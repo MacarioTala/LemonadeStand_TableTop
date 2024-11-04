@@ -162,6 +162,22 @@ public class InventoryTests
     }
 
     [Test]
+    public void If_no_goods_are_available_at_price_do_nothing()
+    {
+        //arrange
+        var test_inventory = new Inventory();
+        var test_inventory_entry = new InventoryEntry(lemon, 10, 1.0f);
+        test_inventory.Add_good_to_inventory(test_inventory_entry);
+        var lemons_to_sell = 15;
+        var price_to_sell_at = 2.0f;
+        var expected_inventory_count = 1;
+        //act
+        var actual_inventory = test_inventory.Generate_goods_to_remove(lemon, lemons_to_sell, price_to_sell_at);
+        //assert
+        Assert.AreEqual(expected_inventory_count, actual_inventory.Count);
+    }
+
+    [Test]
     public void Sell_goods_removes_goods_from_inventory_price_matches_stock_exactly()
     {
         //arrange

@@ -20,6 +20,9 @@
 *.user
 *.userprefs
 
+#Apple stuff
+.DS_Store
+
 # Unity dependencies
 /Packages/packages-lock.json
 
