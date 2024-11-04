@@ -1,0 +1,25 @@
+# Unity-generated folders
+/Library/
+/Logs/
+/Temp/
+/Obj/
+
+# Local configuration files
+/UserSettings/
+.DS_Store           # macOS system file
+
+# VS Code settings
+.vscode/
+
+# Visual Studio files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+
+# Unity dependencies
+/Packages/packages-lock.json
+

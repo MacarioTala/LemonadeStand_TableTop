@@ -1,0 +1,6 @@
+{
+    "name": "Tests",
+    "references":["GameAssembly"],
+    "optionalUnityReferences": ["TestAssemblies"],
+    "includePlatforms": ["Editor"]
+}
