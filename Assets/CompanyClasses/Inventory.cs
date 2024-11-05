@@ -27,7 +27,7 @@ public class Inventory
     public void Sell_goods(Good good, int quantity, float price) 
     {
         var goods_to_remove = Generate_goods_to_remove(good, quantity, price);
-        remove_goods(goods_to_remove);
+        Remove_goods(goods_to_remove);
     } 
     public List<InventoryEntry> Generate_goods_to_remove(Good good, int quantity, float price)
     {
@@ -55,7 +55,25 @@ public class Inventory
         }
         return goods_to_remove;
     }
-    private void remove_goods(List<InventoryEntry> entries_to_remove)
+
+    public void Consume_for_recipe(Recipe recipe, int quantity)
+    {
+        //Assumes quantity that is passed in is valid. Maybe need a token system to check if quantity is valid
+        var ingredients = recipe.Get_recipe();
+        foreach(var ingredient in ingredients)
+        {
+            var quantity_to_remove = ingredient.Quantity_needed * quantity;
+            var inventory_entry = inventory_items.Find(x=> x.good.good_name == ingredient.Good.good_name);
+            inventory_entry.quantity -= quantity_to_remove;
+
+            if(inventory_entry.quantity == 0)
+            {
+                inventory_items.Remove(inventory_entry);
+            }
+
+        }
+    }
+    private void Remove_goods(List<InventoryEntry> entries_to_remove)
     {
         foreach(var entry in entries_to_remove)
         {
@@ -66,4 +84,6 @@ public class Inventory
             }
         }
     }
+
+
 }

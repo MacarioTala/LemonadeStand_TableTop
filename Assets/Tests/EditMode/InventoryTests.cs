@@ -222,6 +222,40 @@ public class InventoryTests
                     );
         }
     }
+    [Test]
+    public void Consume_for_recipe_consumes_ingredients_in_inventory()
+    {
+        //arrange
+        var test_inventory = new Inventory();
+        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0f);
+        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0f);
+        var inventory_entry3 = new InventoryEntry(water, 10, 1.0f);
+        test_inventory.Add_good_to_inventory(inventory_entry1);
+        test_inventory.Add_good_to_inventory(inventory_entry2);
+        test_inventory.Add_good_to_inventory(inventory_entry3);
+        var lemonade = Good.CreateInstance("Lemonade", 1.0f, 0.1f, 10, 5);
+        var lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
+        var quantity = 1;
+        var expected_inventory = new List<InventoryEntry> { new(lemon, 1, 1.0f), new(sugar, 8, 1.0f), new(water, 3, 1.0f) };
+        //act
+        test_inventory.Consume_for_recipe(lemonade_recipe, quantity);
+        var actual_inventory = test_inventory.Get_inventory_items();
+        //assert
+        if(expected_inventory.Count != actual_inventory.Count)
+        {
+            // Generate string representations of both lists
+            string expectedInventoryString = ListToString(expected_inventory);
+            string actualInventoryString = ListToString(actual_inventory);
+            Assert.Fail(
+                $"Inventory counts do not match:\n" +
+                $"Expected count: {expected_inventory.Count}, Actual count: {actual_inventory.Count}\n\n" +
+                $"Expected Inventory:\n{expectedInventoryString}\n\n" +
+                $"Actual Inventory:\n{actualInventoryString}"
+                    );
+        }
+    }
+  
+    
     // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
     // `yield return null;` to skip a frame.
     [UnityTest]
