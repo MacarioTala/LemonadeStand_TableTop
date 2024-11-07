@@ -30,9 +30,9 @@ public class InventoryTests
         //Goods are created with a name, price, price_increment_rate, 
         //          price_increase_threshold, price_decrease_threshold
         //          in that order
-         sugar = Good.CreateInstance("Sugar", 2.0f, 10, 5, price_band1);
-         lemon = Good.CreateInstance("Lemon", 1.0f, 10, 5, price_band2);
-         water = Good.CreateInstance("Water", 0.5f, 10, 5, price_band3);
+         sugar = Good.CreateInstance("Sugar", price_band1);
+         lemon = Good.CreateInstance("Lemon", price_band2);
+         water = Good.CreateInstance("Water", price_band3);
         
 
     }
@@ -237,7 +237,7 @@ public class InventoryTests
         test_inventory.Add_good_to_inventory(inventory_entry1);
         test_inventory.Add_good_to_inventory(inventory_entry2);
         test_inventory.Add_good_to_inventory(inventory_entry3);
-        var lemonade = Good.CreateInstance("Lemonade", 1.0f, 10, 5, price_band4);
+        var lemonade = Good.CreateInstance("Lemonade", price_band4);
         
         var lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 1;

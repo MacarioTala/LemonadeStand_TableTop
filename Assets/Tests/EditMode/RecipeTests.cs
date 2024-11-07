@@ -24,9 +24,9 @@ public class RecipeTests
     public void SetUp()
     {
         test_inventory = new Inventory();
-        lemon = Good.CreateInstance("lemon", 1,10, 5, price_band2);
-        sugar = Good.CreateInstance("sugar", 1,10, 5, price_band1);
-        water = Good.CreateInstance("water", 1,10, 5, price_band3);
+        lemon = Good.CreateInstance("lemon", price_band2);
+        sugar = Good.CreateInstance("sugar", price_band1);
+        water = Good.CreateInstance("water", price_band3);
         var lemon_inventory_entry = new InventoryEntry(lemon, 10, 1);
         var sugar_inventory_entry = new InventoryEntry(sugar, 10, 1);
         var water_inventory_entry = new InventoryEntry(water, 10, 1);
@@ -34,7 +34,7 @@ public class RecipeTests
         test_inventory.Add_good_to_inventory(sugar_inventory_entry);
         test_inventory.Add_good_to_inventory(water_inventory_entry);
 
-        lemonade = Good.CreateInstance("lemonade", 1, 10, 5, price_band4);
+        lemonade = Good.CreateInstance("lemonade", price_band4);
         var lemonade_ingredients = new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) };
         lemonade_recipe = new Recipe(lemonade, lemonade_ingredients);
     }
@@ -72,7 +72,7 @@ public class RecipeTests
         test_inventory.Add_good_to_inventory(inventory_entry1);
         test_inventory.Add_good_to_inventory(inventory_entry2);
         test_inventory.Add_good_to_inventory(inventory_entry3);
-        var lemonade = Good.CreateInstance("Lemonade", 1.0f, 10, 5, price_band4);
+        var lemonade = Good.CreateInstance("Lemonade", price_band4);
         var lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 2;
         //act
@@ -91,7 +91,7 @@ public class RecipeTests
         test_inventory.Add_good_to_inventory(inventory_entry1);
         test_inventory.Add_good_to_inventory(inventory_entry2);
         test_inventory.Add_good_to_inventory(inventory_entry3);
-        var lemonade = Good.CreateInstance("Lemonade", 1.0f, 10, 5, price_band4);
+        var lemonade = Good.CreateInstance("Lemonade", price_band4);
         var lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 1;
         var expected_remaining_lemons = 1;

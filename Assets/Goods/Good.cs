@@ -6,8 +6,10 @@ public class Good : ScriptableObject
 {
     private float Price;
     public string good_name;
-    public float price_increment_rate;
+    private float price_increment_rate;
     private Price_band price_band;
+
+    private Rarity_enum rarity;
     private int units_sold_in_period;//how many units of this good were sold in the last period
     public int price_increase_threshold; //if units_sold_in_period >= price_increase_threshold then increase price 
     public int price_decrease_threshold; //if units_sold_in_period <= price_decrease_threshold then decrease price
@@ -17,22 +19,26 @@ public class Good : ScriptableObject
     [SerializeField] private List<Good> _substitute_goods = new();
 
 
-    public static Good CreateInstance(string good_name, float price_increment_rate, int price_increase_threshold, int price_decrease_threshold, Price_band price_band=null)
+    public static Good CreateInstance(  string good_name, 
+                                        Price_band price_band=null,
+                                        Rarity_enum rarity=Rarity_enum.Common)
     {
         var good = ScriptableObject.CreateInstance<Good>();
-        good.Initialize(good_name,  price_increment_rate, price_increase_threshold, price_decrease_threshold, price_band);
+        good.Initialize(good_name, price_band,rarity);
         return good;
     }
 
-    private void Initialize(string good_name, float price_increment_rate, int price_increase_threshold, int price_decrease_threshold, Price_band price_band) 
+    private void Initialize(string good_name, 
+                            Price_band price_band,
+                            Rarity_enum rarity=Rarity_enum.Common) 
     {
         this.good_name = good_name;
-        this.price_increment_rate = price_increment_rate;
-        this.price_increase_threshold = price_increase_threshold;
-        this.price_decrease_threshold = price_decrease_threshold;
         this.price_band = price_band;
+        this.rarity = rarity;
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
+        Set_initial_price_thresholds();
+        Set_initial_price_increment_rate();
     }
 
     public Price_band Get_price_band()
@@ -44,9 +50,14 @@ public class Good : ScriptableObject
     {
         return Price;
     }
-    public void Sell(int units_sold)
+
+    public Rarity_enum Get_rarity()
     {
-        units_sold_in_period += units_sold;
+        return rarity;
+    }
+    public float Get_price_increment_rate()
+    {
+        return price_increment_rate;
     }
 
     private float Generate_initial_price()
@@ -70,6 +81,63 @@ public class Good : ScriptableObject
         _substitute_goods.Add(good);
     }
 
+    private void set_price_thresholds(int increase_threshold, int decrease_threshold){
+        price_increase_threshold = increase_threshold;
+        price_decrease_threshold = decrease_threshold;
+    }
+
+    private void Set_initial_price_thresholds()
+    {
+        const int common_increase_threshold = 500;
+        const int common_decrease_threshold = 100;
+        const int uncommon_increase_threshold = 250;
+        const int uncommon_decrease_threshold = 50;
+        const int rare_increase_threshold = 50;
+        const int rare_decrease_threshold = 10;
+        const int very_rare_increase_threshold = 5;
+        const int very_rare_decrease_threshold = 1;
+        if(rarity==Rarity_enum.Common){
+            set_price_thresholds(common_increase_threshold, common_decrease_threshold);
+        }
+        if(rarity==Rarity_enum.Uncommon){
+            set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
+        }
+        if(rarity==Rarity_enum.Rare){
+            set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
+        }
+        if(rarity==Rarity_enum.Very_Rare){
+            set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
+        }
+    }
+
+    private void Set_initial_price_increment_rate()
+    {
+        const float common_price_increment_rate = 0.1f;
+        const float uncommon_price_increment_rate = 0.15f;
+        const float rare_price_increment_rate = 0.3f;
+        const float very_rare_price_increment_rate = 0.4f;
+        if(rarity==Rarity_enum.Common){
+            price_increment_rate = common_price_increment_rate;
+        }
+        if(rarity==Rarity_enum.Uncommon){
+            price_increment_rate = uncommon_price_increment_rate;
+        }
+        if(rarity==Rarity_enum.Rare){
+            price_increment_rate = rare_price_increment_rate;
+        }
+        if(rarity==Rarity_enum.Very_Rare){
+            price_increment_rate = very_rare_price_increment_rate;
+        }
+    }
+}
+
+public enum Rarity_enum
+{
+    Common,
+    Uncommon,
+    Rare,
+    Very_Rare,
+    Unique
 }
 
 [System.Serializable]
