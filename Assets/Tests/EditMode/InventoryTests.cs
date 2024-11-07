@@ -14,6 +14,10 @@ public class InventoryTests
     private Good sugar;
     private Good water;
 
+    private Price_band price_band1 = new(.05f, 2f);
+    private Price_band price_band2 = new(1f, 3f);
+    private Price_band price_band3 = new(2f, 5f);
+    private Price_band price_band4 = new(5f, 10f);
     [SetUp]
     public void Setup()
     {
@@ -26,9 +30,9 @@ public class InventoryTests
         //Goods are created with a name, price, price_increment_rate, 
         //          price_increase_threshold, price_decrease_threshold
         //          in that order
-         lemon = Good.CreateInstance("Lemon", 1.0f, 0.1f, 10, 5);
-         sugar = Good.CreateInstance("Sugar", 2.0f, 0.2f, 10, 5);
-         water = Good.CreateInstance("Water", 0.5f, 0.05f, 10, 5);
+         sugar = Good.CreateInstance("Sugar", 2.0f, 10, 5, price_band1);
+         lemon = Good.CreateInstance("Lemon", 1.0f, 10, 5, price_band2);
+         water = Good.CreateInstance("Water", 0.5f, 10, 5, price_band3);
         
 
     }
@@ -233,7 +237,8 @@ public class InventoryTests
         test_inventory.Add_good_to_inventory(inventory_entry1);
         test_inventory.Add_good_to_inventory(inventory_entry2);
         test_inventory.Add_good_to_inventory(inventory_entry3);
-        var lemonade = Good.CreateInstance("Lemonade", 1.0f, 0.1f, 10, 5);
+        var lemonade = Good.CreateInstance("Lemonade", 1.0f, 10, 5, price_band4);
+        
         var lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 1;
         var expected_inventory = new List<InventoryEntry> { new(lemon, 1, 1.0f), new(sugar, 8, 1.0f), new(water, 3, 1.0f) };
