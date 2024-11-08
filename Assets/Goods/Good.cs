@@ -4,7 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Good", menuName = "GameObjects/Good", order = 1)]
 public class Good : ScriptableObject
 {
-    private float Price;
+    private float _price;
+    private float Price{
+                        get => _price;
+                        set => _price = Mathf.Round(value * 100f) / 100f;}
     public string good_name;
     private float price_increment_rate;
     private Price_band price_band;
@@ -81,7 +84,7 @@ public class Good : ScriptableObject
         _substitute_goods.Add(good);
     }
 
-    private void set_price_thresholds(int increase_threshold, int decrease_threshold){
+    private void Set_price_thresholds(int increase_threshold, int decrease_threshold){
         price_increase_threshold = increase_threshold;
         price_decrease_threshold = decrease_threshold;
     }
@@ -97,16 +100,16 @@ public class Good : ScriptableObject
         const int very_rare_increase_threshold = 5;
         const int very_rare_decrease_threshold = 1;
         if(rarity==Rarity_enum.Common){
-            set_price_thresholds(common_increase_threshold, common_decrease_threshold);
+            Set_price_thresholds(common_increase_threshold, common_decrease_threshold);
         }
         if(rarity==Rarity_enum.Uncommon){
-            set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
+            Set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
         }
         if(rarity==Rarity_enum.Rare){
-            set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
+            Set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
         }
         if(rarity==Rarity_enum.Very_Rare){
-            set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
+            Set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
         }
     }
 

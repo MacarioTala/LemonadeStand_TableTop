@@ -2,15 +2,58 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Runtime.Serialization;
 
 public class The_Market : MonoBehaviour
 {
     public List<Good> goods = new();
-
     public List<InventoryEntry> goods_in_market = new();
+
+    private readonly List<Trade> trade_queue = new();
+    private ITradeLogger _trade_logger;
     public List<Company> companies = new();
-    private float _market_update_rate = 1f;
+    private readonly float _market_update_rate = 1f;
     private float _time_since_last_market_update = 0;
+
+    public void Initialize(ITradeLogger trade_logger)
+    {
+        Create_initial_goods(goods);
+        _trade_logger = trade_logger;
+    }
+
+    public void Queue_Trade(Trade trade)
+    {
+        trade_queue.Add(trade);
+    }
+
+    public void Execute_Daily_Trades()
+    {
+        foreach(Trade trade in trade_queue)
+        {
+            Process_trade(trade);
+            _trade_logger.LogTrade(trade);
+            }
+
+            _trade_logger?.SaveDailySummary(trade_queue);
+            trade_queue.Clear();
+    }
+
+    private void Process_trade(Trade trade)
+    {
+       try{
+            trade.seller.SellGood(trade.good, trade.quantity, trade.price);
+            trade.buyer.BuyGood(trade.good, trade.quantity,trade.price);
+          }
+        catch(Company.Company_InventoryException e)
+        {
+            Debug.Log(e.Message);
+        }
+        catch(Company.Company_InsufficientFundsException e)
+        {
+            Debug.Log(e.Message);
+        }
+       
+    }
 
     public void Register_Company(Company company)
     {
@@ -20,7 +63,7 @@ public class The_Market : MonoBehaviour
         }
         else
         {
-            throw new CompanyException("Company already registered");
+            throw new TheMarket_CompanyException("Company already registered");
         }
         
     }
@@ -41,11 +84,6 @@ public class The_Market : MonoBehaviour
 
     public void Create_initial_goods(List<Good> goods)//move static data to DB in future
     {
-        //generate random numbers for price bands
-        var band1 = new Price_band(1f,5f);
-        var band2 = new Price_band(6f,10f);
-        var band3 = new Price_band(11f, 20f);
-
         //Limits for good quantities
         var common_range = UnityEngine.Random.Range(1, 1000);
         var uncommon_range = UnityEngine.Random.Range(1, 500);
@@ -76,10 +114,11 @@ public class The_Market : MonoBehaviour
     }
 }
 }
+
 [Serializable]
-public class CompanyException : Exception
+public class TheMarket_CompanyException : Exception
 {
-    public CompanyException(string message) : base(message)
+    public TheMarket_CompanyException(string message) : base(message)
     {
     }
 

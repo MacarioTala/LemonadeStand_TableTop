@@ -4,7 +4,6 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Linq;
-using System.Text;
 
 [TestFixture]
 public class InventoryTests
@@ -13,6 +12,8 @@ public class InventoryTests
     private Good lemon;
     private Good sugar;
     private Good water;
+
+    private readonly TestHelpers testHelpers = new();
 
     private Price_band price_band1 = new(.05f, 2f);
     private Price_band price_band2 = new(1f, 3f);
@@ -24,7 +25,6 @@ public class InventoryTests
         //create a test company
         test_company = ScriptableObject.CreateInstance<Company>();
         test_company.company_name = "Test Company";
-        test_company.company_description = "This is a test company";
 
         //create test goods
         //Goods are created with a name, price, price_increment_rate, 
@@ -138,8 +138,8 @@ public class InventoryTests
         if(expected_inventory.Count != actual_inventory.Count)
         {
             // Generate string representations of both lists
-            string expectedInventoryString = ListToString(expected_inventory);
-            string actualInventoryString = ListToString(actual_inventory);
+            string expectedInventoryString = testHelpers.ListToString(expected_inventory);
+            string actualInventoryString = testHelpers.ListToString(actual_inventory);
 
             Assert.Fail(
                 $"Inventory counts do not match:\n" +
@@ -216,8 +216,8 @@ public class InventoryTests
         if(expected_remaining_inventory.Count != actual_remaining_inventory.Count)
         {
             // Generate string representations of both lists
-            string expectedInventoryString = ListToString(expected_remaining_inventory);
-            string actualInventoryString = ListToString(actual_remaining_inventory);
+            string expectedInventoryString = testHelpers.ListToString(expected_remaining_inventory);
+            string actualInventoryString = testHelpers.ListToString(actual_remaining_inventory);
             Assert.Fail(
                 $"Inventory counts do not match:\n" +
                 $"Expected count: {expected_remaining_inventory.Count}, Actual count: {actual_remaining_inventory.Count}\n\n" +
@@ -249,8 +249,8 @@ public class InventoryTests
         if(expected_inventory.Count != actual_inventory.Count)
         {
             // Generate string representations of both lists
-            string expectedInventoryString = ListToString(expected_inventory);
-            string actualInventoryString = ListToString(actual_inventory);
+            string expectedInventoryString = testHelpers.ListToString(expected_inventory);
+            string actualInventoryString = testHelpers.ListToString(actual_inventory);
             Assert.Fail(
                 $"Inventory counts do not match:\n" +
                 $"Expected count: {expected_inventory.Count}, Actual count: {actual_inventory.Count}\n\n" +
@@ -271,14 +271,4 @@ public class InventoryTests
         yield return null;
     }
 
-    //Private helper methods
-    private string ListToString(List<InventoryEntry> inventory)
-{
-    var sb = new StringBuilder();
-    foreach (var item in inventory)
-    {
-        sb.AppendLine($"Good: {item.good.name}, Quantity: {item.quantity}, Price: {item.acquisition_price}");
-    }
-    return sb.ToString();
-}
 }

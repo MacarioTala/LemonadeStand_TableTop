@@ -1,0 +1,103 @@
+using NUnit.Framework;
+using UnityEngine;
+using System.Linq;
+using System.Collections.Generic;
+[TestFixture]
+public class CompanyTests
+{
+    private TestHelpers testHelpers;
+    [SetUp]
+    public void Setup()
+    {
+        testHelpers = new TestHelpers();
+    }
+
+    [Test]
+    public void Set_initial_cash_sets_cash_to_10000_for_beginner()
+    {
+        //arrange
+        var company = ScriptableObject.CreateInstance<Company>();
+        company.Initialize("Test Company", Company.CompanyLevelEnum.Beginner);
+        const float expected_cash = 10000;
+        //Act
+        //Assert
+        Assert.AreEqual(expected_cash, company.Get_cash());
+    }
+    [Test]
+    public void Buy_good_when_buyer_has_enough_cash_removes_cash_from_buyer()
+    {
+        //arrange
+        var company = ScriptableObject.CreateInstance<Company>();
+        company.Initialize("Test Company", Company.CompanyLevelEnum.Beginner);
+        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        const float trade_price = 3f;
+        var expected_cash = 10000 - 3;
+        //Act
+        company.BuyGood(good, 1, trade_price);
+        var actual_cash = company.Get_cash();
+        //Assert
+        Assert.AreEqual(expected_cash, actual_cash);
+
+    }
+
+    [Test]
+    public void Buy_good_when_buyer_has_enough_cash_adds_good_to_inventory()
+    {
+        //arrange
+        var company = ScriptableObject.CreateInstance<Company>();
+        company.Initialize("Test Company", Company.CompanyLevelEnum.Beginner);
+        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        const float trade_price = 3f;
+        var expected_inventory_entry = new InventoryEntry(good, 1, trade_price);
+        
+        //Act
+        company.BuyGood(good, 1, trade_price);
+        var actual_inventory_entry = company.Get_inventory().Get_inventory_items().Where(x => x.good.good_name == "Lemon" 
+                                                                    && x.quantity == 1 
+                                                                    && x.acquisition_price == trade_price
+                                                                    ).FirstOrDefault();
+        //Assert
+        var expected_inventory = testHelpers.ListToString(new List<InventoryEntry> { expected_inventory_entry });
+        var actual_inventory = testHelpers.ListToString(company.Get_inventory().Get_inventory_items());
+        Assert.AreEqual(expected_inventory, actual_inventory);
+    }
+
+    [Test]
+    public void Sell_good_when_seller_has_good_in_inventory_adds_cash_to_seller()
+    {
+        //arrange
+        var company = ScriptableObject.CreateInstance<Company>();
+        company.Initialize("Test Company", Company.CompanyLevelEnum.Beginner);
+        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        company.BuyGood(good, 1,good.Get_price());
+        var initial_cash = company.Get_cash();
+        var good_price = 3f;
+        var expected_cash = initial_cash + good_price;
+        
+        //Act
+        company.SellGood(good, 1, good_price);
+        var actual_cash = company.Get_cash();
+        //Assert
+        Assert.AreEqual(expected_cash, actual_cash);
+    }
+
+    [Test]
+    public void sell_good_throws_exception_when_not_enough_quantity()
+    {
+        //arrange
+        var company = ScriptableObject.CreateInstance<Company>();
+        company.Initialize("Test Company", Company.CompanyLevelEnum.Beginner);
+        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        company.BuyGood(good, 1,good.Get_price());
+        var good_price = 3f;
+        //Act
+        //Assert
+        Assert.Throws<Company.Company_InventoryException>(() => company.SellGood(good, 2, good_price));
+    }
+    
+    [Test]
+    public void if_goods_at_multiple_prices_exist_ask_which_batch_to_sell()
+    {
+        throw new System.NotImplementedException();
+    }
+}

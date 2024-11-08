@@ -11,12 +11,12 @@ public class The_MarketTests
     Good water;
     Good sugar;
 
-    Price_band band1 = new Price_band(.5f, 1f);
-    Price_band band2 = new Price_band(1f, 3f);
-    Price_band band3 = new Price_band(3f, 5f);
-    Price_band band4 = new Price_band(5f, 10f);
+    readonly Price_band band1 = new(.5f, 1f);
+    readonly Price_band band2 = new(1f, 3f);
+    readonly Price_band band3 = new(3f, 5f);
+    readonly Price_band band4 = new(5f, 10f);
 
-    List<Good> test_goods = new();
+    readonly List<Good> test_goods = new();
 
     [SetUp]
     public void SetUp()
@@ -56,7 +56,7 @@ public class The_MarketTests
         company2.company_name = "Test Company";
         // Act
         // Assert
-        Assert.Throws<CompanyException>(() => test_market.Register_Company(company2));
+        Assert.Throws<TheMarket_CompanyException>(() => test_market.Register_Company(company2));
     }
 
     [Test]
