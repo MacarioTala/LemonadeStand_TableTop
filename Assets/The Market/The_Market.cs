@@ -9,6 +9,7 @@ public class The_Market : MonoBehaviour
     
     private readonly List<Trade> trade_queue = new();
     private ITradeLogger _trade_logger;
+    
     public List<Company> companies = new();
     private readonly float _market_update_rate = 1f;
     private float _time_since_last_market_update = 0;

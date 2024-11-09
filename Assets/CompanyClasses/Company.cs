@@ -56,7 +56,10 @@ public enum CompanyLevelEnum
     Global
     }
 
+
 public void BuyGood(Good good, int quantity,float price)
+//Currently public for testing purposes
+//Make private or internal afterwards
     {
         var money_needed = price * quantity;
         if(HasMoney(money_needed))

@@ -17,7 +17,7 @@ public class The_MarketTests
     readonly Price_band band2 = new(1f, 3f);
     readonly Price_band band3 = new(3f, 5f);
     readonly Price_band band4 = new(5f, 10f);
-    readonly ITradeLogger trade_logger = null;
+    readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 
     [SetUp]
@@ -99,9 +99,65 @@ public class The_MarketTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
+#region TradeTests
+    [Test]
+    public void A_Company_buying_a_good_from_another_company_via_queue_can_be_initiated_by_queue_trade()
+    {
+        // Arrange
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", Company.CompanyLevelEnum.Beginner);
+        var company2 = ScriptableObject.CreateInstance<Company>();
+        company2.Initialize("Company2", Company.CompanyLevelEnum.Beginner);
+        test_market.Register_Company(company1);
+        test_market.Register_Company(company2);
+        company1.BuyGood(lemon, 10, 3f);
+        company1.BuyGood(water, 10, 1f);
+        company1.BuyGood(sugar, 10, 1f);
+        company2.BuyGood(lemon, 10, 1f);
+        company2.BuyGood(water, 10, 3f);
+        company2.BuyGood(sugar, 10, 1f);
+        var expected_company1_cash = company1.Get_cash() - 2;
+        var expected_company2_cash = company2.Get_cash() + 2;
+        var expected_company1_2flemon_quantity = 1;
+        var expected_company2_lemon_quantity = 10 - 1;
+
+        // Act
+        var trade = new Trade(company1, company2, lemon, 1, 2f);
+        test_market.Queue_Trade(trade);
+        test_market.Execute_Daily_Trades();
+        var actual_company1_cash = company1.Get_cash();
+        var actual_company2_cash = company2.Get_cash();
+        var actual_company1_2flemon_quantity = company1.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2f).quantity;
+        var actual_company2_lemon_quantity = company2.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
+        // Assert
+        Assert.AreEqual(expected_company1_cash, actual_company1_cash);
+        Assert.AreEqual(expected_company2_cash, actual_company2_cash);
+        Assert.AreEqual(expected_company1_2flemon_quantity, actual_company1_2flemon_quantity);
+        Assert.AreEqual(expected_company2_lemon_quantity, actual_company2_lemon_quantity);
+    }
+
+
+
+#endregion
+
+#region stubs
+public class MockLogger : ITradeLogger
+{
+    public void LogTrade(Trade trade)
+    {
+    }
+    public void SaveDailySummary(List<Trade> trade_queue)
+    {
+    }
+}
+#endregion
+
+
     [TearDown]
     public void TearDown()
     {
         Object.DestroyImmediate(test_market.gameObject);
     }
+
+
 }
