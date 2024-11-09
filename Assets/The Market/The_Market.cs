@@ -2,23 +2,35 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using System.Runtime.Serialization;
 
 public class The_Market : MonoBehaviour
 {
     public List<Good> goods = new();
-    public List<InventoryEntry> goods_in_market = new();
-
+    
     private readonly List<Trade> trade_queue = new();
     private ITradeLogger _trade_logger;
     public List<Company> companies = new();
     private readonly float _market_update_rate = 1f;
     private float _time_since_last_market_update = 0;
 
+    //The Global Market is a company that is always present in the market.
+    //It contains the initial goods that are available in the market
+    //As well as the goods sold to the market by Producers and the players
+
+    private Company TheGlobalMarket;
+
     public void Initialize(ITradeLogger trade_logger)
     {
         Create_initial_goods(goods);
         _trade_logger = trade_logger;
+        CreateTheMarketCompany();
+    }
+
+    private void CreateTheMarketCompany()
+    {
+        TheGlobalMarket = ScriptableObject.CreateInstance<Company>();
+        TheGlobalMarket.Initialize("The Global Market", Company.CompanyLevelEnum.Global);
+        Register_Company(TheGlobalMarket);
     }
 
     public void Queue_Trade(Trade trade)
@@ -82,6 +94,10 @@ public class The_Market : MonoBehaviour
         }
     }
 
+    public Company GetGlobalMarket()
+    {
+        return TheGlobalMarket;
+    }
     public void Create_initial_goods(List<Good> goods)//move static data to DB in future
     {
         //Limits for good quantities
@@ -96,25 +112,27 @@ public class The_Market : MonoBehaviour
             //Generate quantity based on rarity
             if(good.Get_rarity() == Rarity_enum.Common)
             {
-                goods_in_market.Add(new InventoryEntry(good, common_range,good.Get_price()));
+                TheGlobalMarket.BuyGood(good, common_range,good.Get_price());
             }
             else if(good.Get_rarity() == Rarity_enum.Uncommon)
             {
-                goods_in_market.Add(new InventoryEntry(good, uncommon_range,good.Get_price()));
+                TheGlobalMarket.BuyGood(good, uncommon_range,good.Get_price());
             }
             else if(good.Get_rarity() == Rarity_enum.Rare)
             {
-                goods_in_market.Add(new InventoryEntry(good, rare_range,good.Get_price()));
+                TheGlobalMarket.BuyGood(good, rare_range,good.Get_price());
             }
             else if(good.Get_rarity() == Rarity_enum.Very_Rare)
             {
-                goods_in_market.Add(new InventoryEntry(good, very_rare_range,good.Get_price()));
+                TheGlobalMarket.BuyGood(good, very_rare_range,good.Get_price());
         }
         //in the future, have a concept of rarity driving the initial price
     }
 }
 }
 
+
+#region Exceptions
 [Serializable]
 public class TheMarket_CompanyException : Exception
 {
@@ -123,3 +141,4 @@ public class TheMarket_CompanyException : Exception
     }
 
 }
+#endregion

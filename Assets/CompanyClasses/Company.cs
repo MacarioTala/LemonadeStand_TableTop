@@ -43,14 +43,18 @@ public class Company : ScriptableObject
             case CompanyLevelEnum.Advanced:
                 cash = 1000;
                 break;  
+            case CompanyLevelEnum.Global:
+                cash = 1000000000000;
+                break;
         }
     }
 public enum CompanyLevelEnum
 {
     Beginner,
     Intermediate,
-    Advanced
-}
+    Advanced,
+    Global
+    }
 
 public void BuyGood(Good good, int quantity,float price)
     {
@@ -105,7 +109,7 @@ public void BuyGood(Good good, int quantity,float price)
     }
 
     [Serializable]
-    internal class Company_InsufficientFundsException : Exception
+    public class Company_InsufficientFundsException : Exception
     {
         public Company_InsufficientFundsException(string message) : base(message)
         {

@@ -63,6 +63,19 @@ public class CompanyTests
     }
 
     [Test]
+    public void Buy_good_when_buyer_doesnt_have_enough_cash_throws_exception()
+    {
+        //arrange
+        var company = ScriptableObject.CreateInstance<Company>();
+        company.Initialize("Test Company", Company.CompanyLevelEnum.Beginner);
+        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        const float trade_price = 3f;
+        const int trade_quantity = 10000;
+        //Act
+        //Assert
+        Assert.Throws<Company.Company_InsufficientFundsException>(() => company.BuyGood(good, trade_quantity, trade_price));
+    }
+    [Test]
     public void Sell_good_when_seller_has_good_in_inventory_adds_cash_to_seller()
     {
         //arrange
@@ -82,7 +95,7 @@ public class CompanyTests
     }
 
     [Test]
-    public void sell_good_throws_exception_when_not_enough_quantity()
+    public void Sell_good_throws_exception_when_not_enough_quantity()
     {
         //arrange
         var company = ScriptableObject.CreateInstance<Company>();
@@ -96,7 +109,7 @@ public class CompanyTests
     }
     
     [Test]
-    public void if_goods_at_multiple_prices_exist_ask_which_batch_to_sell()
+    public void If_goods_at_multiple_prices_exist_ask_which_batch_to_sell()
     {
         throw new System.NotImplementedException();
     }
