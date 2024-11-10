@@ -3,25 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class The_Market : MonoBehaviour
+public class TheEconomy : MonoBehaviour
 {
+    //The Economy is a singleton that manages the market and all companies
+    public static TheEconomy Instance { get; private set; }
+    public int tradingPeriod = 0;
+
+    //These are the goods, but not the inventory items, that will exist in the market when initialized
     public List<Good> goods = new();
     
     private readonly List<Trade> trade_queue = new();
     private ITradeLogger _trade_logger;
     
     public List<Company> companies = new();
-    private readonly float _market_update_rate = 1f;
-    private float _time_since_last_market_update = 0;
 
-    //The Global Market is a company that is always present in the market.
+    //The Initial Market is a company that is always present in the market.
     //It contains the initial goods that are available in the market
     //As well as the goods sold to the market by Producers and the players
+    //There will eventually be multiple markets,representing different regions
 
-    private Company TheGlobalMarket;
+    private Company InitialMarket;
 
+   
     public void Initialize(ITradeLogger trade_logger)
     {
+        //Create the instance
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         Create_initial_goods(goods);
         _trade_logger = trade_logger;
         CreateTheMarketCompany();
@@ -29,9 +43,9 @@ public class The_Market : MonoBehaviour
 
     private void CreateTheMarketCompany()
     {
-        TheGlobalMarket = ScriptableObject.CreateInstance<Company>();
-        TheGlobalMarket.Initialize("The Global Market", Company.CompanyLevelEnum.Global);
-        Register_Company(TheGlobalMarket);
+        InitialMarket = ScriptableObject.CreateInstance<Company>();
+        InitialMarket.Initialize("The First Market", CompanyLevelEnum.Global);
+        Register_Company(InitialMarket);
     }
 
     public void Queue_Trade(Trade trade)
@@ -39,13 +53,14 @@ public class The_Market : MonoBehaviour
         trade_queue.Add(trade);
     }
 
-    public void Execute_Daily_Trades()
+    public void ExecuteDailyTrades()
     {
         foreach(Trade trade in trade_queue)
-        {
+            {
             Process_trade(trade);
             _trade_logger.LogTrade(trade);
             }
+            tradingPeriod++;
 
             _trade_logger?.SaveDailySummary(trade_queue);
             trade_queue.Clear();
@@ -54,14 +69,14 @@ public class The_Market : MonoBehaviour
     private void Process_trade(Trade trade)
     {
        try{
-            trade.seller.SellGood(trade.good, trade.quantity, trade.price);
-            trade.buyer.BuyGood(trade.good, trade.quantity,trade.price);
+            trade.seller.SellGood(trade.good, trade.quantity, trade.price,tradingPeriod);
+            trade.buyer.BuyGood(trade.good, trade.quantity,trade.price,tradingPeriod);
           }
-        catch(Company.Company_InventoryException e)
+        catch(Company_InventoryException e)
         {
             Debug.Log(e.Message);
         }
-        catch(Company.Company_InsufficientFundsException e)
+        catch(Company_InsufficientFundsException e)
         {
             Debug.Log(e.Message);
         }
@@ -82,22 +97,12 @@ public class The_Market : MonoBehaviour
     }
     private void Update()
     {
-        _time_since_last_market_update += Time.deltaTime;
-
-        if(_time_since_last_market_update >= _market_update_rate)
-        {
-            _time_since_last_market_update = 0;
-            foreach(Good good in goods)
-            {
-                good.Update_price_based_on_demand();
-            }
-            _time_since_last_market_update = 0;
-        }
+       throw new NotImplementedException();
     }
 
     public Company GetGlobalMarket()
     {
-        return TheGlobalMarket;
+        return InitialMarket;
     }
     public void Create_initial_goods(List<Good> goods)//move static data to DB in future
     {
@@ -113,19 +118,19 @@ public class The_Market : MonoBehaviour
             //Generate quantity based on rarity
             if(good.Get_rarity() == Rarity_enum.Common)
             {
-                TheGlobalMarket.BuyGood(good, common_range,good.Get_price());
+                InitialMarket.BuyGood(good, common_range,good.Get_price());
             }
             else if(good.Get_rarity() == Rarity_enum.Uncommon)
             {
-                TheGlobalMarket.BuyGood(good, uncommon_range,good.Get_price());
+                InitialMarket.BuyGood(good, uncommon_range,good.Get_price());
             }
             else if(good.Get_rarity() == Rarity_enum.Rare)
             {
-                TheGlobalMarket.BuyGood(good, rare_range,good.Get_price());
+                InitialMarket.BuyGood(good, rare_range,good.Get_price());
             }
             else if(good.Get_rarity() == Rarity_enum.Very_Rare)
             {
-                TheGlobalMarket.BuyGood(good, very_rare_range,good.Get_price());
+                InitialMarket.BuyGood(good, very_rare_range,good.Get_price());
         }
         //in the future, have a concept of rarity driving the initial price
     }

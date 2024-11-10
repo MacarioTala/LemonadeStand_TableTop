@@ -1,7 +1,6 @@
 using System;
-using System.Runtime.Serialization;
 using UnityEngine;
-public class Company : ScriptableObject 
+public class Company : ScriptableObject, iCompany
 {
     public string company_name;
 
@@ -48,18 +47,12 @@ public class Company : ScriptableObject
                 break;
         }
     }
-public enum CompanyLevelEnum
-{
-    Beginner,
-    Intermediate,
-    Advanced,
-    Global
-    }
 
 
-public void BuyGood(Good good, int quantity,float price)
+public void BuyGood(Good good, int quantity,float price,int period=0)
 //Currently public for testing purposes
 //Make private or internal afterwards
+//period currently does nothing for companies, but is used in Market which implements iCompany
     {
         var money_needed = price * quantity;
         if(HasMoney(money_needed))
@@ -88,8 +81,9 @@ public void BuyGood(Good good, int quantity,float price)
 
 
 
-    public void SellGood(Good good, int quantity, float price)
+    public void SellGood(Good good, int quantity, float price,int period=0)
     {
+        //period currently does nothing for companies, but is used in Market which implements iCompany
         if(HasGood(good, quantity))
         {
             
@@ -101,8 +95,17 @@ public void BuyGood(Good good, int quantity,float price)
             throw new Company_InventoryException("Company does not have enough of the good to sell");
         }
     }
-
-    #region Exceptions
+}
+#region enums
+public enum CompanyLevelEnum
+{
+    Beginner,
+    Intermediate,
+    Advanced,
+    Global
+    }
+#endregion
+#region Exceptions
     [Serializable]
     public class Company_InventoryException : Exception
     {
@@ -119,4 +122,3 @@ public void BuyGood(Good good, int quantity,float price)
         }
     }
     #endregion
-}

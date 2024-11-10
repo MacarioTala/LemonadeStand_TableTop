@@ -4,9 +4,9 @@ using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
-public class The_MarketTests
+public class TheEconomyTests
 {
-    private The_Market test_market;
+    private TheEconomy test_market;
 
     private Company TheGlobalMarket_for_testing;
     Good lemon;
@@ -24,7 +24,7 @@ public class The_MarketTests
     public void SetUp()
     {
         var market_object = new GameObject();
-        test_market = market_object.AddComponent<The_Market>();
+        test_market = market_object.AddComponent<TheEconomy>();
         test_market.Initialize(trade_logger);
         TheGlobalMarket_for_testing = test_market.GetGlobalMarket(); 
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
@@ -78,10 +78,10 @@ public class The_MarketTests
     }
 
     [Test]
-    public void Make_sure_the_Market_company_exists_in_The_Market_with_proper_params()
+    public void Make_sure_the_first_market_exists_in_TheEconomy_with_proper_params()
     {
         // Arrange
-        var expected_name = "The Global Market";
+        var expected_name = "The First Market";
         // Act
         var actual = test_market.GetGlobalMarket().company_name;
         // Assert
@@ -89,7 +89,7 @@ public class The_MarketTests
     }
 
     [Test]
-    public void When_market_is_initialized_goods_are_created_in_the_Global_Market()
+    public void When_TheEconomy_is_initialized_goods_are_created_in_InitialMarket()
     {
         // Arrange
         var expected = "Lemon";
@@ -105,9 +105,9 @@ public class The_MarketTests
     {
         // Arrange
         var company1 = ScriptableObject.CreateInstance<Company>();
-        company1.Initialize("Company1", Company.CompanyLevelEnum.Beginner);
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
         var company2 = ScriptableObject.CreateInstance<Company>();
-        company2.Initialize("Company2", Company.CompanyLevelEnum.Beginner);
+        company2.Initialize("Company2", CompanyLevelEnum.Beginner);
         test_market.Register_Company(company1);
         test_market.Register_Company(company2);
         company1.BuyGood(lemon, 10, 3f);
@@ -124,7 +124,7 @@ public class The_MarketTests
         // Act
         var trade = new Trade(company1, company2, lemon, 1, 2f);
         test_market.Queue_Trade(trade);
-        test_market.Execute_Daily_Trades();
+        test_market.ExecuteDailyTrades();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
         var actual_company1_2flemon_quantity = company1.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2f).quantity;
@@ -140,6 +140,14 @@ public class The_MarketTests
 
 #endregion
 
+    [TearDown]
+    public void TearDown()
+    {
+        Object.DestroyImmediate(test_market.gameObject);
+    }
+
+
+}
 #region stubs
 public class MockLogger : ITradeLogger
 {
@@ -151,13 +159,3 @@ public class MockLogger : ITradeLogger
     }
 }
 #endregion
-
-
-    [TearDown]
-    public void TearDown()
-    {
-        Object.DestroyImmediate(test_market.gameObject);
-    }
-
-
-}

@@ -13,11 +13,9 @@ public class Good : ScriptableObject
     private Price_band price_band;
 
     private Rarity_enum rarity;
-    private int units_sold_in_period;//how many units of this good were sold in the last period
-    public int price_increase_threshold; //if units_sold_in_period >= price_increase_threshold then increase price 
-    public int price_decrease_threshold; //if units_sold_in_period <= price_decrease_threshold then decrease price
-
-    public List<float> historical_prices = new();
+    
+    public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
+    public int price_decrease_threshold; //ibid
 
     [SerializeField] private List<Good> _substitute_goods = new();
 
@@ -68,18 +66,6 @@ public class Good : ScriptableObject
         return Random.Range(price_band.min, price_band.max);
     }
 
-    public void Update_price_based_on_demand(){
-        if(units_sold_in_period >= price_increase_threshold){
-            Price += price_increment_rate;
-        }
-        else if(units_sold_in_period <= price_decrease_threshold){
-            Price -= price_increment_rate;
-        }
-
-        historical_prices.Add(Price);
-        units_sold_in_period = 0;
-    }
-
     public void Add_substitute_good(Good good){
         _substitute_goods.Add(good);
     }
@@ -88,7 +74,6 @@ public class Good : ScriptableObject
         price_increase_threshold = increase_threshold;
         price_decrease_threshold = decrease_threshold;
     }
-
     private void Set_initial_price_thresholds()
     {
         const int common_increase_threshold = 500;
