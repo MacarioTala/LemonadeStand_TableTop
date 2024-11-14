@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 public class Trade
 {
-    public Company buyer;
-    public Company seller;
+    public iCompany buyer;
+    public iCompany seller;
     public Good good;
     public int quantity;
     public float price;
 
-    public Trade(Company buyer, Company seller, Good good, int quantity, float price)
+    public Trade(iCompany buyer, iCompany seller, Good good, int quantity, float price)
     {
         this.buyer = buyer;
         this.seller = seller;

@@ -2,7 +2,13 @@ using System;
 using UnityEngine;
 public class Company : ScriptableObject, iCompany
 {
-    public string company_name;
+    //Fields to get around Unity's limitation of not having automatic backing properties.
+    [SerializeField]private string _company_name;
+    public string company_name
+    {
+        get => _company_name;
+        set => _company_name = value;
+    }
 
     private readonly float share_price;
     private readonly int shares_outstanding;

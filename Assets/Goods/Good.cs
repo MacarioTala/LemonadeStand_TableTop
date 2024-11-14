@@ -8,6 +8,8 @@ public class Good : ScriptableObject
     private float Price{
                         get => _price;
                         set => _price = Mathf.Round(value * 100f) / 100f;}
+    public float DemandElasticity { get; set; }
+
     public string good_name;
     private float price_increment_rate;
     private Price_band price_band;

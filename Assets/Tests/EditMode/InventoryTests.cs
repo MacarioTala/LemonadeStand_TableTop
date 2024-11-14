@@ -259,16 +259,17 @@ public class InventoryTests
                     );
         }
     }
-  
-    
-    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-    // `yield return null;` to skip a frame.
-    [UnityTest]
-    public IEnumerator InventoryTestsWithEnumeratorPasses()
+    [Test]
+    public void If_goods_at_multiple_prices_exist_ask_which_batch_to_sell()
     {
-        // Use the Assert class to test conditions.
-        // Use yield to skip a frame.
-        yield return null;
+        //arrange
+        var test_inventory = new Inventory();
+        var test_inventory_entry = new InventoryEntry(lemon, 10, 1.0f);
+        test_inventory.Add_good_to_inventory(test_inventory_entry);
+        var test_inventory_entry2 = new InventoryEntry(lemon, 10, 1.9f);
+        test_inventory.Add_good_to_inventory(test_inventory_entry2);
+        var lemons_to_sell = 15;
+        throw new System.NotImplementedException();
     }
 
 }

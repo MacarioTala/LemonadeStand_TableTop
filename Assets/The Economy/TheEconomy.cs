@@ -15,14 +15,14 @@ public class TheEconomy : MonoBehaviour
     private readonly List<Trade> trade_queue = new();
     private ITradeLogger _trade_logger;
     
-    public List<Company> companies = new();
+    public List<iCompany> companies = new();
 
     //The Initial Market is a company that is always present in the market.
     //It contains the initial goods that are available in the market
     //As well as the goods sold to the market by Producers and the players
     //There will eventually be multiple markets,representing different regions
 
-    private Company InitialMarket;
+    private Market InitialMarket;
 
    
     public void Initialize(ITradeLogger trade_logger)
@@ -38,12 +38,12 @@ public class TheEconomy : MonoBehaviour
         }
         Create_initial_goods(goods);
         _trade_logger = trade_logger;
-        CreateTheMarketCompany();
+        CreateInitialMarket();
     }
 
-    private void CreateTheMarketCompany()
+    private void CreateInitialMarket()
     {
-        InitialMarket = ScriptableObject.CreateInstance<Company>();
+        InitialMarket = ScriptableObject.CreateInstance<Market>();
         InitialMarket.Initialize("The First Market", CompanyLevelEnum.Global);
         Register_Company(InitialMarket);
     }
@@ -60,10 +60,21 @@ public class TheEconomy : MonoBehaviour
             Process_trade(trade);
             _trade_logger.LogTrade(trade);
             }
-            tradingPeriod++;
 
-            _trade_logger?.SaveDailySummary(trade_queue);
-            trade_queue.Clear();
+        tradingPeriod++;
+
+        _trade_logger?.SaveDailySummary(trade_queue);
+        trade_queue.Clear();
+        //Update prices
+        foreach (var company in companies)
+        {
+            if(company is Market market)
+            {
+                market.CalculateFulfillmentRates();
+                market.AdjustDemand();
+                market.UpdatePrices();
+            }
+        }
     }
 
     private void Process_trade(Trade trade)
@@ -75,15 +86,16 @@ public class TheEconomy : MonoBehaviour
         catch(Company_InventoryException e)
         {
             Debug.Log(e.Message);
+            throw e;
         }
         catch(Company_InsufficientFundsException e)
         {
-            Debug.Log(e.Message);
+            throw e;
         }
        
     }
 
-    public void Register_Company(Company company)
+    public void Register_Company(iCompany company)
     {
         if(!companies.Any(x=>x.company_name == company.company_name))
         {
@@ -100,7 +112,7 @@ public class TheEconomy : MonoBehaviour
        throw new NotImplementedException();
     }
 
-    public Company GetGlobalMarket()
+    public iCompany GetGlobalMarket()
     {
         return InitialMarket;
     }

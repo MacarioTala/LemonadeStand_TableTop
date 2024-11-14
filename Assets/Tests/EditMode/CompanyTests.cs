@@ -107,10 +107,4 @@ public class CompanyTests
         //Assert
         Assert.Throws<Company_InventoryException>(() => company.SellGood(good, 2, good_price));
     }
-    
-    [Test]
-    public void If_goods_at_multiple_prices_exist_ask_which_batch_to_sell()
-    {
-        throw new System.NotImplementedException();
-    }
 }

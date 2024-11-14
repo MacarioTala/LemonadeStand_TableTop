@@ -1,13 +1,19 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
 public class Market : ScriptableObject,iCompany
 {
-    //Intrinsic members
-    public string company_name;
+    //Fields to get around Unity's limitation of not having automatic backing properties.
+    [SerializeField]private string _company_name;
 
+    public string company_name
+    {
+        get => _company_name;
+        set => _company_name = value;
+    }
+
+    //Intrinsic members
     private float cash = 0;
     private readonly Inventory inventory = new();
 
@@ -17,13 +23,23 @@ public class Market : ScriptableObject,iCompany
     internal readonly List<MarketTrade> marketTradesInPeriod= new();
     private readonly List<iPriceModifier> price_modifiers= new();
 
-    public void Initialize (string company_name, CompanyLevelEnum company_level)
+    //demand_data represents the base demand for each good
+    //outside of that demanded by companies
+    //It is used to 'seed' the market with an initial demand that will
+    //then be affected by market forces
+    public Dictionary<Good, DemandData> demand_data = new();
+
+    public void Initialize(string company_name, CompanyLevelEnum company_level)
     {
         this.company_name = company_name;
         this.company_level = company_level;
         //setup
         Set_Initial_Cash();
         price_modifiers.Add(new SupplyDemandModifier());
+        //Initialize demand data
+        //If no demand data is passed, demand defaults to 1000 units of Lemonade
+        //This is a placeholder and will be replaced with a more sophisticated system
+        InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8f, 13f), Rarity_enum.Uncommon), 1000);
     }
 
     public Inventory Get_inventory()
@@ -75,7 +91,17 @@ public class Market : ScriptableObject,iCompany
     }
 
 #region  buy/sell, and helpers
-//Note: these are currently duplicated in Company.cs. Find a way to refactor
+    internal bool HasMoney(float money_needed)
+    {
+       return cash >= money_needed;
+    }
+
+    internal bool HasGood(Good good, int quantity)
+    {
+        var goods = inventory.Get_inventory_items();
+        var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
+        return good_in_inventory != null && good_in_inventory.quantity >= quantity;
+    }
     public void BuyGood(Good good, int quantity,float price,int period=0)
     //Currently public for testing purposes
     //Make private or internal afterwards
@@ -95,18 +121,6 @@ public class Market : ScriptableObject,iCompany
         }
     }
 
-    internal bool HasMoney(float money_needed)
-    {
-       return cash >= money_needed;
-    }
-
-    internal bool HasGood(Good good, int quantity)
-    {
-        var goods = inventory.Get_inventory_items();
-        var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
-        return good_in_inventory != null && good_in_inventory.quantity >= quantity;
-    }
-
     public void SellGood(Good good, int quantity, float price,int period=0)
     {
         //period currently does nothing for companies, but is used in Market which implements iCompany
@@ -123,24 +137,103 @@ public class Market : ScriptableObject,iCompany
         }
     }
 #endregion
-    internal int GetTotalBought(int tradingPeriod, Good good)
+    public int GetTotalBought(int tradingPeriod, Good good)//Currently public for testing purposes
     {
-        return marketTradesInPeriod
+        var total_bought = 
+            marketTradesInPeriod
             .Where(x => x.Period == tradingPeriod
                         && x.InventoryEntry.good.good_name == good.good_name
                         && x.TradeType == TradeType.Buy)
             .Sum(x => x.InventoryEntry.quantity);
-
+        return total_bought;
     }
 
-    internal int GetTotalSold(int tradingPeriod, Good good)
+    public int GetTotalSold(int tradingPeriod, Good good) //currently public for testing purposes
     {
-        return marketTradesInPeriod
+        var total_sold=marketTradesInPeriod
             .Where(x => x.Period == tradingPeriod
                         && x.InventoryEntry.good.good_name == good.good_name
                         && x.TradeType == TradeType.Sell)
             .Sum(x => x.InventoryEntry.quantity);
+        return total_sold;
     }
+
+#region Supply
+    public int GetTotalSupply(int tradingPeriod, Good good)
+    {
+        //Currently, supply is the total bought
+        //This will change when we introduce production
+        //And other things that increase supply, like substitute goods, imports, etc.
+        return GetTotalBought(tradingPeriod, good);
+    }
+#endregion
+#region Demand
+
+    public void InitializeDemand(Good good, int InitialDemand)
+    {
+        var demandData = new DemandData
+                            { 
+                                CurrentDemand = InitialDemand,
+                                FulfilmentRate = 0f
+                            };
+        demand_data.Add(good, demandData);
+    }
+
+    public void CalculateFulfillmentRates(int tradingPeriod=-1)
+    {
+        if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed
+        {
+            //if no parameter was passed, always look at the previous trading period
+            tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
+        }
+        
+        foreach(var good in demand_data.Keys)
+        {
+            var demanded_quantity = demand_data[good].CurrentDemand;
+            var supplied_quantity = GetTotalBought(tradingPeriod, good);
+            var FulfilmentRate = (float)supplied_quantity/demanded_quantity;
+            demand_data[good].FulfilmentRate = FulfilmentRate;
+        }
+    }
+
+    public void AdjustDemand()
+    {
+        foreach(var good in demand_data.Keys)
+        {
+            
+            var demandData = demand_data[good];
+            var elasticity = good.DemandElasticity;
+            
+            //Calculate adjustment factor
+            var adjustment_factor = 1f;
+
+
+            if(demandData.FulfilmentRate < .9f)
+            {
+                adjustment_factor += (1f- demandData.FulfilmentRate) * elasticity;  
+            }
+            else if(demandData.FulfilmentRate > 1.1f)
+            {
+                adjustment_factor -= (demandData.FulfilmentRate - 1f) * elasticity;
+            }
+
+            demandData.CurrentDemand = Mathf.Clamp(
+                Mathf.RoundToInt(demandData.CurrentDemand * adjustment_factor)
+                                ,demandData.MinDemand
+                                ,demandData.MaxDemand
+                                );
+        }
+#endregion
+
+    }
+}
+public class DemandData
+{
+    public int CurrentDemand{get; set;}
+    public float FulfilmentRate{get; set;}
+    public float DemandElasticity{get; set;}
+    public int MinDemand{get; set;}
+    public int MaxDemand{get; set;}
 }
 
 public enum TradeType

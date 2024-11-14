@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -6,17 +7,15 @@ using UnityEngine;
 [TestFixture]
 public class TheEconomyTests
 {
-    private TheEconomy test_market;
+    private TheEconomy test_economy;
 
-    private Company TheGlobalMarket_for_testing;
+    private iCompany test_initial_market;
     Good lemon;
     Good water;
     Good sugar;
 
     readonly Price_band band1 = new(.5f, 1f);
     readonly Price_band band2 = new(1f, 3f);
-    readonly Price_band band3 = new(3f, 5f);
-    readonly Price_band band4 = new(5f, 10f);
     readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 
@@ -24,9 +23,9 @@ public class TheEconomyTests
     public void SetUp()
     {
         var market_object = new GameObject();
-        test_market = market_object.AddComponent<TheEconomy>();
-        test_market.Initialize(trade_logger);
-        TheGlobalMarket_for_testing = test_market.GetGlobalMarket(); 
+        test_economy = market_object.AddComponent<TheEconomy>();
+        test_economy.Initialize(trade_logger);
+        test_initial_market = test_economy.GetGlobalMarket(); 
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
@@ -34,17 +33,51 @@ public class TheEconomyTests
         test_goods.Add(water);
         test_goods.Add(sugar);
     }
+#region  Initialization tests
+  [Test]
+    public void Make_sure_the_first_market_exists_in_TheEconomy_with_proper_params()
+    {
+        // Arrange
+        var expected_name = "The First Market";
+        // Act
+        var actual = test_economy.GetGlobalMarket().company_name;
+        // Assert
+        Assert.AreEqual(expected_name, actual);
+    }
 
+    [Test]
+    public void The_initial_market_should_be_instantiated_as_a_market()
+    {
+        // Arrange
+        var expected = typeof(Market);
+        // Act
+        var actual = test_initial_market.GetType();
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void When_TheEconomy_is_initialized_goods_are_created_in_InitialMarket()
+    {
+        // Arrange
+        var expected = "Lemon";
+        // Act
+        test_economy.Create_initial_goods(test_goods);
+        var actual = test_initial_market.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+#endregion
     [Test]
     public void Register_Company_adds_company_to_companies_list_if_no_companies_are_registered()
     {
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
         company.company_name = "Test Company";
-        var expected = test_market.companies.Count + 1;
+        var expected = test_economy.companies.Count + 1;
         // Act
-        test_market.Register_Company(company);
-        var actual = test_market.companies.Count;
+        test_economy.Register_Company(company);
+        var actual = test_economy.companies.Count;
         
         // Assert
         Assert.AreEqual(expected, actual);
@@ -55,12 +88,12 @@ public class TheEconomyTests
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
         company.company_name = "Test Company";
-        test_market.Register_Company(company);
+        test_economy.Register_Company(company);
         var company2 = ScriptableObject.CreateInstance<Company>();
         company2.company_name = "Test Company";
         // Act
         // Assert
-        Assert.Throws<TheMarket_CompanyException>(() => test_market.Register_Company(company2));
+        Assert.Throws<TheMarket_CompanyException>(() => test_economy.Register_Company(company2));
     }
 
     [Test]
@@ -70,34 +103,11 @@ public class TheEconomyTests
         const int expected_floor = 1;
         const int expected_ceiling = 1000;
         // Act
-        test_market.Create_initial_goods(test_goods);
-        var actual_good = TheGlobalMarket_for_testing.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon");
+        test_economy.Create_initial_goods(test_goods);
+        var actual_good = test_initial_market.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon");
         var actual_quantity = actual_good.quantity;
         // Assert
         Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling); 
-    }
-
-    [Test]
-    public void Make_sure_the_first_market_exists_in_TheEconomy_with_proper_params()
-    {
-        // Arrange
-        var expected_name = "The First Market";
-        // Act
-        var actual = test_market.GetGlobalMarket().company_name;
-        // Assert
-        Assert.AreEqual(expected_name, actual);
-    }
-
-    [Test]
-    public void When_TheEconomy_is_initialized_goods_are_created_in_InitialMarket()
-    {
-        // Arrange
-        var expected = "Lemon";
-        // Act
-        test_market.Create_initial_goods(test_goods);
-        var actual = TheGlobalMarket_for_testing.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
-        // Assert
-        Assert.AreEqual(expected, actual);
     }
 #region TradeTests
     [Test]
@@ -108,8 +118,8 @@ public class TheEconomyTests
         company1.Initialize("Company1", CompanyLevelEnum.Beginner);
         var company2 = ScriptableObject.CreateInstance<Company>();
         company2.Initialize("Company2", CompanyLevelEnum.Beginner);
-        test_market.Register_Company(company1);
-        test_market.Register_Company(company2);
+        test_economy.Register_Company(company1);
+        test_economy.Register_Company(company2);
         company1.BuyGood(lemon, 10, 3f);
         company1.BuyGood(water, 10, 1f);
         company1.BuyGood(sugar, 10, 1f);
@@ -123,8 +133,8 @@ public class TheEconomyTests
 
         // Act
         var trade = new Trade(company1, company2, lemon, 1, 2f);
-        test_market.Queue_Trade(trade);
-        test_market.ExecuteDailyTrades();
+        test_economy.Queue_Trade(trade);
+        test_economy.ExecuteDailyTrades();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
         var actual_company1_2flemon_quantity = company1.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2f).quantity;
@@ -136,14 +146,66 @@ public class TheEconomyTests
         Assert.AreEqual(expected_company2_lemon_quantity, actual_company2_lemon_quantity);
     }
 
+    [Test]
+    public void A_Company_cannot_sell_a_good_if_it_has_insufficient_inventory()
+    {
+        // Arrange
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        var company2 = ScriptableObject.CreateInstance<Company>();
+        company2.Initialize("Company2", CompanyLevelEnum.Beginner);
+        test_economy.Register_Company(company1);
+        test_economy.Register_Company(company2);
+        var expected = "Company does not have enough of the good to sell";
+        string actual = null;
+        
+        // Act
+        try{
+        TheEconomy.Instance.Queue_Trade(new Trade(company1, company2, lemon, 10, 3f));
+        TheEconomy.Instance.ExecuteDailyTrades();
+        }
+        catch(Exception e)
+        {
+            actual = e.Message;
+        }
+        // Assert
+        Assert.AreEqual(expected, actual);
 
+
+    }
+
+    [Test]
+    public void A_Company_cannot_buy_a_good_if_it_has_insufficient_cash()
+    {
+        // Arrange
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        var company2 = ScriptableObject.CreateInstance<Company>();
+        company2.Initialize("Company2", CompanyLevelEnum.Advanced);
+        test_economy.Register_Company(company1);
+        test_economy.Register_Company(company2);
+        company1.BuyGood(lemon, 3000, 1f);
+        const string expected="Insufficient funds to buy good";
+        string actual=null;
+        // Act
+        try{
+        TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 1000, 3f));
+        TheEconomy.Instance.ExecuteDailyTrades();
+        }
+        catch(Exception e)
+        {
+            // Assert
+            actual=e.Message;    
+        }
+        Assert.AreEqual(expected, actual);
+    }
 
 #endregion
 
     [TearDown]
     public void TearDown()
     {
-        Object.DestroyImmediate(test_market.gameObject);
+        UnityEngine.Object.DestroyImmediate(test_economy.gameObject);
     }
 
 
