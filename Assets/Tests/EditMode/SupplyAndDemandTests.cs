@@ -113,8 +113,7 @@ public class SupplyAndDemandTests
         var selling_company = ScriptableObject.CreateInstance<Company>();
         selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         // Set up a market with demand for lemons
-        Market MarketThatDemandsLemons = ScriptableObject.CreateInstance<Market>();
-        MarketThatDemandsLemons.Initialize("Market That Demands Lemons", CompanyLevelEnum.Global);
+        Market MarketThatDemandsLemons = Market.Factory.CreateMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
         MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
         TheEconomy.Instance.Register_Company(MarketThatDemandsLemons);
 
@@ -141,8 +140,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.Register_Company(selling_company);
 
         //Make a market that demands lemons
-        Market MarketThatDemandsLemons = ScriptableObject.CreateInstance<Market>();
-        MarketThatDemandsLemons.Initialize("Market That Demands Lemons", CompanyLevelEnum.Global);
+        Market MarketThatDemandsLemons = Market.Factory.CreateMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
         MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
         TheEconomy.Instance.Register_Company(MarketThatDemandsLemons);
 

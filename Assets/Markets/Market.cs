@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class Market : ScriptableObject,iCompany
 {
@@ -22,6 +23,23 @@ public class Market : ScriptableObject,iCompany
     //Market-specific members
     internal readonly List<MarketTrade> marketTradesInPeriod= new();
     private readonly List<iPriceModifier> price_modifiers= new();
+    public iDemandStrategy DemandStrategy;
+
+    //Instantiate Markets using a factory
+    private Market()
+    {
+    }
+
+    public static class Factory
+    {
+        public static Market CreateMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy)
+        {
+            var market = ScriptableObject.CreateInstance<Market>();
+            market.Initialize(company_name, company_level);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            return market;
+        }
+    }
 
     //demand_data represents the base demand for each good
     //outside of that demanded by companies
@@ -65,7 +83,7 @@ public class Market : ScriptableObject,iCompany
             case CompanyLevelEnum.Advanced:
                 cash = 1000;
                 break;  
-            case CompanyLevelEnum.Global:
+            case CompanyLevelEnum.Market:
                 cash = 1000000000000;
                 break;
         }
@@ -200,37 +218,7 @@ public class Market : ScriptableObject,iCompany
 
     public void AdjustDemand()
     {
-        foreach(var good in demand_data.Keys)
-        {
-            
-            var demandData = demand_data[good];
-            var elasticity = good.DemandElasticity;
-            
-            //Calculate adjustment factor
-            var adjustment_factor = 1f;
-
-            //increase demand if fulfilment rate is 60% or lower
-            if(demandData.FulfilmentRate <= .6f)
-            {
-                adjustment_factor += (1f- demandData.FulfilmentRate) * elasticity;  
-            }
-            //make adjustment_factor equal elasticity if fulfilment rate is 60 to 95%
-            else if(demandData.FulfilmentRate > .6f && demandData.FulfilmentRate < .95f)
-            {
-                adjustment_factor = elasticity;
-            }
-            //decrease demand if fulfilment rate is 95% or higher
-            else if(demandData.FulfilmentRate >= .95f)
-            {
-                adjustment_factor -= .1f * elasticity;
-            }
-
-            demandData.CurrentDemand = Mathf.Clamp(
-                Mathf.RoundToInt(demandData.CurrentDemand * adjustment_factor)
-                                ,demandData.MinDemand
-                                ,demandData.MaxDemand
-                                );
-        }
+        DemandStrategy.AdjustDemand(this);
     }
     #endregion
 }

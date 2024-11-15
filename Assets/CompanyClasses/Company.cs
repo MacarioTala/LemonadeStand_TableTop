@@ -48,7 +48,7 @@ public class Company : ScriptableObject, iCompany
             case CompanyLevelEnum.Advanced:
                 cash = 1000;
                 break;  
-            case CompanyLevelEnum.Global:
+            case CompanyLevelEnum.Market:
                 cash = 1000000000000;
                 break;
         }
@@ -108,7 +108,7 @@ public enum CompanyLevelEnum
     Beginner,
     Intermediate,
     Advanced,
-    Global
+    Market
     }
 #endregion
 #region Exceptions

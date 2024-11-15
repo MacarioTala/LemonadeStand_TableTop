@@ -43,8 +43,7 @@ public class TheEconomy : MonoBehaviour
 
     private void CreateInitialMarket()
     {
-        InitialMarket = ScriptableObject.CreateInstance<Market>();
-        InitialMarket.Initialize("The First Market", CompanyLevelEnum.Global);
+        InitialMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         Register_Company(InitialMarket);
     }
 
