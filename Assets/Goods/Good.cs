@@ -8,7 +8,7 @@ public class Good : ScriptableObject
     private float Price{
                         get => _price;
                         set => _price = Mathf.Round(value * 100f) / 100f;}
-    public float DemandElasticity { get; set; }
+    public float DemandElasticity { get;  private set; }
 
     public string good_name;
     private float price_increment_rate;
@@ -33,11 +33,13 @@ public class Good : ScriptableObject
 
     private void Initialize(string good_name, 
                             Price_band price_band,
-                            Rarity_enum rarity=Rarity_enum.Common) 
+                            Rarity_enum rarity=Rarity_enum.Common,
+                            float demand_elasticity=1) 
     {
         this.good_name = good_name;
         this.price_band = price_band;
         this.rarity = rarity;
+        this.DemandElasticity = demand_elasticity;
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
         Set_initial_price_thresholds();

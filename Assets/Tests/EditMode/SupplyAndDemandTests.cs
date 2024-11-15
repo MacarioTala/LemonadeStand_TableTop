@@ -38,8 +38,8 @@ public class SupplyAndDemandTests
         // set test_market to the Initial Market
         test_market = TheEconomy.Instance.companies.Find(company => company.company_name == "The First Market") as Market;
         //Make the market demand lemons and lemonade
-        test_market.InitializeDemand(lemonade,1000);
-        test_market.InitializeDemand(lemon,1000);
+        test_market.InitializeDemand(lemonade,1000,10,10000);
+        test_market.InitializeDemand(lemon,1000,10,10000);
     }
 
     [Test]
@@ -59,9 +59,21 @@ public class SupplyAndDemandTests
     }
 
     [Test]
-    public void If_buying_in_a_period_exceeds_demand_threshold_decrease_prices()
+    public void If_market_buying_in_a_period_exceeds_demand_threshold_increase_prices()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var test_period = 0;
+        var current_lemon_price = lemon.Get_price();
+        var price_increment_rate = lemon.Get_price_increment_rate();
+        var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
+        test_market.BuyGood(lemon, 500,3f, test_period);
+        test_market.BuyGood(lemon, 500,3f, test_period);
+        test_market.BuyGood(lemon, 500,3f, test_period);
+        // Act
+        test_market.UpdatePrices();
+        var actual_lemon_price = Math.Round(test_market.Get_inventory().Get_inventory_items().Find(item => item.good.good_name == lemon.good_name).acquisition_price,2);
+        // Assert
+        Assert.AreEqual(expected_lemon_price, actual_lemon_price);
     }
     
     [Test]
@@ -144,10 +156,10 @@ public class SupplyAndDemandTests
     }
 #endregion    
     [Test]
-    public void Adjust_Demand_increases_demand_when_demand_is_90_percent_filled()
+    public void Adjust_Demand_increases_demand_when_demand_is_60_percent_filled()
     {
         //Assert
-        var expected_lemon_demand = 1100;
+        var expected_lemon_demand = 1400;
         var selling_company = ScriptableObject.CreateInstance<Company>();
         selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         TheEconomy.Instance.Register_Company(selling_company);
@@ -155,7 +167,26 @@ public class SupplyAndDemandTests
         selling_company.BuyGood(lemon, 900, 3f);
         //Act
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 900, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 600, 3f));
+        TheEconomy.Instance.ExecuteDailyTrades();
+        var actual_lemon_demand = test_market.demand_data[lemon].CurrentDemand;
+        //Assert
+        Assert.AreEqual(expected_lemon_demand, actual_lemon_demand);
+    }
+
+    [Test]
+    public void Adjust_demand_decreases_demand_when_demand_is_100_percent_filled()
+    {
+        //Assert
+        var expected_lemon_demand = 900;
+        var selling_company = ScriptableObject.CreateInstance<Company>();
+        selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        TheEconomy.Instance.Register_Company(selling_company);
+        //give the selling company some lemons
+        selling_company.BuyGood(lemon, 1000, 3f);
+        //Act
+        //have the market buy some lemons
+        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 1000, 3f));
         TheEconomy.Instance.ExecuteDailyTrades();
         var actual_lemon_demand = test_market.demand_data[lemon].CurrentDemand;
         //Assert
