@@ -36,6 +36,7 @@ public class TheEconomy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
         Create_initial_goods(goods);
         _trade_logger = trade_logger;
         CreateInitialMarket();
@@ -43,7 +44,10 @@ public class TheEconomy : MonoBehaviour
 
     private void CreateInitialMarket()
     {
-        InitialMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        InitialMarket = Market.Factory.CreateMarket(
+                            "The First Market", 
+                            CompanyLevelEnum.Market, 
+                            new LinearDemandStrategy());
         Register_Company(InitialMarket);
     }
 
@@ -64,6 +68,7 @@ public class TheEconomy : MonoBehaviour
 
         _trade_logger?.SaveDailySummary(trade_queue);
         trade_queue.Clear();
+
         //Update prices
         foreach (var company in companies)
         {
@@ -72,6 +77,7 @@ public class TheEconomy : MonoBehaviour
                 market.CalculateFulfillmentRates();
                 market.AdjustDemand();
                 market.UpdatePrices();
+                market.ConsumeGoods();
             }
         }
     }

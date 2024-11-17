@@ -272,4 +272,51 @@ public class InventoryTests
         throw new System.NotImplementedException();
     }
 
+    [Test]
+    public void TryConsumeGood_returns_0_if_good_is_available_at_specified_quantity()
+    {
+        //arrange
+        var test_inventory = new Inventory();
+        var test_inventory_entry = new InventoryEntry(lemon, 10, 1.0f);
+        test_inventory.Add_good_to_inventory(test_inventory_entry);
+        var quantity = 10;
+        var expected = 0;
+        //act
+        var actual = test_inventory.TryConsumeGood("Lemon", quantity);
+        //assert
+        Assert.AreEqual(expected, actual);
+    }
+    
+    [Test]
+    public void TryConsumeGood_returns_remaining_quantity_if_good_is_not_available_at_specified_quantity()
+    {
+        //arrange
+        var test_inventory = new Inventory();
+        var test_inventory_entry = new InventoryEntry(lemon, 10, 1.0f);
+        test_inventory.Add_good_to_inventory(test_inventory_entry);
+        var quantity = 15;
+        var expected = 5;
+        //act
+        var actual = test_inventory.TryConsumeGood("Lemon", quantity);
+        //assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void GetInventoryEntry_returns_correct_entry()
+    {
+        //arrange
+        var test_inventory = new Inventory();
+        var test_inventory_entry = new InventoryEntry(lemon, 10, 1.0f);
+        var test_inventory_entry2 = new InventoryEntry(sugar, 10, 1.0f);
+        test_inventory.Add_good_to_inventory(test_inventory_entry);
+        test_inventory.Add_good_to_inventory(test_inventory_entry2);
+        var expected = test_inventory_entry;
+        //act
+        var actual = test_inventory.GetInventoryEntry("Lemon");
+        //assert
+        Assert.AreEqual(expected, actual);
+    }
+
+
 }

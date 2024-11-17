@@ -32,6 +32,8 @@ public class MarketTests
         test_goods.Add(lemon);
         test_goods.Add(water);
         test_goods.Add(sugar);
+        //Make the market demand lemons
+        test_initial_market.InitializeDemand(lemon, 1000);
     }
 
     #region Initialization tests
@@ -54,15 +56,27 @@ public class MarketTests
         var expected_good_name = "Lemonade";
         var expected_demand = 1000;
         // Act
-        var actual = test_initial_market.demand_data.First();
+        var actual = test_initial_market.MarketDemand.First();
         // Assert
         Assert.AreEqual(expected_good_name, actual.Key.good_name);
         Assert.AreEqual(expected_demand, actual.Value.CurrentDemand);
     }
-    
     #endregion
 
-    
+    [Test]
+    public void ConsumeGoods_should_decrease_inventory()
+    {
+        // Arrange
+        var initialLemons = 10000;
+        var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
+        var expected = initialLemons - lemonDemand;
+        test_initial_market.BuyGood(lemon,initialLemons,3f);
+        // Act
+        test_initial_market.ConsumeGoods();
+        var actual = test_initial_market.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
 
     [TearDown]
     public void TearDown()

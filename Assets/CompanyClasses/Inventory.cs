@@ -5,10 +5,9 @@ public class Inventory
 {
     private readonly List<InventoryEntry> inventory_items = new(); 
 
-    public List<InventoryEntry> Get_inventory_items()
-    {
-        return inventory_items;
-    }
+    public List<InventoryEntry> Get_inventory_items() => inventory_items;
+
+    public InventoryEntry GetInventoryEntry(string goodName)=> inventory_items.Find(item=> item.good.good_name == goodName);
 
     public void Add_good_to_inventory(InventoryEntry entry)
     {
@@ -56,6 +55,28 @@ public class Inventory
         return goods_to_remove;
     }
 
+    public int TryConsumeGood(string goodName, int quantity)
+    {
+        //tries to consume good, returns quantity that was not consumed
+        var inventory_entry = GetInventoryEntry(goodName);
+        var availableQuantity = inventory_entry == null ? 0 : inventory_entry.quantity;
+        
+
+        if (inventory_entry == null)
+        {
+            return quantity;
+        }        
+        else
+        {
+            inventory_entry.quantity -= quantity;
+            if(inventory_entry.quantity == 0)
+            {
+                inventory_items.Remove(inventory_entry);
+            }
+        }
+        return quantity - availableQuantity;
+    }
+    
     public void Consume_for_recipe(Recipe recipe, int quantity)
     {
         //Assumes quantity that is passed in is valid. Maybe need a token system to check if quantity is valid

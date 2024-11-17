@@ -46,33 +46,15 @@ public class Good : ScriptableObject
         Set_initial_price_increment_rate();
     }
 
-    public Price_band Get_price_band()
-    {
-        return price_band;
-    }
+    public Price_band Get_price_band() => price_band;
+    public float Get_price() => Price;
 
-    public float Get_price()
-    {
-        return Price;
-    }
+    public Rarity_enum Get_rarity() => rarity;
+    public float Get_price_increment_rate() => price_increment_rate;
 
-    public Rarity_enum Get_rarity()
-    {
-        return rarity;
-    }
-    public float Get_price_increment_rate()
-    {
-        return price_increment_rate;
-    }
+    private float Generate_initial_price() => Random.Range(price_band.min, price_band.max);
 
-    private float Generate_initial_price()
-    {
-        return Random.Range(price_band.min, price_band.max);
-    }
-
-    public void Add_substitute_good(Good good){
-        _substitute_goods.Add(good);
-    }
+    public void Add_substitute_good(Good good) => _substitute_goods.Add(good);
 
     private void Set_price_thresholds(int increase_threshold, int decrease_threshold){
         price_increase_threshold = increase_threshold;
@@ -120,6 +102,20 @@ public class Good : ScriptableObject
         if(rarity==Rarity_enum.Very_Rare){
             price_increment_rate = very_rare_price_increment_rate;
         }
+    }
+
+    public override bool Equals(object obj)
+    {
+        if(obj is Good other)
+        {
+            return good_name == other.good_name;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return good_name?.GetHashCode() ?? 0;
     }
 }
 

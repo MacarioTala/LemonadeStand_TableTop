@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 public class Company : ScriptableObject, iCompany
 {
@@ -15,6 +16,12 @@ public class Company : ScriptableObject, iCompany
     private float cash = 0;
     private readonly Inventory inventory = new();
 
+    public List<Recipe> recipes{get; private set;} = new();
+
+    public void Add_recipe(Recipe recipe)
+    {
+        recipes.Add(recipe);
+    }
     public CompanyLevelEnum company_level;
 
     public void Initialize (string company_name, CompanyLevelEnum company_level)

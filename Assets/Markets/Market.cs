@@ -45,7 +45,7 @@ public class Market : ScriptableObject,iCompany
     //outside of that demanded by companies
     //It is used to 'seed' the market with an initial demand that will
     //then be affected by market forces
-    public Dictionary<Good, DemandData> demand_data = new();
+    public Dictionary<Good, DemandData> MarketDemand = new();
 
     public void Initialize(string company_name, CompanyLevelEnum company_level)
     {
@@ -60,15 +60,9 @@ public class Market : ScriptableObject,iCompany
         InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8f, 13f), Rarity_enum.Uncommon), 1000);
     }
 
-    public Inventory Get_inventory()
-    {
-        return inventory;
-    }
-
-    public float Get_cash()
-    {
-        return cash;
-    }
+    public Inventory Get_inventory() => inventory;
+    
+    public float Get_cash() => cash;
 
     private void Set_Initial_Cash()
     {
@@ -154,7 +148,6 @@ public class Market : ScriptableObject,iCompany
             throw new Company_InventoryException("Company does not have enough of the good to sell");
         }
     }
-#endregion
     public int GetTotalBought(int tradingPeriod, Good good)//Currently public for testing purposes
     {
         var total_bought = 
@@ -175,7 +168,7 @@ public class Market : ScriptableObject,iCompany
             .Sum(x => x.InventoryEntry.quantity);
         return total_sold;
     }
-
+#endregion
 #region Supply
     public int GetTotalSupply(int tradingPeriod, Good good)
     {
@@ -189,6 +182,9 @@ public class Market : ScriptableObject,iCompany
 
     public void InitializeDemand(Good good, int InitialDemand,int MinDemand=0, int MaxDemand=1000000)
     {
+        if(MarketDemand.ContainsKey(good))
+        {
+        }
         var demandData = new DemandData
                             { 
                                 CurrentDemand = InitialDemand,
@@ -196,7 +192,7 @@ public class Market : ScriptableObject,iCompany
                                 MinDemand = MinDemand,
                                 MaxDemand = MaxDemand
                             };
-        demand_data.Add(good, demandData);
+        MarketDemand.Add(good, demandData);
     }
 
     public void CalculateFulfillmentRates(int tradingPeriod=-1)
@@ -207,18 +203,33 @@ public class Market : ScriptableObject,iCompany
             tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
         }
         
-        foreach(var good in demand_data.Keys)
+        foreach(var good in MarketDemand.Keys)
         {
-            var demanded_quantity = demand_data[good].CurrentDemand;
+            var demanded_quantity = MarketDemand[good].CurrentDemand;
             var supplied_quantity = GetTotalBought(tradingPeriod, good);
             var FulfilmentRate = (float)supplied_quantity/demanded_quantity;
-            demand_data[good].FulfilmentRate = FulfilmentRate;
+            MarketDemand[good].FulfilmentRate = FulfilmentRate;
         }
     }
-
+    public void ConsumeGoods()
+    {
+        //attempt to consume goods at current demand levels
+        foreach(var good in MarketDemand.Keys)
+        {
+            var demanded_quantity = MarketDemand[good].CurrentDemand;
+            //consume good
+            var unfulfilledDemand = inventory.TryConsumeGood(good.good_name,demanded_quantity);
+            // Do something with unfulfilled demand later
+        }
+    }
     public void AdjustDemand()
     {
         DemandStrategy.AdjustDemand(this);
+    }
+    public int GetDemand(string good_name)
+    {
+        var good = MarketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
+        return MarketDemand[good].CurrentDemand;
     }
     #endregion
 }

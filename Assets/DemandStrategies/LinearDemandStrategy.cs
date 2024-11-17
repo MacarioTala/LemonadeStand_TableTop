@@ -4,7 +4,7 @@ public class LinearDemandStrategy : iDemandStrategy
 {
     public void AdjustDemand(Market market)
     {
-        var demand_data = market.demand_data;
+        var demand_data = market.MarketDemand;
         foreach(var good in demand_data.Keys)
         {
             

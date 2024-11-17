@@ -9,7 +9,7 @@ public class TheEconomyTests
 {
     private TheEconomy test_economy;
 
-    private iCompany test_initial_market;
+    private Market test_initial_market;
     Good lemon;
     Good water;
     Good sugar;
@@ -25,13 +25,16 @@ public class TheEconomyTests
         var market_object = new GameObject();
         test_economy = market_object.AddComponent<TheEconomy>();
         test_economy.Initialize(trade_logger);
-        test_initial_market = test_economy.GetGlobalMarket(); 
+        test_initial_market = (Market)test_economy.GetGlobalMarket(); 
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
         test_goods.Add(lemon);
         test_goods.Add(water);
         test_goods.Add(sugar);
+
+        //make the market demand a thousand lemons
+        test_initial_market.InitializeDemand(lemon, 1000);
     }
 #region  Initialization tests
   [Test]
@@ -109,6 +112,33 @@ public class TheEconomyTests
         // Assert
         Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling); 
     }
+
+    [Test]
+    public void ExecuteDailyTrades_should_consider_market_buys_when_consuming_goods()
+    {
+        //For instance, if the demand for lemons is 1000
+        //and the market buys 500 lemons, 
+        //ConsumeGoods should only consume 500 lemons
+        // Arrange
+        var initialLemons = 1000;
+        var lemonsCompanyWillSellToMarket = 500;
+        test_initial_market.BuyGood(lemon,initialLemons,3f);
+        var test_company = ScriptableObject.CreateInstance<Company>();
+        test_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        test_economy.Register_Company(test_company);
+        test_company.BuyGood(lemon,1000,2f);
+        var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
+        //next line is necessary because of different demand strategies that will change the demand
+        var lemon_quantity_if_ConsumeGoods_ignores_market_buys = initialLemons - lemonDemand;
+        // Act
+        var lemonSale = new Trade(test_initial_market, test_company, lemon, lemonsCompanyWillSellToMarket, 3f);
+        TheEconomy.Instance.Queue_Trade(lemonSale);
+        TheEconomy.Instance.ExecuteDailyTrades();
+        var actual_final_market_lemons = test_initial_market.Get_inventory().GetInventoryEntry(lemon.good_name);
+        // Assert
+        Assert.AreNotEqual(lemon_quantity_if_ConsumeGoods_ignores_market_buys, actual_final_market_lemons.quantity);
+    }
+
 #region TradeTests
     [Test]
     public void A_Company_buying_a_good_from_another_company_via_queue_can_be_initiated_by_queue_trade()
