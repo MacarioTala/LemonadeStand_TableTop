@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-public class Market : ScriptableObject,iCompany
+public class Market : ScriptableObject,iCompany,iPriceSetter
 {
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField]private string _company_name;
@@ -83,12 +83,16 @@ public class Market : ScriptableObject,iCompany
         }
     }
 
+    public void SetPrice(Good good, float new_price)
+    {
+        good.Set_price(new_price);
+    }
+
      public void UpdatePrices(){
         foreach(var entry in inventory.Get_inventory_items())
         {   
             var new_price = CalculateNewPrice(entry.good); 
-            entry.acquisition_price = new_price;
-            
+            SetPrice(entry.good,new_price); 
         }
     }
 
@@ -184,15 +188,22 @@ public class Market : ScriptableObject,iCompany
     {
         if(MarketDemand.ContainsKey(good))
         {
+            MarketDemand[good].CurrentDemand = InitialDemand;
+            MarketDemand[good].MinDemand = MinDemand;
+            MarketDemand[good].MaxDemand = MaxDemand;
         }
-        var demandData = new DemandData
+        else
+        {
+            var demandData = new DemandData
                             { 
                                 CurrentDemand = InitialDemand,
                                 FulfilmentRate = 0f,
                                 MinDemand = MinDemand,
                                 MaxDemand = MaxDemand
                             };
-        MarketDemand.Add(good, demandData);
+            MarketDemand.Add(good, demandData);
+        }
+        
     }
 
     public void CalculateFulfillmentRates(int tradingPeriod=-1)

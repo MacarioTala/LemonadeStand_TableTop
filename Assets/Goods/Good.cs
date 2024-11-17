@@ -48,6 +48,8 @@ public class Good : ScriptableObject
 
     public Price_band Get_price_band() => price_band;
     public float Get_price() => Price;
+    
+    internal void Set_price(float new_price) => Price = new_price;
 
     public Rarity_enum Get_rarity() => rarity;
     public float Get_price_increment_rate() => price_increment_rate;

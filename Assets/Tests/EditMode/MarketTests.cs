@@ -78,6 +78,11 @@ public class MarketTests
         Assert.AreEqual(expected, actual);
     }
 
+    [Test]
+    public void Markets_should_only_have_a_single_InventoryEntry_per_good()
+    {
+        throw new NotImplementedException();
+    }
     [TearDown]
     public void TearDown()
     {

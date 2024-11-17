@@ -53,7 +53,7 @@ public class SupplyAndDemandTests
         var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
         // Act
         test_market.UpdatePrices();        
-        var actual_lemon_price = Math.Round(test_market.Get_inventory().Get_inventory_items().Find(item => item.good.good_name == lemon.good_name).acquisition_price,2);
+        var actual_lemon_price = Math.Round(test_market.Get_inventory().GetInventoryEntry(lemon.good_name).good.Get_price(),2);
         // Assert
         Assert.AreEqual(expected_lemon_price, actual_lemon_price);
     }
@@ -71,7 +71,7 @@ public class SupplyAndDemandTests
         test_market.BuyGood(lemon, 500,3f, test_period);
         // Act
         test_market.UpdatePrices();
-        var actual_lemon_price = Math.Round(test_market.Get_inventory().Get_inventory_items().Find(item => item.good.good_name == lemon.good_name).acquisition_price,2);
+        var actual_lemon_price = Math.Round(test_market.Get_inventory().GetInventoryEntry(lemon.good_name).good.Get_price(),2);
         // Assert
         Assert.AreEqual(expected_lemon_price, actual_lemon_price);
     }

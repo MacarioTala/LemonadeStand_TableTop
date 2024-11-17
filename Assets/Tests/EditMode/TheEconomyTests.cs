@@ -128,7 +128,8 @@ public class TheEconomyTests
         test_economy.Register_Company(test_company);
         test_company.BuyGood(lemon,1000,2f);
         var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
-        //next line is necessary because of different demand strategies that will change the demand
+        //next line is necessary because of different demand strategies 
+        //that will change the demand
         var lemon_quantity_if_ConsumeGoods_ignores_market_buys = initialLemons - lemonDemand;
         // Act
         var lemonSale = new Trade(test_initial_market, test_company, lemon, lemonsCompanyWillSellToMarket, 3f);
