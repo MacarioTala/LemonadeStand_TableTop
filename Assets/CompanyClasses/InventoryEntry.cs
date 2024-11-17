@@ -10,4 +10,9 @@ public class InventoryEntry
         this.quantity = quantity;
         this.acquisition_price = acquisition_price;
     }
+
+    public override string ToString()
+    {
+        return $"{good.good_name} {quantity} units at {acquisition_price} ";
+    }
 }

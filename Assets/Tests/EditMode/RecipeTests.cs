@@ -56,7 +56,7 @@ public class RecipeTests
         // Arrange
         var expected = 1;// need 9 lemon, 2 sugar, 7 water, can only make 1 lemonade
         // Act
-        var actual = lemonade_recipe.Get_max_quantity(test_inventory.Get_inventory_items());
+        var actual = lemonade_recipe.Get_max_quantity(test_inventory.GetInventoryEntries());
         // Assert 
         Assert.AreEqual(expected, actual);
     }
@@ -101,9 +101,9 @@ public class RecipeTests
         var actual = lemonade_recipe.Make_recipe(quantity, test_inventory);
         //assert
         Assert.AreEqual((lemonade, quantity), actual);
-        Assert.AreEqual(expected_remaining_lemons, test_inventory.Get_inventory_items().Where(entry => entry.good == lemon).First().quantity);
-        Assert.AreEqual(expected_remaining_sugar, test_inventory.Get_inventory_items().Where(entry => entry.good == sugar).First().quantity);
-        Assert.AreEqual(expected_remaining_water, test_inventory.Get_inventory_items().Where(entry => entry.good == water).First().quantity);
+        Assert.AreEqual(expected_remaining_lemons, test_inventory.GetInventoryEntries().Where(entry => entry.good == lemon).First().quantity);
+        Assert.AreEqual(expected_remaining_sugar, test_inventory.GetInventoryEntries().Where(entry => entry.good == sugar).First().quantity);
+        Assert.AreEqual(expected_remaining_water, test_inventory.GetInventoryEntries().Where(entry => entry.good == water).First().quantity);
     }
     [Test]
     public void Get_recipe_returns_list_of_ingredients_and_quantity_needed()

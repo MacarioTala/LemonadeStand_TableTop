@@ -89,7 +89,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 
      public void UpdatePrices(){
-        foreach(var entry in inventory.Get_inventory_items())
+        foreach(var entry in inventory.GetInventoryEntries())
         {   
             var new_price = CalculateNewPrice(entry.good); 
             SetPrice(entry.good,new_price); 
@@ -114,7 +114,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
 
     internal bool HasGood(Good good, int quantity)
     {
-        var goods = inventory.Get_inventory_items();
+        var goods = inventory.GetInventoryEntries();
         var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
         return good_in_inventory != null && good_in_inventory.quantity >= quantity;
     }
@@ -126,10 +126,19 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         var money_needed = price * quantity;
         if(HasMoney(money_needed))
         {
-            var inventory_entry = new InventoryEntry(good, quantity, price);
-            inventory.Add_good_to_inventory(inventory_entry);
-            cash -= money_needed;
-            marketTradesInPeriod.Add(new MarketTrade(inventory_entry, period,TradeType.Buy));
+            if(inventory.GetInventoryEntriesByGood(good.good_name).Count > 0)
+            {
+                var inventory_entry = inventory.GetInventoryEntriesByGood(good.good_name).First();
+                inventory_entry.quantity += quantity;
+                cash -= money_needed;
+            }
+            else
+            {
+                var inventory_entry = new InventoryEntry(good, quantity, price);
+                inventory.Add_good_to_inventory(inventory_entry);
+                cash -= money_needed;
+                marketTradesInPeriod.Add(new MarketTrade(inventory_entry, period,TradeType.Buy));
+            }
         }
         else
         {

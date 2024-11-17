@@ -5,10 +5,14 @@ public class Inventory
 {
     private readonly List<InventoryEntry> inventory_items = new(); 
 
-    public List<InventoryEntry> Get_inventory_items() => inventory_items;
+    public List<InventoryEntry> GetInventoryEntries() => inventory_items;
 
-    public InventoryEntry GetInventoryEntry(string goodName)=> inventory_items.Find(item=> item.good.good_name == goodName);
-
+    public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)
+    {
+        return inventory_items.Where(x => x.good.good_name == goodName)
+                              .OrderBy(x => x.acquisition_price)
+                              .ToList();
+    }
     public void Add_good_to_inventory(InventoryEntry entry)
     {
         var existing_good_at_price = inventory_items.Find(item=> item.good.good_name == entry.good.good_name && item.acquisition_price == entry.acquisition_price);
@@ -58,23 +62,38 @@ public class Inventory
     public int TryConsumeGood(string goodName, int quantity)
     {
         //tries to consume good, returns quantity that was not consumed
-        var inventory_entry = GetInventoryEntry(goodName);
-        var availableQuantity = inventory_entry == null ? 0 : inventory_entry.quantity;
+        //do not call after SellGood or ConsumeForRecipe. Those already consume goods
+        var inventory_entries = GetInventoryEntriesByGood(goodName);
+        var remaining_quantity = quantity;
+        var entries_to_remove = new List<InventoryEntry>();
         
-
-        if (inventory_entry == null)
+        if (inventory_entries == null)
         {
             return quantity;
-        }        
-        else
+        }   
+     
+        foreach(var entry in inventory_entries)
         {
-            inventory_entry.quantity -= quantity;
-            if(inventory_entry.quantity == 0)
+            if(remaining_quantity <= 0)
             {
-                inventory_items.Remove(inventory_entry);
+                break;
+            }
+            if(entry.quantity <= remaining_quantity)
+            {
+                remaining_quantity -= entry.quantity;
+                entries_to_remove.Add(entry);
+            }
+            else //consume remaining quantity
+            {
+                entry.quantity -= remaining_quantity;
+                remaining_quantity = 0;
             }
         }
-        return quantity - availableQuantity;
+        foreach(var entry in entries_to_remove)
+        {
+            inventory_items.Remove(entry);
+        }
+        return remaining_quantity;
     }
     
     public void Consume_for_recipe(Recipe recipe, int quantity)

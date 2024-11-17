@@ -34,7 +34,7 @@ public class Recipe
         
         public (Good,int) Make_recipe(int quantity, Inventory inventory)
         {
-            var stock = inventory.Get_inventory_items()
+            var stock = inventory.GetInventoryEntries()
                      .Where(entry => Get_Ingredients().Contains(entry.good.good_name))
                      .ToList();
 

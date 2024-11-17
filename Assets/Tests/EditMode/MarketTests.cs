@@ -25,15 +25,26 @@ public class MarketTests
         var economy_object = new GameObject();
         test_economy = economy_object.AddComponent<TheEconomy>();
         test_economy.Initialize(trade_logger);
-        test_initial_market = (Market)test_economy.GetGlobalMarket(); 
+        SetupGoods();
+
+        //Setup the initial market
+        SetupInitialMarket();
+    }
+
+    private void SetupInitialMarket()
+    {
+        test_initial_market = (Market)test_economy.GetGlobalMarket();
+        test_initial_market.InitializeDemand(lemon, 1000);
+    }
+
+    private void SetupGoods()
+    {
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
         test_goods.Add(lemon);
         test_goods.Add(water);
         test_goods.Add(sugar);
-        //Make the market demand lemons
-        test_initial_market.InitializeDemand(lemon, 1000);
     }
 
     #region Initialization tests
@@ -73,7 +84,7 @@ public class MarketTests
         test_initial_market.BuyGood(lemon,initialLemons,3f);
         // Act
         test_initial_market.ConsumeGoods();
-        var actual = test_initial_market.Get_inventory().Get_inventory_items().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
+        var actual = test_initial_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -81,7 +92,32 @@ public class MarketTests
     [Test]
     public void Markets_should_only_have_a_single_InventoryEntry_per_good()
     {
-        throw new NotImplementedException();
+        //As of 11/17/2023, Markets don't care about optimizing 
+        //the price that they buy goods at
+        //they only care about the quantity of goods they have
+        //So there should only be one InventoryEntry per good
+        
+        // Arrange
+        const int expected_number_of_entries = 1;
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        test_economy.Register_Company(company1);
+        var company2 = ScriptableObject.CreateInstance<Company>();
+        company2.Initialize("Company2", CompanyLevelEnum.Beginner);
+        test_economy.Register_Company(company2);
+        company1.BuyGood(lemon, 10,3f);
+        company2.BuyGood(lemon, 10,3f);
+        test_initial_market.BuyGood(lemon, 1000, 3f);
+        test_initial_market.InitializeDemand(lemon, 50);
+        // Act
+        var trade1 = new Trade(test_initial_market, company1, lemon, 10, 10f);
+        var trade2 = new Trade(test_initial_market, company2, lemon, 10, 15f);
+        TheEconomy.Instance.Queue_Trade(trade1);
+        TheEconomy.Instance.Queue_Trade(trade2);
+        TheEconomy.Instance.ExecuteDailyTrades();
+        var actual_number_of_entries = test_initial_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).Count();
+        // Assert
+        Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
     }
     [TearDown]
     public void TearDown()

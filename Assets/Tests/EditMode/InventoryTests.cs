@@ -47,7 +47,7 @@ public class InventoryTests
         test_inventory.Add_good_to_inventory(test_inventory_entry);
         var expected = lemon;
         //act
-        var actual = test_inventory.Get_inventory_items().First().good;
+        var actual = test_inventory.GetInventoryEntries().First().good;
         //assert
         Assert.AreEqual(expected, actual);
     }
@@ -62,7 +62,7 @@ public class InventoryTests
         var expected_quantity = 2;
         //act
         test_inventory.Add_good_to_inventory(new_test_inventory_entry);
-        var actual_quantity = test_inventory.Get_inventory_items().First().quantity;
+        var actual_quantity = test_inventory.GetInventoryEntries().First().quantity;
         //assert
         Assert.AreEqual(expected_quantity, actual_quantity);
 
@@ -80,8 +80,8 @@ public class InventoryTests
         var expected_quantity = 1;
         //act
         test_inventory.Add_good_to_inventory(new_test_inventory_entry);
-        var actual_number_of_entries = test_inventory.Get_inventory_items().Count;
-        var actual_quantity = test_inventory.Get_inventory_items().Last().quantity;
+        var actual_number_of_entries = test_inventory.GetInventoryEntries().Count;
+        var actual_quantity = test_inventory.GetInventoryEntries().Last().quantity;
         //assert
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
         Assert.AreEqual(expected_quantity, actual_quantity);
@@ -193,7 +193,7 @@ public class InventoryTests
         var expected_inventory_count = 0;
         //act
         test_inventory.Sell_goods(lemon, lemons_to_sell, price_to_sell_at);
-        var actual_inventory_count = test_inventory.Get_inventory_items().Count;
+        var actual_inventory_count = test_inventory.GetInventoryEntries().Count;
         //assert
         Assert.AreEqual(expected_inventory_count, actual_inventory_count);
     }
@@ -211,7 +211,7 @@ public class InventoryTests
         var expected_remaining_inventory  = new List<InventoryEntry>(){new(lemon, 5, 1.9f)};
         //act
         test_inventory.Sell_goods(lemon, lemons_to_sell, price_to_sell_at);
-        var actual_remaining_inventory = test_inventory.Get_inventory_items();
+        var actual_remaining_inventory = test_inventory.GetInventoryEntries();
         //assert
         if(expected_remaining_inventory.Count != actual_remaining_inventory.Count)
         {
@@ -244,7 +244,7 @@ public class InventoryTests
         var expected_inventory = new List<InventoryEntry> { new(lemon, 1, 1.0f), new(sugar, 8, 1.0f), new(water, 3, 1.0f) };
         //act
         test_inventory.Consume_for_recipe(lemonade_recipe, quantity);
-        var actual_inventory = test_inventory.Get_inventory_items();
+        var actual_inventory = test_inventory.GetInventoryEntries();
         //assert
         if(expected_inventory.Count != actual_inventory.Count)
         {
@@ -303,7 +303,7 @@ public class InventoryTests
     }
 
     [Test]
-    public void GetInventoryEntry_returns_correct_entry()
+    public void GetInventoryEntryByGood_returns_correct_entry_if_only_one_entry_for_good_exists()
     {
         //arrange
         var test_inventory = new Inventory();
@@ -313,7 +313,7 @@ public class InventoryTests
         test_inventory.Add_good_to_inventory(test_inventory_entry2);
         var expected = test_inventory_entry;
         //act
-        var actual = test_inventory.GetInventoryEntry("Lemon");
+        var actual = test_inventory.GetInventoryEntriesByGood("Lemon").FirstOrDefault();
         //assert
         Assert.AreEqual(expected, actual);
     }

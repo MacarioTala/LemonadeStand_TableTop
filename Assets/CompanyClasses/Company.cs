@@ -84,7 +84,7 @@ public void BuyGood(Good good, int quantity,float price,int period=0)
 
     internal bool HasGood(Good good, int quantity)
     {
-        var goods = inventory.Get_inventory_items();
+        var goods = inventory.GetInventoryEntries();
         var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
         return good_in_inventory != null && good_in_inventory.quantity >= quantity;
     }

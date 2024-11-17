@@ -52,13 +52,13 @@ public class CompanyTests
         
         //Act
         company.BuyGood(good, 1, trade_price);
-        var actual_inventory_entry = company.Get_inventory().Get_inventory_items().Where(x => x.good.good_name == "Lemon" 
+        var actual_inventory_entry = company.Get_inventory().GetInventoryEntries().Where(x => x.good.good_name == "Lemon" 
                                                                     && x.quantity == 1 
                                                                     && x.acquisition_price == trade_price
                                                                     ).FirstOrDefault();
         //Assert
         var expected_inventory = testHelpers.ListToString(new List<InventoryEntry> { expected_inventory_entry });
-        var actual_inventory = testHelpers.ListToString(company.Get_inventory().Get_inventory_items());
+        var actual_inventory = testHelpers.ListToString(company.Get_inventory().GetInventoryEntries());
         Assert.AreEqual(expected_inventory, actual_inventory);
     }
 
