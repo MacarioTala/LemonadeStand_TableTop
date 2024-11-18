@@ -47,7 +47,7 @@ public class Good : ScriptableObject
     }
 
     public Price_band Get_price_band() => price_band;
-    public float Get_price() => Price;
+    public float GetPrice() => Price;
     
     internal void Set_price(float new_price) => Price = new_price;
 

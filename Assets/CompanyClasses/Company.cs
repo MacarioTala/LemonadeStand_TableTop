@@ -29,7 +29,7 @@ public class Company : ScriptableObject, iCompany
         Set_Initial_Cash();
     }
 
-    public Inventory Get_inventory()
+    public Inventory GetInventory()
     {
         return inventory;
     }

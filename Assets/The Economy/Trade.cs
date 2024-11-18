@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 public class Trade
 {
@@ -15,6 +16,11 @@ public class Trade
         this.good = good;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public override string ToString()
+    {
+        return "Trade: " + buyer.company_name + " buys " + quantity + " " + good.good_name + " from " + seller.company_name + " at " + price;
     }
 }
 

@@ -66,7 +66,7 @@ public class TheEconomyTests
         var expected = "Lemon";
         // Act
         test_economy.Create_initial_goods(test_goods);
-        var actual = test_initial_market.Get_inventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
+        var actual = test_initial_market.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -107,7 +107,7 @@ public class TheEconomyTests
         const int expected_ceiling = 1000;
         // Act
         test_economy.Create_initial_goods(test_goods);
-        var actual_good = test_initial_market.Get_inventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon");
+        var actual_good = test_initial_market.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon");
         var actual_quantity = actual_good.quantity;
         // Assert
         Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling); 
@@ -136,7 +136,7 @@ public class TheEconomyTests
         TheEconomy.Instance.Queue_Trade(lemonSale);
         TheEconomy.Instance.ExecuteDailyTrades();
         //only one inventory entry per good in Markets
-        var actual_final_market_lemons = test_initial_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actual_final_market_lemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
         // Assert
         Assert.AreNotEqual(lemon_quantity_if_ConsumeGoods_ignores_market_buys, actual_final_market_lemons.quantity);
     }
@@ -169,8 +169,8 @@ public class TheEconomyTests
         test_economy.ExecuteDailyTrades();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
-        var actual_company1_2flemon_quantity = company1.Get_inventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2f).quantity;
-        var actual_company2_lemon_quantity = company2.Get_inventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
+        var actual_company1_2flemon_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2f).quantity;
+        var actual_company2_lemon_quantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
         // Assert
         Assert.AreEqual(expected_company1_cash, actual_company1_cash);
         Assert.AreEqual(expected_company2_cash, actual_company2_cash);

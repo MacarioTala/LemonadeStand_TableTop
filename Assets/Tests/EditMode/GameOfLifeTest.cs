@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class GameOfLifeTest
 {
     private TheEconomy LemonadeEconomy;
     private int TotalNumberOfCycles;
+    private int TradesPerCycle;
 
     private Market LemonadeMarket;
 
@@ -15,7 +17,6 @@ public class GameOfLifeTest
     private Good Water;
     private Good Sugar;
     private Good Lemonade;
-
     private readonly List<Good> TestGoods= new();
 
     [SetUp]
@@ -36,6 +37,7 @@ public class GameOfLifeTest
         CreateTestCompanies();
 
         TotalNumberOfCycles = 10;
+        TradesPerCycle = 10;
 
     }
 
@@ -65,7 +67,10 @@ public class GameOfLifeTest
         }
         foreach (var company in Companies)
         {
-
+            foreach (var good in TestGoods)
+            {
+                company.BuyGood(good, random.Next(0, 1000), good.GetPrice());
+            }
         }
             
     }
@@ -76,13 +81,60 @@ public class GameOfLifeTest
         //Give it some goods
         //Let it demand Lemonade, Lemons, etc
         LemonadeMarket = (Market)LemonadeEconomy.GetGlobalMarket();
-        LemonadeMarket.InitializeDemand(Lemonade, 1000);
-        LemonadeMarket.InitializeDemand(Lemon, 1000);
-        LemonadeMarket.InitializeDemand(Water, 1000);
-        LemonadeMarket.InitializeDemand(Sugar, 1000);
-        LemonadeMarket.BuyGood(Lemon, 10000, .5f);
-        LemonadeMarket.BuyGood(Water, 10000, .5f);
-        LemonadeMarket.BuyGood(Sugar, 10000, .5f);
+       
+       foreach (var good in TestGoods)
+        {
+            LemonadeMarket.InitializeDemand(good, Random.Range(100, 1000));
+            LemonadeMarket.BuyGood(good,10000,.5f);
+        }
+    }
+    [Test]
+    public void SimulateRandom()
+    {
+        for (int cycle = 0; cycle < TotalNumberOfCycles; cycle++)
+        {
+            Debug.Log("Starting cycle:" + cycle);
+            for (int i = 0; i < TradesPerCycle; i++) 
+            {
+                PerformRandomAction(cycle);
+            }
+            try{
+                TheEconomy.Instance.ExecuteDailyTrades();
+                }
+            catch (System.Exception e)
+            {
+                Debug.Log("Error in cycle:" + cycle + " " + e.Message);
+            }
+
+            Debug.Log("Cycle:" + cycle + " completed");
+        }
+
+       //GenerateSummary();
     }
 
+    private void PerformRandomAction(int cycle)
+    {
+        var potentialSellers = new List<iCompany>(Companies){LemonadeMarket};
+        var potentialBuyers = new List<iCompany>(Companies){LemonadeMarket};
+
+        var buyer = potentialBuyers[Random.Range(0, potentialBuyers.Count)];
+        var seller = potentialSellers[Random.Range(0, potentialSellers.Count)];
+
+        if(buyer==seller) return;
+        
+        var goodToBuy = SelectRandomGood();
+        if (goodToBuy == null) return;
+        
+        var quantity = Random.Range(1, 10);
+        var price = goodToBuy.GetPrice();
+        var trade = new Trade(buyer, seller, goodToBuy, quantity, price);
+        TheEconomy.Instance.Queue_Trade(trade);
+        Debug.Log("Trade queued in cycle: "+cycle+ " " + trade);
+    }
+
+    private Good SelectRandomGood()
+    {
+        return TestGoods[Random.Range(0, TestGoods.Count)];
+    }
+    
 }

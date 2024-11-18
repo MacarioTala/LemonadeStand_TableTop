@@ -60,7 +60,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8f, 13f), Rarity_enum.Uncommon), 1000);
     }
 
-    public Inventory Get_inventory() => inventory;
+    public Inventory GetInventory() => inventory;
     
     public float Get_cash() => cash;
 
@@ -98,7 +98,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
 
     private float CalculateNewPrice(Good good)
     {
-        float price = good.Get_price();
+        float price = good.GetPrice();
         foreach(var modifier in price_modifiers)
         {
             price = modifier.Apply(price,good,this);

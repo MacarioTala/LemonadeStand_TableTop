@@ -52,13 +52,13 @@ public class CompanyTests
         
         //Act
         company.BuyGood(good, 1, trade_price);
-        var actual_inventory_entry = company.Get_inventory().GetInventoryEntries().Where(x => x.good.good_name == "Lemon" 
+        var actual_inventory_entry = company.GetInventory().GetInventoryEntries().Where(x => x.good.good_name == "Lemon" 
                                                                     && x.quantity == 1 
                                                                     && x.acquisition_price == trade_price
                                                                     ).FirstOrDefault();
         //Assert
         var expected_inventory = testHelpers.ListToString(new List<InventoryEntry> { expected_inventory_entry });
-        var actual_inventory = testHelpers.ListToString(company.Get_inventory().GetInventoryEntries());
+        var actual_inventory = testHelpers.ListToString(company.GetInventory().GetInventoryEntries());
         Assert.AreEqual(expected_inventory, actual_inventory);
     }
 
@@ -82,7 +82,7 @@ public class CompanyTests
         var company = ScriptableObject.CreateInstance<Company>();
         company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
-        company.BuyGood(good, 1,good.Get_price());
+        company.BuyGood(good, 1,good.GetPrice());
         var initial_cash = company.Get_cash();
         var good_price = 3f;
         var expected_cash = initial_cash + good_price;
@@ -101,7 +101,7 @@ public class CompanyTests
         var company = ScriptableObject.CreateInstance<Company>();
         company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
-        company.BuyGood(good, 1,good.Get_price());
+        company.BuyGood(good, 1,good.GetPrice());
         var good_price = 3f;
         //Act
         //Assert

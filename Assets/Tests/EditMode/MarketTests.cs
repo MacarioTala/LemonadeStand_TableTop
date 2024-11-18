@@ -84,7 +84,7 @@ public class MarketTests
         test_initial_market.BuyGood(lemon,initialLemons,3f);
         // Act
         test_initial_market.ConsumeGoods();
-        var actual = test_initial_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
+        var actual = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -115,7 +115,7 @@ public class MarketTests
         TheEconomy.Instance.Queue_Trade(trade1);
         TheEconomy.Instance.Queue_Trade(trade2);
         TheEconomy.Instance.ExecuteDailyTrades();
-        var actual_number_of_entries = test_initial_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).Count();
+        var actual_number_of_entries = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).Count();
         // Assert
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
     }

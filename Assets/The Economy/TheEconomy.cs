@@ -135,19 +135,19 @@ public class TheEconomy : MonoBehaviour
             //Generate quantity based on rarity
             if(good.Get_rarity() == Rarity_enum.Common)
             {
-                InitialMarket.BuyGood(good, common_range,good.Get_price());
+                InitialMarket.BuyGood(good, common_range,good.GetPrice());
             }
             else if(good.Get_rarity() == Rarity_enum.Uncommon)
             {
-                InitialMarket.BuyGood(good, uncommon_range,good.Get_price());
+                InitialMarket.BuyGood(good, uncommon_range,good.GetPrice());
             }
             else if(good.Get_rarity() == Rarity_enum.Rare)
             {
-                InitialMarket.BuyGood(good, rare_range,good.Get_price());
+                InitialMarket.BuyGood(good, rare_range,good.GetPrice());
             }
             else if(good.Get_rarity() == Rarity_enum.Very_Rare)
             {
-                InitialMarket.BuyGood(good, very_rare_range,good.Get_price());
+                InitialMarket.BuyGood(good, very_rare_range,good.GetPrice());
         }
         //in the future, have a concept of rarity driving the initial price
     }

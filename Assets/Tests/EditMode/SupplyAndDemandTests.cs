@@ -49,14 +49,14 @@ public class SupplyAndDemandTests
         // Arrange
         var test_period = 0;
         test_market.BuyGood(lemon, 500,3f, test_period);
-        var current_lemon_price = lemon.Get_price();
+        var current_lemon_price = lemon.GetPrice();
         var price_increment_rate = lemon.Get_price_increment_rate();
         var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
         // Act
         test_market.UpdatePrices();   
         // Only one entry per good in market inventories
-        var actual_lemon = test_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
-        var actual_lemon_price = Math.Round(actual_lemon.good.Get_price(),2);
+        var actual_lemon = test_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actual_lemon_price = Math.Round(actual_lemon.good.GetPrice(),2);
         // Assert
         Assert.AreEqual(expected_lemon_price, actual_lemon_price);
     }
@@ -66,7 +66,7 @@ public class SupplyAndDemandTests
     {
         // Arrange
         var test_period = 0;
-        var current_lemon_price = lemon.Get_price();
+        var current_lemon_price = lemon.GetPrice();
         var price_increment_rate = lemon.Get_price_increment_rate();
         var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
         test_market.BuyGood(lemon, 500,3f, test_period);
@@ -74,8 +74,8 @@ public class SupplyAndDemandTests
         test_market.BuyGood(lemon, 500,3f, test_period);
         // Act
         test_market.UpdatePrices();
-        var actual_lemon = test_market.Get_inventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
-        var actual_lemon_price = Math.Round(actual_lemon.good.Get_price(),2);
+        var actual_lemon = test_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actual_lemon_price = Math.Round(actual_lemon.good.GetPrice(),2);
         // Assert
         Assert.AreEqual(expected_lemon_price, actual_lemon_price);
     }

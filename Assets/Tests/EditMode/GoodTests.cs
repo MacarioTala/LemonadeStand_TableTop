@@ -27,7 +27,7 @@ public class GoodTests
         // Assert
         Assert.AreEqual(good_name, lemon.good_name);
         Assert.AreEqual(expected_rarity, lemon.Get_rarity());
-        Assert.IsTrue(lemon.Get_price() >= expected_price_min && lemon.Get_price() <= expected_price_max);
+        Assert.IsTrue(lemon.GetPrice() >= expected_price_min && lemon.GetPrice() <= expected_price_max);
     }
     
     [Test]
