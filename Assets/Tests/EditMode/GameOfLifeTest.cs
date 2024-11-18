@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-
+[TestFixture]
 public class GameOfLifeTest
 {
     private TheEconomy LemonadeEconomy;

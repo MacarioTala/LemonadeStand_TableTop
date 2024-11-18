@@ -5,6 +5,10 @@ public class Inventory
 {
     private readonly List<InventoryEntry> inventory_items = new(); 
 
+    public void Clear()
+    {
+        inventory_items.Clear();
+    }
     public List<InventoryEntry> GetInventoryEntries() => inventory_items;
 
     public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)

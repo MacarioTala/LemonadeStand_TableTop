@@ -22,10 +22,12 @@ public class TheEconomyTests
     [SetUp]
     public void SetUp()
     {
+        //Create the economy
         var market_object = new GameObject();
         test_economy = market_object.AddComponent<TheEconomy>();
         test_economy.Initialize(trade_logger);
         test_initial_market = (Market)test_economy.GetGlobalMarket(); 
+
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
@@ -107,10 +109,13 @@ public class TheEconomyTests
         const int expected_ceiling = 1000;
         // Act
         test_economy.Create_initial_goods(test_goods);
-        var actual_good = test_initial_market.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon");
+        var actual_good = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
         var actual_quantity = actual_good.quantity;
         // Assert
-        Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling); 
+        Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling, 
+        "Expected between:"+expected_floor+" and "+
+        expected_ceiling + 
+        "Actual quantity: " + actual_quantity ); 
     }
 
     [Test]
@@ -237,7 +242,9 @@ public class TheEconomyTests
     [TearDown]
     public void TearDown()
     {
+        test_economy.ClearEconomy();
         UnityEngine.Object.DestroyImmediate(test_economy.gameObject);
+        UnityEngine.Object.DestroyImmediate(test_initial_market);
     }
 
 

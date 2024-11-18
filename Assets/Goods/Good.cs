@@ -52,7 +52,7 @@ public class Good : ScriptableObject
     
     internal void Set_price(decimal new_price) => Price = new_price;
 
-    public Rarity_enum Get_rarity() => rarity;
+    public Rarity_enum GetRarity() => rarity;
     public decimal Get_price_increment_rate() => price_increment_rate;
 
     private decimal Generate_initial_price() 

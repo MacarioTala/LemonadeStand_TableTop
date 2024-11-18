@@ -42,6 +42,13 @@ public class TheEconomy : MonoBehaviour
         CreateInitialMarket();
     }
 
+    public void ClearEconomy()
+    {
+        companies.Clear();
+        goods.Clear();
+        trade_queue.Clear();
+    }
+
     private void CreateInitialMarket()
     {
         InitialMarket = Market.Factory.CreateMarket(
@@ -60,8 +67,15 @@ public class TheEconomy : MonoBehaviour
     {
         foreach(Trade trade in trade_queue)
             {
-            Process_trade(trade);
-            _trade_logger.LogTrade(trade);
+                try{
+                    Process_trade(trade);
+                    _trade_logger.LogTrade(trade);
+                    }
+                catch(SystemException e)
+                {
+                    Debug.Log(e.Message);
+                    throw e;
+                }
             }
 
         tradingPeriod++;
@@ -124,34 +138,27 @@ public class TheEconomy : MonoBehaviour
     public void Create_initial_goods(List<Good> goods)//move static data to DB in future
     {
         //Limits for good quantities
-        var common_range = UnityEngine.Random.Range(1, 1000);
-        var uncommon_range = UnityEngine.Random.Range(1, 500);
-        var rare_range = UnityEngine.Random.Range(1, 100);
-        var very_rare_range = UnityEngine.Random.Range(1, 10);
+        var common_range = UnityEngine.Random.Range(1, 1001);
+        var uncommon_range = UnityEngine.Random.Range(1, 501);
+        var rare_range = UnityEngine.Random.Range(1, 101);
+        var very_rare_range = UnityEngine.Random.Range(1, 11);
 
         //create goods
         foreach(Good good in goods)
         {
             //Generate quantity based on rarity
-            if(good.Get_rarity() == Rarity_enum.Common)
+            int quantity = good.GetRarity() switch
             {
-                InitialMarket.BuyGood(good, common_range,good.GetPrice());
-            }
-            else if(good.Get_rarity() == Rarity_enum.Uncommon)
-            {
-                InitialMarket.BuyGood(good, uncommon_range,good.GetPrice());
-            }
-            else if(good.Get_rarity() == Rarity_enum.Rare)
-            {
-                InitialMarket.BuyGood(good, rare_range,good.GetPrice());
-            }
-            else if(good.Get_rarity() == Rarity_enum.Very_Rare)
-            {
-                InitialMarket.BuyGood(good, very_rare_range,good.GetPrice());
-        }
+                Rarity_enum.Common => common_range,
+                Rarity_enum.Uncommon => uncommon_range,
+                Rarity_enum.Rare => rare_range,
+                Rarity_enum.Very_Rare => very_rare_range,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            InitialMarket.BuyGood(good, quantity, good.GetPrice());
         //in the future, have a concept of rarity driving the initial price
+        }
     }
-}
 }
 
 

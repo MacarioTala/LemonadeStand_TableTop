@@ -133,7 +133,24 @@ public class RecipeTests
     [Test]
     public void Recipe_can_be_made_if_ingredients_span_two_inventory_entries()
     {
-        throw new NotImplementedException("Implement this test");
+        // Arrange
+        var inventory = new Inventory();
+        var lemonInventoryEntry = new InventoryEntry(lemon, 5, 3);
+        var sugarInventoryEntry = new InventoryEntry(sugar, 5, 2);
+        var waterInventoryEntry = new InventoryEntry(water, 7, 1);
+        var secondLemonInventoryEntry = new InventoryEntry(lemon, 5, 2);
+        inventory.Add_good_to_inventory(lemonInventoryEntry);
+        inventory.Add_good_to_inventory(sugarInventoryEntry);
+        inventory.Add_good_to_inventory(waterInventoryEntry);
+        inventory.Add_good_to_inventory(secondLemonInventoryEntry);
+        lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), 
+                                                                        new(sugar, 2), 
+                                                                        new(water, 7) });
+        var expected = (lemonade, 1);
+        // Act
+        var actual = lemonade_recipe.Make_recipe(1, inventory);
+        // Assert
+        Assert.AreEqual(expected, actual);
     }
 
     [Test]
