@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -17,6 +16,8 @@ public class GameOfLifeTest
     private Good Water;
     private Good Sugar;
     private Good Lemonade;
+
+    private Recipe LemonadeRecipe;
     private readonly List<Good> TestGoods= new();
 
     [SetUp]
@@ -28,7 +29,7 @@ public class GameOfLifeTest
         LemonadeEconomy.Initialize(new MockLogger());
 
         // Fill it with goods
-        MakeGoods();
+        MakeGoodsAndRecipes();
 
         // get the first market ready
         InitializeFirstMarket();
@@ -41,16 +42,22 @@ public class GameOfLifeTest
 
     }
 
-    private void MakeGoods()
+    private void MakeGoodsAndRecipes()
     {
-        Lemon = Good.CreateInstance("Lemon", new Price_band(1f, 3f), Rarity_enum.Common);
-        Water = Good.CreateInstance("Water", new Price_band(1f, 1f), Rarity_enum.Common);
-        Sugar = Good.CreateInstance("Sugar", new Price_band(1f, 2f), Rarity_enum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(4f, 5f), Rarity_enum.Uncommon);
+        Lemon = Good.CreateInstance("Lemon", new Price_band(1.0m, 3.0m), Rarity_enum.Common);
+        Water = Good.CreateInstance("Water", new Price_band(1.0m, 1.0m), Rarity_enum.Common);
+        Sugar = Good.CreateInstance("Sugar", new Price_band(1.0m, 2.0m), Rarity_enum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new Price_band(4.0m, 5.0m), Rarity_enum.Uncommon);
         TestGoods.Add(Lemon);
         TestGoods.Add(Water);
         TestGoods.Add(Sugar);
         TestGoods.Add(Lemonade);
+
+        //Recipes
+        var lemonIngredient = new Ingredient(Lemon, 1);
+        var waterIngredient = new Ingredient(Water, 5);
+        var sugarIngredient = new Ingredient(Sugar, 2);
+        LemonadeRecipe = new Recipe(Lemonade, new List<Ingredient> { lemonIngredient, waterIngredient, sugarIngredient });
     }
 
     private void CreateTestCompanies()
@@ -85,7 +92,7 @@ public class GameOfLifeTest
        foreach (var good in TestGoods)
         {
             LemonadeMarket.InitializeDemand(good, Random.Range(100, 1000));
-            LemonadeMarket.BuyGood(good,10000,.5f);
+            LemonadeMarket.BuyGood(good,10000,.5m);
         }
     }
     [Test]
@@ -137,4 +144,11 @@ public class GameOfLifeTest
         return TestGoods[Random.Range(0, TestGoods.Count)];
     }
     
+    [TearDown]
+    public void Teardown()
+    {
+        // Clean up the test GameObject after each test
+        Object.DestroyImmediate(LemonadeMarket);
+        Object.DestroyImmediate(LemonadeEconomy.gameObject);
+    }
 }

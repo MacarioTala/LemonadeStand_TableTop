@@ -1,6 +1,6 @@
 public class SupplyDemandModifier : iPriceModifier
 {
-    public float Apply(float base_price, Good good, Market market)
+    public decimal Apply(decimal base_price, Good good, Market market)
     {
         var demand_data = market.MarketDemand;
         var demand = demand_data[good].CurrentDemand;

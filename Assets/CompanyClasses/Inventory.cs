@@ -27,12 +27,12 @@ public class Inventory
 
     }
 
-    public void Sell_goods(Good good, int quantity, float price) 
+    public void Sell_goods(Good good, int quantity, decimal price) 
     {
         var goods_to_remove = Generate_goods_to_remove(good, quantity, price);
         Remove_goods(goods_to_remove);
     } 
-    public List<InventoryEntry> Generate_goods_to_remove(Good good, int quantity, float price)
+    public List<InventoryEntry> Generate_goods_to_remove(Good good, int quantity, decimal price)
     {
         var eligible_goods = inventory_items
             .Where(item=> item.good == good && item.acquisition_price <= price)

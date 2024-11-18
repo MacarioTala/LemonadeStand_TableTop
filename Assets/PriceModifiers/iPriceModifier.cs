@@ -1,4 +1,4 @@
 public interface iPriceModifier
 {
-    float Apply(float base_price, Good good, Market market);
+    decimal Apply(decimal base_price, Good good, Market market);
 }

@@ -14,8 +14,8 @@ public class TheEconomyTests
     Good water;
     Good sugar;
 
-    readonly Price_band band1 = new(.5f, 1f);
-    readonly Price_band band2 = new(1f, 3f);
+    readonly Price_band band1 = new(.5m, 1.0m);
+    readonly Price_band band2 = new(1.0m, 3.0m);
     readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 
@@ -122,17 +122,17 @@ public class TheEconomyTests
         // Arrange
         var initialLemons = 1000;
         var lemonsCompanyWillSellToMarket = 500;
-        test_initial_market.BuyGood(lemon,initialLemons,3f);
+        test_initial_market.BuyGood(lemon,initialLemons,3.0m);
         var test_company = ScriptableObject.CreateInstance<Company>();
         test_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         test_economy.Register_Company(test_company);
-        test_company.BuyGood(lemon,1000,2f);
+        test_company.BuyGood(lemon,1000,2.0m);
         var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
         //next line is necessary because of different demand strategies 
         //that will change the demand
         var lemon_quantity_if_ConsumeGoods_ignores_market_buys = initialLemons - lemonDemand;
         // Act
-        var lemonSale = new Trade(test_initial_market, test_company, lemon, lemonsCompanyWillSellToMarket, 3f);
+        var lemonSale = new Trade(test_initial_market, test_company, lemon, lemonsCompanyWillSellToMarket, 3.0m);
         TheEconomy.Instance.Queue_Trade(lemonSale);
         TheEconomy.Instance.ExecuteDailyTrades();
         //only one inventory entry per good in Markets
@@ -152,24 +152,24 @@ public class TheEconomyTests
         company2.Initialize("Company2", CompanyLevelEnum.Beginner);
         test_economy.Register_Company(company1);
         test_economy.Register_Company(company2);
-        company1.BuyGood(lemon, 10, 3f);
-        company1.BuyGood(water, 10, 1f);
-        company1.BuyGood(sugar, 10, 1f);
-        company2.BuyGood(lemon, 10, 1f);
-        company2.BuyGood(water, 10, 3f);
-        company2.BuyGood(sugar, 10, 1f);
+        company1.BuyGood(lemon, 10, 3.0m);
+        company1.BuyGood(water, 10, 1.0m);
+        company1.BuyGood(sugar, 10, 1.0m);
+        company2.BuyGood(lemon, 10, 1.0m);
+        company2.BuyGood(water, 10, 3.0m);
+        company2.BuyGood(sugar, 10, 1.0m);
         var expected_company1_cash = company1.Get_cash() - 2;
         var expected_company2_cash = company2.Get_cash() + 2;
         var expected_company1_2flemon_quantity = 1;
         var expected_company2_lemon_quantity = 10 - 1;
 
         // Act
-        var trade = new Trade(company1, company2, lemon, 1, 2f);
+        var trade = new Trade(company1, company2, lemon, 1, 2.0m);
         test_economy.Queue_Trade(trade);
         test_economy.ExecuteDailyTrades();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
-        var actual_company1_2flemon_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2f).quantity;
+        var actual_company1_2flemon_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2.0m).quantity;
         var actual_company2_lemon_quantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
         // Assert
         Assert.AreEqual(expected_company1_cash, actual_company1_cash);
@@ -193,7 +193,7 @@ public class TheEconomyTests
         
         // Act
         try{
-        TheEconomy.Instance.Queue_Trade(new Trade(company1, company2, lemon, 10, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(company1, company2, lemon, 10, 3.0m));
         TheEconomy.Instance.ExecuteDailyTrades();
         }
         catch(Exception e)
@@ -216,12 +216,12 @@ public class TheEconomyTests
         company2.Initialize("Company2", CompanyLevelEnum.Advanced);
         test_economy.Register_Company(company1);
         test_economy.Register_Company(company2);
-        company1.BuyGood(lemon, 3000, 1f);
+        company1.BuyGood(lemon, 3000, 1.0m);
         const string expected="Insufficient funds to buy good";
         string actual=null;
         // Act
         try{
-        TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 1000, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 1000, 3.0m));
         TheEconomy.Instance.ExecuteDailyTrades();
         }
         catch(Exception e)

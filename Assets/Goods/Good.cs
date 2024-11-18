@@ -1,17 +1,18 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Good", menuName = "GameObjects/Good", order = 1)]
 public class Good : ScriptableObject
 {
-    private float _price;
-    private float Price{
+    private decimal _price;
+    private decimal Price{
                         get => _price;
-                        set => _price = Mathf.Round(value * 100f) / 100f;}
+                        set => _price = Math.Round(value,2);}
     public float DemandElasticity { get;  private set; }
 
     public string good_name;
-    private float price_increment_rate;
+    private decimal price_increment_rate;
     private Price_band price_band;
 
     private Rarity_enum rarity;
@@ -47,14 +48,19 @@ public class Good : ScriptableObject
     }
 
     public Price_band Get_price_band() => price_band;
-    public float GetPrice() => Price;
+    public decimal GetPrice() => Price;
     
-    internal void Set_price(float new_price) => Price = new_price;
+    internal void Set_price(decimal new_price) => Price = new_price;
 
     public Rarity_enum Get_rarity() => rarity;
-    public float Get_price_increment_rate() => price_increment_rate;
+    public decimal Get_price_increment_rate() => price_increment_rate;
 
-    private float Generate_initial_price() => Random.Range(price_band.min, price_band.max);
+    private decimal Generate_initial_price() 
+    {
+        var randomFloat = UnityEngine.Random.value;
+        var price_range = price_band.max - price_band.min;
+        return price_band.min + (decimal)randomFloat * price_range;
+    }
 
     public void Add_substitute_good(Good good) => _substitute_goods.Add(good);
 
@@ -88,10 +94,10 @@ public class Good : ScriptableObject
 
     private void Set_initial_price_increment_rate()
     {
-        const float common_price_increment_rate = 0.1f;
-        const float uncommon_price_increment_rate = 0.15f;
-        const float rare_price_increment_rate = 0.3f;
-        const float very_rare_price_increment_rate = 0.4f;
+        const decimal common_price_increment_rate = 0.1m;
+        const decimal uncommon_price_increment_rate = 0.15m;
+        const decimal rare_price_increment_rate = 0.3m;
+        const decimal very_rare_price_increment_rate = 0.4m;
         if(rarity==Rarity_enum.Common){
             price_increment_rate = common_price_increment_rate;
         }
@@ -132,10 +138,10 @@ public enum Rarity_enum
 
 [System.Serializable]
 public class Price_band{
-    public readonly float min;
-    public readonly float max;
+    public readonly decimal min;
+    public readonly decimal max;
 
-    public Price_band(float lower_bound=0, float upper_bound=0){
+    public Price_band(decimal lower_bound=0, decimal upper_bound=0){
         min = lower_bound;
         max = upper_bound;
     }

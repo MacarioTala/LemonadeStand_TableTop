@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class Recipe
 {
@@ -48,6 +49,40 @@ public class Recipe
                 return (product, quantity);
             }
         }
+    public override string ToString()
+    {
+        return product.good_name;
+    }
+
+    public override bool Equals(object other)
+    {
+        if (other is Recipe other_recipe)
+        {
+            return product.good_name == other_recipe.product.good_name;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return product.good_name?.GetHashCode()??0;
+    }
+
+    public decimal GetCostPerUnit(Inventory inventory)
+    {
+        Dictionary<string, decimal> cost_per_good = new();
+        foreach (var ingredient in ingredients)
+        {
+            var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.good_name);
+            var costForThisIngredient = inventoryEntries.Sum(entry => entry.acquisition_price*entry.quantity);
+            var quantityForThisIngredient = inventoryEntries.Sum(entry => entry.quantity);
+            var requiredUnits = ingredient.Quantity_needed;
+
+            var costPerUnit = Math.Round(requiredUnits*(costForThisIngredient / quantityForThisIngredient),2);
+            cost_per_good.Add(ingredient.Good.good_name, costPerUnit);
+        }
+        return Math.Round(cost_per_good.Sum(entry => entry.Value),2);
+    }
 }
 
 public class Ingredient

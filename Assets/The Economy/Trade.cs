@@ -7,9 +7,9 @@ public class Trade
     public iCompany seller;
     public Good good;
     public int quantity;
-    public float price;
+    public decimal price;
 
-    public Trade(iCompany buyer, iCompany seller, Good good, int quantity, float price)
+    public Trade(iCompany buyer, iCompany seller, Good good, int quantity, decimal price)
     {
         this.buyer = buyer;
         this.seller = seller;

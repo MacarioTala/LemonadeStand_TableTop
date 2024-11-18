@@ -12,10 +12,10 @@ public class SupplyAndDemandTests
     Good water;
     Good sugar;
     Good lemonade;
-    readonly Price_band band1 = new(.5f, 1f);
-    readonly Price_band band2 = new(1f, 3f);
-    readonly Price_band band3 = new(3f, 5f);
-    readonly Price_band band4 = new(5f, 10f);
+    readonly Price_band band1 = new(.5m, 1.0m);
+    readonly Price_band band2 = new(1.0m, 3.0m);
+    readonly Price_band band3 = new(3.0m, 5.0m);
+    readonly Price_band band4 = new(5.0m, 10.0m);
     readonly ITradeLogger trade_logger = new MockLogger();
 
     GameObject TestEconomy;
@@ -48,7 +48,7 @@ public class SupplyAndDemandTests
     {
         // Arrange
         var test_period = 0;
-        test_market.BuyGood(lemon, 500,3f, test_period);
+        test_market.BuyGood(lemon, 500,3.0m, test_period);
         var current_lemon_price = lemon.GetPrice();
         var price_increment_rate = lemon.Get_price_increment_rate();
         var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
@@ -69,9 +69,9 @@ public class SupplyAndDemandTests
         var current_lemon_price = lemon.GetPrice();
         var price_increment_rate = lemon.Get_price_increment_rate();
         var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
-        test_market.BuyGood(lemon, 500,3f, test_period);
-        test_market.BuyGood(lemon, 500,3f, test_period);
-        test_market.BuyGood(lemon, 500,3f, test_period);
+        test_market.BuyGood(lemon, 500,3.0m, test_period);
+        test_market.BuyGood(lemon, 500,3.0m, test_period);
+        test_market.BuyGood(lemon, 500,3.0m, test_period);
         // Act
         test_market.UpdatePrices();
         var actual_lemon = test_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
@@ -84,9 +84,9 @@ public class SupplyAndDemandTests
     public void GetTotalBought_returns_total_amount_of_good_bought_in_a_period()
     {
         // Arrange
-        test_market.BuyGood(lemon, 500,3f, 0);
-        test_market.BuyGood(lemon, 500,3f, 1);
-        test_market.BuyGood(lemon, 500,3f, 2);
+        test_market.BuyGood(lemon, 500,3.0m, 0);
+        test_market.BuyGood(lemon, 500,3.0m, 1);
+        test_market.BuyGood(lemon, 500,3.0m, 2);
         const int expected = 1500;
         const int trading_period = 0;
         // Act
@@ -98,10 +98,10 @@ public class SupplyAndDemandTests
     public void GetTotalSold_returns_total_amount_of_good_sold_in_a_period()
     {
         // Arrange
-        test_market.BuyGood(lemon, 5000,3f, 0);
-        test_market.SellGood(lemon, 500,3f, 0);
-        test_market.SellGood(lemon, 500,3f, 0);
-        test_market.SellGood(lemon, 500,3f, 0);
+        test_market.BuyGood(lemon, 5000,3.0m, 0);
+        test_market.SellGood(lemon, 500,3.0m, 0);
+        test_market.SellGood(lemon, 500,3.0m, 0);
+        test_market.SellGood(lemon, 500,3.0m, 0);
         const int expected = 1500;
         const int trading_period = 0;
         // Act
@@ -122,10 +122,10 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.Register_Company(MarketThatDemandsLemons);
 
         //give the selling company some lemons
-        selling_company.BuyGood(lemon, 1000, 3f);
+        selling_company.BuyGood(lemon, 1000, 3.0m);
         TheEconomy.Instance.Register_Company(selling_company);
         //have the market buy the lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 1000, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 1000, 3.0m));
         TheEconomy.Instance.ExecuteDailyTrades();
         
         // Act
@@ -140,7 +140,7 @@ public class SupplyAndDemandTests
         var selling_company = ScriptableObject.CreateInstance<Company>();
         selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         //give the selling company some lemons
-        selling_company.BuyGood(lemon, 500, 3f);
+        selling_company.BuyGood(lemon, 500, 3.0m);
         TheEconomy.Instance.Register_Company(selling_company);
 
         //Make a market that demands lemons
@@ -149,7 +149,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.Register_Company(MarketThatDemandsLemons);
 
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 500, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 500, 3.0m));
         TheEconomy.Instance.ExecuteDailyTrades();
         //Act
         var actual_fulfillment_rate = MarketThatDemandsLemons.MarketDemand[lemon].FulfilmentRate;
@@ -166,10 +166,10 @@ public class SupplyAndDemandTests
         selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         TheEconomy.Instance.Register_Company(selling_company);
         //give the selling company some lemons
-        selling_company.BuyGood(lemon, 900, 3f);
+        selling_company.BuyGood(lemon, 900, 3.0m);
         //Act
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 600, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 600, 3.0m));
         TheEconomy.Instance.ExecuteDailyTrades();
         var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
         //Assert
@@ -185,10 +185,10 @@ public class SupplyAndDemandTests
         selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         TheEconomy.Instance.Register_Company(selling_company);
         //give the selling company some lemons
-        selling_company.BuyGood(lemon, 1000, 3f);
+        selling_company.BuyGood(lemon, 1000, 3.0m);
         //Act
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 1000, 3f));
+        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 1000, 3.0m));
         TheEconomy.Instance.ExecuteDailyTrades();
         var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
         //Assert
@@ -199,9 +199,9 @@ public class SupplyAndDemandTests
     public void GetTotalSupply_returns_total_supply_of_good_in_inventory()
     {
         // Arrange
-        test_market.BuyGood(lemon, 500,3f, 0);
-        test_market.BuyGood(lemon, 500,3f, 1);
-        test_market.BuyGood(lemon, 500,3f, 2);
+        test_market.BuyGood(lemon, 500,3.0m, 0);
+        test_market.BuyGood(lemon, 500,3.0m, 1);
+        test_market.BuyGood(lemon, 500,3.0m, 2);
         const int expected = 1500;
         // Act
         var actual = test_market.GetTotalSupply(0, lemon);

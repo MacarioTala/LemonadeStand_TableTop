@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 public class Company : ScriptableObject, iCompany
 {
@@ -13,7 +14,7 @@ public class Company : ScriptableObject, iCompany
 
     private readonly float share_price;
     private readonly int shares_outstanding;
-    private float cash = 0;
+    private decimal cash = 0;
     private readonly Inventory inventory = new();
 
     public List<Recipe> Recipes{get; private set;} = new();
@@ -34,7 +35,7 @@ public class Company : ScriptableObject, iCompany
         return inventory;
     }
 
-    public float Get_cash()
+    public decimal Get_cash()
     {
         return cash;
     }
@@ -58,8 +59,8 @@ public class Company : ScriptableObject, iCompany
         }
     }
 
-
-public void BuyGood(Good good, int quantity,float price,int period=0)
+#region Buy/Sell and helper methods
+public void BuyGood(Good good, int quantity,decimal price,int period=0)
 //Currently public for testing purposes
 //Make private or internal afterwards
 //period currently does nothing for companies, but is used in Market which implements iCompany
@@ -77,7 +78,7 @@ public void BuyGood(Good good, int quantity,float price,int period=0)
         }
     }
 
-    internal bool HasMoney(float money_needed)
+    internal bool HasMoney(decimal money_needed)
     {
        return cash >= money_needed;
     }
@@ -89,9 +90,7 @@ public void BuyGood(Good good, int quantity,float price,int period=0)
         return good_in_inventory != null && good_in_inventory.quantity >= quantity;
     }
 
-
-
-    public void SellGood(Good good, int quantity, float price,int period=0)
+    public void SellGood(Good good, int quantity, decimal price,int period=0)
     {
         //period currently does nothing for companies, but is used in Market which implements iCompany
         if(HasGood(good, quantity))
@@ -103,6 +102,25 @@ public void BuyGood(Good good, int quantity,float price,int period=0)
         else
         {
             throw new Company_InventoryException("Company does not have enough of the good to sell");
+        }
+    }
+#endregion
+
+    public void MakeRecipe(Recipe recipe, int quantity)
+    {
+        if(!Recipes.Contains(recipe))
+        {
+            throw new RecipeException("Recipe for "+recipe.ToString()+" not found in company's recipe book");
+        }
+        try
+        {
+            var totalCost = recipe.GetCostPerUnit(inventory)*quantity;
+            var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
+            inventory.Add_good_to_inventory(new InventoryEntry(product, product_quantity, totalCost));
+        }
+        catch(RecipeException e)
+        {
+            throw new RecipeException(e.Message);
         }
     }
 }
@@ -131,4 +149,4 @@ public enum CompanyLevelEnum
         {
         }
     }
-    #endregion
+#endregion

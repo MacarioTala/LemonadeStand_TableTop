@@ -15,7 +15,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 
     //Intrinsic members
-    private float cash = 0;
+    private decimal cash = 0;
     private readonly Inventory inventory = new();
 
     public CompanyLevelEnum company_level;
@@ -57,12 +57,12 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         //Initialize demand data
         //If no demand data is passed, demand defaults to 1000 units of Lemonade
         //This is a placeholder and will be replaced with a more sophisticated system
-        InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8f, 13f), Rarity_enum.Uncommon), 1000);
+        InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon), 1000);
     }
 
     public Inventory GetInventory() => inventory;
     
-    public float Get_cash() => cash;
+    public decimal Get_cash() => cash;
 
     private void Set_Initial_Cash()
     {
@@ -83,7 +83,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
     }
 
-    public void SetPrice(Good good, float new_price)
+    public void SetPrice(Good good, decimal new_price)
     {
         good.Set_price(new_price);
     }
@@ -96,9 +96,9 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
     }
 
-    private float CalculateNewPrice(Good good)
+    private decimal CalculateNewPrice(Good good)
     {
-        float price = good.GetPrice();
+        decimal price = good.GetPrice();
         foreach(var modifier in price_modifiers)
         {
             price = modifier.Apply(price,good,this);
@@ -107,7 +107,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 
 #region  buy/sell, and helpers
-    internal bool HasMoney(float money_needed)
+    internal bool HasMoney(decimal money_needed)
     {
        return cash >= money_needed;
     }
@@ -118,7 +118,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
         return good_in_inventory != null && good_in_inventory.quantity >= quantity;
     }
-    public void BuyGood(Good good, int quantity,float price,int period=0)
+    public void BuyGood(Good good, int quantity,decimal price,int period=0)
     //Currently public for testing purposes
     //Make private or internal afterwards
     //period currently does nothing for companies, but is used in Market which implements iCompany
@@ -146,7 +146,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
     }
 
-    public void SellGood(Good good, int quantity, float price,int period=0)
+    public void SellGood(Good good, int quantity, decimal price,int period=0)
     {
         //period currently does nothing for companies, but is used in Market which implements iCompany
         if(HasGood(good, quantity))

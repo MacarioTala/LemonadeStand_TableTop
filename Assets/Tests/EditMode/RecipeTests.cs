@@ -14,11 +14,11 @@ public class RecipeTests
     private Good water;
     private Recipe lemonade_recipe;
 
-    private readonly Price_band price_band1= new(.5f, 1f);
-    private readonly Price_band price_band2= new(1f, 5f);
-    private readonly Price_band price_band3= new(6f, 8f);
+    private readonly Price_band price_band1= new(.5m, 1.0m);
+    private readonly Price_band price_band2= new(1.0m, 5.0m);
+    private readonly Price_band price_band3= new(6.0m, 8.0m);
 
-    private readonly Price_band price_band4 = new(10f, 15f);
+    private readonly Price_band price_band4 = new(10.0m, 15.0m);
 
     [SetUp]
     public void SetUp()
@@ -35,7 +35,9 @@ public class RecipeTests
         test_inventory.Add_good_to_inventory(water_inventory_entry);
 
         lemonade = Good.CreateInstance("lemonade", price_band4);
-        var lemonade_ingredients = new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) };
+        var lemonade_ingredients = new List<Ingredient> { new(lemon, 9),
+                                                          new(sugar, 2), 
+                                                          new(water, 7) };
         lemonade_recipe = new Recipe(lemonade, lemonade_ingredients);
     }
 
@@ -66,9 +68,9 @@ public class RecipeTests
     {
         //arrange
         var test_inventory = new Inventory();
-        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0f);
-        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0f);
-        var inventory_entry3 = new InventoryEntry(water, 10, 1.0f);
+        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0m);
+        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0m);
+        var inventory_entry3 = new InventoryEntry(water, 10, 1.0m);
         test_inventory.Add_good_to_inventory(inventory_entry1);
         test_inventory.Add_good_to_inventory(inventory_entry2);
         test_inventory.Add_good_to_inventory(inventory_entry3);
@@ -85,9 +87,9 @@ public class RecipeTests
     {
         //arrange
         var test_inventory = new Inventory();
-        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0f);
-        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0f);
-        var inventory_entry3 = new InventoryEntry(water, 10, 1.0f);
+        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0m);
+        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0m);
+        var inventory_entry3 = new InventoryEntry(water, 10, 1.0m);
         test_inventory.Add_good_to_inventory(inventory_entry1);
         test_inventory.Add_good_to_inventory(inventory_entry2);
         test_inventory.Add_good_to_inventory(inventory_entry3);
@@ -127,5 +129,28 @@ public class RecipeTests
             var match = actual.FirstOrDefault(a => a.good_name == expectedName && a.Quantity_needed == expectedQuantity);
             Assert.IsNotNull(match, $"Expected ingredient '{expectedName}' with quantity {expectedQuantity} was not found in the recipe.");
         }
+    }
+    [Test]
+    public void Recipe_can_be_made_if_ingredients_span_two_inventory_entries()
+    {
+        throw new NotImplementedException("Implement this test");
+    }
+
+    [Test]
+    public void GetCostPerUnit_returns_average_cost_of_ingredients()
+    {
+        // Arrange
+        var inventory = new Inventory();
+        var lemon_inventory_entry = new InventoryEntry(lemon, 10, 3);
+        var sugar_inventory_entry = new InventoryEntry(sugar, 10, 2);
+        var water_inventory_entry = new InventoryEntry(water, 10, 1);
+        inventory.Add_good_to_inventory(lemon_inventory_entry);
+        inventory.Add_good_to_inventory(sugar_inventory_entry);
+        inventory.Add_good_to_inventory(water_inventory_entry);
+        var expected = (float)(9*3 + 2*2 + 7*1);
+        // Act
+        var actual = lemonade_recipe.GetCostPerUnit(inventory);
+        // Assert
+        Assert.AreEqual(expected, actual);
     }
 }

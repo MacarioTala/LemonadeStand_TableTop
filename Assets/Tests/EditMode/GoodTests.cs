@@ -4,7 +4,7 @@ using NUnit.Framework;
 [TestFixture]
 public class GoodTests
 {
-    readonly Price_band price_band1 = new(.5f, 1f);
+    readonly Price_band price_band1 = new(.5m, 1.0m);
 
     [SetUp]
     public void SetUp()
@@ -18,8 +18,8 @@ public class GoodTests
         // Arrange
         var good_name = "lemon";
         var uncommon = Rarity_enum.Uncommon;
-        var expected_price_min = 0.5f;
-        var expected_price_max = 1f;
+        var expected_price_min = 0.5m;
+        var expected_price_max = 1.0m;
         var expected_rarity = Rarity_enum.Uncommon;
 
         // Act

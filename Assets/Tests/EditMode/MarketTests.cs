@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 [TestFixture]
@@ -10,12 +10,17 @@ public class MarketTests
     private TheEconomy test_economy;
 
     private Market test_initial_market;
+    //Goods
     Good lemon;
     Good water;
     Good sugar;
+    Good lemonade;
 
-    readonly Price_band band1 = new(.5f, 1f);
-    readonly Price_band band2 = new(1f, 3f);
+    //Recipes
+    private Recipe lemonade_recipe;
+
+    readonly Price_band band1 = new(.5m, 1.0m);
+    readonly Price_band band2 = new(1.0m, 3.0m);
     readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 
@@ -25,7 +30,7 @@ public class MarketTests
         var economy_object = new GameObject();
         test_economy = economy_object.AddComponent<TheEconomy>();
         test_economy.Initialize(trade_logger);
-        SetupGoods();
+        SetupGoodsAndRecipes();
 
         //Setup the initial market
         SetupInitialMarket();
@@ -37,14 +42,19 @@ public class MarketTests
         test_initial_market.InitializeDemand(lemon, 1000);
     }
 
-    private void SetupGoods()
+    private void SetupGoodsAndRecipes()
     {
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
+        lemonade = Good.CreateInstance("Lemonade", band2, Rarity_enum.Uncommon);
+        lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), 
+                                                                        new(sugar, 2), 
+                                                                        new(water, 7) });                
         test_goods.Add(lemon);
         test_goods.Add(water);
         test_goods.Add(sugar);
+        test_goods.Add(lemonade);
     }
 
     #region Initialization tests
@@ -81,7 +91,7 @@ public class MarketTests
         var initialLemons = 10000;
         var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
         var expected = initialLemons - lemonDemand;
-        test_initial_market.BuyGood(lemon,initialLemons,3f);
+        test_initial_market.BuyGood(lemon,initialLemons,3.0m);
         // Act
         test_initial_market.ConsumeGoods();
         var actual = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
@@ -105,13 +115,13 @@ public class MarketTests
         var company2 = ScriptableObject.CreateInstance<Company>();
         company2.Initialize("Company2", CompanyLevelEnum.Beginner);
         test_economy.Register_Company(company2);
-        company1.BuyGood(lemon, 10,3f);
-        company2.BuyGood(lemon, 10,3f);
-        test_initial_market.BuyGood(lemon, 1000, 3f);
+        company1.BuyGood(lemon, 10,3.0m);
+        company2.BuyGood(lemon, 10,3.0m);
+        test_initial_market.BuyGood(lemon, 1000, 3.0m);
         test_initial_market.InitializeDemand(lemon, 50);
         // Act
-        var trade1 = new Trade(test_initial_market, company1, lemon, 10, 10f);
-        var trade2 = new Trade(test_initial_market, company2, lemon, 10, 15f);
+        var trade1 = new Trade(test_initial_market, company1, lemon, 10, 10.0m);
+        var trade2 = new Trade(test_initial_market, company2, lemon, 10, 15.0m);
         TheEconomy.Instance.Queue_Trade(trade1);
         TheEconomy.Instance.Queue_Trade(trade2);
         TheEconomy.Instance.ExecuteDailyTrades();
@@ -119,6 +129,30 @@ public class MarketTests
         // Assert
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
     }
+   
+   #region Production tests
+   [Test]
+   public void Companies_cannot_make_goods_without_a_recipe()
+   {
+       // Arrange
+       var company = ScriptableObject.CreateInstance<Company>();
+       company.Initialize("Company1", CompanyLevelEnum.Beginner);
+       test_economy.Register_Company(company);
+       System.Exception actual=null;
+       // Act
+       try
+       {
+        company.MakeRecipe(lemonade_recipe,1);
+        }
+        catch(System.Exception e)
+        {
+            actual = e;
+        }
+        // Assert
+        Assert.That(actual, Is.TypeOf<RecipeException>());
+    }
+
+   #endregion
     [TearDown]
     public void TearDown()
     {
