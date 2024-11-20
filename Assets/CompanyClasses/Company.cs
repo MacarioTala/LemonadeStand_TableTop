@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using UnityEngine;
 public class Company : ScriptableObject, iCompany
 {
@@ -11,6 +10,33 @@ public class Company : ScriptableObject, iCompany
         get => _company_name;
         set => _company_name = value;
     }
+    
+    #region Action Economy
+    private int actionsPerCycle;
+    private int actionsRemaining = 0;
+    public void ResetActions() => actionsRemaining = actionsPerCycle;
+    public void SetActionsPerCycle(int actions) => actionsPerCycle = actions;
+    
+    public void SetInitialActions()
+    {
+        switch(companyLevel)
+        {
+            case CompanyLevelEnum.Beginner:
+                actionsPerCycle = 3;
+                break;
+            case CompanyLevelEnum.Intermediate:
+                actionsPerCycle = 2;
+                break;
+            case CompanyLevelEnum.Advanced:
+                actionsPerCycle = 1;
+                break;
+            case CompanyLevelEnum.Market:
+                actionsPerCycle = 1000;
+                break;
+        }
+    }
+
+    #endregion
 
     private readonly float share_price;
     private readonly int shares_outstanding;
@@ -20,14 +46,15 @@ public class Company : ScriptableObject, iCompany
     public List<Recipe> Recipes{get; private set;} = new();
 
     public void Add_recipe(Recipe recipe)=>Recipes.Add(recipe);
-    public CompanyLevelEnum company_level;
+    public CompanyLevelEnum companyLevel;
 
     public void Initialize (string company_name, CompanyLevelEnum company_level)
     {
         this.company_name = company_name;
-        this.company_level = company_level;
+        this.companyLevel = company_level;
         //setup
-        Set_Initial_Cash();
+        SetInitialCash();
+        SetInitialActions();
     }
 
     public Inventory GetInventory()
@@ -40,9 +67,9 @@ public class Company : ScriptableObject, iCompany
         return cash;
     }
 
-    private void Set_Initial_Cash()
+    private void SetInitialCash()
     {
-        switch(company_level)
+        switch(companyLevel)
         {
             case CompanyLevelEnum.Beginner:
                 cash = 10000;

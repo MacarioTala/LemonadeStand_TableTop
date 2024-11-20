@@ -252,32 +252,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         return MarketDemand[good].CurrentDemand;
     }
     #endregion
-}
-public class DemandData
-{
-    public int CurrentDemand{get; set;}
-    public float FulfilmentRate{get; set;}
-    public float DemandElasticity{get; set;}
-    public int MinDemand{get; set;}
-    public int MaxDemand{get; set;}
+
 }
 
-public enum TradeType
-{
-    Buy,
-    Sell
-}
-public class MarketTrade
-{
-    public InventoryEntry InventoryEntry{get; private set;}
-    public int Period{get; private set;}
 
-    public TradeType TradeType{get; private set;}
-
-    public MarketTrade(InventoryEntry inventoryEntry, int period,TradeType tradeType)
-    {
-        InventoryEntry = inventoryEntry;
-        Period = period;
-        TradeType = tradeType;
-    }
-}

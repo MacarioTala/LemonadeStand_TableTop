@@ -121,22 +121,39 @@ public class GameOfLifeTest
 
     private void PerformRandomAction(int cycle)
     {
-        var potentialSellers = new List<iCompany>(Companies){LemonadeMarket};
-        var potentialBuyers = new List<iCompany>(Companies){LemonadeMarket};
+        var randomAction = Random.Range(0, 2);
+        if (randomAction == 0)
+            PerformRandomTrade(cycle);
+        else
+            PerformRandomProduction(cycle);
+    }
+
+    private void PerformRandomProduction(int cycle)
+    {
+        Debug.Log("Performing random production");
+    }
+
+    private void PerformRandomTrade(int cycle)
+    {
+        var potentialSellers = new List<iCompany>(Companies) { LemonadeMarket };
+        var potentialBuyers = new List<iCompany>(Companies) { LemonadeMarket };
 
         var buyer = potentialBuyers[Random.Range(0, potentialBuyers.Count)];
         var seller = potentialSellers[Random.Range(0, potentialSellers.Count)];
 
-        if(buyer==seller) return;
-        
+        if (buyer == seller) return;
+
         var goodToBuy = SelectRandomGood();
         if (goodToBuy == null) return;
-        
+
+        var doesSellerHaveRandomGood = seller.GetInventory().GetInventoryEntries().Exists(entry => entry.good == goodToBuy);
+        if (!doesSellerHaveRandomGood) return;
+
         var quantity = Random.Range(1, 10);
         var price = goodToBuy.GetPrice();
         var trade = new Trade(buyer, seller, goodToBuy, quantity, price);
         TheEconomy.Instance.Queue_Trade(trade);
-        Debug.Log("Trade queued in cycle: "+cycle+ " " + trade);
+        Debug.Log("Trade queued in cycle: " + cycle + " " + trade);
     }
 
     private Good SelectRandomGood()
