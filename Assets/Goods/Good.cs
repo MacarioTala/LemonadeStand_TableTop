@@ -125,6 +125,11 @@ public class Good : ScriptableObject
     {
         return good_name?.GetHashCode() ?? 0;
     }
+
+    public override string ToString()
+    {
+        return good_name;
+    }
 }
 
 public enum Rarity_enum

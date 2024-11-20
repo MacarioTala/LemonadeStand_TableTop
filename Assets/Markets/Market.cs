@@ -24,6 +24,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     internal readonly List<MarketTrade> marketTradesInPeriod= new();
     private readonly List<iPriceModifier> price_modifiers= new();
     public iDemandStrategy DemandStrategy;
+    public List<MarketData> MarketData = new();
 
     //Instantiate Markets using a factory
     private Market()
@@ -106,7 +107,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         return price;
     }
 
-#region  buy/sell, and helpers
+#region buy/sell, and helpers
     internal bool HasMoney(decimal money_needed)
     {
        return cash >= money_needed;
@@ -251,8 +252,78 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         var good = MarketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
         return MarketDemand[good].CurrentDemand;
     }
-    #endregion
+#endregion
+#region Publishing
 
+//remember to call CalculateMarketData as part of TheEconomy.Instance.ExecuteDailyTrades.
+public void CalculateMarketData()
+{
+    var temporaryPriceIncrease = .01m;
+    foreach(var entry in inventory.GetInventoryEntries())
+    {
+        var data = new MarketData
+        {
+            Company = this,
+            Bid = entry.good.GetPrice(),
+            Ask = entry.good.GetPrice() * (1 + temporaryPriceIncrease),
+            Good = entry.good
+        };
+        MarketData.Add(data);
+    }
+}
+public List<MarketData> PublishMarketData()=>MarketData;
+
+public void PublishSpreadToMarket(ActionContext context)
+{
+    var MarketToSubmitTo = this;
+    var good = context.GoodToSubmit;
+    var bid = context.BidToSubmit;
+    var ask = context.AskToSubmit;
+    var submittingCompany = context.SubmittingCompany;
+
+    var isGoodInMarketData = MarketData.Any(x=>x.Good==good && x.Company.Equals(submittingCompany));
+    if(isGoodInMarketData)
+    {
+        var marketData = MarketData.First(x=>x.Good==good && x.Company.Equals(submittingCompany));
+        marketData.Bid = bid;
+        marketData.Ask = ask;
+    }
+    else
+    {
+        var data = new MarketData
+        {
+            Company = submittingCompany,
+            Good = good,
+            Bid = bid,
+            Ask = ask
+        };
+        MarketData.Add(data);
+    }
+}
+#endregion
 }
 
+public class MarketData
+{
+    public iCompany Company;
+    public Good Good;
+    public decimal Bid;
+    public decimal Ask;
 
+    public override string ToString()
+    {
+        return $"Company: {Company}, Good: {Good}, Bid: {Bid}, Ask: {Ask}";
+    }
+    public override bool Equals(object other)
+    {
+        if(other is MarketData data)
+        {
+            return Company.Equals(data.Company) && Good.Equals(data.Good) && Bid == data.Bid && Ask == data.Ask;
+        }
+        return false;
+    }
+    public override int GetHashCode()
+    {
+        return Company.GetHashCode() + Good.GetHashCode() + Bid.GetHashCode() + Ask.GetHashCode();
+    }
+}

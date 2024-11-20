@@ -12,11 +12,13 @@ public class Company : ScriptableObject, iCompany
     }
     
     #region Action Economy
+    private List<AllowedAction> allowedActions = new();
     private int actionsPerCycle;
     private int actionsRemaining = 0;
     public void ResetActions() => actionsRemaining = actionsPerCycle;
     public void SetActionsPerCycle(int actions) => actionsPerCycle = actions;
-    
+    public void AddAllowedAction(AllowedAction action) => allowedActions.Add(action);
+
     public void SetInitialActions()
     {
         switch(companyLevel)
@@ -34,6 +36,7 @@ public class Company : ScriptableObject, iCompany
                 actionsPerCycle = 1000;
                 break;
         }
+        ResetActions();
     }
 
     #endregion
@@ -87,7 +90,7 @@ public class Company : ScriptableObject, iCompany
     }
 
 #region Buy/Sell and helper methods
-public void BuyGood(Good good, int quantity,decimal price,int period=0)
+    public void BuyGood(Good good, int quantity,decimal price,int period=0)
 //Currently public for testing purposes
 //Make private or internal afterwards
 //period currently does nothing for companies, but is used in Market which implements iCompany
@@ -133,8 +136,10 @@ public void BuyGood(Good good, int quantity,decimal price,int period=0)
     }
 #endregion
 
-    public void MakeRecipe(Recipe recipe, int quantity)
+    public void MakeRecipe(ActionContext context)
     {
+        var recipe = context.Recipe;
+        var quantity = context.QuantityToMake;
         if(!Recipes.Contains(recipe))
         {
             throw new RecipeException("Recipe for "+recipe.ToString()+" not found in company's recipe book");
@@ -150,6 +155,57 @@ public void BuyGood(Good good, int quantity,decimal price,int period=0)
             throw new RecipeException(e.Message);
         }
     }
+
+#region Market Actions
+    public void QueueTrade(ActionContext context)
+    {
+        var seller = context.Seller;
+        Trade trade;
+        if(context.Seller == null || context.GoodToBuy == null || context.Quantity == 0 || context.Price == 0)
+        {
+            throw new ContextException("Seller, Good, Quantity, or Price not set in context");
+        }
+
+        if (context.IsBuy)
+        {
+            trade = new Trade(this, seller, context.GoodToBuy, context.Quantity, context.Price);
+        }
+        else
+        {
+            trade = new Trade(seller, this, context.GoodToBuy, context.Quantity, context.Price);
+        }
+        TheEconomy.Instance.Queue_Trade(trade);
+    }
+    public void SubmitBidAskSpreadToMarket(ActionContext context)
+    {
+        context.SubmittingCompany = this;
+        if(context.BidToSubmit==0||context.AskToSubmit==0||context.GoodToSubmit==null||context.MarketToSubmitTo==null)
+        {
+            throw new ContextException("Bid, Ask, Good, or Market not set in context");
+        }
+        context.MarketToSubmitTo.PublishSpreadToMarket(context);
+    }
+#endregion
+#region Overrides
+    public override string ToString()
+    {
+        return company_name;
+    }
+
+    public override bool Equals(object other)
+    {
+        if(other is Company company)
+        {
+            return company_name == company.company_name;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return company_name.GetHashCode();
+    }
+#endregion
 }
 #region enums
 public enum CompanyLevelEnum

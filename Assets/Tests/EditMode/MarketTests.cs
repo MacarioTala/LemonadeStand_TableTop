@@ -139,10 +139,11 @@ public class MarketTests
        company.Initialize("Company1", CompanyLevelEnum.Beginner);
        test_economy.Register_Company(company);
        System.Exception actual=null;
+       var context = new ActionContext{Recipe = lemonade_recipe, QuantityToMake = 1};
        // Act
        try
        {
-        company.MakeRecipe(lemonade_recipe,1);
+        company.MakeRecipe(context);
         }
         catch(System.Exception e)
         {
@@ -152,6 +153,63 @@ public class MarketTests
         Assert.That(actual, Is.TypeOf<RecipeException>());
     }
 
+   #endregion
+
+   #region publish tests
+    [Test]
+    public void PublishMarketDataShouldAddOnePercentToPrice()
+    {
+        // Arrange
+        test_initial_market.BuyGood(lemon, 1000, 3.0m);
+        var initial_price = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().good.GetPrice();
+        var expected = initial_price * 1.01m;
+        // Act
+        test_initial_market.CalculateMarketData();
+        var marketData = test_initial_market.MarketData;
+        var actual = marketData.Where(entry => entry.Good.good_name == lemon.good_name
+                                        && entry.Company.company_name == test_initial_market.company_name)
+                                    .First().Ask;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void PublishSpreadToMarket_should_update_existing_MarketData_if_spread_exists()
+    {
+        // Arrange
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        test_economy.Register_Company(company1);
+        var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon, MarketToSubmitTo = test_initial_market};
+        var expected = new List<MarketData>{new() { Good = lemon, Company = company1, Bid = 2.0m, Ask = 3.0m}};
+        //Act
+        company1.SubmitBidAskSpreadToMarket(context);
+        test_initial_market.CalculateMarketData();
+        var actual = test_initial_market.MarketData;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void PublishSpreadToMarketThrowsContextExceptionIfActionContextIsIncomplete()
+    {
+        // Arrange
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        test_economy.Register_Company(company1);
+        var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
+        System.Exception actual=null;
+        //Act
+        try
+        {
+            company1.SubmitBidAskSpreadToMarket(context);
+        }
+        catch(System.Exception e)
+        {
+            actual = e;
+        }
+        // Assert
+        Assert.That(actual, Is.TypeOf<ContextException>());
+    }
+                               
    #endregion
     [TearDown]
     public void TearDown()

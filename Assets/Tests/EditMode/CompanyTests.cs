@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 [TestFixture]
 public class CompanyTests
 {
@@ -106,5 +107,29 @@ public class CompanyTests
         //Act
         //Assert
         Assert.Throws<Company_InventoryException>(() => company.SellGood(good, 2, good_price));
+    }
+
+    [Test]
+    public void QueueTradethrowsContextExceptionWhenActionContextIncomplete()
+    {
+        //Assert
+        var company1 = ScriptableObject.CreateInstance<Company>();
+        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        var lemon = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
+        System.Exception actual=null;
+        var expected = new ContextException("Seller, Good, Quantity, or Price not set in context");
+        //Act
+        try
+        {
+            company1.QueueTrade(context);
+        }
+        catch (System.Exception e)
+        {
+            actual = e;
+        }
+        //Assert
+        Assert.AreEqual(expected.Message, actual.Message);
+        
     }
 }
