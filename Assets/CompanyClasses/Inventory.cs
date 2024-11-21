@@ -13,9 +13,14 @@ public class Inventory
 
     public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)
     {
-        return inventory_items.Where(x => x.good.good_name == goodName)
+        var items = inventory_items.Where(x => x.good.good_name == goodName)
                               .OrderBy(x => x.acquisition_price)
                               .ToList();
+        if (items.Count == 0)
+        {
+            new List<InventoryEntry>();
+        }
+        return items;
     }
     public void Add_good_to_inventory(InventoryEntry entry)
     {

@@ -2,7 +2,6 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
-using NUnit.Framework.Constraints;
 [TestFixture]
 public class CompanyTests
 {

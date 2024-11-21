@@ -11,7 +11,7 @@ public class Company : ScriptableObject, iCompany
         set => _company_name = value;
     }
 
-    private iStrategy companyStrategy = null;
+    public iStrategy companyStrategy {get; private set;}= null;
     
     #region Action Economy
     private List<AllowedAction> allowedActions = new();
@@ -50,7 +50,7 @@ public class Company : ScriptableObject, iCompany
 
     public List<Recipe> Recipes{get; private set;} = new();
 #region Goals
-    public List<Goal> Goals {get;set;}
+    public List<Goal> Goals {get;set;} = new();
     public void CompleteGoal(Goal goal)
     {
         Debug.Log("Goal Completed: "+goal);

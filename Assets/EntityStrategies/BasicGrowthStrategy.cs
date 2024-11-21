@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class BasicGrowthStrategy : iStrategy
 {
@@ -7,9 +8,26 @@ public class BasicGrowthStrategy : iStrategy
         throw new System.NotImplementedException();
     }
 
-    public List<Goal> GenerateGoals(iCompany company)
+    public void GenerateGoals(iCompany company)
     {
-        throw new System.NotImplementedException();
+        var goals = new List<Goal>();
+        var doubleCashGoal = new Goal("Double Initial Cash",
+                                      "Double the initial cash of the company",
+                                      null,
+                                      (c,g) => g.SetOriginalValue("InitialCash",c.Get_cash())
+                                      );
+        doubleCashGoal.IsGoalMet = c=>c.Get_cash() >= (decimal)doubleCashGoal.GetOriginalValue<decimal>("InitialCash")*2;
+        company.Goals.Add(doubleCashGoal);
+
+        var tenLemonadeGoal = new Goal("Have 10 Lemonade",
+                                      "Have 10 Lemonade in stock",
+                                      null,
+                                      (c, g) => g.SetOriginalValue("InitialLemonade", 0)
+                                      )
+        {
+            IsGoalMet = c => c.GetInventory().GetInventoryEntriesByGood("Lemonade").Sum(e => e.quantity) >= 10
+        };
+        company.Goals.Add(tenLemonadeGoal);
     }
 
     public void PerformStrategy(ActionContext context)

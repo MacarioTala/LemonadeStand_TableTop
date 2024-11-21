@@ -47,14 +47,14 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     {
         public static Market CreateMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy,iStrategy marketStrategy)
         {
-            var market = ScriptableObject.CreateInstance<Market>();
+            var market = CreateInstance<Market>();
             market.Initialize(company_name, company_level,marketStrategy);
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
             return market;
         }
         public static Market CreateMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy)
         {
-            var market = ScriptableObject.CreateInstance<Market>();
+            var market = CreateInstance<Market>();
             market.Initialize(company_name, company_level,null);
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
             return market;
