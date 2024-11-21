@@ -2,6 +2,7 @@ public class ActionContext
 {
     //General
     public int Period;
+    public ActionEnum Action;
 
     //QueueTrade
     public Company Buyer;
@@ -12,6 +13,7 @@ public class ActionContext
     public bool IsBuy;
     
     //Make Recipe
+    public Company RecipeMaker;
     public Recipe Recipe;
     public int QuantityToMake;
 

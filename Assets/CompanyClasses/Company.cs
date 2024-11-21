@@ -10,6 +10,8 @@ public class Company : ScriptableObject, iCompany
         get => _company_name;
         set => _company_name = value;
     }
+
+    private iStrategy companyStrategy = null;
     
     #region Action Economy
     private List<AllowedAction> allowedActions = new();
@@ -47,14 +49,34 @@ public class Company : ScriptableObject, iCompany
     private readonly Inventory inventory = new();
 
     public List<Recipe> Recipes{get; private set;} = new();
+#region Goals
+    public List<Goal> Goals {get;set;}
+    public void CompleteGoal(Goal goal)
+    {
+        Debug.Log("Goal Completed: "+goal);
+    }
+    public void CheckCompanyGoals()
+    {
+        foreach (var goal in Goals)
+        {
+            if (goal.IsAchieved)
+            {
+                Debug.Log($"{company_name} has completed the goal: {goal}");
+                CompleteGoal(goal);
+            }
+        }
 
+    }
+#endregion 
     public void Add_recipe(Recipe recipe)=>Recipes.Add(recipe);
     public CompanyLevelEnum companyLevel;
 
-    public void Initialize (string company_name, CompanyLevelEnum company_level)
+    public void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
-        this.company_name = company_name;
-        this.companyLevel = company_level;
+        company_name = companyName;
+        companyLevel = company_level;
+        companyStrategy = strategy;
+
         //setup
         SetInitialCash();
         SetInitialActions();
@@ -205,7 +227,7 @@ public class Company : ScriptableObject, iCompany
     {
         return company_name.GetHashCode();
     }
-#endregion
+    #endregion
 }
 #region enums
 public enum CompanyLevelEnum

@@ -126,7 +126,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.Register_Company(selling_company);
         //have the market buy the lemons
         TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 1000, 3.0m));
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         
         // Act
         var actual_fulfillment_rate = MarketThatDemandsLemons.MarketDemand[lemon].FulfilmentRate;
@@ -150,7 +150,7 @@ public class SupplyAndDemandTests
 
         //have the market buy some lemons
         TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 500, 3.0m));
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         //Act
         var actual_fulfillment_rate = MarketThatDemandsLemons.MarketDemand[lemon].FulfilmentRate;
         // Assert
@@ -170,7 +170,7 @@ public class SupplyAndDemandTests
         //Act
         //have the market buy some lemons
         TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 600, 3.0m));
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
         //Assert
         Assert.AreEqual(expected_lemon_demand, actual_lemon_demand);
@@ -189,7 +189,7 @@ public class SupplyAndDemandTests
         //Act
         //have the market buy some lemons
         TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 1000, 3.0m));
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
         //Assert
         Assert.AreEqual(expected_lemon_demand, actual_lemon_demand);

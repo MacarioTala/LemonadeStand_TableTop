@@ -1,9 +1,14 @@
+using System.Collections.Generic;
+
 public interface iCompany
 {
     string company_name{get;set;}
+    List<Goal> Goals{get;set;}
     void BuyGood(Good good, int quantity, decimal price,int period);
     void SellGood(Good good, int quantity, decimal price,int period);
-    void Initialize(string company_name, CompanyLevelEnum company_level);
+    void Initialize(string company_name, CompanyLevelEnum company_level,iStrategy strategy);
     Inventory GetInventory();
     decimal Get_cash();
+    void CompleteGoal(Goal goal);
+    void CheckCompanyGoals();
 }

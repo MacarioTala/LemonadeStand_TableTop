@@ -106,7 +106,7 @@ public class GameOfLifeTest
                 PerformRandomAction(cycle);
             }
             try{
-                TheEconomy.Instance.ExecuteDailyTrades();
+                TheEconomy.Instance.EndTradingPeriod();
                 }
             catch (System.Exception e)
             {

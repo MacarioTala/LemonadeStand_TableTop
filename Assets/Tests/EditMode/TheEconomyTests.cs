@@ -98,7 +98,7 @@ public class TheEconomyTests
         company2.company_name = "Test Company";
         // Act
         // Assert
-        Assert.Throws<TheMarket_CompanyException>(() => test_economy.Register_Company(company2));
+        Assert.Throws<TheEconomy_CompanyException>(() => test_economy.Register_Company(company2));
     }
 
     [Test]
@@ -139,7 +139,7 @@ public class TheEconomyTests
         // Act
         var lemonSale = new Trade(test_initial_market, test_company, lemon, lemonsCompanyWillSellToMarket, 3.0m);
         TheEconomy.Instance.Queue_Trade(lemonSale);
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         //only one inventory entry per good in Markets
         var actual_final_market_lemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
         // Assert
@@ -171,7 +171,7 @@ public class TheEconomyTests
         // Act
         var trade = new Trade(company1, company2, lemon, 1, 2.0m);
         test_economy.Queue_Trade(trade);
-        test_economy.ExecuteDailyTrades();
+        test_economy.EndTradingPeriod();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
         var actual_company1_2flemon_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2.0m).quantity;
@@ -199,7 +199,7 @@ public class TheEconomyTests
         // Act
         try{
         TheEconomy.Instance.Queue_Trade(new Trade(company1, company2, lemon, 10, 3.0m));
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         }
         catch(Exception e)
         {
@@ -227,7 +227,7 @@ public class TheEconomyTests
         // Act
         try{
         TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 1000, 3.0m));
-        TheEconomy.Instance.ExecuteDailyTrades();
+        TheEconomy.Instance.EndTradingPeriod();
         }
         catch(Exception e)
         {

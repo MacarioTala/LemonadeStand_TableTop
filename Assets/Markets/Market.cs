@@ -8,12 +8,24 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField]private string _company_name;
 
+    private iStrategy MarketStrategy = null;
     public string company_name
     {
         get => _company_name;
         set => _company_name = value;
     }
+#region goals
+    public List<Goal> Goals {get;set;}
+    public void CompleteGoal(Goal goal)
+        {
+            throw new NotImplementedException();
+        }
 
+    public void CheckCompanyGoals()
+        {
+            throw new NotImplementedException();
+        }
+#endregion
     //Intrinsic members
     private decimal cash = 0;
     private readonly Inventory inventory = new();
@@ -33,10 +45,17 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
 
     public static class Factory
     {
+        public static Market CreateMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy,iStrategy marketStrategy)
+        {
+            var market = ScriptableObject.CreateInstance<Market>();
+            market.Initialize(company_name, company_level,marketStrategy);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            return market;
+        }
         public static Market CreateMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy)
         {
             var market = ScriptableObject.CreateInstance<Market>();
-            market.Initialize(company_name, company_level);
+            market.Initialize(company_name, company_level,null);
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
             return market;
         }
@@ -48,10 +67,11 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     //then be affected by market forces
     public Dictionary<Good, DemandData> MarketDemand = new();
 
-    public void Initialize(string company_name, CompanyLevelEnum company_level)
+    public void Initialize(string companyName, CompanyLevelEnum companyLevel,iStrategy strategy)
     {
-        this.company_name = company_name;
-        this.company_level = company_level;
+        company_name = companyName;
+        company_level = companyLevel;
+        MarketStrategy = strategy;
         //setup
         Set_Initial_Cash();
         price_modifiers.Add(new SupplyDemandModifier());
@@ -301,29 +321,5 @@ public void PublishSpreadToMarket(ActionContext context)
     }
 }
 #endregion
-}
-
-public class MarketData
-{
-    public iCompany Company;
-    public Good Good;
-    public decimal Bid;
-    public decimal Ask;
-
-    public override string ToString()
-    {
-        return $"Company: {Company}, Good: {Good}, Bid: {Bid}, Ask: {Ask}";
-    }
-    public override bool Equals(object other)
-    {
-        if(other is MarketData data)
-        {
-            return Company.Equals(data.Company) && Good.Equals(data.Good) && Bid == data.Bid && Ask == data.Ask;
-        }
-        return false;
-    }
-    public override int GetHashCode()
-    {
-        return Company.GetHashCode() + Good.GetHashCode() + Bid.GetHashCode() + Ask.GetHashCode();
-    }
+   
 }

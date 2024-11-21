@@ -63,7 +63,7 @@ public class TheEconomy : MonoBehaviour
         trade_queue.Add(trade);
     }
 
-    public void ExecuteDailyTrades()
+    public void EndTradingPeriod()
     {
         foreach(Trade trade in trade_queue)
             {
@@ -93,8 +93,10 @@ public class TheEconomy : MonoBehaviour
                 market.UpdatePrices();
                 market.ConsumeGoods();
             }
-        }
+          //  company.CheckCompanyGoals();
+        };
     }
+
 
     private void Process_trade(Trade trade)
     {
@@ -122,7 +124,7 @@ public class TheEconomy : MonoBehaviour
         }
         else
         {
-            throw new TheMarket_CompanyException("Company already registered");
+            throw new TheEconomy_CompanyException("Company already registered");
         }
         
     }
@@ -164,9 +166,9 @@ public class TheEconomy : MonoBehaviour
 
 #region Exceptions
 [Serializable]
-public class TheMarket_CompanyException : Exception
+public class TheEconomy_CompanyException : Exception
 {
-    public TheMarket_CompanyException(string message) : base(message)
+    public TheEconomy_CompanyException(string message) : base(message)
     {
     }
 
