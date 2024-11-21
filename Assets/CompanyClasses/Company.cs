@@ -120,7 +120,7 @@ public class Company : ScriptableObject, iCompany
         var money_needed = price * quantity;
         if(HasMoney(money_needed))
         {
-            var inventory_entry = new InventoryEntry(good, quantity, price);
+            var inventory_entry = new InventoryEntry(good, quantity, price, period);
             inventory.Add_good_to_inventory(inventory_entry);
             cash -= money_needed;
         }
@@ -170,12 +170,16 @@ public class Company : ScriptableObject, iCompany
         {
             var totalCost = recipe.GetCostPerUnit(inventory)*quantity;
             var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
-            inventory.Add_good_to_inventory(new InventoryEntry(product, product_quantity, totalCost));
+            inventory.Add_good_to_inventory(new InventoryEntry(product, product_quantity, totalCost,context.Period));
         }
         catch(RecipeException e)
         {
             throw new RecipeException(e.Message);
         }
+    }
+    public void ExpireGoods(int period)
+    {
+        inventory.ExpireGoods(period);
     }
 
 #region Market Actions

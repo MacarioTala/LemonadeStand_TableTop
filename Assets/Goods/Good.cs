@@ -13,10 +13,12 @@ public class Good : ScriptableObject
 
     public string good_name;
     private decimal price_increment_rate;
-    private Price_band price_band;
+    private Price_band PriceBand;
 
-    private Rarity_enum rarity;
+    public int ExpiresAfterPeriods { get; set; } = int.MaxValue;
+    private Rarity_enum Rarity;
     
+    public bool IsProducedGood { get; set; } = false;
     public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
     public int price_decrease_threshold; //ibid
 
@@ -35,31 +37,31 @@ public class Good : ScriptableObject
     private void Initialize(string good_name, 
                             Price_band price_band,
                             Rarity_enum rarity=Rarity_enum.Common,
-                            float demand_elasticity=1) 
+                            float demandElasticity=1) 
     {
         this.good_name = good_name;
-        this.price_band = price_band;
-        this.rarity = rarity;
-        this.DemandElasticity = demand_elasticity;
+        PriceBand = price_band;
+        Rarity = rarity;
+        DemandElasticity = demandElasticity;
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
         Set_initial_price_thresholds();
         Set_initial_price_increment_rate();
     }
 
-    public Price_band Get_price_band() => price_band;
+    public Price_band Get_price_band() => PriceBand;
     public decimal GetPrice() => Price;
     
     internal void Set_price(decimal new_price) => Price = new_price;
 
-    public Rarity_enum GetRarity() => rarity;
+    public Rarity_enum GetRarity() => Rarity;
     public decimal Get_price_increment_rate() => price_increment_rate;
 
     private decimal Generate_initial_price() 
     {
         var randomFloat = UnityEngine.Random.value;
-        var price_range = price_band.max - price_band.min;
-        return price_band.min + (decimal)randomFloat * price_range;
+        var price_range = PriceBand.max - PriceBand.min;
+        return PriceBand.min + (decimal)randomFloat * price_range;
     }
 
     public void Add_substitute_good(Good good) => _substitute_goods.Add(good);
@@ -78,16 +80,16 @@ public class Good : ScriptableObject
         const int rare_decrease_threshold = 10;
         const int very_rare_increase_threshold = 5;
         const int very_rare_decrease_threshold = 1;
-        if(rarity==Rarity_enum.Common){
+        if(Rarity==Rarity_enum.Common){
             Set_price_thresholds(common_increase_threshold, common_decrease_threshold);
         }
-        if(rarity==Rarity_enum.Uncommon){
+        if(Rarity==Rarity_enum.Uncommon){
             Set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
         }
-        if(rarity==Rarity_enum.Rare){
+        if(Rarity==Rarity_enum.Rare){
             Set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
         }
-        if(rarity==Rarity_enum.Very_Rare){
+        if(Rarity==Rarity_enum.Very_Rare){
             Set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
         }
     }
@@ -98,16 +100,16 @@ public class Good : ScriptableObject
         const decimal uncommon_price_increment_rate = 0.15m;
         const decimal rare_price_increment_rate = 0.3m;
         const decimal very_rare_price_increment_rate = 0.4m;
-        if(rarity==Rarity_enum.Common){
+        if(Rarity==Rarity_enum.Common){
             price_increment_rate = common_price_increment_rate;
         }
-        if(rarity==Rarity_enum.Uncommon){
+        if(Rarity==Rarity_enum.Uncommon){
             price_increment_rate = uncommon_price_increment_rate;
         }
-        if(rarity==Rarity_enum.Rare){
+        if(Rarity==Rarity_enum.Rare){
             price_increment_rate = rare_price_increment_rate;
         }
-        if(rarity==Rarity_enum.Very_Rare){
+        if(Rarity==Rarity_enum.Very_Rare){
             price_increment_rate = very_rare_price_increment_rate;
         }
     }

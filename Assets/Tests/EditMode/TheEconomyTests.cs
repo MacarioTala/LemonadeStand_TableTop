@@ -31,6 +31,7 @@ public class TheEconomyTests
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
+        lemon.ExpiresAfterPeriods = 1;
         test_goods.Add(lemon);
         test_goods.Add(water);
         test_goods.Add(sugar);
@@ -238,7 +239,47 @@ public class TheEconomyTests
     }
 
 #endregion
+#region Perishability tests
+[Test]
+public void PerishableGoodsShouldExpire()
+{
+    // Arrange
+    var company = ScriptableObject.CreateInstance<Company>();
+    company.Initialize("Company1", CompanyLevelEnum.Beginner);
+    test_economy.Register_Company(company);
+    company.BuyGood(lemon, 10, 3.0m,0);
+    company.BuyGood(water, 10, 1.0m,0);
+    company.BuyGood(sugar, 10, 1.0m,0);
+    var expected_lemon_quantity = 0;
+    // Act
+    test_economy.tradingPeriod = 0;
+    test_economy.EndTradingPeriod(); //lemons should expire
+    var lemon_entry = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+    var actual_lemon_quantity = lemon_entry?.quantity??0;
+    // Assert
+    Assert.AreEqual(expected_lemon_quantity, actual_lemon_quantity);
+}
 
+[Test]
+public void NonPerishableGoodsShouldNotExpire()
+{
+     // Arrange
+    var company = ScriptableObject.CreateInstance<Company>();
+    company.Initialize("Company1", CompanyLevelEnum.Beginner);
+    test_economy.Register_Company(company);
+    company.BuyGood(lemon, 10, 3.0m,0);
+    company.BuyGood(water, 10, 1.0m,0);
+    company.BuyGood(sugar, 10, 1.0m,0);
+    var expected_water_quantity = 10;
+    // Act
+    test_economy.tradingPeriod = 0;
+    test_economy.EndTradingPeriod(); //lemons should expire
+    var actual_water_quantity = company.GetInventory().GetInventoryEntriesByGood(water.good_name).FirstOrDefault().quantity;
+    // Assert
+    Assert.AreEqual(expected_water_quantity, actual_water_quantity);
+}
+
+#endregion
     [TearDown]
     public void TearDown()
     {

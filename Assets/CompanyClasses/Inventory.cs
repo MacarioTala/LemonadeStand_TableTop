@@ -62,7 +62,8 @@ public class Inventory
             remaining_quantity -= quantity_to_remove;
             current_entry.quantity -= quantity_to_remove;
             
-            goods_to_remove.Add(new InventoryEntry(current_entry.good, current_entry.quantity, current_entry.acquisition_price));   
+            const int nullPeriod = 0;
+            goods_to_remove.Add(new InventoryEntry(current_entry.good, current_entry.quantity, current_entry.acquisition_price,nullPeriod));   
             
         }
         return goods_to_remove;
@@ -134,5 +135,13 @@ public class Inventory
         }
     }
 
+    public void ExpireGoods(int period)
+    {
+        var expired_goods = inventory_items.Where(item=> item.PeriodAcquired+item.good.ExpiresAfterPeriods <= period).ToList();
+        foreach(var entry in expired_goods)
+        {
+            inventory_items.Remove(entry);
+        }
+    }
 
 }

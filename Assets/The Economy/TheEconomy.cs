@@ -93,6 +93,11 @@ public class TheEconomy : MonoBehaviour
                 market.UpdatePrices();
                 market.ConsumeGoods();
             }
+            else
+            {
+                company.ExpireGoods(tradingPeriod);//only companies' goods expire
+            }
+            
           //  company.CheckCompanyGoals();
         };
     }
@@ -133,10 +138,7 @@ public class TheEconomy : MonoBehaviour
        throw new NotImplementedException();
     }
 
-    public iCompany GetGlobalMarket()
-    {
-        return InitialMarket;
-    }
+    public iCompany GetGlobalMarket() => InitialMarket;
     public void Create_initial_goods(List<Good> goods)//move static data to DB in future
     {
         //Limits for good quantities

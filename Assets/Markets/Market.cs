@@ -155,7 +155,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
             }
             else
             {
-                var inventory_entry = new InventoryEntry(good, quantity, price);
+                var inventory_entry = new InventoryEntry(good, quantity, price, period);
                 inventory.Add_good_to_inventory(inventory_entry);
                 cash -= money_needed;
                 marketTradesInPeriod.Add(new MarketTrade(inventory_entry, period,TradeType.Buy));
@@ -175,7 +175,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
             
             inventory.Sell_goods(good, quantity, price);
             cash += price * quantity;
-            marketTradesInPeriod.Add(new MarketTrade(new InventoryEntry(good, quantity, price), period,TradeType.Sell));
+            marketTradesInPeriod.Add(new MarketTrade(new InventoryEntry(good, quantity, price,period), period,TradeType.Sell));
         }
         else
         {
@@ -321,5 +321,9 @@ public void PublishSpreadToMarket(ActionContext context)
     }
 }
 #endregion
-   
+
+public void ExpireGoods(int period)
+{
+    //inventory.ExpireGoods(period); //maybe goods in market just don't expire?
+}
 }

@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class Recipe
 {
         private readonly List<Ingredient> ingredients;
         private readonly Good product;
-        private readonly float cost;
-        
-        public Recipe(Good product, List<Ingredient> ingredients)
+
+    public Recipe(Good product, List<Ingredient> ingredients)
         {
             this.product = product;
             this.ingredients = ingredients;
         }
-        public List<String> Get_Ingredients()
+        public List<string> Get_Ingredients()
         {
             return ingredients.Select(ingredient => ingredient.Good.good_name).ToList();
         }
@@ -45,14 +43,12 @@ public class Recipe
             }
             else
             {
-                inventory.Consume_for_recipe(this, quantity);    
+                inventory.Consume_for_recipe(this, quantity);   
+                product.IsProducedGood = true; 
                 return (product, quantity);
             }
         }
-    public override string ToString()
-    {
-        return product.good_name;
-    }
+    public override string ToString() => product.good_name;
 
     public override bool Equals(object other)
     {
@@ -63,10 +59,7 @@ public class Recipe
         return false;
     }
 
-    public override int GetHashCode()
-    {
-        return product.good_name?.GetHashCode()??0;
-    }
+    public override int GetHashCode() => product.good_name?.GetHashCode() ?? 0;
 
     public decimal GetCostPerUnit(Inventory inventory)
     {

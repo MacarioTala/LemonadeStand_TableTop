@@ -44,11 +44,12 @@ public class CompanyTests
     public void Buy_good_when_buyer_has_enough_cash_adds_good_to_inventory()
     {
         //arrange
+        const int PeriodIsIrrelevant = 0;
         var company = ScriptableObject.CreateInstance<Company>();
         company.Initialize("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         const decimal trade_price = 3.0m;
-        var expected_inventory_entry = new InventoryEntry(good, 1, trade_price);
+        var expected_inventory_entry = new InventoryEntry(good, 1, trade_price, PeriodIsIrrelevant);
         
         //Act
         company.BuyGood(good, 1, trade_price);

@@ -4,11 +4,14 @@ public class InventoryEntry
     public int quantity;
     public decimal acquisition_price;
 
-    public InventoryEntry(Good good, int quantity, decimal acquisition_price)
+    public int PeriodAcquired;
+
+    public InventoryEntry(Good good, int quantity, decimal acquisition_price, int period)
     {
         this.good = good;
         this.quantity = quantity;
         this.acquisition_price = acquisition_price;
+        PeriodAcquired = period;
     }
 
     public override string ToString()
