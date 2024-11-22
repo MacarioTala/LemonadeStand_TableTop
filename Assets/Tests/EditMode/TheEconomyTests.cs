@@ -275,6 +275,52 @@ public void NonPerishableGoodsShouldNotExpire()
     Assert.AreEqual(expected_water_quantity, actual_water_quantity);
 }
 
+[Test]
+public void OnlyPerishableGoodsAtTheirExpiryPeriodShouldExpire()
+{
+    // Arrange
+    var company = ScriptableObject.CreateInstance<Company>();
+    company.Initialize("Company1", CompanyLevelEnum.Beginner);
+    test_economy.Register_Company(company);
+    company.BuyGood(lemon, 10, 3.0m,0);
+    lemon.ExpiresAfterPeriods=2;
+    var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, Rarity_enum.Common);
+    ripeLemon.ExpiresAfterPeriods=1;
+    company.BuyGood(ripeLemon, 10, 3.0m,0);
+    var expected_lemon_quantity = 10;
+    var expected_ripeLemon_quantity = 0;
+    // Act
+    test_economy.tradingPeriod = 0;
+    test_economy.EndTradingPeriod(); //ripe lemons should expire
+    var actualLemonEntries = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+    var actualRipeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.good_name).FirstOrDefault();
+    var actual_lemon_quantity = actualLemonEntries?.quantity??0;
+    var actual_ripeLemon_quantity = actualRipeLemonEntries?.quantity??0;
+    // Assert
+    Assert.AreEqual(expected_lemon_quantity, actual_lemon_quantity);
+    Assert.AreEqual(expected_ripeLemon_quantity, actual_ripeLemon_quantity);
+}
+
+[Test]
+public void TheSameGoodBoughtAtDifferentTimesExpiresAtDifferentPeriods()
+{
+    // Arrange
+    var company = ScriptableObject.CreateInstance<Company>();
+    company.Initialize("Company1", CompanyLevelEnum.Beginner);
+    test_economy.Register_Company(company);
+    company.BuyGood(lemon, 10, 3.0m,0);
+    lemon.ExpiresAfterPeriods=2;
+    company.BuyGood(lemon, 10, 3.0m,1);
+    var expected_lemon_quantity = 10;
+    // Act
+    test_economy.tradingPeriod = 0;
+    test_economy.EndTradingPeriod(); //First batch of lemons expires
+    var actual_lemon_entry = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+    var actual_lemon_quantity = actual_lemon_entry?.quantity??0;
+    // Assert
+    Assert.AreEqual(expected_lemon_quantity, actual_lemon_quantity);
+    }
+
 #endregion
     [TearDown]
     public void TearDown()

@@ -24,14 +24,17 @@ public class Inventory
     }
     public void Add_good_to_inventory(InventoryEntry entry)
     {
-        var existing_good_at_price = inventory_items.Find(item=> item.good.good_name == entry.good.good_name && item.acquisition_price == entry.acquisition_price);
-        if(existing_good_at_price == null)
+        var existingGoodAtPriceAndExpiry = inventory_items.Find(item=> item.good.good_name == entry.good.good_name 
+                                            && item.acquisition_price == entry.acquisition_price
+                                            && item.PeriodAcquired == entry.PeriodAcquired
+                                            );
+        if(existingGoodAtPriceAndExpiry == null)
         {
             inventory_items.Add(entry);
         }
         else
         {
-            existing_good_at_price.quantity += entry.quantity;
+            existingGoodAtPriceAndExpiry.quantity += entry.quantity;
         }
 
     }
