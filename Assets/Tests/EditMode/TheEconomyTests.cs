@@ -158,30 +158,26 @@ public class TheEconomyTests
         company2.Initialize("Company2", CompanyLevelEnum.Beginner);
         test_economy.Register_Company(company1);
         test_economy.Register_Company(company2);
-        company1.BuyGood(lemon, 10, 3.0m);
-        company1.BuyGood(water, 10, 1.0m);
-        company1.BuyGood(sugar, 10, 1.0m);
-        company2.BuyGood(lemon, 10, 1.0m);
-        company2.BuyGood(water, 10, 3.0m);
-        company2.BuyGood(sugar, 10, 1.0m);
+        company1.BuyGood(sugar, 10, 2.0m);
+        company2.BuyGood(sugar, 10, 2.0m);
         var expected_company1_cash = company1.Get_cash() - 2;
         var expected_company2_cash = company2.Get_cash() + 2;
-        var expected_company1_2flemon_quantity = 1;
-        var expected_company2_lemon_quantity = 10 - 1;
+        var expected_company1_sugar_quantity = 11;
+        var expected_company2_sugar_quantity = 10 - 1;
 
         // Act
-        var trade = new Trade(company1, company2, lemon, 1, 2.0m);
+        var trade = new Trade(company1, company2, sugar, 1, 2.0m);
         test_economy.Queue_Trade(trade);
         test_economy.EndTradingPeriod();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
-        var actual_company1_2flemon_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon"&& x.acquisition_price==2.0m).quantity;
-        var actual_company2_lemon_quantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").quantity;
+        var actual_company1_sugar_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.acquisition_price==2.0m).quantity;
+        var actual_company2_sugar_quantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar).quantity;
         // Assert
         Assert.AreEqual(expected_company1_cash, actual_company1_cash);
         Assert.AreEqual(expected_company2_cash, actual_company2_cash);
-        Assert.AreEqual(expected_company1_2flemon_quantity, actual_company1_2flemon_quantity);
-        Assert.AreEqual(expected_company2_lemon_quantity, actual_company2_lemon_quantity);
+        Assert.AreEqual(expected_company1_sugar_quantity, actual_company1_sugar_quantity);
+        Assert.AreEqual(expected_company2_sugar_quantity, actual_company2_sugar_quantity);
     }
 
     [Test]
