@@ -8,8 +8,7 @@ public class GoalTests
     public void GenerateGoals_creates_double_cash_goal_for_company_with_BasicGrowthStrategy()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner, new BasicGrowthStrategy());
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner, new BasicGrowthStrategy());
         company.companyStrategy.GenerateGoals(company);
         var expected_goal = new Goal("Double Initial Cash",
                                       "Double the initial cash of the company",
@@ -26,8 +25,7 @@ public class GoalTests
     public void GenerateGoals_creates_ten_lemonade_goal_for_company_with_BasicGrowthStrategy()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner, new BasicGrowthStrategy());
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner, new BasicGrowthStrategy());
         company.companyStrategy.GenerateGoals(company);
         var expected_goal = new Goal("Have 10 Lemonade",
                                       "Have 10 Lemonade in stock",

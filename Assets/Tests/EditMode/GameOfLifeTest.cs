@@ -67,8 +67,7 @@ public class GameOfLifeTest
         var numberOfCompanies = random.Next(1, 10);
         for (int i = 0; i < numberOfCompanies; i++)
         {
-            var company = ScriptableObject.CreateInstance<Company>();
-            company.Initialize("Company" + i, CompanyLevelEnum.Beginner);
+            var company = Company.Factory.Create("Company" + i, CompanyLevelEnum.Beginner);
             TheEconomy.Instance.Register_Company(company);
             Companies.Add(company);
         }

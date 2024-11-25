@@ -114,8 +114,7 @@ public class SupplyAndDemandTests
     public void CalculateFulfillmentRate_returns_1_when_demand_is_met()
     {
         // Arrange
-        var selling_company = ScriptableObject.CreateInstance<Company>();
-        selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         // Set up a market with demand for lemons
         Market MarketThatDemandsLemons = Market.Factory.CreateMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
         MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
@@ -137,8 +136,7 @@ public class SupplyAndDemandTests
     public void CalculateFulfillmentRates_returns_less_than_1_when_demand_is_not_met()
     {
         // Arrange
-        var selling_company = ScriptableObject.CreateInstance<Company>();
-        selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         //give the selling company some lemons
         selling_company.BuyGood(lemon, 500, 3.0m);
         TheEconomy.Instance.Register_Company(selling_company);
@@ -162,8 +160,7 @@ public class SupplyAndDemandTests
     {
         //Assert
         var expected_lemon_demand = 1400;
-        var selling_company = ScriptableObject.CreateInstance<Company>();
-        selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         TheEconomy.Instance.Register_Company(selling_company);
         //give the selling company some lemons
         selling_company.BuyGood(lemon, 900, 3.0m);
@@ -181,8 +178,7 @@ public class SupplyAndDemandTests
     {
         //Assert
         var expected_lemon_demand = 900;
-        var selling_company = ScriptableObject.CreateInstance<Company>();
-        selling_company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         TheEconomy.Instance.Register_Company(selling_company);
         //give the selling company some lemons
         selling_company.BuyGood(lemon, 1000, 3.0m);

@@ -16,8 +16,7 @@ public class CompanyTests
     public void Set_initial_cash_sets_cash_to_10000_for_beginner()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         const float expected_cash = 10000;
         //Act
         //Assert
@@ -27,8 +26,7 @@ public class CompanyTests
     public void Buy_good_when_buyer_has_enough_cash_removes_cash_from_buyer()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         const decimal trade_price = 3.0m;
         var expected_cash = 10000 - 3;
@@ -45,8 +43,7 @@ public class CompanyTests
     {
         //arrange
         const int PeriodIsIrrelevant = 0;
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         const decimal trade_price = 3.0m;
         var expected_inventory_entry = new InventoryEntry(good, 1, trade_price, PeriodIsIrrelevant);
@@ -67,8 +64,7 @@ public class CompanyTests
     public void Buy_good_when_buyer_doesnt_have_enough_cash_throws_exception()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         const decimal trade_price = 3.0m;
         const int trade_quantity = 10000;
@@ -80,8 +76,7 @@ public class CompanyTests
     public void Sell_good_when_seller_has_good_in_inventory_adds_cash_to_seller()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         company.BuyGood(good, 1,good.GetPrice());
         var initial_cash = company.Get_cash();
@@ -99,8 +94,7 @@ public class CompanyTests
     public void Sell_good_throws_exception_when_not_enough_quantity()
     {
         //arrange
-        var company = ScriptableObject.CreateInstance<Company>();
-        company.Initialize("Test Company", CompanyLevelEnum.Beginner);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         company.BuyGood(good, 1,good.GetPrice());
         var good_price = 3.0m;
@@ -113,8 +107,7 @@ public class CompanyTests
     public void QueueTradethrowsContextExceptionWhenActionContextIncomplete()
     {
         //Assert
-        var company1 = ScriptableObject.CreateInstance<Company>();
-        company1.Initialize("Company1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var lemon = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
         System.Exception actual=null;

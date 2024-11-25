@@ -22,7 +22,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     public iFixedCostStrategy FixedCostStrategy {get;set;}
     public decimal CalculateFixedCostsForPeriod(int period)
     {
-        return FixedCosts.Sum(x=>x.Amount);
+        return FixedCostStrategy.CalculateFixedCosts(FixedCosts,period);
     }
 #endregion
 
@@ -104,6 +104,16 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
             return market;
         }
+        
+        public static Market CreateMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy,iStrategy marketStrategy, iFixedCostStrategy fixedCostStrategy)
+        {
+            var market = CreateInstance<Market>();
+            market.Initialize(company_name, company_level,marketStrategy);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            market.FixedCostStrategy = fixedCostStrategy ?? throw new ArgumentNullException("Markets must have a fixed cost strategy");
+            return market;
+        }
+        
     }
 
     //demand_data represents the base demand for each good
