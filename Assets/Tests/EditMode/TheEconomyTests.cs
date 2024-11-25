@@ -249,6 +249,7 @@ public void PerishableGoodsShouldExpire()
     var expected_lemon_quantity = 0;
     // Act
     test_economy.tradingPeriod = 0;
+    test_economy.EndTradingPeriod(); //nothing expires yet, they just bought the goods
     test_economy.EndTradingPeriod(); //lemons should expire
     var lemon_entry = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
     var actual_lemon_quantity = lemon_entry?.quantity??0;
@@ -291,6 +292,7 @@ public void OnlyPerishableGoodsAtTheirExpiryPeriodShouldExpire()
     var expected_ripeLemon_quantity = 0;
     // Act
     test_economy.tradingPeriod = 0;
+    test_economy.EndTradingPeriod(); //nothing expires yet, they just bought the goods
     test_economy.EndTradingPeriod(); //ripe lemons should expire
     var actualLemonEntries = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
     var actualRipeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.good_name).FirstOrDefault();

@@ -68,7 +68,7 @@ public class TheEconomy : MonoBehaviour
         foreach(Trade trade in trade_queue)
             {
                 try{
-                    Process_trade(trade);
+                    Process_trade(trade,tradingPeriod);
                     _trade_logger.LogTrade(trade);
                     }
                 catch(SystemException e)
@@ -77,18 +77,12 @@ public class TheEconomy : MonoBehaviour
                     throw e;
                 }
             }
-
-        tradingPeriod++;
-
-        _trade_logger?.SaveDailySummary(trade_queue);
-        trade_queue.Clear();
-
         //Update prices
         foreach (var company in companies)
         {
             if(company is Market market)
             {
-                market.CalculateFulfillmentRates();
+                market.CalculateFulfillmentRates(tradingPeriod);
                 market.AdjustDemand();
                 market.UpdatePrices();
                 market.ConsumeGoods();
@@ -97,13 +91,20 @@ public class TheEconomy : MonoBehaviour
             {
                 company.ExpireGoods(tradingPeriod);//only companies' goods expire
             }
-            
+            company.UpdateCurrentPeriod(tradingPeriod);
           //  company.CheckCompanyGoals();
         };
+
+        tradingPeriod++;
+
+        foreach (var company in companies) company.UpdateCurrentPeriod(tradingPeriod);
+
+        _trade_logger?.SaveDailySummary(trade_queue);
+        trade_queue.Clear();
     }
 
 
-    private void Process_trade(Trade trade)
+    private void Process_trade(Trade trade, int tradingPeriod)
     {
        try{
             trade.seller.SellGood(trade.good, trade.quantity, trade.price,tradingPeriod);

@@ -5,17 +5,53 @@ using System;
 
 public class Market : ScriptableObject,iCompany,iPriceSetter
 {
+#region Identity
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField]private string _company_name;
-
-    private iStrategy MarketStrategy = null;
     public string company_name
     {
         get => _company_name;
         set => _company_name = value;
     }
-#region goals
+    public CompanyLevelEnum company_level;
+#endregion
+    private iStrategy MarketStrategy = null;
+
+#region fixed_costs
+    public List<FixedCost> FixedCosts {get;set;}
+    public iFixedCostStrategy FixedCostStrategy {get;set;}
+    public decimal CalculateFixedCostsForPeriod(int period)
+    {
+        return FixedCosts.Sum(x=>x.Amount);
+    }
+#endregion
+
+#region Financials
+    private decimal cash = 0;
+    public decimal Get_cash() => cash;
+    private void Set_Initial_Cash()
+    {
+        switch(company_level)
+        {
+            case CompanyLevelEnum.Beginner:
+                cash = 10000;
+                break;
+            case CompanyLevelEnum.Intermediate:
+                cash = 5000;
+                break;
+            case CompanyLevelEnum.Advanced:
+                cash = 1000;
+                break;  
+            case CompanyLevelEnum.Market:
+                cash = 1000000000000;
+                break;
+        }
+    }
+#endregion
+
+#region goals and strategies
     public List<Goal> Goals {get;set;}
+    public iDemandStrategy DemandStrategy;
     public void CompleteGoal(Goal goal)
         {
             throw new NotImplementedException();
@@ -26,16 +62,25 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
             throw new NotImplementedException();
         }
 #endregion
-    //Intrinsic members
-    private decimal cash = 0;
+
+#region Inventory Management
     private readonly Inventory inventory = new();
+    public Inventory GetInventory() => inventory;
+#endregion
 
-    public CompanyLevelEnum company_level;
-
+#region Time
+    public int StartingPeriod{get;set;}
+    public int CurrentPeriod{get;set;}
+    public void UpdateCurrentPeriod(int period)
+    {
+        CurrentPeriod = period;
+    }
+#endregion
+    
     //Market-specific members
     internal readonly List<MarketTrade> marketTradesInPeriod= new();
     private readonly List<iPriceModifier> price_modifiers= new();
-    public iDemandStrategy DemandStrategy;
+    
     public List<MarketData> MarketData = new();
 
     //Instantiate Markets using a factory
@@ -81,29 +126,16 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon), 1000);
     }
 
-    public Inventory GetInventory() => inventory;
-    
-    public decimal Get_cash() => cash;
-
-    private void Set_Initial_Cash()
+#region Price Setting
+    private decimal CalculateNewPrice(Good good)
     {
-        switch(company_level)
+        decimal price = good.GetPrice();
+        foreach(var modifier in price_modifiers)
         {
-            case CompanyLevelEnum.Beginner:
-                cash = 10000;
-                break;
-            case CompanyLevelEnum.Intermediate:
-                cash = 5000;
-                break;
-            case CompanyLevelEnum.Advanced:
-                cash = 1000;
-                break;  
-            case CompanyLevelEnum.Market:
-                cash = 1000000000000;
-                break;
+            price = modifier.Apply(price,good,this);
         }
+        return price;
     }
-
     public void SetPrice(Good good, decimal new_price)
     {
         good.Set_price(new_price);
@@ -116,17 +148,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
             SetPrice(entry.good,new_price); 
         }
     }
-
-    private decimal CalculateNewPrice(Good good)
-    {
-        decimal price = good.GetPrice();
-        foreach(var modifier in price_modifiers)
-        {
-            price = modifier.Apply(price,good,this);
-        }
-        return price;
-    }
-
+#endregion
 #region buy/sell, and helpers
     internal bool HasMoney(decimal money_needed)
     {
@@ -213,7 +235,6 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 #endregion
 #region Demand
-
     public void InitializeDemand(Good good, int InitialDemand,int MinDemand=0, int MaxDemand=1000000)
     {
         if(MarketDemand.ContainsKey(good))
@@ -235,7 +256,6 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
         
     }
-
     public void CalculateFulfillmentRates(int tradingPeriod=-1)
     {
         if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed

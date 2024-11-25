@@ -10,17 +10,50 @@ public class Company : ScriptableObject, iCompany
         get => _company_name;
         set => _company_name = value;
     }
+    public CompanyLevelEnum companyLevel;
 
-    public iStrategy companyStrategy {get; private set;}= null;
+#region Time
+    public int CurrentPeriod {get;set;}
+    public int StartingPeriod {get;set;}
+    public void UpdateCurrentPeriod(int period)
+    {
+        CurrentPeriod = period;
+    }
+#endregion
     
-    #region Action Economy
+#region Financials
+    private decimal cash = 0;
+    public decimal Get_cash() => cash;
+    private readonly float share_price;
+    private readonly int shares_outstanding;
+    public List<FixedCost> FixedCosts {get;set;} = new();
+    private void SetInitialCash()
+        {
+            switch(companyLevel)
+            {
+                case CompanyLevelEnum.Beginner:
+                    cash = 10000;
+                    break;
+                case CompanyLevelEnum.Intermediate:
+                    cash = 5000;
+                    break;
+                case CompanyLevelEnum.Advanced:
+                    cash = 1000;
+                    break;  
+                case CompanyLevelEnum.Market:
+                    cash = 1000000000000;
+                    break;
+            }
+        }
+    public iFixedCostStrategy FixedCostStrategy {get;set;} = null;
+#endregion    
+#region Action Economy
     private List<AllowedAction> allowedActions = new();
     private int actionsPerCycle;
     private int actionsRemaining = 0;
     public void ResetActions() => actionsRemaining = actionsPerCycle;
     public void SetActionsPerCycle(int actions) => actionsPerCycle = actions;
     public void AddAllowedAction(AllowedAction action) => allowedActions.Add(action);
-
     public void SetInitialActions()
     {
         switch(companyLevel)
@@ -40,16 +73,14 @@ public class Company : ScriptableObject, iCompany
         }
         ResetActions();
     }
+#endregion
 
-    #endregion
-
-    private readonly float share_price;
-    private readonly int shares_outstanding;
-    private decimal cash = 0;
     private readonly Inventory inventory = new();
-
+    public Inventory GetInventory() => inventory;
     public List<Recipe> Recipes{get; private set;} = new();
-#region Goals
+    public void Add_recipe(Recipe recipe)=>Recipes.Add(recipe);
+#region Goals and strategies
+    public iStrategy companyStrategy {get; private set;}= null;
     public List<Goal> Goals {get;set;} = new();
     public void CompleteGoal(Goal goal)
     {
@@ -68,9 +99,7 @@ public class Company : ScriptableObject, iCompany
 
     }
 #endregion 
-    public void Add_recipe(Recipe recipe)=>Recipes.Add(recipe);
-    public CompanyLevelEnum companyLevel;
-
+    
     public void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
         company_name = companyName;
@@ -82,35 +111,29 @@ public class Company : ScriptableObject, iCompany
         SetInitialActions();
     }
 
-    public Inventory GetInventory()
-    {
-        return inventory;
-    }
+    #region Fixed costs
 
-    public decimal Get_cash()
+    public decimal CalculateFixedCostsForPeriod(int period)
     {
-        return cash;
-    }
-
-    private void SetInitialCash()
-    {
-        switch(companyLevel)
+        decimal total = 0;
+        if(FixedCosts == null|| FixedCosts.Count == 0)
         {
-            case CompanyLevelEnum.Beginner:
-                cash = 10000;
-                break;
-            case CompanyLevelEnum.Intermediate:
-                cash = 5000;
-                break;
-            case CompanyLevelEnum.Advanced:
-                cash = 1000;
-                break;  
-            case CompanyLevelEnum.Market:
-                cash = 1000000000000;
-                break;
+            return total;
         }
+        foreach (var cost in FixedCosts)
+        {
+            if(cost.Frequency <1)
+            {
+                throw new ArgumentException("Frequency of fixed cost must be greater than 0");
+            }
+            if (((period - cost.PeriodAcquired)%cost.Frequency == 0) && period > cost.PeriodAcquired)
+            {
+                total += cost.Amount;
+            }
+        }
+        return total;
     }
-
+#endregion
 #region Buy/Sell and helper methods
     public void BuyGood(Good good, int quantity,decimal price,int period=0)
 //Currently public for testing purposes
@@ -177,10 +200,7 @@ public class Company : ScriptableObject, iCompany
             throw new RecipeException(e.Message);
         }
     }
-    public void ExpireGoods(int period)
-    {
-        inventory.ExpireGoods(period);
-    }
+    public void ExpireGoods(int period) => inventory.ExpireGoods(period);
 
 #region Market Actions
     public void QueueTrade(ActionContext context)
@@ -211,12 +231,9 @@ public class Company : ScriptableObject, iCompany
         }
         context.MarketToSubmitTo.PublishSpreadToMarket(context);
     }
-#endregion
+    #endregion
 #region Overrides
-    public override string ToString()
-    {
-        return company_name;
-    }
+    public override string ToString() => company_name;
 
     public override bool Equals(object other)
     {
@@ -226,36 +243,6 @@ public class Company : ScriptableObject, iCompany
         }
         return false;
     }
-
-    public override int GetHashCode()
-    {
-        return company_name.GetHashCode();
-    }
-    #endregion
+    public override int GetHashCode() => company_name.GetHashCode();
+#endregion
 }
-#region enums
-public enum CompanyLevelEnum
-{
-    Beginner,
-    Intermediate,
-    Advanced,
-    Market
-    }
-#endregion
-#region Exceptions
-    [Serializable]
-    public class Company_InventoryException : Exception
-    {
-        public Company_InventoryException(string message) : base(message)
-        {
-        }
-    }
-
-    [Serializable]
-    public class Company_InsufficientFundsException : Exception
-    {
-        public Company_InsufficientFundsException(string message) : base(message)
-        {
-        }
-    }
-#endregion

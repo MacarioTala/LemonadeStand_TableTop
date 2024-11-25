@@ -2,14 +2,37 @@ using System.Collections.Generic;
 
 public interface iCompany
 {
-    string company_name{get;set;}
-    List<Goal> Goals{get;set;}
-    void BuyGood(Good good, int quantity, decimal price,int period);
-    void SellGood(Good good, int quantity, decimal price,int period);
-    void Initialize(string company_name, CompanyLevelEnum company_level,iStrategy strategy);
-    void ExpireGoods(int period);
-    Inventory GetInventory();
-    decimal Get_cash();
-    void CompleteGoal(Goal goal);
-    void CheckCompanyGoals();
+    #region Identity
+        string company_name{get;set;}
+        void Initialize(string company_name, CompanyLevelEnum company_level,iStrategy strategy);
+    #endregion
+
+    #region Financials
+        List<FixedCost> FixedCosts {get;set;}    
+        iFixedCostStrategy FixedCostStrategy{get;set;}
+        decimal Get_cash();
+        decimal CalculateFixedCostsForPeriod(int period);
+    #endregion
+
+    #region Goals and strategies
+        List<Goal> Goals{get;set;}
+        void CheckCompanyGoals();
+        void CompleteGoal(Goal goal);
+    #endregion
+    
+    #region Inventory Management
+        void ExpireGoods(int period);
+        Inventory GetInventory();
+    #endregion
+
+    #region Time
+        int CurrentPeriod{get;set;} 
+        int StartingPeriod{get;set;}
+        void UpdateCurrentPeriod(int period);
+    #endregion
+    
+    #region Trading
+        void BuyGood(Good good, int quantity, decimal price,int period);
+        void SellGood(Good good, int quantity, decimal price,int period);
+    #endregion
 }
