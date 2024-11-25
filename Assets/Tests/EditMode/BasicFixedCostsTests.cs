@@ -2,13 +2,18 @@ using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
-public class FixedCostsTests
+public class BasicFixedCostsTests
 {
+    /// <summary>
+    /// Note: All of these tests use the BasicFixedCost Strategy implementation
+    /// It was too much trouble to refactor the tests to just test the BasicFixedCost Strategy
+    /// If a kind soul wants to refactor the tests to JUST test the BasicFixedCost Strategy, please do so
+    /// </summary>
     [Test]
     public void CalcFixedCostsForPeriodSumsAllValidCosts()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         
         var rent = new FixedCost
         {
@@ -39,7 +44,7 @@ public class FixedCostsTests
     public void WhenCalculatingForPeriod2FixedCostsShouldIgnoreCostsWithFrequency2()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         var rent = new FixedCost
         {
             Description = "Rent",
@@ -69,7 +74,7 @@ public class FixedCostsTests
     public void WhenCalculatingForPeriod2FixedCostsShouldIgnoreCostsAcquiredInPeriod2()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         var rent = new FixedCost
         {
             Description = "Rent",
@@ -98,7 +103,7 @@ public class FixedCostsTests
     public void FixedCostsWithInvalidFrequencyShouldThrowException()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         var rent = new FixedCost
         {
             Description = "Rent",
@@ -115,7 +120,7 @@ public class FixedCostsTests
     public void IfMultipleFixedCostsExistAcquiredInMultiplePeriodsOnlySumValidCosts()
     {
         //arrange
-       var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+       var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         var rent = new FixedCost
         {
             Description = "Rent",
@@ -173,7 +178,7 @@ public class FixedCostsTests
     public void FixedCostsForFreq2AcquiredOnP1IsNotIncludedInP4()
     {
         //arrange
-       var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+       var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         var rent = new FixedCost
         {
             Description = "Rent",
@@ -194,7 +199,7 @@ public class FixedCostsTests
     public void IfFixedCostsAreEmptyReturnZero()
     {
         //arrange
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner,null, new BasicFixedCostStrategy());
         var period = 4;
         var expected = 0m;
         //act
