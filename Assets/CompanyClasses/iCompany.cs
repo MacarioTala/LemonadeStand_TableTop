@@ -4,7 +4,6 @@ public interface iCompany
 {
     #region Identity
         string company_name{get;set;}
-        void Initialize(string company_name, CompanyLevelEnum company_level,iStrategy strategy);
     #endregion
 
     #region Financials

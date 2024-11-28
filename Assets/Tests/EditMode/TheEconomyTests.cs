@@ -211,12 +211,12 @@ public class TheEconomyTests
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
         test_economy.Register_Company(company1);
         test_economy.Register_Company(company2);
-        company1.BuyGood(lemon, 3000, 1.0m);
+        company1.BuyGood(lemon, 4000, 1.0m);
         const string expected="Insufficient funds to buy good";
         string actual=null;
         // Act
         try{
-        TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 1000, 3.0m));
+        TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 4000, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         }
         catch(Exception e)

@@ -122,7 +122,9 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     //then be affected by market forces
     public Dictionary<Good, DemandData> MarketDemand = new();
 
-    public void Initialize(string companyName, CompanyLevelEnum companyLevel,iStrategy strategy)
+    internal void Initialize(string companyName,
+                             CompanyLevelEnum companyLevel,
+                             iStrategy strategy)
     {
         company_name = companyName;
         company_level = companyLevel;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public class Company : ScriptableObject, iCompany
 {
@@ -14,7 +15,7 @@ public class Company : ScriptableObject, iCompany
     public CompanyLevelEnum companyLevel;
 
     private Company(){}
-    public void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
+    internal void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
         company_name = companyName;
         companyLevel = company_level;
@@ -178,8 +179,13 @@ public class Company : ScriptableObject, iCompany
 
     internal bool HasGood(Good good, int quantity)
     {
-        var goods = inventory.GetInventoryEntries();
-        var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
+        // var goods = inventory.GetInventoryEntries();
+        // var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
+        var good_in_inventory = inventory.GetInventoryEntriesByGood(good.good_name).FirstOrDefault();
+        if(good_in_inventory == null)
+        {
+            return false;
+        }
         return good_in_inventory != null && good_in_inventory.quantity >= quantity;
     }
 
