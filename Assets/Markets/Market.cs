@@ -80,8 +80,6 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     //Market-specific members
     internal readonly List<MarketTrade> marketTradesInPeriod= new();
     private readonly List<iPriceModifier> price_modifiers= new();
-    
-    public List<MarketData> MarketData = new();
 
     //Instantiate Markets using a factory
     private Market()
@@ -306,54 +304,132 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 #endregion
 #region Publishing
-
-//remember to call CalculateMarketData as part of TheEconomy.Instance.ExecuteDailyTrades.
-public void CalculateMarketData()
-{
-    var temporaryPriceIncrease = .01m;
-    foreach(var entry in inventory.GetInventoryEntries())
+    public List<MarketData> MarketData = new();//bid/ask spread for companies
+    //remember to call CalculateMarketData as part of TheEconomy.Instance.ExecuteDailyTrades.
+    public void CalculateMarketData()
     {
-        var data = new MarketData
+        var temporaryPriceIncrease = .01m;
+        foreach(var entry in inventory.GetInventoryEntries())
         {
-            Company = this,
-            Bid = entry.good.GetPrice(),
-            Ask = entry.good.GetPrice() * (1 + temporaryPriceIncrease),
-            Good = entry.good
-        };
-        MarketData.Add(data);
+            var data = new MarketData
+            {
+                Company = this,
+                Bid = entry.good.GetPrice(),
+                Ask = entry.good.GetPrice() * (1 + temporaryPriceIncrease),
+                Good = entry.good
+            };
+            MarketData.Add(data);
+        }
     }
-}
-public List<MarketData> PublishMarketData()=>MarketData;
+    public List<MarketData> PublishMarketData()=>MarketData;
 
-public void PublishSpreadToMarket(ActionContext context)
-{
-    var MarketToSubmitTo = this;
-    var good = context.GoodToSubmit;
-    var bid = context.BidToSubmit;
-    var ask = context.AskToSubmit;
-    var submittingCompany = context.SubmittingCompany;
+    public void PublishSpreadToMarket(ActionContext context)
+    {
+        var MarketToSubmitTo = this;
+        var good = context.GoodToSubmit;
+        var bid = context.BidToSubmit;
+        var ask = context.AskToSubmit;
+        var submittingCompany = context.SubmittingCompany;
 
-    var isGoodInMarketData = MarketData.Any(x=>x.Good==good && x.Company.Equals(submittingCompany));
-    if(isGoodInMarketData)
-    {
-        var marketData = MarketData.First(x=>x.Good==good && x.Company.Equals(submittingCompany));
-        marketData.Bid = bid;
-        marketData.Ask = ask;
-    }
-    else
-    {
-        var data = new MarketData
+        var isGoodInMarketData = MarketData.Any(x=>x.Good==good && x.Company.Equals(submittingCompany));
+        if(isGoodInMarketData)
         {
-            Company = submittingCompany,
-            Good = good,
-            Bid = bid,
-            Ask = ask
-        };
-        MarketData.Add(data);
+            var marketData = MarketData.First(x=>x.Good==good && x.Company.Equals(submittingCompany));
+            marketData.Bid = bid;
+            marketData.Ask = ask;
+        }
+        else
+        {
+            var data = new MarketData
+            {
+                Company = submittingCompany,
+                Good = good,
+                Bid = bid,
+                Ask = ask
+            };
+            MarketData.Add(data);
+        }
     }
-}
 #endregion
-
+#region Interacting with the Economy
+    public List<Company> CompaniesInThisMarket = new();
+    private readonly List<Trade> TradesSentToTheMarket = new();
+    public List<Trade> TradesToSendToTheEconomy = new();
+    public void RegisterCompany(Company company)
+    {
+        if(!CompaniesInThisMarket.Contains(company))
+        {
+            CompaniesInThisMarket.Add(company);
+        }
+        else
+        {
+            throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
+        }
+        TheEconomy.Instance.RegisterCompany(company);
+    }
+    public void QueueOrder(ActionContext context)
+    {
+        var trade = new Trade(buyer: context.Buyer,
+                              seller: context.Seller,
+                              good: context.GoodToBuy,
+                              quantity: context.Quantity,
+                              price: context.Price
+                            );
+        TradesSentToTheMarket.Add(trade);
+    }
+    public void SendTradesToEconomy()
+    {
+        //Adjust this later to have different demand fulfilment strategies
+        //For now, make it random
+        
+        //Consume produced goods
+        BuyProducedGoods();
+        //Send all other trades to the economy
+        foreach(var trade in TradesSentToTheMarket)
+        {
+            if(!trade.good.IsProducedGood)
+            {
+                TradesToSendToTheEconomy.Add(trade);
+            }
+        }
+    }
+    public void BuyProducedGoods()//Currently public for testing purposes
+    {
+        foreach(var good in MarketDemand.Keys.Where(good=>good.IsProducedGood))
+        {
+            var remainingDemand = MarketDemand[good].CurrentDemand;       
+            var quantitySuppliedByTrades = 
+                        TradesSentToTheMarket.Where(trade=>trade.good == good).Sum(trade=>trade.quantity);
+            if(quantitySuppliedByTrades <= remainingDemand)
+            {
+                //Send all trades for this good to the economy, with the market as a buyer
+                foreach(var trade in TradesSentToTheMarket.Where(trade=>trade.good == good))
+                {
+                    trade.buyer = this;
+                    TradesToSendToTheEconomy.Add(trade);
+                    remainingDemand -= trade.quantity;
+                }
+            }
+            else
+            {
+                //Shuffle the companies in the trades 
+                //and randomly buy trades until demand is met
+                var trades = TradesSentToTheMarket.Where(trade=>trade.good == good).ToList();
+                trades = trades.Shuffle();
+                while(remainingDemand > 0)
+                {
+                    foreach(var trade in trades)
+                    {
+                        //Fill order as if market order
+                        //FillOrder(trade,remainingDemand,fillPercentage); 
+                        throw new NotImplementedException();
+                    }
+                }
+            }
+        }
+    }
+        
+#endregion
 public void ExpireGoods(int period)
 {
     //inventory.ExpireGoods(period); //maybe goods in market just don't expire?

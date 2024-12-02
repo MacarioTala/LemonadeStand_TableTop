@@ -82,7 +82,7 @@ public class TheEconomyTests
         company.company_name = "Test Company";
         var expected = test_economy.companies.Count + 1;
         // Act
-        test_economy.Register_Company(company);
+        test_economy.RegisterCompany(company);
         var actual = test_economy.companies.Count;
         
         // Assert
@@ -94,12 +94,12 @@ public class TheEconomyTests
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
         company.company_name = "Test Company";
-        test_economy.Register_Company(company);
+        test_economy.RegisterCompany(company);
         var company2 = ScriptableObject.CreateInstance<Company>();
         company2.company_name = "Test Company";
         // Act
         // Assert
-        Assert.Throws<TheEconomy_CompanyException>(() => test_economy.Register_Company(company2));
+        Assert.Throws<TheEconomy_CompanyException>(() => test_economy.RegisterCompany(company2));
     }
 
     [Test]
@@ -130,7 +130,7 @@ public class TheEconomyTests
         var lemonsCompanyWillSellToMarket = 500;
         test_initial_market.BuyGood(lemon,initialLemons,3.0m);
         var test_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(test_company);
+        test_economy.RegisterCompany(test_company);
         test_company.BuyGood(lemon,1000,2.0m);
         var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
         //next line is necessary because of different demand strategies 
@@ -153,8 +153,8 @@ public class TheEconomyTests
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company1);
-        test_economy.Register_Company(company2);
+        test_economy.RegisterCompany(company1);
+        test_economy.RegisterCompany(company2);
         company1.BuyGood(sugar, 10, 2.0m);
         company2.BuyGood(sugar, 10, 2.0m);
         var expected_company1_cash = company1.Get_cash() - 2;
@@ -183,8 +183,8 @@ public class TheEconomyTests
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company1);
-        test_economy.Register_Company(company2);
+        test_economy.RegisterCompany(company1);
+        test_economy.RegisterCompany(company2);
         var expected = "Company does not have enough of the good to sell";
         string actual = null;
         
@@ -209,8 +209,8 @@ public class TheEconomyTests
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company1);
-        test_economy.Register_Company(company2);
+        test_economy.RegisterCompany(company1);
+        test_economy.RegisterCompany(company2);
         company1.BuyGood(lemon, 4000, 1.0m);
         const string expected="Insufficient funds to buy good";
         string actual=null;
@@ -234,7 +234,7 @@ public void PerishableGoodsShouldExpire()
 {
     // Arrange
     var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-    test_economy.Register_Company(company);
+    test_economy.RegisterCompany(company);
     company.BuyGood(lemon, 10, 3.0m,0);
     company.BuyGood(water, 10, 1.0m,0);
     company.BuyGood(sugar, 10, 1.0m,0);
@@ -254,7 +254,7 @@ public void NonPerishableGoodsShouldNotExpire()
 {
      // Arrange
     var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-    test_economy.Register_Company(company);
+    test_economy.RegisterCompany(company);
     company.BuyGood(lemon, 10, 3.0m,0);
     company.BuyGood(water, 10, 1.0m,0);
     company.BuyGood(sugar, 10, 1.0m,0);
@@ -272,7 +272,7 @@ public void OnlyPerishableGoodsAtTheirExpiryPeriodShouldExpire()
 {
     // Arrange
     var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-    test_economy.Register_Company(company);
+    test_economy.RegisterCompany(company);
     company.BuyGood(lemon, 10, 3.0m,0);
     lemon.ExpiresAfterPeriods=2;
     var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, Rarity_enum.Common);
@@ -298,7 +298,7 @@ public void TheSameGoodBoughtAtDifferentTimesExpiresAtDifferentPeriods()
 {
     // Arrange
     var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-    test_economy.Register_Company(company);
+    test_economy.RegisterCompany(company);
     company.BuyGood(lemon, 10, 3.0m,0);
     lemon.ExpiresAfterPeriods=2;
     company.BuyGood(lemon, 10, 3.0m,1);

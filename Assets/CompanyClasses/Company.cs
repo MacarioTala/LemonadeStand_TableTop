@@ -179,8 +179,6 @@ public class Company : ScriptableObject, iCompany
 
     internal bool HasGood(Good good, int quantity)
     {
-        // var goods = inventory.GetInventoryEntries();
-        // var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
         var good_in_inventory = inventory.GetInventoryEntriesByGood(good.good_name).FirstOrDefault();
         if(good_in_inventory == null)
         {
@@ -213,7 +211,7 @@ public class Company : ScriptableObject, iCompany
     }
 #endregion
 #region Market Actions
-    public void QueueTrade(ActionContext context)
+    public void QueueOrder(ActionContext context)
     {
         var seller = context.Seller;
         Trade trade;

@@ -110,9 +110,9 @@ public class MarketTests
         // Arrange
         const int expected_number_of_entries = 1;
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company1);
+        test_economy.RegisterCompany(company1);
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company2);
+        test_economy.RegisterCompany(company2);
         company1.BuyGood(lemon, 10,3.0m);
         company2.BuyGood(lemon, 10,3.0m);
         test_initial_market.BuyGood(lemon, 1000, 3.0m);
@@ -134,7 +134,7 @@ public class MarketTests
    {
        // Arrange
        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-       test_economy.Register_Company(company);
+       test_economy.RegisterCompany(company);
        System.Exception actual=null;
        var context = new ActionContext{Recipe = lemonade_recipe, QuantityToMake = 1};
        // Act
@@ -174,7 +174,7 @@ public class MarketTests
     {
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company1);
+        test_economy.RegisterCompany(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon, MarketToSubmitTo = test_initial_market};
         var expected = new List<MarketData>{new() { Good = lemon, Company = company1, Bid = 2.0m, Ask = 3.0m}};
         //Act
@@ -189,7 +189,7 @@ public class MarketTests
     {
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        test_economy.Register_Company(company1);
+        test_economy.RegisterCompany(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
         System.Exception actual=null;
         //Act

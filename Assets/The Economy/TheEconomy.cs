@@ -55,7 +55,7 @@ public class TheEconomy : MonoBehaviour
                             "The First Market", 
                             CompanyLevelEnum.Market, 
                             new LinearDemandStrategy());
-        Register_Company(InitialMarket);
+        RegisterCompany(InitialMarket);
     }
 
     public void Queue_Trade(Trade trade)
@@ -122,7 +122,7 @@ public class TheEconomy : MonoBehaviour
        
     }
 
-    public void Register_Company(iCompany company)
+    public void RegisterCompany(iCompany company)
     {
         if(!companies.Any(x=>x.company_name == company.company_name))
         {

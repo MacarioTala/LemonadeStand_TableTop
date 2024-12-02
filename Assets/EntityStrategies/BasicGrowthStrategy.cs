@@ -35,11 +35,11 @@ public class BasicGrowthStrategy : iStrategy
         switch(context.Action)
         {
             case ActionEnum.QueueTradeBuy:
-                context.Buyer.QueueTrade(context);
+                context.Buyer.QueueOrder(context);
                 break;
 
             case ActionEnum.QueueTradeSell:
-                context.Seller.QueueTrade(context);
+                context.Seller.QueueOrder(context);
                 break;
 
             case ActionEnum.MakeRecipe:

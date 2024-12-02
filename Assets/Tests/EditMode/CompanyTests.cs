@@ -115,7 +115,7 @@ public class CompanyTests
         //Act
         try
         {
-            company1.QueueTrade(context);
+            company1.QueueOrder(context);
         }
         catch (System.Exception e)
         {

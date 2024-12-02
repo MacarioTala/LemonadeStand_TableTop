@@ -33,5 +33,7 @@ public interface iCompany
     #region Trading
         void BuyGood(Good good, int quantity, decimal price,int period);
         void SellGood(Good good, int quantity, decimal price,int period);
+
+        void QueueOrder(ActionContext context);
     #endregion
 }

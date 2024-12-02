@@ -68,7 +68,7 @@ public class GameOfLifeTest
         for (int i = 0; i < numberOfCompanies; i++)
         {
             var company = Company.Factory.Create("Company" + i, CompanyLevelEnum.Beginner);
-            TheEconomy.Instance.Register_Company(company);
+            TheEconomy.Instance.RegisterCompany(company);
             Companies.Add(company);
         }
         foreach (var company in Companies)
