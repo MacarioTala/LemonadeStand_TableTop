@@ -48,7 +48,9 @@ public class MarketTests
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
         lemonade = Good.CreateInstance("Lemonade", band2, Rarity_enum.Uncommon);
-        lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), 
+        lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
+                                     product: lemonade, 
+                                     ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
                                                                         new(water, 7) });                
         test_goods.Add(lemon);

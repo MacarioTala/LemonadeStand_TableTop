@@ -111,6 +111,14 @@ public class Company : ScriptableObject, iCompany
     private readonly Inventory inventory = new();
     public Inventory GetInventory() => inventory;
     public List<Recipe> Recipes{get; private set;} = new();
+
+    public void AddRecipe(Recipe recipe)
+    {
+        if(!Recipes.Contains(recipe))
+        {
+            Recipes.Add(recipe);
+        }
+    }
     public void Add_recipe(Recipe recipe)=>Recipes.Add(recipe);
      public void MakeRecipe(ActionContext context)
     {
@@ -124,7 +132,9 @@ public class Company : ScriptableObject, iCompany
         {
             var totalCost = recipe.GetCostPerUnit(inventory)*quantity;
             var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
-            inventory.Add_good_to_inventory(new InventoryEntry(product, product_quantity, totalCost,context.Period));
+            var inventoryEntryToAdd=new InventoryEntry(product, product_quantity, totalCost,context.Period);
+            inventoryEntryToAdd.SetRecipe(recipe);
+            inventory.Add_good_to_inventory(inventoryEntryToAdd);
         }
         catch(RecipeException e)
         {

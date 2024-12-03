@@ -4,11 +4,13 @@ using System.Linq;
 
 public class Recipe
 {
+        public string RecipeName;
         private readonly List<Ingredient> ingredients;
         private readonly Good product;
 
-    public Recipe(Good product, List<Ingredient> ingredients)
+    public Recipe(string RecipeName,Good product, List<Ingredient> ingredients)
         {
+            this.RecipeName = RecipeName;
             this.product = product;
             this.ingredients = ingredients;
         }
@@ -48,18 +50,18 @@ public class Recipe
                 return (product, quantity);
             }
         }
-    public override string ToString() => product.good_name;
+    public override string ToString() => RecipeName;
 
     public override bool Equals(object other)
     {
         if (other is Recipe other_recipe)
         {
-            return product.good_name == other_recipe.product.good_name;
+            return RecipeName == other_recipe.RecipeName;
         }
         return false;
     }
 
-    public override int GetHashCode() => product.good_name?.GetHashCode() ?? 0;
+    public override int GetHashCode() => RecipeName?.GetHashCode() ?? 0;
 
     public decimal GetCostPerUnit(Inventory inventory)
     {

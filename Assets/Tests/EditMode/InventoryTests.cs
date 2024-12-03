@@ -240,7 +240,9 @@ public class InventoryTests
         test_inventory.Add_good_to_inventory(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
         
-        var lemonade_recipe = new Recipe(lemonade, new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
+        var lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
+                                         product: lemonade, 
+                                        ingredients: new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 1;
         var expected_inventory = new List<InventoryEntry> { new(lemon, 1, 1.0m,PeriodIsIrrelevant), new(sugar, 8, 1.0m,PeriodIsIrrelevant), new(water, 3, 1.0m,PeriodIsIrrelevant) };
         //act

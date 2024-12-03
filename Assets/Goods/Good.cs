@@ -22,7 +22,7 @@ public class Good : ScriptableObject
     public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
     public int price_decrease_threshold; //ibid
 
-    [SerializeField] private List<Good> _substitute_goods = new();
+    [SerializeField] private readonly List<Good> _substitute_goods = new();
 
 
     public static Good CreateInstance(  string good_name, 

@@ -113,13 +113,6 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
         
     }
-
-    //demand_data represents the base demand for each good
-    //outside of that demanded by companies
-    //It is used to 'seed' the market with an initial demand that will
-    //then be affected by market forces
-    public Dictionary<Good, DemandData> MarketDemand = new();
-
     internal void Initialize(string companyName,
                              CompanyLevelEnum companyLevel,
                              iStrategy strategy)
@@ -137,6 +130,11 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 
 #region Price Setting
+    private decimal CalculateAskForProducedGood(Good good)
+    {
+        throw new NotImplementedException();
+    }
+        
     private decimal CalculateNewPrice(Good good)
     {
         decimal price = good.GetPrice();
@@ -245,6 +243,11 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     }
 #endregion
 #region Demand
+    //demand_data represents the base demand for each good
+    //outside of that demanded by companies
+    //It is used to 'seed' the market with an initial demand that will
+    //then be affected by market forces
+    public Dictionary<Good, DemandData> MarketDemand = new();
     public void InitializeDemand(Good good, int InitialDemand,int MinDemand=0, int MaxDemand=1000000)
     {
         if(MarketDemand.ContainsKey(good))
@@ -255,12 +258,14 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
         else
         {
+            var ask = good.IsProducedGood ? CalculateAskForProducedGood(good):good.GetPrice();
             var demandData = new DemandData
                             { 
                                 CurrentDemand = InitialDemand,
                                 FulfilmentRate = 0f,
                                 MinDemand = MinDemand,
-                                MaxDemand = MaxDemand
+                                MaxDemand = MaxDemand,
+                                Ask = ask
                             };
             MarketDemand.Add(good, demandData);
         }

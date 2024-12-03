@@ -57,7 +57,9 @@ public class GameOfLifeTest
         var lemonIngredient = new Ingredient(Lemon, 1);
         var waterIngredient = new Ingredient(Water, 5);
         var sugarIngredient = new Ingredient(Sugar, 2);
-        LemonadeRecipe = new Recipe(Lemonade, new List<Ingredient> { lemonIngredient, waterIngredient, sugarIngredient });
+        LemonadeRecipe = new Recipe(RecipeName:"Basic Lemonade",
+                                    product:Lemonade, 
+                                    ingredients:new List<Ingredient> { lemonIngredient, waterIngredient, sugarIngredient });
     }
 
     private void CreateTestCompanies()
