@@ -66,6 +66,24 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
 #region Inventory Management
     private readonly Inventory inventory = new();
     public Inventory GetInventory() => inventory;
+    private List<Recipe> Recipes = new();
+    public List<Recipe> GetRecipes()=>Recipes;
+    private Recipe GetRecipeForGood(Good good)
+    {
+       return Recipes.Where(recipe=>recipe.GetProduct().Equals(good)).FirstOrDefault();
+    }
+    public void AddRecipe(Recipe recipe)
+    {
+        if(Recipes.Contains(recipe))
+        {
+            throw new System.Exception("Recipe already exists in company");
+        }
+        else
+        {
+            Recipes.Add(recipe);
+        }
+    }
+
 #endregion
 
 #region Time
@@ -76,11 +94,12 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         CurrentPeriod = period;
     }
 #endregion
-    
+
     //Market-specific members
     internal readonly List<MarketTrade> marketTradesInPeriod= new();
     private readonly List<iPriceModifier> price_modifiers= new();
 
+#region Creation
     //Instantiate Markets using a factory
     private Market()
     {
@@ -111,7 +130,15 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
             market.FixedCostStrategy = fixedCostStrategy ?? throw new ArgumentNullException("Markets must have a fixed cost strategy");
             return market;
         }
-        
+
+        public static Market CreateStarterMarket(string company_name, CompanyLevelEnum company_level,iDemandStrategy demandStrategy)
+        {
+            var market = CreateInstance<Market>();
+            market.SeedWithInitialGoods();
+            market.Initialize(company_name, company_level,null);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            return market;
+        }
     }
     internal void Initialize(string companyName,
                              CompanyLevelEnum companyLevel,
@@ -123,16 +150,50 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         //setup
         Set_Initial_Cash();
         price_modifiers.Add(new SupplyDemandModifier());
+        CreateStarterDemand();
+
+    }
+
+    private void CreateStarterDemand()
+    {
         //Initialize demand data
         //If no demand data is passed, demand defaults to 1000 units of Lemonade
         //This is a placeholder and will be replaced with a more sophisticated system
-        InitializeDemand(Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon), 1000);
+        var lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
+        lemonade.IsProducedGood = true;
+        InitializeDemand(lemonade, 1000);
     }
 
+    private void SeedWithInitialGoods()
+    {
+        var Lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
+        var Lemon = Good.CreateInstance("Lemon", new Price_band(1.0m, 3.0m), Rarity_enum.Common);
+        var Sugar = Good.CreateInstance("Sugar", new Price_band(1.0m, 2.0m), Rarity_enum.Common);
+        var Water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
+        inventory.Add_good_to_inventory(new InventoryEntry(Lemon, 10000, 2.0m, 0));
+        inventory.Add_good_to_inventory(new InventoryEntry(Sugar, 10000, 1.5m, 0));
+        inventory.Add_good_to_inventory(new InventoryEntry(Water, 10000, .75m, 0));
+        var LemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
+                                        product: Lemonade,
+                                        ingredients: new List<Ingredient> { new(Lemon, 9),
+                                                                           new(Sugar, 2),
+                                                                           new(Water, 7) });
+        AddRecipe(LemonadeRecipe);
+    }
+#endregion
 #region Price Setting
     private decimal CalculateAskForProducedGood(Good good)
     {
-        throw new NotImplementedException();
+        var recipeToUse = GetRecipeForGood(good);
+
+        if(recipeToUse == null)
+        {
+            throw new Exception("No recipe found for "+good.good_name);
+        }
+        var costPerUnit = recipeToUse.GetCostPerUnit(inventory);
+        var rng = (double)UnityEngine.Random.Range(.01f,.15f);
+        var ask = costPerUnit * 1+(decimal)rng;
+        return ask;
     }
         
     private decimal CalculateNewPrice(Good good)
@@ -250,15 +311,25 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
     public Dictionary<Good, DemandData> MarketDemand = new();
     public void InitializeDemand(Good good, int InitialDemand,int MinDemand=0, int MaxDemand=1000000)
     {
+        decimal ask;
+        if(good.IsProducedGood && GetRecipeForGood(good)!=null)
+        {
+            ask=CalculateAskForProducedGood(good);
+        }
+        else
+        {
+            ask = good.GetPrice();
+        }
+
         if(MarketDemand.ContainsKey(good))
         {
             MarketDemand[good].CurrentDemand = InitialDemand;
             MarketDemand[good].MinDemand = MinDemand;
             MarketDemand[good].MaxDemand = MaxDemand;
+            MarketDemand[good].Ask = ask;
         }
         else
         {
-            var ask = good.IsProducedGood ? CalculateAskForProducedGood(good):good.GetPrice();
             var demandData = new DemandData
                             { 
                                 CurrentDemand = InitialDemand,
@@ -271,6 +342,7 @@ public class Market : ScriptableObject,iCompany,iPriceSetter
         }
         
     }
+
     public void CalculateFulfillmentRates(int tradingPeriod=-1)
     {
         if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed

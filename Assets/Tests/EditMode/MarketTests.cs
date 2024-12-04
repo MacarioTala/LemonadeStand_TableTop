@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using UnityEngine;
 
 [TestFixture]
@@ -136,7 +135,10 @@ public class MarketTests
    {
        // Arrange
        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-       test_economy.RegisterCompany(company);
+       company.BuyGood(lemon, 10,3.0m);
+       company.BuyGood(sugar, 10,3.0m);
+       company.BuyGood(water, 10,3.0m);
+       var expectedText = "not found in company's recipe book";
        System.Exception actual=null;
        var context = new ActionContext{Recipe = lemonade_recipe, QuantityToMake = 1};
        // Act
@@ -150,6 +152,7 @@ public class MarketTests
         }
         // Assert
         Assert.That(actual, Is.TypeOf<RecipeException>());
+        StringAssert.Contains(expectedText, actual.Message);
     }
 
    #endregion
@@ -208,12 +211,41 @@ public class MarketTests
     }
                                
    #endregion
+   #region Pricing Tests
+   [Test]
+   public void AskForAGoodShouldExceedCost()
+   {
+         // Arrange
+        var testMarket = Market.Factory.CreateMarket(company_name: "TestMarket", 
+                                                    company_level: CompanyLevelEnum.Market,
+                                                    demandStrategy: new LinearDemandStrategy());
+        var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, Rarity_enum.Uncommon);
+        enhancedlemonade.IsProducedGood = true;
+        var enhancedLemonadeRecipe = new Recipe(RecipeName: "Enhanced Lemonade",
+                                     product: enhancedlemonade, 
+                                     ingredients: new List<Ingredient> { new(lemon, 9), 
+                                                                        new(sugar, 2), 
+                                                                        new(water, 7) });
+        testMarket.BuyGood(lemon, 1000, 3.0m);
+        testMarket.BuyGood(sugar, 1000, 3.0m);
+        testMarket.BuyGood(water, 1000, 3.0m);
+        testMarket.AddRecipe(enhancedLemonadeRecipe);
+        testMarket.InitializeDemand(enhancedlemonade, 1000);
+        var costPerUnit = 9 * 3.0m + 2 * 3.0m + 7 * 3.0m;
+        // Act
+        var actual = testMarket.MarketDemand[enhancedlemonade].Ask;
+        // Assert
+        Assert.Greater(actual, costPerUnit);
+        Debug.Log($"Cost per unit: {costPerUnit}" + " Ask: " + actual);
+   }
+   #endregion
+
     [TearDown]
     public void TearDown()
     {
-        UnityEngine.Object.DestroyImmediate(lemon);
-        UnityEngine.Object.DestroyImmediate(water);
-        UnityEngine.Object.DestroyImmediate(sugar);
-        UnityEngine.Object.DestroyImmediate(test_economy);
+        Object.DestroyImmediate(lemon);
+        Object.DestroyImmediate(water);
+        Object.DestroyImmediate(sugar);
+        Object.DestroyImmediate(test_economy);
     }
 }

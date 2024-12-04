@@ -262,11 +262,6 @@ public class InventoryTests
                     );
         }
     }
-    [Test]
-    public void If_goods_at_multiple_prices_exist_ask_which_batch_to_sell()
-    {
-        throw new System.NotImplementedException();
-    }
 
     [Test]
     public void TryConsumeGood_returns_0_if_good_is_available_at_specified_quantity()

@@ -7,6 +7,7 @@ public class Recipe
         public string RecipeName;
         private readonly List<Ingredient> ingredients;
         private readonly Good product;
+        public Good GetProduct() => product;
 
     public Recipe(string RecipeName,Good product, List<Ingredient> ingredients)
         {
