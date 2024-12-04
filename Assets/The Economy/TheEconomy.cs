@@ -124,7 +124,7 @@ public class TheEconomy : MonoBehaviour
 
     public void RegisterCompany(iCompany company)
     {
-        if(!companies.Any(x=>x.company_name == company.company_name))
+        if(!companies.Any(x=>x.Name == company.Name))
         {
             companies.Add(company);
         }

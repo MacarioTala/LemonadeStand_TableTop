@@ -14,9 +14,9 @@ public class BasicGrowthStrategy : iStrategy
         var doubleCashGoal = new Goal("Double Initial Cash",
                                       "Double the initial cash of the company",
                                       null,
-                                      (c,g) => g.SetOriginalValue("InitialCash",c.Get_cash())
+                                      (c,g) => g.SetOriginalValue("InitialCash",c.GetCash())
                                       );
-        doubleCashGoal.IsGoalMet = c=>c.Get_cash() >= (decimal)doubleCashGoal.GetOriginalValue<decimal>("InitialCash")*2;
+        doubleCashGoal.IsGoalMet = c=>c.GetCash() >= (decimal)doubleCashGoal.GetOriginalValue<decimal>("InitialCash")*2;
         company.Goals.Add(doubleCashGoal);
 
         var tenLemonadeGoal = new Goal("Have 10 Lemonade",

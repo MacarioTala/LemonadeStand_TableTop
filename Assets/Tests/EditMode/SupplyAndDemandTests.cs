@@ -37,7 +37,7 @@ public class SupplyAndDemandTests
         lemonade = Good.CreateInstance("Lemonade", band3, Rarity_enum.Uncommon);
 
         // set test_market to the Initial Market
-        test_market = TheEconomy.Instance.companies.Find(company => company.company_name == "The First Market") as Market;
+        test_market = TheEconomy.Instance.companies.Find(company => company.Name == "The First Market") as Market;
         //Make the market demand lemons and lemonade
         test_market.InitializeDemand(lemonade,1000,10,10000);
         test_market.InitializeDemand(lemon,1000,10,10000);

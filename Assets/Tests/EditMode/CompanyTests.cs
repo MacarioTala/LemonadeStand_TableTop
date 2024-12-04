@@ -20,7 +20,7 @@ public class CompanyTests
         const float expected_cash = 10000;
         //Act
         //Assert
-        Assert.AreEqual(expected_cash, company.Get_cash());
+        Assert.AreEqual(expected_cash, company.GetCash());
     }
     [Test]
     public void Buy_good_when_buyer_has_enough_cash_removes_cash_from_buyer()
@@ -32,7 +32,7 @@ public class CompanyTests
         var expected_cash = 10000 - 3;
         //Act
         company.BuyGood(good, 1, trade_price);
-        var actual_cash = company.Get_cash();
+        var actual_cash = company.GetCash();
         //Assert
         Assert.AreEqual(expected_cash, actual_cash);
 
@@ -79,13 +79,13 @@ public class CompanyTests
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         company.BuyGood(good, 1,good.GetPrice());
-        var initial_cash = company.Get_cash();
+        var initial_cash = company.GetCash();
         var good_price = 3.0m;
         var expected_cash = initial_cash + good_price;
         
         //Act
         company.SellGood(good, 1, good_price);
-        var actual_cash = company.Get_cash();
+        var actual_cash = company.GetCash();
         //Assert
         Assert.AreEqual(expected_cash, actual_cash);
     }

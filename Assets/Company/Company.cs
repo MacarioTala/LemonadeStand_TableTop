@@ -7,7 +7,7 @@ public class Company : ScriptableObject, iCompany
 #region Identity and Initialization
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField]private string _company_name;
-    public string company_name
+    public string Name
     {
         get => _company_name;
         set => _company_name = value;
@@ -17,7 +17,7 @@ public class Company : ScriptableObject, iCompany
     private Company(){}
     internal void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
-        company_name = companyName;
+        Name = companyName;
         companyLevel = company_level;
         companyStrategy = strategy;
 
@@ -75,7 +75,7 @@ public class Company : ScriptableObject, iCompany
 #endregion
 #region Financials
     private decimal cash = 0;
-    public decimal Get_cash() => cash;
+    public decimal GetCash() => cash;
     private readonly float share_price;
     private readonly int shares_outstanding;
     public List<FixedCost> FixedCosts {get;set;} = new();
@@ -156,7 +156,7 @@ public class Company : ScriptableObject, iCompany
         {
             if (goal.IsAchieved)
             {
-                Debug.Log($"{company_name} has completed the goal: {goal}");
+                Debug.Log($"{Name} has completed the goal: {goal}");
                 CompleteGoal(goal);
             }
         }
@@ -251,16 +251,16 @@ public class Company : ScriptableObject, iCompany
     }
     #endregion
 #region Overrides
-    public override string ToString() => company_name;
+    public override string ToString() => Name;
 
     public override bool Equals(object other)
     {
         if(other is Company company)
         {
-            return company_name == company.company_name;
+            return Name == company.Name;
         }
         return false;
     }
-    public override int GetHashCode() => company_name.GetHashCode();
+    public override int GetHashCode() => Name.GetHashCode();
 #endregion
 }

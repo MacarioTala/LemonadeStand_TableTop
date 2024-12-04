@@ -46,7 +46,7 @@ public class TheEconomyTests
         // Arrange
         var expected_name = "The First Market";
         // Act
-        var actual = test_economy.GetGlobalMarket().company_name;
+        var actual = test_economy.GetGlobalMarket().Name;
         // Assert
         Assert.AreEqual(expected_name, actual);
     }
@@ -79,7 +79,7 @@ public class TheEconomyTests
     {
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
-        company.company_name = "Test Company";
+        company.Name = "Test Company";
         var expected = test_economy.companies.Count + 1;
         // Act
         test_economy.RegisterCompany(company);
@@ -93,10 +93,10 @@ public class TheEconomyTests
     {
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
-        company.company_name = "Test Company";
+        company.Name = "Test Company";
         test_economy.RegisterCompany(company);
         var company2 = ScriptableObject.CreateInstance<Company>();
-        company2.company_name = "Test Company";
+        company2.Name = "Test Company";
         // Act
         // Assert
         Assert.Throws<TheEconomy_CompanyException>(() => test_economy.RegisterCompany(company2));
@@ -157,8 +157,8 @@ public class TheEconomyTests
         test_economy.RegisterCompany(company2);
         company1.BuyGood(sugar, 10, 2.0m);
         company2.BuyGood(sugar, 10, 2.0m);
-        var expected_company1_cash = company1.Get_cash() - 2;
-        var expected_company2_cash = company2.Get_cash() + 2;
+        var expected_company1_cash = company1.GetCash() - 2;
+        var expected_company2_cash = company2.GetCash() + 2;
         var expected_company1_sugar_quantity = 11;
         var expected_company2_sugar_quantity = 10 - 1;
 
@@ -166,8 +166,8 @@ public class TheEconomyTests
         var trade = new Trade(company1, company2, sugar, 1, 2.0m);
         test_economy.Queue_Trade(trade);
         test_economy.EndTradingPeriod();
-        var actual_company1_cash = company1.Get_cash();
-        var actual_company2_cash = company2.Get_cash();
+        var actual_company1_cash = company1.GetCash();
+        var actual_company2_cash = company2.GetCash();
         var actual_company1_sugar_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.Cost==2.0m).quantity;
         var actual_company2_sugar_quantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar).quantity;
         // Assert

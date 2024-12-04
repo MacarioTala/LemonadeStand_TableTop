@@ -25,7 +25,7 @@ public class InventoryTests
     {
         //create a test company
         test_company = ScriptableObject.CreateInstance<Company>();
-        test_company.company_name = "Test Company";
+        test_company.Name = "Test Company";
 
         //create test goods
         //Goods are created with a name, price, price_increment_rate, 

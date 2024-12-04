@@ -3,13 +3,13 @@ using System.Collections.Generic;
 public interface iCompany
 {
     #region Identity
-        string company_name{get;set;}
+        string Name{get;set;}
     #endregion
 
     #region Financials
         List<FixedCost> FixedCosts {get;set;}    
         iFixedCostStrategy FixedCostStrategy{get;set;}
-        decimal Get_cash();
+        decimal GetCash ();
         decimal CalculateFixedCostsForPeriod(int period);
     #endregion
 

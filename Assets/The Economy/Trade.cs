@@ -20,7 +20,7 @@ public class Trade
 
     public override string ToString()
     {
-        return "Trade: " + buyer.company_name + " buys " + quantity + " " + good.good_name + " from " + seller.company_name + " at " + price;
+        return "Trade: " + buyer.Name + " buys " + quantity + " " + good.good_name + " from " + seller.Name + " at " + price;
     }
 }
 

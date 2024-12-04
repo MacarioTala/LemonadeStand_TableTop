@@ -66,7 +66,7 @@ public class MarketTests
         var expected = typeof(Market);
         // Act
         var actual = from company in test_economy.companies
-                     where company.company_name == "The First Market"
+                     where company.Name == "The First Market"
                      select company.GetType();
         // Assert
         Assert.AreEqual(expected, actual.First());
@@ -169,7 +169,7 @@ public class MarketTests
         test_initial_market.CalculateMarketData();
         var marketData = test_initial_market.MarketData;
         var actual = marketData.Where(entry => entry.Good.good_name == lemon.good_name
-                                        && entry.Company.company_name == test_initial_market.company_name)
+                                        && entry.Company.Name == test_initial_market.Name)
                                     .First().Ask;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -216,8 +216,8 @@ public class MarketTests
    public void AskForAGoodShouldExceedCost()
    {
          // Arrange
-        var testMarket = Market.Factory.CreateMarket(company_name: "TestMarket", 
-                                                    company_level: CompanyLevelEnum.Market,
+        var testMarket = Market.Factory.CreateMarket(companyName: "TestMarket", 
+                                                    companyLevel: CompanyLevelEnum.Market,
                                                     demandStrategy: new LinearDemandStrategy());
         var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, Rarity_enum.Uncommon);
         enhancedlemonade.IsProducedGood = true;

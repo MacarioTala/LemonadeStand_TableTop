@@ -13,9 +13,9 @@ public class GoalTests
         var expected_goal = new Goal("Double Initial Cash",
                                       "Double the initial cash of the company",
                                       null,
-                                      (c, g) => g.SetOriginalValue("InitialCash", c.Get_cash())
+                                      (c, g) => g.SetOriginalValue("InitialCash", c.GetCash())
                                       );
-        expected_goal.IsGoalMet = c => c.Get_cash() >= expected_goal.GetOriginalValue<decimal>("InitialCash") * 2;
+        expected_goal.IsGoalMet = c => c.GetCash() >= expected_goal.GetOriginalValue<decimal>("InitialCash") * 2;
         //Act
         var actual_goal = company.Goals.Where(g => g.Name == "Double Initial Cash").FirstOrDefault();
         //Assert
