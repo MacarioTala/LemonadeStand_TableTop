@@ -15,7 +15,38 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
     public CompanyLevelEnum company_level;
 #endregion
-
+#region Managers
+    private iTransactionManager _transactionManager;
+    public void SetTransactionManager(iTransactionManager transactionManager)
+    {
+        _transactionManager = transactionManager;
+    }
+    private iConsumptionManager _consumptionManager;
+    public void SetConsumptionManager(iConsumptionManager consumptionManager)
+    {
+        _consumptionManager = consumptionManager;
+    }
+     private iTradeProcessor _tradeProcessor;
+    public void SetTradeProcessor(iTradeProcessor tradeProcessor)
+    {
+        _tradeProcessor = tradeProcessor;
+    }
+#endregion
+#region Company Registration
+    public List<Company> CompaniesInThisMarket = new();
+        public void RegisterCompany(Company company)
+        {
+            if(!CompaniesInThisMarket.Contains(company))
+            {
+                CompaniesInThisMarket.Add(company);
+            }
+            else
+            {
+                throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
+            }
+            TheEconomy.Instance.RegisterCompany(company);
+        }
+#endregion
 #region fixed_costs
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy {get;set;}
@@ -97,6 +128,10 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
 
     //Market-specific members
     private readonly List<MarketTrade> _marketTradesInPeriod = new();
+    public void RecordTrade(MarketTrade trade)
+    {
+        _marketTradesInPeriod.Add(trade);
+    }
     private readonly List<iPriceModifier> _priceModifiers = new();
 
 #region Creation
@@ -149,6 +184,8 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         company_level = companyLevel;
         _marketStrategy = strategy;
         //setup
+        _transactionManager = new BasicTransactionManager();
+        _tradeProcessor = new BasicTradeProcessor();
         SetInitialCash();
         _priceModifiers.Add(new SupplyDemandModifier());
         CreateStarterDemand();
@@ -171,9 +208,9 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         var Lemon = Good.CreateInstance("Lemon", new Price_band(1.0m, 3.0m), Rarity_enum.Common);
         var Sugar = Good.CreateInstance("Sugar", new Price_band(1.0m, 2.0m), Rarity_enum.Common);
         var Water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
-        _inventory.Add_good_to_inventory(new InventoryEntry(Lemon, 10000, 2.0m, 0));
-        _inventory.Add_good_to_inventory(new InventoryEntry(Sugar, 10000, 1.5m, 0));
-        _inventory.Add_good_to_inventory(new InventoryEntry(Water, 10000, .75m, 0));
+        _inventory.AddGood(new InventoryEntry(Lemon, 10000, 2.0m, 0));
+        _inventory.AddGood(new InventoryEntry(Sugar, 10000, 1.5m, 0));
+        _inventory.AddGood(new InventoryEntry(Water, 10000, .75m, 0));
         var LemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
                                         product: Lemonade,
                                         ingredients: new List<Ingredient> { new(Lemon, 9),
@@ -219,89 +256,60 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         }
     }
 #endregion
-#region buy/sell, and helpers
-    internal bool HasMoney(decimal money_needed)
-    {
-       return cash >= money_needed;
-    }
-
-    internal bool HasGood(Good good, int quantity)
-    {
-        var goods = _inventory.GetInventoryEntries();
-        var good_in_inventory = goods.Find(item=> item.good.good_name == good.good_name);
-        return good_in_inventory != null && good_in_inventory.quantity >= quantity;
-    }
+#region buy/sell 
     public void BuyGood(Good good, int quantity,decimal price,int period=0)
-    //Currently public for testing purposes
-    //Make private or internal afterwards
-    //period currently does nothing for companies, but is used in Market which implements iCompany
     {
-        var money_needed = price * quantity;
-        if(HasMoney(money_needed))
+        var context = new ActionContext
         {
-            if(_inventory.GetInventoryEntriesByGood(good.good_name).Count > 0)
-            {
-                var inventory_entry = _inventory.GetInventoryEntriesByGood(good.good_name).First();
-                inventory_entry.quantity += quantity;
-                cash -= money_needed;
-            }
-            else
-            {
-                var inventory_entry = new InventoryEntry(good, quantity, price, period);
-                _inventory.Add_good_to_inventory(inventory_entry);
-                cash -= money_needed;
-                _marketTradesInPeriod.Add(new MarketTrade(inventory_entry, period,TradeType.Buy));
-            }
-        }
-        else
-        {
-            throw new Company_InsufficientFundsException("Insufficient funds to buy good");
-        }
+            Buyer=this,
+            Seller=null,//null because we're buying from the market
+            GoodToBuy=good,
+            Quantity=quantity,
+            Price=price,
+            Period=period
+        };
+            
+        _transactionManager.ProcessTransaction(context);
     }
-
     public void SellGood(Good good, int quantity, decimal price,int period=0)
     {
         //period currently does nothing for companies, but is used in Market which implements iCompany
-        if(HasGood(good, quantity))
+        var context = new ActionContext
         {
-            
-            _inventory.Sell_goods(good, quantity, price);
-            cash += price * quantity;
-            _marketTradesInPeriod.Add(new MarketTrade(new InventoryEntry(good, quantity, price,period), period,TradeType.Sell));
-        }
-        else
-        {
-            throw new Company_InventoryException("Company does not have enough of the good to sell");
-        }
+            Buyer=null,//null because we're selling to the market
+            Seller=this,
+            GoodToBuy=good,
+            Quantity=quantity,
+            Price=price,
+            Period=period
+        };
+        _transactionManager.ProcessTransaction(context);
     }
     public int GetTotalBought(int tradingPeriod, Good good)//Currently public for testing purposes
     {
-        var total_bought = 
+        return 
             _marketTradesInPeriod
             .Where(x => x.Period == tradingPeriod
                         && x.InventoryEntry.good.Equals(good)
                         && x.TradeType == TradeType.Buy)
             .Sum(x => x.InventoryEntry.quantity);
-        return total_bought;
     }
 
     public int GetTotalSold(int tradingPeriod, Good good) //currently public for testing purposes
     {
-        var total_sold=_marketTradesInPeriod
+        return _marketTradesInPeriod
             .Where(x => x.Period == tradingPeriod
-                        && x.InventoryEntry.good.good_name == good.good_name
+                        && x.InventoryEntry.good.Equals(good)
                         && x.TradeType == TradeType.Sell)
             .Sum(x => x.InventoryEntry.quantity);
-        return total_sold;
+        
     }
 #endregion
 #region Supply
     public int GetTotalSupply(int tradingPeriod, Good good)
     {
-        //Currently, supply is the total bought
-        //This will change when we introduce production
-        //And other things that increase supply, like substitute goods, imports, etc.
-        return GetTotalBought(tradingPeriod, good);
+        return _inventory.GetInventoryEntriesByGood(good.good_name)
+            .Sum(x => x.quantity);
     }
 #endregion
 #region Demand
@@ -430,42 +438,10 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
 #endregion
 #region Interacting with the Economy
-    private iTradeProcessor _tradeProcessor;
-    private iConsumptionManager _consumptionManager;
-    public void SetTradeProcessor(iTradeProcessor tradeProcessor)
-    {
-        _tradeProcessor = tradeProcessor;
-    }
-    public void SetConsumptionManager(iConsumptionManager consumptionManager)
-    {
-        _consumptionManager = consumptionManager;
-    }
     public void QueueOrder(ActionContext context)
     {
         _tradeProcessor.QueueOrder(context);
     }
-
-    public List<Company> CompaniesInThisMarket = new();
-    public void RegisterCompany(Company company)
-    {
-        if(!CompaniesInThisMarket.Contains(company))
-        {
-            CompaniesInThisMarket.Add(company);
-        }
-        else
-        {
-            throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
-        }
-        TheEconomy.Instance.RegisterCompany(company);
-    }
-    
-   
-
-    // public List<Trade> FillOrders()
-    // {
-    //     var ordersToReturn = new List<Trade>();
-    // }
-        
 #endregion
 public void ExpireGoods(int period)
 {

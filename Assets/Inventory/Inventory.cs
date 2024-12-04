@@ -22,7 +22,7 @@ public class Inventory
         }
         return items;
     }
-    public void Add_good_to_inventory(InventoryEntry entry)
+    public void AddGood(InventoryEntry entry)
     {
         var existingGoodAtPriceAndExpiry = inventory_items.Find(item=> item.good.good_name == entry.good.good_name 
                                             && item.Cost == entry.Cost
@@ -39,7 +39,7 @@ public class Inventory
 
     }
 
-    public void Sell_goods(Good good, int quantity, decimal price) 
+    public void RemoveGood(Good good, int quantity, decimal price) 
     {
         var goods_to_remove = Generate_goods_to_remove(good, quantity, price);
         Remove_goods(goods_to_remove);

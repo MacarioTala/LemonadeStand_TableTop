@@ -134,7 +134,7 @@ public class Company : ScriptableObject, iCompany
             var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
             var inventoryEntryToAdd=new InventoryEntry(product, product_quantity, totalCost,context.Period);
             inventoryEntryToAdd.SetRecipe(recipe);
-            inventory.Add_good_to_inventory(inventoryEntryToAdd);
+            inventory.AddGood(inventoryEntryToAdd);
         }
         catch(RecipeException e)
         {
@@ -173,7 +173,7 @@ public class Company : ScriptableObject, iCompany
         if(HasMoney(money_needed))
         {
             var inventory_entry = new InventoryEntry(good, quantity, price, period);
-            inventory.Add_good_to_inventory(inventory_entry);
+            inventory.AddGood(inventory_entry);
             cash -= money_needed;
         }
         else
@@ -203,7 +203,7 @@ public class Company : ScriptableObject, iCompany
         if(HasGood(good, quantity))
         {
             
-            inventory.Sell_goods(good, quantity, price);
+            inventory.RemoveGood(good, quantity, price);
             cash += price * quantity;
         }
         else

@@ -3,19 +3,19 @@ public class ActionContext
     //General
     public int Period;
     public ActionEnum Action;
-
-    //QueueTrade
-    public Company Buyer;
-    public Company Seller;
-    public Good GoodToBuy;
-    public int Quantity;
-    public decimal Price;
-    public bool IsBuy;
     
     //Make Recipe
     public Company RecipeMaker;
     public Recipe Recipe;
     public int QuantityToMake;
+
+    //QueueTrade/transactions
+    public iCompany Buyer;
+    public iCompany Seller;
+    public Good GoodToBuy;
+    public int Quantity;
+    public decimal Price;
+    public bool IsBuy;
 
     //Submit Bid/Ask
     public Market MarketToSubmitTo;

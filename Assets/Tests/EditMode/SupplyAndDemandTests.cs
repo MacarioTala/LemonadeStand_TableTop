@@ -85,8 +85,8 @@ public class SupplyAndDemandTests
     {
         // Arrange
         test_market.BuyGood(lemon, 500,3.0m, 0);
-        test_market.BuyGood(lemon, 500,3.0m, 1);
-        test_market.BuyGood(lemon, 500,3.0m, 2);
+        test_market.BuyGood(lemon, 500,3.0m, 0);
+        test_market.BuyGood(lemon, 500,3.0m, 0);
         const int expected = 1500;
         const int trading_period = 0;
         // Act
@@ -184,7 +184,11 @@ public class SupplyAndDemandTests
         selling_company.BuyGood(lemon, 1000, 3.0m);
         //Act
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 1000, 3.0m));
+        TheEconomy.Instance.Queue_Trade(new Trade ( buyer: test_market,
+                                                    seller: selling_company, 
+                                                    good: lemon, 
+                                                    quantity: 1000, 
+                                                    price: 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
         //Assert
