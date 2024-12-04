@@ -130,8 +130,8 @@ public class Company : ScriptableObject, iCompany
         }
         try
         {
-            var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
             var totalCost = recipe.GetCostPerUnit(inventory)*quantity;
+            var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
             var inventoryEntryToAdd=new InventoryEntry(product, product_quantity, totalCost,context.Period);
             inventoryEntryToAdd.SetRecipe(recipe);
             inventory.Add_good_to_inventory(inventoryEntryToAdd);

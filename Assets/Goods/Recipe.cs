@@ -70,7 +70,7 @@ public class Recipe
         foreach (var ingredient in ingredients)
         {
             var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.good_name);
-            var costForThisIngredient = inventoryEntries.Sum(entry => entry.acquisition_price*entry.quantity);
+            var costForThisIngredient = inventoryEntries.Sum(entry => entry.Cost*entry.quantity);
             var quantityForThisIngredient = inventoryEntries.Sum(entry => entry.quantity);
             var requiredUnits = ingredient.Quantity_needed;
 

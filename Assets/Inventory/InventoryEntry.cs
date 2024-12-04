@@ -2,7 +2,7 @@ public class InventoryEntry
 {
     public Good good;
     public int quantity;
-    public decimal acquisition_price;
+    public decimal Cost;
     private Recipe recipe;
     public int PeriodAcquired;
     public Recipe GetRecipe()=> good.IsProducedGood?recipe:null;
@@ -22,12 +22,12 @@ public class InventoryEntry
     {
         this.good = good;
         this.quantity = quantity;
-        this.acquisition_price = acquisition_price;
+        this.Cost = acquisition_price;
         PeriodAcquired = period;
     }
 
     public override string ToString()
     {
-        return $"{good.good_name} {quantity} units at {acquisition_price} ";
+        return $"{good.good_name} {quantity} units at {Cost} ";
     }
 }

@@ -9,7 +9,7 @@ public string ListToString(List<InventoryEntry> inventory)
     var sb = new StringBuilder();
     foreach (var item in inventory)
     {
-        sb.AppendLine($"Good: {item.good.name}, Quantity: {item.quantity}, Price: {item.acquisition_price}");
+        sb.AppendLine($"Good: {item.good.name}, Quantity: {item.quantity}, Price: {item.Cost}");
     }
     return sb.ToString();
 }

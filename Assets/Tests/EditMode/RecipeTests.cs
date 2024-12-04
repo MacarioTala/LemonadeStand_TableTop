@@ -13,7 +13,7 @@ public class RecipeTests
     private Good lemon;
     private Good sugar;
     private Good water;
-    private Recipe lemonade_recipe;
+    private Recipe basicLemonadeRecipe;
     private const int Period = 0;
 
     private readonly Price_band price_band1= new(.5m, 1.0m);
@@ -40,7 +40,7 @@ public class RecipeTests
         var lemonade_ingredients = new List<Ingredient> { new(lemon, 9),
                                                           new(sugar, 2), 
                                                           new(water, 7) };
-        lemonade_recipe = new Recipe(RecipeName:"Basic Lemonade",
+        basicLemonadeRecipe = new Recipe(RecipeName:"Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: lemonade_ingredients);
     }
@@ -51,7 +51,7 @@ public class RecipeTests
         // Arrange
         var expected = new List<String> { "lemon", "sugar", "water" };
         // Act
-        var actual = lemonade_recipe.Get_Ingredients();
+        var actual = basicLemonadeRecipe.Get_Ingredients();
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -62,7 +62,7 @@ public class RecipeTests
         // Arrange
         var expected = 1;// need 9 lemon, 2 sugar, 7 water, can only make 1 lemonade
         // Act
-        var actual = lemonade_recipe.Get_max_quantity(test_inventory.GetInventoryEntries());
+        var actual = basicLemonadeRecipe.Get_max_quantity(test_inventory.GetInventoryEntries());
         // Assert 
         Assert.AreEqual(expected, actual);
     }
@@ -127,7 +127,7 @@ public class RecipeTests
         };
 
         // Act
-        var actual = lemonade_recipe.Get_recipe()
+        var actual = basicLemonadeRecipe.Get_recipe()
                                     .Select(ingredient => (ingredient.Good.good_name, ingredient.Quantity_needed))
                                     .ToList();
 
@@ -151,14 +151,14 @@ public class RecipeTests
         inventory.Add_good_to_inventory(sugarInventoryEntry);
         inventory.Add_good_to_inventory(waterInventoryEntry);
         inventory.Add_good_to_inventory(secondLemonInventoryEntry);
-        lemonade_recipe = new Recipe(RecipeName:"Basic Lemonade",
+        basicLemonadeRecipe = new Recipe(RecipeName:"Basic Lemonade",
                                     product: lemonade, 
                                     ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
                                                                         new(water, 7) });
         var expected = (lemonade, 1);
         // Act
-        var actual = lemonade_recipe.Make_recipe(1, inventory);
+        var actual = basicLemonadeRecipe.Make_recipe(1, inventory);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -176,7 +176,7 @@ public class RecipeTests
         inventory.Add_good_to_inventory(water_inventory_entry);
         var expected = (float)(9*3 + 2*2 + 7*1);
         // Act
-        var actual = lemonade_recipe.GetCostPerUnit(inventory);
+        var actual = basicLemonadeRecipe.GetCostPerUnit(inventory);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -191,14 +191,14 @@ public class RecipeTests
         inventory.Add_good_to_inventory(lemonInventoryEntry);
         inventory.Add_good_to_inventory(sugarInventoryEntry);
         inventory.Add_good_to_inventory(waterInventoryEntry);
-        lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
+        basicLemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
                                                                         new(water, 7) });
         var expected = true;
         //Act
-        lemonade_recipe.Make_recipe(1, inventory);
+        basicLemonadeRecipe.Make_recipe(1, inventory);
         var actual = lemonade.IsProducedGood;
         //Assert
         Assert.AreEqual(expected, actual);
@@ -219,22 +219,56 @@ public class RecipeTests
         inventory.Add_good_to_inventory(lemonInventoryEntry);
         inventory.Add_good_to_inventory(sugarInventoryEntry);
         inventory.Add_good_to_inventory(waterInventoryEntry);
-        lemonade_recipe = new Recipe("Basic Lemonade",
+        basicLemonadeRecipe = new Recipe("Basic Lemonade",
                                     product: lemonade, 
                                     ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
                                                                         new(water, 7) });
-        TestCompany.AddRecipe(lemonade_recipe);
-        var expected = lemonade_recipe;
+        TestCompany.AddRecipe(basicLemonadeRecipe);
+        var expected = basicLemonadeRecipe;
         //Act
         var context = new ActionContext{
                                         RecipeMaker = TestCompany
-                                      , Recipe = lemonade_recipe
+                                      , Recipe = basicLemonadeRecipe
                                       , QuantityToMake = 1
                                       , };
         TestCompany.MakeRecipe(context);
         var actual = inventory.GetInventoryEntries().Where(entry => entry.good == lemonade).First().GetRecipe();
         //Assert
         Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void MakingRecipeUpdatesAcquisitionCostToCostOfIngredients()
+    {
+        //Arrange
+        var TestCompany = Company.Factory.Create(companyName: "TestCompany", 
+                                                 company_level: CompanyLevelEnum.Beginner, 
+                                                 fixedCostStrategy: new BasicFixedCostStrategy(),
+                                                 strategy: new BasicGrowthStrategy());
+        var inventory = TestCompany.GetInventory();
+        var lemonInventoryEntry = new InventoryEntry(lemon, 10, 3,Period);
+        var sugarInventoryEntry = new InventoryEntry(sugar, 10, 2,Period);
+        var waterInventoryEntry = new InventoryEntry(water, 10, 1,Period);
+        inventory.Add_good_to_inventory(lemonInventoryEntry);
+        inventory.Add_good_to_inventory(sugarInventoryEntry);
+        inventory.Add_good_to_inventory(waterInventoryEntry);
+        basicLemonadeRecipe = new Recipe("Basic Lemonade",
+                                    product: lemonade, 
+                                    ingredients: new List<Ingredient> { new(lemon, 5), 
+                                                                        new(sugar, 2), 
+                                                                        new(water, 10) });
+        TestCompany.AddRecipe(basicLemonadeRecipe);
+        var expected = 5*3 + 2*2 + 10*1;
+        //Act
+        var context = new ActionContext{
+                                        RecipeMaker = TestCompany
+                                      , Recipe = basicLemonadeRecipe
+                                      , QuantityToMake = 1
+                                      , };
+        TestCompany.MakeRecipe(context);
+        var actual = inventory.GetInventoryEntries().Where(entry => entry.good == lemonade).First().Cost;
+        //Assert
+        Assert.AreEqual(expected, actual);
+
     }
 }

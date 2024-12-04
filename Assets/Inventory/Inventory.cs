@@ -14,7 +14,7 @@ public class Inventory
     public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)
     {
         var items = inventory_items.Where(x => x.good.good_name == goodName)
-                              .OrderBy(x => x.acquisition_price)
+                              .OrderBy(x => x.Cost)
                               .ToList();
         if (items.Count == 0)
         {
@@ -25,7 +25,7 @@ public class Inventory
     public void Add_good_to_inventory(InventoryEntry entry)
     {
         var existingGoodAtPriceAndExpiry = inventory_items.Find(item=> item.good.good_name == entry.good.good_name 
-                                            && item.acquisition_price == entry.acquisition_price
+                                            && item.Cost == entry.Cost
                                             && item.PeriodAcquired == entry.PeriodAcquired
                                             );
         if(existingGoodAtPriceAndExpiry == null)
@@ -47,8 +47,8 @@ public class Inventory
     public List<InventoryEntry> Generate_goods_to_remove(Good good, int quantity, decimal price)
     {
         var eligible_goods = inventory_items
-            .Where(item=> item.good == good && item.acquisition_price <= price)
-            .OrderBy(item=> item.acquisition_price)
+            .Where(item=> item.good == good && item.Cost <= price)
+            .OrderBy(item=> item.Cost)
             .ToList();
         
         var goods_to_remove = new List<InventoryEntry>();
@@ -66,7 +66,7 @@ public class Inventory
             current_entry.quantity -= quantity_to_remove;
             
             const int nullPeriod = 0;
-            goods_to_remove.Add(new InventoryEntry(current_entry.good, current_entry.quantity, current_entry.acquisition_price,nullPeriod));   
+            goods_to_remove.Add(new InventoryEntry(current_entry.good, current_entry.quantity, current_entry.Cost,nullPeriod));   
             
         }
         return goods_to_remove;
@@ -132,7 +132,7 @@ public class Inventory
         {
             if(entry.quantity == 0)
             {
-                var item_to_remove = inventory_items.Find(item=> item.good == entry.good && item.acquisition_price == entry.acquisition_price);
+                var item_to_remove = inventory_items.Find(item=> item.good == entry.good && item.Cost == entry.Cost);
                 inventory_items.Remove(item_to_remove);
             }
         }

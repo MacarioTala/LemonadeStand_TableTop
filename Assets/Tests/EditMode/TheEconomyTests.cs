@@ -168,7 +168,7 @@ public class TheEconomyTests
         test_economy.EndTradingPeriod();
         var actual_company1_cash = company1.Get_cash();
         var actual_company2_cash = company2.Get_cash();
-        var actual_company1_sugar_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.acquisition_price==2.0m).quantity;
+        var actual_company1_sugar_quantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.Cost==2.0m).quantity;
         var actual_company2_sugar_quantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar).quantity;
         // Assert
         Assert.AreEqual(expected_company1_cash, actual_company1_cash);
