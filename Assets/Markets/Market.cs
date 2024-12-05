@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Market : ScriptableObject, iCompany, iPriceSetter
+public class Market : ScriptableObject, iCompany
 {
 #region Identity
     //Fields to get around Unity's limitation of not having automatic backing properties.
@@ -15,8 +15,10 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
     public CompanyLevelEnum company_level;
      //Market-specific members
+     public List<MarketData> MarketData = new();//bid/ask spread for companies
     private readonly List<MarketTrade> _marketTradesInPeriod = new();
     private readonly List<iPriceModifier> _priceModifiers = new();
+    public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
     public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
     public void RecordTrade(MarketTrade trade)
     {
@@ -228,26 +230,8 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
 #region Pricing
     public void UpdatePrices()
         {
-            foreach(var entry in _inventory.GetInventoryEntries())
-            {   
-                var new_price = CalculateNewPrice(entry.good); 
-                SetPrice(entry.good,new_price); 
-            }
+            _priceManager.UpdatePricesForMarket(this);
         }
-    private decimal CalculateNewPrice (Good good)
-        {
-            decimal price = good.GetPrice();
-            foreach(var modifier in _priceModifiers)
-            {
-                price = modifier.Apply(price,good,this);
-            }
-            return price;
-        }
-    public void SetPrice (Good good, decimal new_price)
-        {
-            good.Set_price(new_price);
-        }
-
     public void CalculateNewBidAskSpreadForMarket()
     {
         //remember to call CalculateNewBidAskSpreadForMarket 
@@ -269,8 +253,6 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
 #endregion
 #region Publishing
-    public List<MarketData> MarketData = new();//bid/ask spread for companies
-    
     public List<MarketData> PublishMarketData()
     {
         return _marketDataManager.PublishMarketData(this);

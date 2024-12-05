@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-public class BasicPriceManager : iPriceManager
+public class BasicPriceManager : iPriceManager, iPriceSetter
 {
     public decimal GetMarketCostForGood(Market market, Good good)
     {
@@ -27,4 +27,27 @@ public class BasicPriceManager : iPriceManager
             market.MarketData.Add(data);
         }
     }
+
+    public void UpdatePricesForMarket(Market market)    
+    {
+         foreach(var entry in market.GetInventory().GetInventoryEntries())
+            {   
+                var new_price = CalculateNewPrice(entry.good,market); 
+                SetPrice(entry.good,new_price); 
+            }
+    }
+    private decimal CalculateNewPrice (Good good,Market market)
+        {
+            decimal price = good.GetPrice();
+            foreach(var modifier in market.GetPriceModifiers())
+            {
+                price = modifier.Apply(price,good,market);
+            }
+            return price;
+        }
+
+     public void SetPrice (Good good, decimal new_price)
+        {
+            good.Set_price(new_price);
+        }
 }

@@ -87,4 +87,19 @@ public class LinearDemandStrategy : iDemandStrategy
     {
         throw new NotImplementedException();
     }
+
+    public float GetDemandElasticityForGood(Good good)
+    {
+        throw new NotImplementedException();
+    }
+
+    public float GetIncomeElasticityForGood(Good good)
+    {
+        throw new NotImplementedException();
+    }
+
+    public float GetPriceElasticityForGood(Good good)
+    {
+        throw new NotImplementedException();
+    }
 }
