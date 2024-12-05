@@ -40,7 +40,7 @@ public class MarketTests
         test_initial_market = Market.Factory.CreateStarterMarket(companyName: "The First Market", 
                                                     companyLevel: CompanyLevelEnum.Market,
                                                     demandStrategy: new LinearDemandStrategy());
-        test_initial_market.InitializeDemand(lemon, 1000);
+        test_initial_market.InitializeDemandForSpecificGood(lemon, 1000);
     }
 
     private void SetupGoodsAndRecipes()
@@ -118,7 +118,7 @@ public class MarketTests
         company1.BuyGood(lemon, 10,3.0m);
         company2.BuyGood(lemon, 10,3.0m);
         test_initial_market.BuyGood(lemon, 1000, 3.0m);
-        test_initial_market.InitializeDemand(lemon, 50);
+        test_initial_market.InitializeDemandForSpecificGood(lemon, 50);
         // Act
         var trade1 = new Trade(test_initial_market, company1, lemon, 10, 10.0m);
         var trade2 = new Trade(test_initial_market, company2, lemon, 10, 15.0m);
@@ -232,7 +232,7 @@ public class MarketTests
         testMarket.BuyGood(sugar, 1000, 3.0m);
         testMarket.BuyGood(water, 1000, 3.0m);
         testMarket.AddRecipe(enhancedLemonadeRecipe);
-        testMarket.InitializeDemand(enhancedlemonade, 1000);
+        testMarket.InitializeDemandForSpecificGood(enhancedlemonade, 1000);
         var costPerUnit = 9 * 3.0m + 2 * 3.0m + 7 * 3.0m;
         // Act
         var actual = testMarket.MarketDemand[enhancedlemonade].Ask;

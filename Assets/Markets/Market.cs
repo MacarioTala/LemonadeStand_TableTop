@@ -75,10 +75,7 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     public Inventory GetInventory() => _inventory;
     private readonly List<Recipe> _recipes = new();
     public List<Recipe> GetRecipes()=>_recipes;
-    private Recipe GetRecipeForGood(Good good)
-    {
-       return _recipes.Where(recipe=>recipe.GetProduct().Equals(good)).FirstOrDefault();
-    }
+    
     public void AddRecipe(Recipe recipe)
     {
         if(_recipes.Contains(recipe))
@@ -160,19 +157,6 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
 #endregion
 #region Price Setting
-    private decimal CalculateAskForProducedGood (Good good)
-    {
-        var recipeToUse = GetRecipeForGood(good);
-
-        if(recipeToUse == null)
-        {
-            throw new Exception("No recipe found for "+good.good_name);
-        }
-        var costPerUnit = recipeToUse.GetCostPerUnit(_inventory);
-        var rng = (double)UnityEngine.Random.Range(.01f,.15f);
-        var ask = costPerUnit * 1+(decimal)rng;
-        return ask;
-    }
     public void CalculateNewBidAskSpreadForMarket()
     {
         //remember to call CalculateNewBidAskSpreadForMarket 
@@ -270,43 +254,10 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
 #endregion
 #region Demand
-    //demand_data represents the base demand for each good
-    //outside of that demanded by companies
-    //It is used to 'seed' the market with an initial demand that will
-    //then be affected by market forces
     public Dictionary<Good, DemandData> MarketDemand = new();
-    public void InitializeDemand(Good good, int InitialDemand,int MinDemand=0, int MaxDemand=1000000)
+    public void InitializeDemandForSpecificGood(Good good, int InitialDemand)
     {
-        decimal ask;
-        if(good.IsProducedGood && GetRecipeForGood(good)!=null)
-        {
-            ask=CalculateAskForProducedGood(good);
-        }
-        else
-        {
-            ask = good.GetPrice();
-        }
-
-        if(MarketDemand.ContainsKey(good))
-        {
-            MarketDemand[good].CurrentDemand = InitialDemand;
-            MarketDemand[good].MinDemand = MinDemand;
-            MarketDemand[good].MaxDemand = MaxDemand;
-            MarketDemand[good].Ask = ask;
-        }
-        else
-        {
-            var demandData = new DemandData
-                            { 
-                                CurrentDemand = InitialDemand,
-                                FulfilmentRate = 0f,
-                                MinDemand = MinDemand,
-                                MaxDemand = MaxDemand,
-                                Ask = ask
-                            };
-            MarketDemand.Add(good, demandData);
-        }
-        
+       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand);
     }
 
     public void CalculateFulfillmentRates(int tradingPeriod=-1)

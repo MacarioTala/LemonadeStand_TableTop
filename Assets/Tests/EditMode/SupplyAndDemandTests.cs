@@ -41,8 +41,8 @@ public class SupplyAndDemandTests
                                                         , CompanyLevelEnum.Market
                                                         , new LinearDemandStrategy());             
         //Make the market demand lemons and lemonade
-        test_market.InitializeDemand(lemonade,1000,10,10000);
-        test_market.InitializeDemand(lemon,1000,10,10000);
+        test_market.InitializeDemandForSpecificGood(lemonade,1000);
+        test_market.InitializeDemandForSpecificGood(lemon,1000);
     }
 #region UpdatePrices tests
     [Test]
@@ -121,7 +121,7 @@ public class SupplyAndDemandTests
         var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         // Set up a market with demand for lemons
         Market MarketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
+        MarketThatDemandsLemons.InitializeDemandForSpecificGood(lemon, 1000);
         TheEconomy.Instance.RegisterCompany(MarketThatDemandsLemons);
 
         //give the selling company some lemons
@@ -147,7 +147,7 @@ public class SupplyAndDemandTests
 
         //Make a market that demands lemons
         Market MarketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
+        MarketThatDemandsLemons.InitializeDemandForSpecificGood(lemon, 1000);
         TheEconomy.Instance.RegisterCompany(MarketThatDemandsLemons);
 
         //have the market buy some lemons
@@ -165,7 +165,7 @@ public class SupplyAndDemandTests
         //Assert
         //Make a market that demands lemons
         Market marketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        marketThatDemandsLemons.InitializeDemand(lemon, 1000);
+        marketThatDemandsLemons.InitializeDemandForSpecificGood(lemon, 1000);
         TheEconomy.Instance.RegisterCompany(marketThatDemandsLemons);
 
         var expectedLemonDemand = 1400;
@@ -202,9 +202,9 @@ public class SupplyAndDemandTests
                                                     quantity: 1000, 
                                                     price: 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
-        var actual_lemon_demand = marketToTest.MarketDemand[lemonade].CurrentDemand;
+        var actualLemonadeDemand = marketToTest.MarketDemand[lemonade].CurrentDemand;
         //Assert
-        Assert.AreEqual(expectedLemonadeDemand, actual_lemon_demand);
+        Assert.AreEqual(expectedLemonadeDemand, actualLemonadeDemand);
     }
 
     [Test]

@@ -92,7 +92,7 @@ public class GameOfLifeTest
        
        foreach (var good in TestGoods)
         {
-            LemonadeMarket.InitializeDemand(good, Random.Range(100, 1000));
+            LemonadeMarket.InitializeDemandForSpecificGood(good, Random.Range(100, 1000));
             LemonadeMarket.BuyGood(good,10000,.5m);
         }
     }

@@ -6,8 +6,8 @@ public class StarterMarketInitializer : iMarketInitializer
     public void InitializeMarket(Market market)
     {
         if (market == null) throw new ArgumentNullException(nameof(market));
-        CreateStarterDemand(market);
         SeedWithInitialGoods(market);
+        CreateStarterDemand(market);
         SetInitialCash(market);
     }
     private void SeedWithInitialGoods (Market market)
@@ -54,6 +54,6 @@ public class StarterMarketInitializer : iMarketInitializer
         //This is a placeholder and will be replaced with a more sophisticated system
         var lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
         lemonade.IsProducedGood = true;
-        market.InitializeDemand(lemonade, 1000);
+        market.InitializeDemandForSpecificGood(lemonade, 1000);
     }
 }

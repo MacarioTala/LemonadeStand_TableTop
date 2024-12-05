@@ -1,14 +1,17 @@
+using System;
+using System.Linq;
 using UnityEngine;
 
 public class LinearDemandStrategy : iDemandStrategy
 {
+    private const int MinDemand = 0;
+    private const int MaxDemand = 1000000;
     public void AdjustDemand(Market market)
     {
-        var demand_data = market.MarketDemand;
-        foreach(var good in demand_data.Keys)
+        var marketDemand = market.MarketDemand;
+        foreach(var good in marketDemand.Keys)
         {
-            
-            var demandData = demand_data[good];
+            var demandData = marketDemand[good];
             var elasticity = good.DemandElasticity;
             
             //Calculate adjustment factor
@@ -36,5 +39,60 @@ public class LinearDemandStrategy : iDemandStrategy
                                 ,demandData.MaxDemand
                                 );
         }
+    }
+
+    public decimal GetMarketCostForGood(Market market, Good good)
+    {
+        var recipeToUse = market.GetRecipes().Where(recipe=>recipe.GetProduct().Equals(good)).FirstOrDefault() ?? throw new Exception("No recipe found for "+good);
+        var costPerUnit = recipeToUse.GetCostPerUnit(market.GetInventory());
+        return costPerUnit;
+    }
+
+     private decimal CalculateAskForProducedGood (Market market,Good good)
+    {
+        if(!good.IsProducedGood) return 0;
+        var costPerUnit = GetMarketCostForGood(market,good);
+        var rng = (double)UnityEngine.Random.Range(.01f,.15f);
+        var ask = costPerUnit * 1+(decimal)rng;
+        return ask;
+    }
+
+    public void InitializeDemandForSpecificGood(Market market,Good good,int initialDemand, int minDemand=MinDemand, int maxDemand=MaxDemand)
+    {
+        decimal ask;
+        bool hasCostForGood = CalculateAskForProducedGood(market,good) > 0;
+        if(good.IsProducedGood && hasCostForGood)
+        {
+            ask=CalculateAskForProducedGood(market,good);
+        }
+        else
+        {
+            ask = good.GetPrice();
+        }
+
+        if(market.MarketDemand.ContainsKey(good))
+        {
+            market.MarketDemand[good].CurrentDemand = initialDemand;
+            market.MarketDemand[good].MinDemand = minDemand;
+            market.MarketDemand[good].MaxDemand = maxDemand;
+            market.MarketDemand[good].Ask = ask;
+        }
+        else
+        {
+            var demandData = new DemandData
+                            { 
+                                CurrentDemand = initialDemand,
+                                FulfilmentRate = 0f,
+                                MinDemand = minDemand,
+                                MaxDemand = maxDemand,
+                                Ask = ask
+                            };
+            market.MarketDemand.Add(good, demandData);
+        }
+    }
+
+    public void InitializeDemand(Market market)
+    {
+        throw new NotImplementedException();
     }
 }
