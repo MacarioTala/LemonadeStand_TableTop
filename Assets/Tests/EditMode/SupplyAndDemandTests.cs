@@ -85,20 +85,6 @@ public class SupplyAndDemandTests
     }
     #endregion
     [Test]
-    public void GetTotalBought_returns_total_amount_of_good_bought_in_a_period()
-    {
-        // Arrange
-        test_market.BuyGood(lemon, 500,3.0m, 0);
-        test_market.BuyGood(lemon, 500,3.0m, 0);
-        test_market.BuyGood(lemon, 500,3.0m, 0);
-        const int expected = 1500;
-        const int trading_period = 0;
-        // Act
-        var actual = test_market.GetTotalBought(trading_period,lemon);
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-    [Test]
     public void GetTotalSold_returns_total_amount_of_good_sold_in_a_period()
     {
         // Arrange
@@ -218,7 +204,7 @@ public class SupplyAndDemandTests
         test_market.BuyGood(lemon, 500,3.0m, 2);
         const int expected = 1500;
         // Act
-        var actual = test_market.GetTotalSupply(0, lemon);
+        var actual = test_market.GetTotalSupply(lemon);
 
         // Assert
         Assert.AreEqual(expected, actual);

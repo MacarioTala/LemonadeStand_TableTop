@@ -14,12 +14,24 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         set => _companyName = value;
     }
     public CompanyLevelEnum company_level;
+     //Market-specific members
+    private readonly List<MarketTrade> _marketTradesInPeriod = new();
+    private readonly List<iPriceModifier> _priceModifiers = new();
+    public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
+    public void RecordTrade(MarketTrade trade)
+    {
+        _marketTradesInPeriod.Add(trade);
+    }
+    
+
 #endregion
 #region Managers
     private iConsumptionManager _consumptionManager;
     public void SetConsumptionManager(iConsumptionManager consumptionManager) => _consumptionManager = consumptionManager;
     private iMarketDataManager _marketDataManager;
     public void SetMarketDataManager(iMarketDataManager marketDataManager) => _marketDataManager = marketDataManager;
+    private iPriceManager _priceManager;
+    public void SetPriceManager(iPriceManager priceManager) => _priceManager = priceManager;
     private iTradeProcessor _tradeProcessor;
     public void SetTradeProcessor(iTradeProcessor tradeProcessor) => _tradeProcessor = tradeProcessor;
     private iTransactionManager _transactionManager;
@@ -40,7 +52,29 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
             TheEconomy.Instance.RegisterCompany(company);
         }
 #endregion
-#region fixed_costs
+#region Consumption
+    public void ConsumeGoods()
+        {
+            //attempt to consume goods at current demand levels
+            foreach(var good in MarketDemand.Keys)
+            {
+                var demanded_quantity = MarketDemand[good].CurrentDemand;
+                //consume good
+                var unfulfilledDemand = _inventory.TryConsumeGood(good.good_name,demanded_quantity);
+                // Do something with unfulfilled demand later
+            }
+        }
+    public void ExpireGoods(int period)
+    {
+        //inventory.ExpireGoods(period); //maybe goods in market just don't expire?
+    }
+#endregion
+#region Financials
+    private decimal cash = 0;
+    public decimal GetCash() => cash;
+    public void SetCash(decimal new_cash) => cash = new_cash;
+ #endregion
+#region Fixed costs
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy {get;set;}
     public decimal CalculateFixedCostsForPeriod(int period)
@@ -48,14 +82,7 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         return FixedCostStrategy.CalculateFixedCosts(FixedCosts,period);
     }
 #endregion
-
-#region Financials
-    private decimal cash = 0;
-    public decimal GetCash() => cash;
-    public void SetCash(decimal new_cash) => cash = new_cash;
- #endregion
-
-    #region goals and strategies
+#region Goals and strategies
     public List<Goal> Goals {get;set;}
     public iDemandStrategy DemandStrategy ;
     private iStrategy _marketStrategy;
@@ -98,106 +125,7 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         CurrentPeriod = period;
     }
 #endregion
-
-    //Market-specific members
-    private readonly List<MarketTrade> _marketTradesInPeriod = new();
-    public void RecordTrade(MarketTrade trade)
-    {
-        _marketTradesInPeriod.Add(trade);
-    }
-    private readonly List<iPriceModifier> _priceModifiers = new();
-
-#region Creation
-    //Instantiate Markets using a factory
-    private Market ()
-    {
-    }
-    public static class Factory
-    { 
-        public static readonly StarterMarketInitializer _initializer = new();
-        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
-        {
-            var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, null);
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            return market;
-        }
-        
-        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy, iStrategy marketStrategy, iFixedCostStrategy fixedCostStrategy)
-        {
-            var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, marketStrategy);
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            market.FixedCostStrategy = fixedCostStrategy ?? throw new ArgumentNullException("Markets must have a fixed cost strategy");
-            return market;
-        }
-
-        public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
-        {
-            var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, null);
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            _initializer.InitializeMarket(market);
-            return market;
-        }
-    }
-    internal void Initialize (string companyName,CompanyLevelEnum companyLevel,iStrategy strategy)
-    {
-        Name = companyName;
-        company_level = companyLevel;
-        _marketStrategy = strategy;
-        //Managers
-        _consumptionManager = new BasicConsumptionManager();
-        _marketDataManager = new BasicMarketDataManager();
-        _tradeProcessor = new BasicTradeProcessor();
-        _transactionManager = new BasicTransactionManager();
-
-        //Price Modifiers
-        _priceModifiers.Add(new SupplyDemandModifier());
-    }
-#endregion
-#region Price Setting
-    public void CalculateNewBidAskSpreadForMarket()
-    {
-        //remember to call CalculateNewBidAskSpreadForMarket 
-        //as part of TheEconomy.Instance.ExecuteDailyTrades.
-        //eventually
-        var temporaryPriceIncrease = .01m;
-        foreach(var entry in _inventory.GetInventoryEntries())
-        {
-            var data = new MarketData
-            {
-                Company = this,
-                Bid = entry.good.GetPrice(),
-                Ask = entry.good.GetPrice() * (1 + temporaryPriceIncrease),
-                Good = entry.good
-            };
-            MarketData.Add(data);
-        }
-    }
-    private decimal CalculateNewPrice (Good good)
-    {
-        decimal price = good.GetPrice();
-        foreach(var modifier in _priceModifiers)
-        {
-            price = modifier.Apply(price,good,this);
-        }
-        return price;
-    }
-    public void SetPrice (Good good, decimal new_price)
-    {
-        good.Set_price(new_price);
-    }
-
-     public void UpdatePrices(){
-        foreach(var entry in _inventory.GetInventoryEntries())
-        {   
-            var new_price = CalculateNewPrice(entry.good); 
-            SetPrice(entry.good,new_price); 
-        }
-    }
-#endregion
-#region buy/sell 
+#region Buy and sell 
     public void BuyGood(Good good, int quantity,decimal price,int period=0)
     {
         var context = new ActionContext
@@ -228,73 +156,116 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
     public int GetTotalBought(int tradingPeriod, Good good)//Currently public for testing purposes
     {
-        return 
-            _marketTradesInPeriod
-            .Where(x => x.Period == tradingPeriod
-                        && x.InventoryEntry.good.Equals(good)
-                        && x.TradeType == TradeType.Buy)
-            .Sum(x => x.InventoryEntry.quantity);
+       return DemandStrategy.GetTotalBought(this,good,tradingPeriod);
     }
-
     public int GetTotalSold(int tradingPeriod, Good good) //currently public for testing purposes
     {
-        return _marketTradesInPeriod
-            .Where(x => x.Period == tradingPeriod
-                        && x.InventoryEntry.good.Equals(good)
-                        && x.TradeType == TradeType.Sell)
-            .Sum(x => x.InventoryEntry.quantity);
-        
+        return DemandStrategy.GetTotalSold(this,tradingPeriod,good);
     }
 #endregion
-#region Supply
-    public int GetTotalSupply(int tradingPeriod, Good good)
+#region Creation
+    //Instantiate Markets using a factory
+    private Market ()
     {
-        return _inventory.GetInventoryEntriesByGood(good.good_name)
-            .Sum(x => x.quantity);
+    }
+    public static class Factory
+    { 
+        public static readonly StarterMarketInitializer _initializer = new();
+        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
+        {
+            var market = CreateInstance<Market>();
+            market.Initialize(companyName, companyLevel, null);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            return market;
+        }
+
+        public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
+        {
+            var market = CreateInstance<Market>();
+            market.Initialize(companyName, companyLevel, null);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            _initializer.InitializeMarket(market);
+            return market;
+        }
+    }
+    internal void Initialize (string companyName,CompanyLevelEnum companyLevel,iStrategy strategy)
+    {
+        Name = companyName;
+        company_level = companyLevel;
+        _marketStrategy = strategy;
+        //Managers
+        _consumptionManager = new BasicConsumptionManager();
+        _marketDataManager = new BasicMarketDataManager();
+        _priceManager = new BasicPriceManager();
+        _tradeProcessor = new BasicTradeProcessor();
+        _transactionManager = new BasicTransactionManager();
+
+        //Price Modifiers
+        _priceModifiers.Add(new SupplyDemandModifier());
     }
 #endregion
 #region Demand
     public Dictionary<Good, DemandData> MarketDemand = new();
-    public void InitializeDemandForSpecificGood(Good good, int InitialDemand)
-    {
-       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand);
-    }
-
-    public void CalculateFulfillmentRates(int tradingPeriod=-1)
-    {
-        if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed
-        {
-            //if no parameter was passed, always look at the previous trading period
-            tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
-        }
-        
-        foreach(var good in MarketDemand.Keys)
-        {
-            var demanded_quantity = MarketDemand[good].CurrentDemand;
-            var supplied_quantity = GetTotalBought(tradingPeriod, good);
-            var FulfilmentRate = (float)supplied_quantity/demanded_quantity;
-            MarketDemand[good].FulfilmentRate = FulfilmentRate;
-        }
-    }
-    public void ConsumeGoods()
-    {
-        //attempt to consume goods at current demand levels
-        foreach(var good in MarketDemand.Keys)
-        {
-            var demanded_quantity = MarketDemand[good].CurrentDemand;
-            //consume good
-            var unfulfilledDemand = _inventory.TryConsumeGood(good.good_name,demanded_quantity);
-            // Do something with unfulfilled demand later
-        }
-    }
+    
     public void AdjustDemand()
     {
         DemandStrategy.AdjustDemand(this);
     }
-    public int GetDemand(string good_name)
+     public void CalculateFulfillmentRates(int tradingPeriod=-1)
+    {
+        DemandStrategy.CalculateFulfillmentRates(this,tradingPeriod);
+    }
+    public int GetMarketDemandForGood(string good_name)
     {
         var good = MarketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
         return MarketDemand[good].CurrentDemand;
+    }
+    public void InitializeDemandForSpecificGood(Good good, int InitialDemand)
+    {
+       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand);
+    }
+#endregion
+#region Pricing
+    public void UpdatePrices()
+        {
+            foreach(var entry in _inventory.GetInventoryEntries())
+            {   
+                var new_price = CalculateNewPrice(entry.good); 
+                SetPrice(entry.good,new_price); 
+            }
+        }
+    private decimal CalculateNewPrice (Good good)
+        {
+            decimal price = good.GetPrice();
+            foreach(var modifier in _priceModifiers)
+            {
+                price = modifier.Apply(price,good,this);
+            }
+            return price;
+        }
+    public void SetPrice (Good good, decimal new_price)
+        {
+            good.Set_price(new_price);
+        }
+
+    public void CalculateNewBidAskSpreadForMarket()
+    {
+        //remember to call CalculateNewBidAskSpreadForMarket 
+        //as part of TheEconomy.Instance.ExecuteDailyTrades.
+        //eventually
+        _priceManager.CalculateNewBidAskSpreadForMarket(this);
+    }
+    public decimal GetMarketCostForGood(Market market, Good good)
+    {
+        return _priceManager.GetMarketCostForGood(market,good);
+    }
+#endregion
+
+#region Supply
+    public int GetTotalSupply(Good good)
+    {
+        return _inventory.GetInventoryEntriesByGood(good.good_name)
+            .Sum(x => x.quantity);
     }
 #endregion
 #region Publishing
@@ -316,8 +287,4 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         _tradeProcessor.QueueOrder(context);
     }
 #endregion
-public void ExpireGoods(int period)
-{
-    //inventory.ExpireGoods(period); //maybe goods in market just don't expire?
-}
 }

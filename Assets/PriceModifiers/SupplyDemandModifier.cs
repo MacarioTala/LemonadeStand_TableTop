@@ -8,7 +8,7 @@ public class SupplyDemandModifier : iPriceModifier
         {
             demand = demand_data[good].CurrentDemand;
         }
-        var supply = market.GetTotalSupply(TheEconomy.Instance.tradingPeriod, good);
+        var supply = market.GetTotalSupply(good);
         var price_increase_threshold = good.price_increase_threshold;
         var price_decrease_threshold = good.price_decrease_threshold;
         var price_increment_rate = good.Get_price_increment_rate();

@@ -91,7 +91,7 @@ public class MarketTests
     public void ConsumeGoods_should_decrease_inventory()
     {
         // Arrange
-        var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
+        var lemonDemand = test_initial_market.GetMarketDemandForGood(lemon.good_name);
         var initialLemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
         var expected = initialLemons - lemonDemand;
         // Act

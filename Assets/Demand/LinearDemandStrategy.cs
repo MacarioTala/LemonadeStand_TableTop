@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using UnityEngine;
 
 public class LinearDemandStrategy : iDemandStrategy
@@ -41,17 +40,10 @@ public class LinearDemandStrategy : iDemandStrategy
         }
     }
 
-    public decimal GetMarketCostForGood(Market market, Good good)
-    {
-        var recipeToUse = market.GetRecipes().Where(recipe=>recipe.GetProduct().Equals(good)).FirstOrDefault() ?? throw new Exception("No recipe found for "+good);
-        var costPerUnit = recipeToUse.GetCostPerUnit(market.GetInventory());
-        return costPerUnit;
-    }
-
      private decimal CalculateAskForProducedGood (Market market,Good good)
     {
         if(!good.IsProducedGood) return 0;
-        var costPerUnit = GetMarketCostForGood(market,good);
+        var costPerUnit = market.GetMarketCostForGood(market,good);
         var rng = (double)UnityEngine.Random.Range(.01f,.15f);
         var ask = costPerUnit * 1+(decimal)rng;
         return ask;

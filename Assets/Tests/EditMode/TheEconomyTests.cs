@@ -132,7 +132,7 @@ public class TheEconomyTests
         var test_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         test_economy.RegisterCompany(test_company);
         test_company.BuyGood(lemon,1000,2.0m);
-        var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
+        var lemonDemand = test_initial_market.GetMarketDemandForGood(lemon.good_name);
         //next line is necessary because of different demand strategies 
         //that will change the demand
         var lemon_quantity_if_ConsumeGoods_ignores_market_buys = initialLemons - lemonDemand;
