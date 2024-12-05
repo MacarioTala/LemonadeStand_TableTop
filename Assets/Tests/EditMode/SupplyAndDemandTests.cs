@@ -37,7 +37,9 @@ public class SupplyAndDemandTests
         lemonade = Good.CreateInstance("Lemonade", band3, Rarity_enum.Uncommon);
 
         // set test_market to the Initial Market
-        test_market = TheEconomy.Instance.companies.Find(company => company.Name == "The First Market") as Market;
+        test_market = Market.Factory.CreateStarterMarket("The First Market"
+                                                        , CompanyLevelEnum.Market
+                                                        , new LinearDemandStrategy());             
         //Make the market demand lemons and lemonade
         test_market.InitializeDemand(lemonade,1000,10,10000);
         test_market.InitializeDemand(lemon,1000,10,10000);
@@ -47,37 +49,39 @@ public class SupplyAndDemandTests
     public void UpdatePrices_increases_price_by_price_increment_rate_when_demand_threshold_is_reached()
     {
         // Arrange
-        var test_period = 0;
-        test_market.BuyGood(lemon, 500,3.0m, test_period);
-        var current_lemon_price = lemon.GetPrice();
-        var price_increment_rate = lemon.Get_price_increment_rate();
-        var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
+        var testMarket = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var testPeriod = 0;
+        testMarket.BuyGood(lemonade, 500,3.0m, testPeriod);
+        var currentLemonadePrice = lemonade.GetPrice();
+        var priceIncrementRate = lemonade.Get_price_increment_rate();
+        var expectedLemonPrice = Math.Round(currentLemonadePrice * (1 + priceIncrementRate), 2);
         // Act
-        test_market.UpdatePrices();   
+        testMarket.UpdatePrices();   
         // Only one entry per good in market inventories
-        var actual_lemon = test_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
-        var actual_lemon_price = Math.Round(actual_lemon.good.GetPrice(),2);
+        var actualLemonade = testMarket.GetInventory().GetInventoryEntriesByGood(lemonade.good_name).FirstOrDefault();
+        var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(),2);
         // Assert
-        Assert.AreEqual(expected_lemon_price, actual_lemon_price);
+        Assert.AreEqual(expectedLemonPrice, actualLemonadePrice);
     }
 
     [Test]
     public void If_market_buying_in_a_period_exceeds_demand_threshold_increase_prices()
     {
         // Arrange
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
         var test_period = 0;
-        var current_lemon_price = lemon.GetPrice();
-        var price_increment_rate = lemon.Get_price_increment_rate();
-        var expected_lemon_price = Math.Round(current_lemon_price * (1 + price_increment_rate), 2);
-        test_market.BuyGood(lemon, 500,3.0m, test_period);
-        test_market.BuyGood(lemon, 500,3.0m, test_period);
-        test_market.BuyGood(lemon, 500,3.0m, test_period);
+        var currentLemonadePrice = lemonade.GetPrice();
+        var price_increment_rate = lemonade.Get_price_increment_rate();
+        var expectedLemonadePrice = Math.Round(currentLemonadePrice * (1 + price_increment_rate), 2);
+        marketToTest.BuyGood(lemonade, 500,3.0m, test_period);
+        marketToTest.BuyGood(lemonade, 500,3.0m, test_period);
+        marketToTest.BuyGood(lemonade, 500,3.0m, test_period);
         // Act
-        test_market.UpdatePrices();
-        var actual_lemon = test_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
-        var actual_lemon_price = Math.Round(actual_lemon.good.GetPrice(),2);
+        marketToTest.UpdatePrices();
+        var actualLemonade = marketToTest.GetInventory().GetInventoryEntriesByGood(lemonade.good_name).FirstOrDefault();
+        var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(),2);
         // Assert
-        Assert.AreEqual(expected_lemon_price, actual_lemon_price);
+        Assert.AreEqual(expectedLemonadePrice, actualLemonadePrice);
     }
     #endregion
     [Test]
@@ -116,7 +120,7 @@ public class SupplyAndDemandTests
         // Arrange
         var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         // Set up a market with demand for lemons
-        Market MarketThatDemandsLemons = Market.Factory.CreateMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        Market MarketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
         MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
         TheEconomy.Instance.RegisterCompany(MarketThatDemandsLemons);
 
@@ -142,7 +146,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.RegisterCompany(selling_company);
 
         //Make a market that demands lemons
-        Market MarketThatDemandsLemons = Market.Factory.CreateMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        Market MarketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
         MarketThatDemandsLemons.InitializeDemand(lemon, 1000);
         TheEconomy.Instance.RegisterCompany(MarketThatDemandsLemons);
 
@@ -159,46 +163,56 @@ public class SupplyAndDemandTests
     public void Adjust_Demand_increases_demand_when_demand_is_60_percent_filled()
     {
         //Assert
-        var expected_lemon_demand = 1400;
-        var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        TheEconomy.Instance.RegisterCompany(selling_company);
+        //Make a market that demands lemons
+        Market marketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        marketThatDemandsLemons.InitializeDemand(lemon, 1000);
+        TheEconomy.Instance.RegisterCompany(marketThatDemandsLemons);
+
+        var expectedLemonDemand = 1400;
+        var sellingCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
+        TheEconomy.Instance.RegisterCompany(sellingCompany);
         //give the selling company some lemons
-        selling_company.BuyGood(lemon, 900, 3.0m);
+        sellingCompany.BuyGood(lemon, 900, 3.0m);
         //Act
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(test_market, selling_company, lemon, 600, 3.0m));
+        TheEconomy.Instance.Queue_Trade(new Trade(marketThatDemandsLemons, sellingCompany, lemon, 600, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
-        var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
+        var actualLemonDemand = marketThatDemandsLemons.MarketDemand[lemon].CurrentDemand;
         //Assert
-        Assert.AreEqual(expected_lemon_demand, actual_lemon_demand);
+        Assert.AreEqual(expectedLemonDemand, actualLemonDemand);
     }
 
     [Test]
     public void Adjust_demand_decreases_demand_when_demand_is_100_percent_filled()
     {
         //Assert
-        var expected_lemon_demand = 900;
+        Market marketToTest = (Market)TheEconomy.Instance.GetGlobalMarket();
+        var initialLemonadeDemand = marketToTest.MarketDemand[lemonade].CurrentDemand;
+        var currentLinearDemandAdjustment = 0.9;
+        var expectedLemonadeDemand = initialLemonadeDemand * currentLinearDemandAdjustment;
         var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         TheEconomy.Instance.RegisterCompany(selling_company);
-        //give the selling company some lemons
-        selling_company.BuyGood(lemon, 1000, 3.0m);
+        //give the selling company some lemonade
+        selling_company.BuyGood(lemonade, 1000, 3.0m);
         //Act
-        //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade ( buyer: test_market,
+        //have the market buy some lemonade
+        TheEconomy.Instance.Queue_Trade(new Trade ( buyer: marketToTest,
                                                     seller: selling_company, 
-                                                    good: lemon, 
+                                                    good: lemonade, 
                                                     quantity: 1000, 
                                                     price: 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
-        var actual_lemon_demand = test_market.MarketDemand[lemon].CurrentDemand;
+        var actual_lemon_demand = marketToTest.MarketDemand[lemonade].CurrentDemand;
         //Assert
-        Assert.AreEqual(expected_lemon_demand, actual_lemon_demand);
+        Assert.AreEqual(expectedLemonadeDemand, actual_lemon_demand);
     }
 
     [Test]
     public void GetTotalSupply_returns_total_supply_of_good_in_inventory()
     {
         // Arrange
+        var test_market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        test_market.SetCash(1000000);
         test_market.BuyGood(lemon, 500,3.0m, 0);
         test_market.BuyGood(lemon, 500,3.0m, 1);
         test_market.BuyGood(lemon, 500,3.0m, 2);

@@ -3,7 +3,11 @@ public class SupplyDemandModifier : iPriceModifier
     public decimal Apply(decimal base_price, Good good, Market market)
     {
         var demand_data = market.MarketDemand;
-        var demand = demand_data[good].CurrentDemand;
+        int demand = 0;
+        if(demand_data.ContainsKey(good))
+        {
+            demand = demand_data[good].CurrentDemand;
+        }
         var supply = market.GetTotalSupply(TheEconomy.Instance.tradingPeriod, good);
         var price_increase_threshold = good.price_increase_threshold;
         var price_decrease_threshold = good.price_decrease_threshold;

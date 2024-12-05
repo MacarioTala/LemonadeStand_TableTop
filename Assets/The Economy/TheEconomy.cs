@@ -24,7 +24,6 @@ public class TheEconomy : MonoBehaviour
 
     private Market InitialMarket;
 
-   
     public void Initialize(ITradeLogger trade_logger)
     {
         //Create the instance
@@ -51,7 +50,7 @@ public class TheEconomy : MonoBehaviour
 
     private void CreateInitialMarket()
     {
-        InitialMarket = Market.Factory.CreateMarket(
+        InitialMarket = Market.Factory.CreateStarterMarket(
                             "The First Market", 
                             CompanyLevelEnum.Market, 
                             new LinearDemandStrategy());

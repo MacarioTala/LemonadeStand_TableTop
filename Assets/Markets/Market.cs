@@ -7,11 +7,11 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
 {
 #region Identity
     //Fields to get around Unity's limitation of not having automatic backing properties.
-    [SerializeField] private string _company_name;
+    [SerializeField] private string _companyName;
     public string Name
     {
-        get => _company_name;
-        set => _company_name = value;
+        get => _companyName;
+        set => _companyName = value;
     }
     public CompanyLevelEnum company_level;
 #endregion
@@ -52,27 +52,10 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
 #region Financials
     private decimal cash = 0;
     public decimal GetCash() => cash;
-    private void SetInitialCash()
-    {
-        switch(company_level)
-        {
-            case CompanyLevelEnum.Beginner:
-                cash = 10000;
-                break;
-            case CompanyLevelEnum.Intermediate:
-                cash = 5000;
-                break;
-            case CompanyLevelEnum.Advanced:
-                cash = 1000;
-                break;  
-            case CompanyLevelEnum.Market:
-                cash = 1000000000000;
-                break;
-        }
-    }
-#endregion
+    public void SetCash(decimal new_cash) => cash = new_cash;
+ #endregion
 
-#region goals and strategies
+    #region goals and strategies
     public List<Goal> Goals {get;set;}
     public iDemandStrategy DemandStrategy ;
     private iStrategy _marketStrategy;
@@ -132,16 +115,9 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     private Market ()
     {
     }
-
     public static class Factory
-    {
-        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy, iStrategy marketStrategy)
-        {
-            var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, marketStrategy);
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            return market;
-        }
+    { 
+        public static readonly StarterMarketInitializer _initializer = new();
         public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
             var market = CreateInstance<Market>();
@@ -162,57 +138,25 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
             var market = CreateInstance<Market>();
-            market.SeedWithInitialGoods();
             market.Initialize(companyName, companyLevel, null);
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            _initializer.InitializeMarket(market);
             return market;
         }
     }
-    internal void Initialize(
-        string companyName,
-        CompanyLevelEnum companyLevel,
-        iStrategy strategy)
+    internal void Initialize (string companyName,CompanyLevelEnum companyLevel,iStrategy strategy)
     {
         Name = companyName;
         company_level = companyLevel;
         _marketStrategy = strategy;
-        //setup
+        //Managers
         _consumptionManager = new BasicConsumptionManager();
         _marketDataManager = new BasicMarketDataManager();
         _tradeProcessor = new BasicTradeProcessor();
         _transactionManager = new BasicTransactionManager();
 
-        SetInitialCash();
+        //Price Modifiers
         _priceModifiers.Add(new SupplyDemandModifier());
-        CreateStarterDemand();
-
-    }
-
-    private void CreateStarterDemand ()
-    {
-        //Initialize demand data
-        //If no demand data is passed, demand defaults to 1000 units of Lemonade
-        //This is a placeholder and will be replaced with a more sophisticated system
-        var lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
-        lemonade.IsProducedGood = true;
-        InitializeDemand(lemonade, 1000);
-    }
-
-    private void SeedWithInitialGoods ()
-    {
-        var Lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
-        var Lemon = Good.CreateInstance("Lemon", new Price_band(1.0m, 3.0m), Rarity_enum.Common);
-        var Sugar = Good.CreateInstance("Sugar", new Price_band(1.0m, 2.0m), Rarity_enum.Common);
-        var Water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
-        _inventory.AddGood(new InventoryEntry(Lemon, 10000, 2.0m, 0));
-        _inventory.AddGood(new InventoryEntry(Sugar, 10000, 1.5m, 0));
-        _inventory.AddGood(new InventoryEntry(Water, 10000, .75m, 0));
-        var LemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
-                                        product: Lemonade,
-                                        ingredients: new List<Ingredient> { new(Lemon, 9),
-                                                                           new(Sugar, 2),
-                                                                           new(Water, 7) });
-        AddRecipe(LemonadeRecipe);
     }
 #endregion
 #region Price Setting
@@ -231,6 +175,9 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     }
     public void CalculateNewBidAskSpreadForMarket()
     {
+        //remember to call CalculateNewBidAskSpreadForMarket 
+        //as part of TheEconomy.Instance.ExecuteDailyTrades.
+        //eventually
         var temporaryPriceIncrease = .01m;
         foreach(var entry in _inventory.GetInventoryEntries())
         {
@@ -401,7 +348,6 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
 #endregion
 #region Publishing
     public List<MarketData> MarketData = new();//bid/ask spread for companies
-    //remember to call CalculateMarketData as part of TheEconomy.Instance.ExecuteDailyTrades.
     
     public List<MarketData> PublishMarketData()
     {

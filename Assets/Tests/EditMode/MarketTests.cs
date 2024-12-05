@@ -37,7 +37,9 @@ public class MarketTests
 
     private void SetupInitialMarket()
     {
-        test_initial_market = (Market)test_economy.GetGlobalMarket();
+        test_initial_market = Market.Factory.CreateStarterMarket(companyName: "The First Market", 
+                                                    companyLevel: CompanyLevelEnum.Market,
+                                                    demandStrategy: new LinearDemandStrategy());
         test_initial_market.InitializeDemand(lemon, 1000);
     }
 
@@ -89,10 +91,9 @@ public class MarketTests
     public void ConsumeGoods_should_decrease_inventory()
     {
         // Arrange
-        var initialLemons = 10000;
         var lemonDemand = test_initial_market.GetDemand(lemon.good_name);
+        var initialLemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
         var expected = initialLemons - lemonDemand;
-        test_initial_market.BuyGood(lemon,initialLemons,3.0m);
         // Act
         test_initial_market.ConsumeGoods();
         var actual = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
@@ -185,7 +186,7 @@ public class MarketTests
         //Act
         company1.SubmitBidAskSpreadToMarket(context);
         test_initial_market.CalculateNewBidAskSpreadForMarket();
-        var actual = test_initial_market.MarketData;
+        var actual = test_initial_market.MarketData.Where(x=>x.Good == lemon).ToList();
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -220,6 +221,7 @@ public class MarketTests
                                                     companyLevel: CompanyLevelEnum.Market,
                                                     demandStrategy: new LinearDemandStrategy());
         var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, Rarity_enum.Uncommon);
+        testMarket.SetCash(100000);
         enhancedlemonade.IsProducedGood = true;
         var enhancedLemonadeRecipe = new Recipe(RecipeName: "Enhanced Lemonade",
                                      product: enhancedlemonade, 
