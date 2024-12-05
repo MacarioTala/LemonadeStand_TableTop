@@ -16,21 +16,14 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
     public CompanyLevelEnum company_level;
 #endregion
 #region Managers
-    private iTransactionManager _transactionManager;
-    public void SetTransactionManager(iTransactionManager transactionManager)
-    {
-        _transactionManager = transactionManager;
-    }
     private iConsumptionManager _consumptionManager;
-    public void SetConsumptionManager(iConsumptionManager consumptionManager)
-    {
-        _consumptionManager = consumptionManager;
-    }
-     private iTradeProcessor _tradeProcessor;
-    public void SetTradeProcessor(iTradeProcessor tradeProcessor)
-    {
-        _tradeProcessor = tradeProcessor;
-    }
+    public void SetConsumptionManager(iConsumptionManager consumptionManager) => _consumptionManager = consumptionManager;
+    private iMarketDataManager _marketDataManager;
+    public void SetMarketDataManager(iMarketDataManager marketDataManager) => _marketDataManager = marketDataManager;
+    private iTradeProcessor _tradeProcessor;
+    public void SetTradeProcessor(iTradeProcessor tradeProcessor) => _tradeProcessor = tradeProcessor;
+    private iTransactionManager _transactionManager;
+    public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
 #endregion
 #region Company Registration
     public List<Company> CompaniesInThisMarket = new();
@@ -184,8 +177,11 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         company_level = companyLevel;
         _marketStrategy = strategy;
         //setup
-        _transactionManager = new BasicTransactionManager();
+        _consumptionManager = new BasicConsumptionManager();
+        _marketDataManager = new BasicMarketDataManager();
         _tradeProcessor = new BasicTradeProcessor();
+        _transactionManager = new BasicTransactionManager();
+
         SetInitialCash();
         _priceModifiers.Add(new SupplyDemandModifier());
         CreateStarterDemand();
@@ -233,7 +229,21 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
         var ask = costPerUnit * 1+(decimal)rng;
         return ask;
     }
-        
+    public void CalculateNewBidAskSpreadForMarket()
+    {
+        var temporaryPriceIncrease = .01m;
+        foreach(var entry in _inventory.GetInventoryEntries())
+        {
+            var data = new MarketData
+            {
+                Company = this,
+                Bid = entry.good.GetPrice(),
+                Ask = entry.good.GetPrice() * (1 + temporaryPriceIncrease),
+                Good = entry.good
+            };
+            MarketData.Add(data);
+        }
+    }
     private decimal CalculateNewPrice (Good good)
     {
         decimal price = good.GetPrice();
@@ -392,49 +402,15 @@ public class Market : ScriptableObject, iCompany, iPriceSetter
 #region Publishing
     public List<MarketData> MarketData = new();//bid/ask spread for companies
     //remember to call CalculateMarketData as part of TheEconomy.Instance.ExecuteDailyTrades.
-    public void CalculateMarketData()
+    
+    public List<MarketData> PublishMarketData()
     {
-        var temporaryPriceIncrease = .01m;
-        foreach(var entry in _inventory.GetInventoryEntries())
-        {
-            var data = new MarketData
-            {
-                Company = this,
-                Bid = entry.good.GetPrice(),
-                Ask = entry.good.GetPrice() * (1 + temporaryPriceIncrease),
-                Good = entry.good
-            };
-            MarketData.Add(data);
-        }
+        return _marketDataManager.PublishMarketData(this);
     }
-    public List<MarketData> PublishMarketData()=>MarketData;
 
     public void PublishSpreadToMarket(ActionContext context)
     {
-        var MarketToSubmitTo = this;
-        var good = context.GoodToSubmit;
-        var bid = context.BidToSubmit;
-        var ask = context.AskToSubmit;
-        var submittingCompany = context.SubmittingCompany;
-
-        var isGoodInMarketData = MarketData.Any(x=>x.Good==good && x.Company.Equals(submittingCompany));
-        if(isGoodInMarketData)
-        {
-            var marketData = MarketData.First(x=>x.Good==good && x.Company.Equals(submittingCompany));
-            marketData.Bid = bid;
-            marketData.Ask = ask;
-        }
-        else
-        {
-            var data = new MarketData
-            {
-                Company = submittingCompany,
-                Good = good,
-                Bid = bid,
-                Ask = ask
-            };
-            MarketData.Add(data);
-        }
+        _marketDataManager.PublishSpreadToMarket(context);
     }
 #endregion
 #region Interacting with the Economy

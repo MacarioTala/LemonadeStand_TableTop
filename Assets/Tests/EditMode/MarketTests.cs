@@ -166,7 +166,7 @@ public class MarketTests
         var initial_price = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().good.GetPrice();
         var expected = initial_price * 1.01m;
         // Act
-        test_initial_market.CalculateMarketData();
+        test_initial_market.CalculateNewBidAskSpreadForMarket();
         var marketData = test_initial_market.MarketData;
         var actual = marketData.Where(entry => entry.Good.good_name == lemon.good_name
                                         && entry.Company.Name == test_initial_market.Name)
@@ -184,7 +184,7 @@ public class MarketTests
         var expected = new List<MarketData>{new() { Good = lemon, Company = company1, Bid = 2.0m, Ask = 3.0m}};
         //Act
         company1.SubmitBidAskSpreadToMarket(context);
-        test_initial_market.CalculateMarketData();
+        test_initial_market.CalculateNewBidAskSpreadForMarket();
         var actual = test_initial_market.MarketData;
         // Assert
         Assert.AreEqual(expected, actual);
