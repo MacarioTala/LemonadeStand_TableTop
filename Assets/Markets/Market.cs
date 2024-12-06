@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
-
+[assembly:InternalsVisibleTo("Tests")]
 public class Market : ScriptableObject, iCompany
 {
 #region Fields, Properties, and Convenience Methods
@@ -127,7 +128,7 @@ public class Market : ScriptableObject, iCompany
     {
         _consumptionManager.FulfillDemand(this);
     }
-    public void ConsumeGoods()
+    internal void ConsumeGoods()
         {
             //attempt to consume goods at current demand levels
             foreach(var good in _marketDemand.Keys)
@@ -218,11 +219,11 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Demand
-    public void AdjustDemand()
+    internal void AdjustDemand()
     {
         DemandStrategy.AdjustDemand(this);
     }
-     public void CalculateFulfillmentRates(int tradingPeriod=-1)
+     internal void CalculateFulfillmentRates(int tradingPeriod=-1)
     {
         DemandStrategy.CalculateFulfillmentRates(this,tradingPeriod);
     }
@@ -237,7 +238,7 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Pricing
-    public void UpdatePrices()
+    internal void UpdatePrices()
         {
             _priceManager.UpdatePricesForMarket(this);
         }
@@ -275,6 +276,13 @@ public class Market : ScriptableObject, iCompany
     public void QueueOrder(ActionContext context)
     {
         _tradeProcessor.QueueOrder(context);
+    }
+    public void UnleashMarketForces(int period)
+    {
+        CalculateFulfillmentRates(period);
+        AdjustDemand();
+        UpdatePrices();
+        ConsumeGoods();
     }
 #endregion
 }

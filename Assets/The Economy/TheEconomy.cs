@@ -81,10 +81,7 @@ public class TheEconomy : MonoBehaviour
         {
             if(company is Market market)
             {
-                market.CalculateFulfillmentRates(tradingPeriod);
-                market.AdjustDemand();
-                market.UpdatePrices();
-                market.ConsumeGoods();
+                market.UnleashMarketForces(tradingPeriod);
             }
             else
             {

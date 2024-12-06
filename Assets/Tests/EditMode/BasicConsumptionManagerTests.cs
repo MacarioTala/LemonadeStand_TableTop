@@ -75,6 +75,73 @@ public class BasicConsumptionManagerTests
         //Assert
         Assert.AreEqual(expectedFilledQuantity, actualFilledQuantity);
     }
+    [Test]
+    public void FillOrderBasedOnPriceFillsBothOrdersWhenLessThanDemandedQuantity()
+    {
+        //Arrange
+        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
+                                                              CompanyLevelEnum.Market,
+                                                              new LinearDemandStrategy() );
+        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+        marketToTest.RegisterCompany(company1);
+        marketToTest.RegisterCompany(company2);
+
+        var company1Order = new Trade(marketToTest, company1, lemonade, 500, 3.5m);
+        var company2Order = new Trade(marketToTest, company2, lemonade, 500, 3.5m);
+        var company1Context = new ActionContext{TradeToSubmit = company1Order,
+                                                MarketToSubmitTo = marketToTest};
+        var company2Context = new ActionContext{TradeToSubmit = company2Order,
+                                                MarketToSubmitTo = marketToTest};
+
+        var expectedFilledQuantityForCompany1 = 500;
+        var expectedFilledQuantityForCompany2 = 500;
+        //Act
+        company1.QueueOrder(company1Context);
+        company2.QueueOrder(company2Context);
+        marketToTest.FulfillDemand();
+        var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
+        var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
+        //Assert
+        Assert.AreEqual(expectedFilledQuantityForCompany1, actualFilledQuantityForCompany1);
+        Assert.AreEqual(expectedFilledQuantityForCompany2, actualFilledQuantityForCompany2);
+    }
+    [Test]
+    public void IfBothOrdersAreLessThanDemandedQuantityBothAreFilled()
+    {
+         //Arrange
+        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
+                                                              CompanyLevelEnum.Market,
+                                                              new LinearDemandStrategy() );
+        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+        marketToTest.RegisterCompany(company1);
+        marketToTest.RegisterCompany(company2);
+
+        var company1Order = new Trade(marketToTest, company1, lemonade, 400, 3.5m);
+        var company2Order = new Trade(marketToTest, company2, lemonade, 400, 3.5m);
+        var company1Context = new ActionContext{TradeToSubmit = company1Order,
+                                                MarketToSubmitTo = marketToTest};
+        var company2Context = new ActionContext{TradeToSubmit = company2Order,
+                                                MarketToSubmitTo = marketToTest};
+
+        var expectedFilledQuantityForCompany1 = 400;
+        var expectedFilledQuantityForCompany2 = 400;
+        //Act
+        company1.QueueOrder(company1Context);
+        company2.QueueOrder(company2Context);
+        marketToTest.FulfillDemand();
+        var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
+        var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
+        //Assert
+        Assert.AreEqual(expectedFilledQuantityForCompany1, actualFilledQuantityForCompany1);
+        Assert.AreEqual(expectedFilledQuantityForCompany2, actualFilledQuantityForCompany2);
+    }
+
     [TearDown]
     public void TearDown()
     {
