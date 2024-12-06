@@ -1,5 +1,5 @@
 public interface iConsumptionManager
 {
-    void FulfillDemand ();
     void AdjustDemand (ActionContext context);
+    void FulfillDemand (Market market);
 }

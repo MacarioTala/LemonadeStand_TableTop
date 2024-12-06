@@ -7,7 +7,7 @@ public class LinearDemandStrategy : iDemandStrategy
     private const int MaxDemand = 1000000;
     public void AdjustDemand(Market market)
     {
-        var marketDemand = market.MarketDemand;
+        var marketDemand = market.GetMarketDemand();
         foreach(var good in marketDemand.Keys)
         {
             var demandData = marketDemand[good];
@@ -53,6 +53,7 @@ public class LinearDemandStrategy : iDemandStrategy
     {
         decimal ask;
         bool hasCostForGood = CalculateAskForProducedGood(market,good) > 0;
+        var marketDemand = market.GetMarketDemand();
         if(good.IsProducedGood && hasCostForGood)
         {
             ask=CalculateAskForProducedGood(market,good);
@@ -62,12 +63,12 @@ public class LinearDemandStrategy : iDemandStrategy
             ask = good.GetPrice();
         }
 
-        if(market.MarketDemand.ContainsKey(good))
+        if(marketDemand.ContainsKey(good))
         {
-            market.MarketDemand[good].CurrentDemand = initialDemand;
-            market.MarketDemand[good].MinDemand = minDemand;
-            market.MarketDemand[good].MaxDemand = maxDemand;
-            market.MarketDemand[good].Ask = ask;
+            marketDemand[good].CurrentDemand = initialDemand;
+            marketDemand[good].MinDemand = minDemand;
+            marketDemand[good].MaxDemand = maxDemand;
+            marketDemand[good].Ask = ask;
         }
         else
         {
@@ -79,7 +80,7 @@ public class LinearDemandStrategy : iDemandStrategy
                                 MaxDemand = maxDemand,
                                 Ask = ask
                             };
-            market.MarketDemand.Add(good, demandData);
+            marketDemand.Add(good, demandData);
         }
     }
 

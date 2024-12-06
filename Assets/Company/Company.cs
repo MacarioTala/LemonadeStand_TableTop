@@ -223,22 +223,16 @@ public class Company : ScriptableObject, iCompany
 #region Market Actions
     public void QueueOrder(ActionContext context)
     {
-        var seller = context.Seller;
-        Trade trade;
-        if(context.Seller == null || context.GoodToBuy == null || context.Quantity == 0 || context.Price == 0)
+        var MarketToSubmitTo = context.MarketToSubmitTo;
+        if  (
+            (context.Seller == null || context.GoodToBuy == null || context.Quantity == 0 || context.Price == 0)
+                &&
+            (context.TradeToSubmit == null)
+            )
         {
-            throw new ContextException("Seller, Good, Quantity, or Price not set in context");
+            throw new ContextException("Seller, Good, Quantity, Price, or Trade not set in context");
         }
-
-        if (context.IsBuy)
-        {
-            trade = new Trade(this, seller, context.GoodToBuy, context.Quantity, context.Price);
-        }
-        else
-        {
-            trade = new Trade(seller, this, context.GoodToBuy, context.Quantity, context.Price);
-        }
-        TheEconomy.Instance.Queue_Trade(trade);
+        MarketToSubmitTo.QueueOrder(context);
     }
     public void SubmitBidAskSpreadToMarket(ActionContext context)
     {

@@ -17,18 +17,19 @@ public interface iDemandStrategy
 
      public void CalculateFulfillmentRates(Market market,int tradingPeriod=-1)
     {
+        var marketDemand = market.GetMarketDemand();
         if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed
         {
             //if no parameter was passed, always look at the previous trading period
             tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
         }
         
-        foreach(var good in market.MarketDemand.Keys)
+        foreach(var good in marketDemand.Keys)
         {
-            var demanded_quantity = market.MarketDemand[good].CurrentDemand;
-            var supplied_quantity = market.GetTotalBought(tradingPeriod, good);
-            var FulfilmentRate = (float)supplied_quantity/demanded_quantity;
-            market.MarketDemand[good].FulfilmentRate = FulfilmentRate;
+            var demandedQuantity = marketDemand[good].CurrentDemand;
+            var suppliedQuantity = market.GetTotalBought(tradingPeriod, good);
+            var FulfilmentRate = (float)suppliedQuantity/demandedQuantity;
+            marketDemand[good].FulfilmentRate = FulfilmentRate;
         }
     }
 

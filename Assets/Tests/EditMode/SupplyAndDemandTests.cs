@@ -118,7 +118,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.EndTradingPeriod();
         
         // Act
-        var actual_fulfillment_rate = MarketThatDemandsLemons.MarketDemand[lemon].FulfilmentRate;
+        var actual_fulfillment_rate = MarketThatDemandsLemons.GetMarketDemand()[lemon].FulfilmentRate;
         // Assert
         Assert.AreEqual(1, actual_fulfillment_rate);
     }
@@ -140,7 +140,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 500, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         //Act
-        var actual_fulfillment_rate = MarketThatDemandsLemons.MarketDemand[lemon].FulfilmentRate;
+        var actual_fulfillment_rate = MarketThatDemandsLemons.GetMarketDemand()[lemon].FulfilmentRate;
         // Assert
         Assert.Less(actual_fulfillment_rate, 1);
     }
@@ -163,7 +163,7 @@ public class SupplyAndDemandTests
         //have the market buy some lemons
         TheEconomy.Instance.Queue_Trade(new Trade(marketThatDemandsLemons, sellingCompany, lemon, 600, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
-        var actualLemonDemand = marketThatDemandsLemons.MarketDemand[lemon].CurrentDemand;
+        var actualLemonDemand = marketThatDemandsLemons.GetMarketDemand()[lemon].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedLemonDemand, actualLemonDemand);
     }
@@ -173,7 +173,7 @@ public class SupplyAndDemandTests
     {
         //Assert
         Market marketToTest = (Market)TheEconomy.Instance.GetGlobalMarket();
-        var initialLemonadeDemand = marketToTest.MarketDemand[lemonade].CurrentDemand;
+        var initialLemonadeDemand = marketToTest.GetMarketDemand()[lemonade].CurrentDemand;
         var currentLinearDemandAdjustment = 0.9;
         var expectedLemonadeDemand = initialLemonadeDemand * currentLinearDemandAdjustment;
         var selling_company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
@@ -188,7 +188,7 @@ public class SupplyAndDemandTests
                                                     quantity: 1000, 
                                                     price: 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
-        var actualLemonadeDemand = marketToTest.MarketDemand[lemonade].CurrentDemand;
+        var actualLemonadeDemand = marketToTest.GetMarketDemand()[lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedLemonadeDemand, actualLemonadeDemand);
     }

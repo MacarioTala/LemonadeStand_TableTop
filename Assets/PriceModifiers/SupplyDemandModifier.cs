@@ -2,7 +2,7 @@ public class SupplyDemandModifier : iPriceModifier
 {
     public decimal Apply(decimal base_price, Good good, Market market)
     {
-        var demand_data = market.MarketDemand;
+        var demand_data = market.GetMarketDemand();
         int demand = 0;
         if(demand_data.ContainsKey(good))
         {

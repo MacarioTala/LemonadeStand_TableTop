@@ -106,8 +106,8 @@ public class TheEconomy : MonoBehaviour
     private void Process_trade(Trade trade, int tradingPeriod)
     {
        try{
-            trade.seller.SellGood(trade.good, trade.quantity, trade.price,tradingPeriod);
-            trade.buyer.BuyGood(trade.good, trade.quantity,trade.price,tradingPeriod);
+            trade.Seller.SellGood(trade.Good, trade.Quantity, trade.Price,tradingPeriod);
+            trade.Buyer.BuyGood(trade.Good, trade.Quantity,trade.Price,tradingPeriod);
           }
         catch(Company_InventoryException e)
         {

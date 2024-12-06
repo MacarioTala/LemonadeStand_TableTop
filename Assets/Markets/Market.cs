@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Market : ScriptableObject, iCompany
 {
-#region Identity
+#region Fields, Properties, and Convenience Methods
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField] private string _companyName;
     public string Name
@@ -14,18 +14,82 @@ public class Market : ScriptableObject, iCompany
         set => _companyName = value;
     }
     public CompanyLevelEnum company_level;
-     //Market-specific members
-     public List<MarketData> MarketData = new();//bid/ask spread for companies
-    private readonly List<MarketTrade> _marketTradesInPeriod = new();
-    private readonly List<iPriceModifier> _priceModifiers = new();
-    public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
-    public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
-    public void RecordTrade(MarketTrade trade)
-    {
-        _marketTradesInPeriod.Add(trade);
-    }
-    
+    //Demand
+    public List<MarketData> MarketData = new();//bid/ask spread for companies
+    private readonly Dictionary<Good, DemandData> _marketDemand = new();
 
+    //Cash and Inventory
+    private decimal cash = 0;
+    private readonly Inventory _inventory = new();
+    private readonly List<Recipe> _recipes = new();
+
+    //Goals
+    public List<Goal> Goals {get;set;}
+    public iDemandStrategy DemandStrategy ;
+    private iStrategy _marketStrategy;
+    
+    //Pricing  
+    public List<FixedCost> FixedCosts { get; set; }
+    public iFixedCostStrategy FixedCostStrategy {get;set;}
+    private readonly List<iPriceModifier> _priceModifiers = new();
+    
+    //Time
+    public int CurrentPeriod{get;set;}
+    public int StartingPeriod{get;set;}
+    //Trading
+    private readonly List<MarketTrade> _marketTradesInPeriod = new();
+
+    //Convenience methods
+    public decimal GetCash() => cash;
+    public Inventory GetInventory() => _inventory;
+    public List<Trade>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
+    public List<Recipe> GetRecipes()=>_recipes;
+    public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
+    public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
+    public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
+    public void RecordTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
+    public void SetCash(decimal new_cash) => cash = new_cash;
+    #endregion
+#region Creation and Initialization
+    //Instantiate Markets using a factory
+    private Market ()
+    {
+    }
+    public static class Factory
+    { 
+        public static readonly StarterMarketInitializer _initializer = new();
+        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
+        {
+            var market = CreateInstance<Market>();
+            market.Initialize(companyName, companyLevel, null);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            return market;
+        }
+
+        public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
+        {
+            var market = CreateInstance<Market>();
+            market.Initialize(companyName, companyLevel, null);
+            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            _initializer.InitializeMarket(market);
+            return market;
+        }
+    }
+    internal void Initialize (string companyName,CompanyLevelEnum companyLevel,iStrategy strategy)
+    {
+        Name = companyName;
+        company_level = companyLevel;
+        _marketStrategy = strategy;
+        //Managers
+        _consumptionManager = new BasicConsumptionManager();
+        _marketDataManager = new BasicMarketDataManager();
+        _priceManager = new BasicPriceManager();
+        _tradeProcessor = new BasicTradeProcessor();
+        _transactionManager = new BasicTransactionManager();
+
+        //Price Modifiers
+        _priceModifiers.Add(new SupplyDemandModifier());
+    }
 #endregion
 #region Managers
     private iConsumptionManager _consumptionManager;
@@ -55,39 +119,37 @@ public class Market : ScriptableObject, iCompany
         }
 #endregion
 #region Consumption
+    public void AddOrderToSendToEconomy (Trade trade)
+    {
+        _tradeProcessor.AddOrderToSendToEconomy(trade);
+    }
+    public void FulfillDemand()
+    {
+        _consumptionManager.FulfillDemand(this);
+    }
     public void ConsumeGoods()
         {
             //attempt to consume goods at current demand levels
-            foreach(var good in MarketDemand.Keys)
+            foreach(var good in _marketDemand.Keys)
             {
-                var demanded_quantity = MarketDemand[good].CurrentDemand;
+                var demanded_quantity = _marketDemand[good].CurrentDemand;
                 //consume good
                 var unfulfilledDemand = _inventory.TryConsumeGood(good.good_name,demanded_quantity);
                 // Do something with unfulfilled demand later
             }
         }
     public void ExpireGoods(int period)
-    {
-        //inventory.ExpireGoods(period); //maybe goods in market just don't expire?
-    }
+        {
+            //inventory.ExpireGoods(period); //maybe goods in market just don't expire?
+        }
 #endregion
-#region Financials
-    private decimal cash = 0;
-    public decimal GetCash() => cash;
-    public void SetCash(decimal new_cash) => cash = new_cash;
- #endregion
 #region Fixed costs
-    public List<FixedCost> FixedCosts { get; set; }
-    public iFixedCostStrategy FixedCostStrategy {get;set;}
     public decimal CalculateFixedCostsForPeriod(int period)
     {
         return FixedCostStrategy.CalculateFixedCosts(FixedCosts,period);
     }
 #endregion
 #region Goals and strategies
-    public List<Goal> Goals {get;set;}
-    public iDemandStrategy DemandStrategy ;
-    private iStrategy _marketStrategy;
     public void CompleteGoal(Goal goal)
         {
             throw new NotImplementedException();
@@ -98,13 +160,7 @@ public class Market : ScriptableObject, iCompany
             throw new NotImplementedException();
         }
 #endregion
-
 #region Inventory Management
-    private readonly Inventory _inventory = new();
-    public Inventory GetInventory() => _inventory;
-    private readonly List<Recipe> _recipes = new();
-    public List<Recipe> GetRecipes()=>_recipes;
-    
     public void AddRecipe(Recipe recipe)
     {
         if(_recipes.Contains(recipe))
@@ -116,12 +172,8 @@ public class Market : ScriptableObject, iCompany
             _recipes.Add(recipe);
         }
     }
-
 #endregion
-
-#region Time
-    public int StartingPeriod{get;set;}
-    public int CurrentPeriod{get;set;}
+#region Time 
     public void UpdateCurrentPeriod(int period)
     {
         CurrentPeriod = period;
@@ -165,50 +217,7 @@ public class Market : ScriptableObject, iCompany
         return DemandStrategy.GetTotalSold(this,tradingPeriod,good);
     }
 #endregion
-#region Creation
-    //Instantiate Markets using a factory
-    private Market ()
-    {
-    }
-    public static class Factory
-    { 
-        public static readonly StarterMarketInitializer _initializer = new();
-        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
-        {
-            var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, null);
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            return market;
-        }
-
-        public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
-        {
-            var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, null);
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            _initializer.InitializeMarket(market);
-            return market;
-        }
-    }
-    internal void Initialize (string companyName,CompanyLevelEnum companyLevel,iStrategy strategy)
-    {
-        Name = companyName;
-        company_level = companyLevel;
-        _marketStrategy = strategy;
-        //Managers
-        _consumptionManager = new BasicConsumptionManager();
-        _marketDataManager = new BasicMarketDataManager();
-        _priceManager = new BasicPriceManager();
-        _tradeProcessor = new BasicTradeProcessor();
-        _transactionManager = new BasicTransactionManager();
-
-        //Price Modifiers
-        _priceModifiers.Add(new SupplyDemandModifier());
-    }
-#endregion
 #region Demand
-    public Dictionary<Good, DemandData> MarketDemand = new();
-    
     public void AdjustDemand()
     {
         DemandStrategy.AdjustDemand(this);
@@ -219,8 +228,8 @@ public class Market : ScriptableObject, iCompany
     }
     public int GetMarketDemandForGood(string good_name)
     {
-        var good = MarketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
-        return MarketDemand[good].CurrentDemand;
+        var good = _marketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
+        return _marketDemand[good].CurrentDemand;
     }
     public void InitializeDemandForSpecificGood(Good good, int InitialDemand)
     {
@@ -244,7 +253,6 @@ public class Market : ScriptableObject, iCompany
         return _priceManager.GetMarketCostForGood(market,good);
     }
 #endregion
-
 #region Supply
     public int GetTotalSupply(Good good)
     {

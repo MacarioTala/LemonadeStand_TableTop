@@ -1,7 +1,12 @@
 using System.Collections.Generic;
 
 public interface iTradeProcessor
-{
+{   
+    public void AddOrderToSendToEconomy (Trade trade);
+    /// <summary>
+    /// Returns all orders in the Market's queue
+    /// </summary>
+    List<Trade> GetOrders ();
     /// <summary>
     /// Processes all orders in the queue
     /// and sends them to TheEconomy

@@ -80,7 +80,7 @@ public class MarketTests
         var expected_good_name = "Lemonade";
         var expected_demand = 1000;
         // Act
-        var actual = test_initial_market.MarketDemand.First();
+        var actual = test_initial_market.GetMarketDemand().First();
         // Assert
         Assert.AreEqual(expected_good_name, actual.Key.good_name);
         Assert.AreEqual(expected_demand, actual.Value.CurrentDemand);
@@ -235,7 +235,7 @@ public class MarketTests
         testMarket.InitializeDemandForSpecificGood(enhancedlemonade, 1000);
         var costPerUnit = 9 * 3.0m + 2 * 3.0m + 7 * 3.0m;
         // Act
-        var actual = testMarket.MarketDemand[enhancedlemonade].Ask;
+        var actual = testMarket.GetMarketDemand()[enhancedlemonade].Ask;
         // Assert
         Assert.Greater(actual, costPerUnit);
         Debug.Log($"Cost per unit: {costPerUnit}" + " Ask: " + actual);

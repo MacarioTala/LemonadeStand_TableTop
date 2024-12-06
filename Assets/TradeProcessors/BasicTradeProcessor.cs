@@ -2,9 +2,14 @@ using System.Collections.Generic;
 
 public class BasicTradeProcessor : iTradeProcessor
 {
-     private readonly List<Trade> TradesSentToTheMarket = new();
+     private readonly List<Trade> _tradesSentToTheMarket = new();
      public List<Trade> TradesToSendToTheEconomy = new();
 
+    public void AddOrderToSendToEconomy(Trade trade)
+    {
+        TradesToSendToTheEconomy.Add(trade);
+    }
+    public List<Trade> GetOrders()=>_tradesSentToTheMarket;
     public List<Trade> GetOrderResults(ActionContext context)
     {
         throw new System.NotImplementedException();
@@ -17,13 +22,7 @@ public class BasicTradeProcessor : iTradeProcessor
 
     public void QueueOrder(ActionContext context)
     {
-        var trade = new Trade(buyer: context.Buyer,
-                              seller: context.Seller,
-                              good: context.GoodToBuy,
-                              quantity: context.Quantity,
-                              price: context.Price
-                            );
-        TradesSentToTheMarket.Add(trade);
+        _tradesSentToTheMarket.Add(context.TradeToSubmit);
     }
     public void SendTradesToEconomy()
     {
@@ -31,9 +30,9 @@ public class BasicTradeProcessor : iTradeProcessor
         //For now, make it random
         
         //Send all other trades to the economy
-        foreach(var trade in TradesSentToTheMarket)
+        foreach(var trade in _tradesSentToTheMarket)
         {
-            if(!trade.good.IsProducedGood)
+            if(!trade.Good.IsProducedGood)
             {
                 TradesToSendToTheEconomy.Add(trade);
             }
