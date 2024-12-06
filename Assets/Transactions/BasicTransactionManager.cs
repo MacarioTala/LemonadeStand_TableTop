@@ -36,6 +36,8 @@ public class BasicTransactionManager : iTransactionManager
         //Adjust cash balances
         buyerCash -= totalCost;
         sellerCash += totalCost;
+        buyer.SetCash(buyerCash);
+        seller.SetCash(sellerCash);
 
         //Adjust inventories
         if(seller is Market marketSeller)

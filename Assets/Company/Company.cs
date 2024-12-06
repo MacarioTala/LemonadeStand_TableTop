@@ -76,6 +76,7 @@ public class Company : ScriptableObject, iCompany
 #region Financials
     private decimal cash = 0;
     public decimal GetCash() => cash;
+    public void SetCash(decimal newCash) => cash = newCash;
     private readonly float share_price;
     private readonly int shares_outstanding;
     public List<FixedCost> FixedCosts {get;set;} = new();

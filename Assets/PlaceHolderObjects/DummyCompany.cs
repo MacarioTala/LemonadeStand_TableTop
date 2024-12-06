@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class DummyCompany : iCompany
 {
     public string Name {get; set;}="Raw Materials Source";
     public decimal InfiniteCash => 10000000;
+        
     public Inventory Inventory{get; private set;} = new Inventory();
 
     public DummyCompany()
@@ -71,5 +73,10 @@ public class DummyCompany : iCompany
     public void UpdateCurrentPeriod(int period)
     {
         throw new System.NotImplementedException();
+    }
+
+    public void SetCash(decimal newCash)
+    {
+        Debug.Log("Null cash transaction for dummy company");
     }
 }

@@ -10,6 +10,7 @@ public interface iCompany
         List<FixedCost> FixedCosts {get;set;}    
         iFixedCostStrategy FixedCostStrategy{get;set;}
         decimal GetCash ();
+        void SetCash(decimal newCash);
         decimal CalculateFixedCostsForPeriod(int period);
     #endregion
 
