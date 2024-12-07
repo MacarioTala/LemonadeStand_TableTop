@@ -122,8 +122,8 @@ public class MarketTests
         // Act
         var trade1 = new Trade(test_initial_market, company1, lemon, 10, 10.0m);
         var trade2 = new Trade(test_initial_market, company2, lemon, 10, 15.0m);
-        TheEconomy.Instance.Queue_Trade(trade1);
-        TheEconomy.Instance.Queue_Trade(trade2);
+        TheEconomy.Instance.QueueOrder(trade1);
+        TheEconomy.Instance.QueueOrder(trade2);
         TheEconomy.Instance.EndTradingPeriod();
         var actual_number_of_entries = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).Count();
         // Assert

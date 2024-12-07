@@ -153,7 +153,7 @@ public class GameOfLifeTest
         var quantity = Random.Range(1, 10);
         var price = goodToBuy.GetPrice();
         var trade = new Trade(buyer, seller, goodToBuy, quantity, price);
-        TheEconomy.Instance.Queue_Trade(trade);
+        TheEconomy.Instance.QueueOrder(trade);
         Debug.Log("Trade queued in cycle: " + cycle + " " + trade);
     }
 

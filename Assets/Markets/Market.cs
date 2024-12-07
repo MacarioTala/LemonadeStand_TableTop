@@ -24,6 +24,9 @@ public class Market : ScriptableObject, iCompany
     private readonly Inventory _inventory = new();
     private readonly List<Recipe> _recipes = new();
 
+    //Companies
+    public List<Company> CompaniesInThisMarket = new();
+
     //Goals
     public List<Goal> Goals {get;set;}
     public iDemandStrategy DemandStrategy ;
@@ -104,20 +107,23 @@ public class Market : ScriptableObject, iCompany
     private iTransactionManager _transactionManager;
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
 #endregion
-#region Company Registration
-    public List<Company> CompaniesInThisMarket = new();
-        public void RegisterCompany(Company company)
+#region Company Interactions
+    public void RegisterCompany(Company company)
+    {
+        if(!CompaniesInThisMarket.Contains(company))
         {
-            if(!CompaniesInThisMarket.Contains(company))
-            {
-                CompaniesInThisMarket.Add(company);
-            }
-            else
-            {
-                throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
-            }
-            TheEconomy.Instance.RegisterCompany(company);
+            CompaniesInThisMarket.Add(company);
         }
+        else
+        {
+            throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
+        }
+        TheEconomy.Instance.RegisterCompany(company);
+    }
+    public void QueueOrder(ActionContext context)
+    {
+        _tradeProcessor.QueueOrder(context);
+    }
 #endregion
 #region Consumption
     public void AddOrderToSendToEconomy (Trade trade)
@@ -273,12 +279,14 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Interacting with the Economy
-    public void QueueOrder(ActionContext context)
+    public void SendTradesToEconomy()
     {
-        _tradeProcessor.QueueOrder(context);
+        _tradeProcessor.SendTradesToEconomy();
     }
     public void UnleashMarketForces(int period)
     {
+        FulfillDemand();
+        _tradeProcessor.SendTradesToEconomy();
         CalculateFulfillmentRates(period);
         AdjustDemand();
         UpdatePrices();

@@ -6,6 +6,7 @@ public interface iTradeProcessor
     /// <summary>
     /// Returns all orders in the Market's queue
     /// </summary>
+    public void SendTradesToEconomy ();
     List<Trade> GetOrders ();
     /// <summary>
     /// Processes all orders in the queue

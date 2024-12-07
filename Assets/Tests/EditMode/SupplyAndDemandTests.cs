@@ -114,7 +114,7 @@ public class SupplyAndDemandTests
         selling_company.BuyGood(lemon, 1000, 3.0m);
         TheEconomy.Instance.RegisterCompany(selling_company);
         //have the market buy the lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 1000, 3.0m));
+        TheEconomy.Instance.QueueOrder(new Trade(MarketThatDemandsLemons, selling_company, lemon, 1000, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         
         // Act
@@ -137,7 +137,7 @@ public class SupplyAndDemandTests
         TheEconomy.Instance.RegisterCompany(MarketThatDemandsLemons);
 
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(MarketThatDemandsLemons, selling_company, lemon, 500, 3.0m));
+        TheEconomy.Instance.QueueOrder(new Trade(MarketThatDemandsLemons, selling_company, lemon, 500, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         //Act
         var actual_fulfillment_rate = MarketThatDemandsLemons.GetMarketDemand()[lemon].FulfilmentRate;
@@ -161,7 +161,7 @@ public class SupplyAndDemandTests
         sellingCompany.BuyGood(lemon, 900, 3.0m);
         //Act
         //have the market buy some lemons
-        TheEconomy.Instance.Queue_Trade(new Trade(marketThatDemandsLemons, sellingCompany, lemon, 600, 3.0m));
+        TheEconomy.Instance.QueueOrder(new Trade(marketThatDemandsLemons, sellingCompany, lemon, 600, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         var actualLemonDemand = marketThatDemandsLemons.GetMarketDemand()[lemon].CurrentDemand;
         //Assert
@@ -182,7 +182,7 @@ public class SupplyAndDemandTests
         selling_company.BuyGood(lemonade, 1000, 3.0m);
         //Act
         //have the market buy some lemonade
-        TheEconomy.Instance.Queue_Trade(new Trade ( buyer: marketToTest,
+        TheEconomy.Instance.QueueOrder(new Trade ( buyer: marketToTest,
                                                     seller: selling_company, 
                                                     good: lemonade, 
                                                     quantity: 1000, 

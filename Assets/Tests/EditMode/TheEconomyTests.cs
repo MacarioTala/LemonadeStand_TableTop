@@ -138,7 +138,7 @@ public class TheEconomyTests
         var lemon_quantity_if_ConsumeGoods_ignores_market_buys = initialLemons - lemonDemand;
         // Act
         var lemonSale = new Trade(test_initial_market, test_company, lemon, lemonsCompanyWillSellToMarket, 3.0m);
-        TheEconomy.Instance.Queue_Trade(lemonSale);
+        TheEconomy.Instance.QueueOrder(lemonSale);
         TheEconomy.Instance.EndTradingPeriod();
         //only one inventory entry per good in Markets
         var actual_final_market_lemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
@@ -164,7 +164,7 @@ public class TheEconomyTests
 
         // Act
         var trade = new Trade(company1, company2, sugar, 1, 2.0m);
-        test_economy.Queue_Trade(trade);
+        test_economy.QueueOrder(trade);
         test_economy.EndTradingPeriod();
         var actual_company1_cash = company1.GetCash();
         var actual_company2_cash = company2.GetCash();
@@ -190,7 +190,7 @@ public class TheEconomyTests
         
         // Act
         try{
-        TheEconomy.Instance.Queue_Trade(new Trade(company1, company2, lemon, 10, 3.0m));
+        TheEconomy.Instance.QueueOrder(new Trade(company1, company2, lemon, 10, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         }
         catch(Exception e)
@@ -216,7 +216,7 @@ public class TheEconomyTests
         string actual=null;
         // Act
         try{
-        TheEconomy.Instance.Queue_Trade(new Trade(company2, company1, lemon, 4000, 3.0m));
+        TheEconomy.Instance.QueueOrder(new Trade(company2, company1, lemon, 4000, 3.0m));
         TheEconomy.Instance.EndTradingPeriod();
         }
         catch(Exception e)
@@ -323,14 +323,3 @@ public void TheSameGoodBoughtAtDifferentTimesExpiresAtDifferentPeriods()
 
 
 }
-#region stubs
-public class MockLogger : ITradeLogger
-{
-    public void LogTrade(Trade trade)
-    {
-    }
-    public void SaveDailySummary(List<Trade> trade_queue)
-    {
-    }
-}
-#endregion

@@ -2,7 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Tests")]
 public class TheEconomy : MonoBehaviour
 {
     //The Economy is a singleton that manages the market and all companies
@@ -12,8 +14,8 @@ public class TheEconomy : MonoBehaviour
     //These are the goods, but not the inventory items, that will exist in the market when initialized
     public List<Good> goods = new();
     
-    private readonly List<Trade> trade_queue = new();
-    private ITradeLogger _trade_logger;
+    internal readonly List<Trade> trade_queue = new();
+    internal ITradeLogger _trade_logger;
     
     public List<iCompany> companies = new();
 
@@ -57,50 +59,54 @@ public class TheEconomy : MonoBehaviour
         RegisterCompany(InitialMarket);
     }
 
-    public void Queue_Trade(Trade trade)
+    public void QueueOrder(Trade trade)
     {
         trade_queue.Add(trade);
     }
 
     public void EndTradingPeriod()
     {
-        foreach(Trade trade in trade_queue)
-            {
-                try{
-                    Process_trade(trade,tradingPeriod);
-                    _trade_logger.LogTrade(trade);
-                    }
-                catch(SystemException e)
-                {
-                    Debug.Log(e.Message);
-                    throw e;
-                }
-            }
+        ProcessOrders();
         //Update prices
-        foreach (var company in companies)
+        foreach (Market market in companies.OfType<Market>())
         {
-            if(company is Market market)
-            {
-                market.UnleashMarketForces(tradingPeriod);
-            }
-            else
-            {
-                company.ExpireGoods(tradingPeriod);//only companies' goods expire
-            }
-            company.UpdateCurrentPeriod(tradingPeriod);
-          //  company.CheckCompanyGoals();
+            market.SendTradesToEconomy();
+            market.UnleashMarketForces(tradingPeriod);
         };
 
         tradingPeriod++;
 
-        foreach (var company in companies) company.UpdateCurrentPeriod(tradingPeriod);
+        foreach (var company in companies) 
+        {
+            company.UpdateCurrentPeriod(tradingPeriod);
+            company.ExpireGoods(tradingPeriod);
+            //  company.CheckCompanyGoals();
+        }
 
         _trade_logger?.SaveDailySummary(trade_queue);
         trade_queue.Clear();
     }
 
+    private void ProcessOrders()
+    {
+        foreach (Trade trade in trade_queue)
+        {
+            try
+            {
+                ProcessOrder(trade, tradingPeriod);
+                _trade_logger.LogTrade(trade);
+            }
+            catch (SystemException e)
+            {
+                Debug.Log(e.Message);
+                throw e;
+            }
+        }
 
-    private void Process_trade(Trade trade, int tradingPeriod)
+       trade_queue.Clear();
+    }
+
+    private void ProcessOrder(Trade trade, int tradingPeriod)
     {
        try{
             trade.Seller.SellGood(trade.Good, trade.Quantity, trade.Price,tradingPeriod);

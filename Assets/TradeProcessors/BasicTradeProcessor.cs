@@ -23,19 +23,14 @@ public class BasicTradeProcessor : iTradeProcessor
     public void QueueOrder(ActionContext context)
     {
         _tradesSentToTheMarket.Add(context.TradeToSubmit);
+        AddOrderToSendToEconomy(context.TradeToSubmit);
     }
     public void SendTradesToEconomy()
     {
-        //Adjust this later to have different demand fulfilment strategies
-        //For now, make it random
-        
-        //Send all other trades to the economy
-        foreach(var trade in _tradesSentToTheMarket)
+        foreach (var trade in TradesToSendToTheEconomy)
         {
-            if(!trade.Good.IsProducedGood)
-            {
-                TradesToSendToTheEconomy.Add(trade);
-            }
+            TheEconomy.Instance.QueueOrder(trade);
         }
+        TradesToSendToTheEconomy.Clear();
     }
 }
