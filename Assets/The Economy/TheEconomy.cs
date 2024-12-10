@@ -14,7 +14,7 @@ public class TheEconomy : MonoBehaviour
     //These are the goods, but not the inventory items, that will exist in the market when initialized
     public List<Good> goods = new();
     
-    internal readonly List<Trade> trade_queue = new();
+    internal readonly List<Trade> tradeQueue = new();
     internal ITradeLogger _trade_logger;
     
     public List<iCompany> companies = new();
@@ -43,11 +43,15 @@ public class TheEconomy : MonoBehaviour
         CreateInitialMarket();
     }
 
+    public void RemoveMarket(Market market)
+    {
+        companies.Remove(market);
+    }
     public void ClearEconomy()
     {
         companies.Clear();
         goods.Clear();
-        trade_queue.Clear();
+        tradeQueue.Clear();
     }
 
     private void CreateInitialMarket()
@@ -59,69 +63,19 @@ public class TheEconomy : MonoBehaviour
         RegisterCompany(InitialMarket);
     }
 
-    public void QueueOrder(Trade trade)
-    {
-        trade_queue.Add(trade);
-    }
-
     public void EndTradingPeriod()
     {
-        ProcessOrders();
+        var executedTrades = new List<Trade>();
         //Update prices
         foreach (Market market in companies.OfType<Market>())
         {
-            market.SendTradesToEconomy();
+            executedTrades = market.ProcessCompanyOrders();
             market.UnleashMarketForces(tradingPeriod);
         };
 
         tradingPeriod++;
 
-        foreach (var company in companies) 
-        {
-            company.UpdateCurrentPeriod(tradingPeriod);
-            company.ExpireGoods(tradingPeriod);
-            //  company.CheckCompanyGoals();
-        }
-
-        _trade_logger?.SaveDailySummary(trade_queue);
-        trade_queue.Clear();
-    }
-
-    private void ProcessOrders()
-    {
-        foreach (Trade trade in trade_queue)
-        {
-            try
-            {
-                ProcessOrder(trade, tradingPeriod);
-                _trade_logger.LogTrade(trade);
-            }
-            catch (SystemException e)
-            {
-                Debug.Log(e.Message);
-                throw e;
-            }
-        }
-
-       trade_queue.Clear();
-    }
-
-    private void ProcessOrder(Trade trade, int tradingPeriod)
-    {
-       try{
-            trade.Seller.SellGood(trade.Good, trade.Quantity, trade.Price,tradingPeriod);
-            trade.Buyer.BuyGood(trade.Good, trade.Quantity,trade.Price,tradingPeriod);
-          }
-        catch(Company_InventoryException e)
-        {
-            Debug.Log(e.Message);
-            throw e;
-        }
-        catch(Company_InsufficientFundsException e)
-        {
-            throw e;
-        }
-       
+        _trade_logger?.SaveDailySummary(executedTrades);
     }
 
     public void RegisterCompany(iCompany company)

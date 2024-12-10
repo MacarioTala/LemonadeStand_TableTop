@@ -107,7 +107,7 @@ public class GameOfLifeTest
                 PerformRandomAction(cycle);
             }
             try{
-                TheEconomy.Instance.EndTradingPeriod();
+                LemonadeMarket.ProcessCompanyOrders();
                 }
             catch (System.Exception e)
             {
@@ -153,7 +153,8 @@ public class GameOfLifeTest
         var quantity = Random.Range(1, 10);
         var price = goodToBuy.GetPrice();
         var trade = new Trade(buyer, seller, goodToBuy, quantity, price);
-        TheEconomy.Instance.QueueOrder(trade);
+        var context = new ActionContext { TradeToSubmit = trade, MarketToSubmitTo = LemonadeMarket };
+        LemonadeMarket.QueueOrder(context);
         Debug.Log("Trade queued in cycle: " + cycle + " " + trade);
     }
 

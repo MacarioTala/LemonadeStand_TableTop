@@ -108,6 +108,10 @@ public class Market : ScriptableObject, iCompany
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
 #endregion
 #region Company Interactions
+    public List<Trade> ProcessCompanyOrders()
+    {
+        return _tradeProcessor.ProcessCompanyOrders(this);
+    }
     public void RegisterCompany(Company company)
     {
         if(!CompaniesInThisMarket.Contains(company))
@@ -123,6 +127,16 @@ public class Market : ScriptableObject, iCompany
     public void QueueOrder(ActionContext context)
     {
         _tradeProcessor.QueueOrder(context);
+    }
+
+    internal void UpdateCompanyStatuses()
+    {
+        foreach (var company in CompaniesInThisMarket)
+        {
+            //Update Company Statuses
+            company.UpdateCurrentPeriod(CurrentPeriod);
+            company.ExpireGoods(CurrentPeriod);
+        }
     }
 #endregion
 #region Consumption
@@ -279,18 +293,32 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Interacting with the Economy
-    public void SendTradesToEconomy()
-    {
-        _tradeProcessor.SendTradesToEconomy();
-    }
     public void UnleashMarketForces(int period)
     {
         FulfillDemand();
-        _tradeProcessor.SendTradesToEconomy();
         CalculateFulfillmentRates(period);
         AdjustDemand();
         UpdatePrices();
         ConsumeGoods();
+        UpdateCompanyStatuses();
+    }
+#endregion
+#region Overrides
+    public override string ToString()
+    {
+        return Name;
+    }
+    public override bool Equals(object obj)
+    {
+        if(obj is Market market)
+        {
+            return market.Name == Name;
+        }
+        return false;
+    }
+    public override int GetHashCode()
+    {
+        return Name.GetHashCode();
     }
 #endregion
 }

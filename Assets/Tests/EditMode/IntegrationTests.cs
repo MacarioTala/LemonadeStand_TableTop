@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using UnityEngine;
@@ -60,57 +61,50 @@ public class IntegrationTests
     }
 
     [Test]
-    public void QueueingUpAnOrderViaTheMarketGetsSentToTheEconomy()
-    {
-        //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        var marketTrade = new Trade(marketToTest, marketToTest, Lemonade, 1000, 3.5m);
-        var marketContext = new ActionContext{TradeToSubmit = marketTrade,
-                                                MarketToSubmitTo = marketToTest};
-        marketToTest.QueueOrder(marketContext);
-        var expected = 1;
-        //Act
-        marketToTest.SendTradesToEconomy();
-        var actual = TestEconomy.trade_queue.Count;
-        //Assert
-        Assert.AreEqual(expected, actual);
-    }
-
-    [Test]
-    public void MultipleOrdersAreCorrectlySentToEconomy()
+    public void EndTradingPeriodSendsTradesThatMarketHasQueued()
     {
         // Arrange
-        var market = Market.Factory.CreateStarterMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var trade1 = new Trade(market, market, Lemonade, 500, 2.0m);
-        var trade2 = new Trade(market, market, Lemonade, 1000, 3.5m);
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        market.SetCash(1000000);
+        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+        var trade1 = new Trade(market, company1, Lemonade, 500, 2.0m);
+        var trade2 = new Trade(market, company1, Lemonade, 1000, 3.5m);
+        var theFirstMarket = (Market)TheEconomy.Instance.companies.Where(c => c.Name == "The First Market").FirstOrDefault();
+        TheEconomy.Instance.RemoveMarket(theFirstMarket);
+        TheEconomy.Instance.RegisterCompany(market);
         
         market.QueueOrder(new ActionContext { TradeToSubmit = trade1, MarketToSubmitTo = market });
         market.QueueOrder(new ActionContext { TradeToSubmit = trade2, MarketToSubmitTo = market });
         var expected = 2;
         
         // Act
-        market.SendTradesToEconomy();
-        var actual = TestEconomy.trade_queue.Count;
-
+        TestEconomy.EndTradingPeriod();
+        TestEconomy.EndTradingPeriod();
+        var actual = TestEconomy._trade_logger.GetTradeCount();
         // Assert
         Assert.AreEqual(expected, actual);
     }
 
-    [Test]
-    public void EndTradingPeriodSendsTradesThatMarketHasQueued()
+     [Test]
+    public void EndTradingPeriodSendsTradesThatMarketHasQueuedWhenTwoMarketsArePresent()
     {
         // Arrange
-        var market = Market.Factory.CreateStarterMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var trade1 = new Trade(market, market, Lemonade, 500, 2.0m);
-        var trade2 = new Trade(market, market, Lemonade, 1000, 3.5m);
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        market.SetCash(1000000);
+        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+        var trade1 = new Trade(market, company1, Lemonade, 500, 2.0m);
+        var trade2 = new Trade(market, company1, Lemonade, 1000, 3.5m);
+        var theFirstMarket = (Market)TheEconomy.Instance.companies.Where(c => c.Name == "The First Market").FirstOrDefault();
+        TheEconomy.Instance.RegisterCompany(market);
         
         market.QueueOrder(new ActionContext { TradeToSubmit = trade1, MarketToSubmitTo = market });
         market.QueueOrder(new ActionContext { TradeToSubmit = trade2, MarketToSubmitTo = market });
         var expected = 2;
         
         // Act
+        TestEconomy.EndTradingPeriod();
         TestEconomy.EndTradingPeriod();
         var actual = TestEconomy._trade_logger.GetTradeCount();
         // Assert

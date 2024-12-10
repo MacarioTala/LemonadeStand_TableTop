@@ -17,14 +17,19 @@ public class BasicDemandStrategyTests
     public void GetTotalBought_returns_total_amount_of_good_bought_in_a_period()
     {
         // Arrange
+        var period = 0;
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        marketToTest.BuyGood(lemon, 500,3.0m, 0);
-        marketToTest.BuyGood(lemon, 500,3.0m, 0);
-        marketToTest.BuyGood(lemon, 500,3.0m, 0);
+        var lemonOrder = new Trade(marketToTest, marketToTest, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
+        marketToTest.QueueOrder(lemonContext);
+        marketToTest.QueueOrder(lemonContext);
+        marketToTest.QueueOrder(lemonContext);
+
         const int expected = 1500;
         const int trading_period = 0;
         var strategy = new LinearDemandStrategy();
         // Act
+        marketToTest.ProcessCompanyOrders();
         var actual = ((iDemandStrategy)strategy).GetTotalBought(marketToTest, lemon, trading_period);
         // Assert
         Assert.AreEqual(expected, actual);
