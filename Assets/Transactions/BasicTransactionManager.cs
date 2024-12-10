@@ -42,7 +42,9 @@ public class BasicTransactionManager : iTransactionManager
         sellerInventory.RemoveGood(good, quantity, price);
 
         //Record trade
+        context.TradeToSubmit.FilledQuantity = quantity;
         RecordTrade(buyer, seller, good, quantity, price, tradingPeriod);
+
 
     }
 

@@ -128,6 +128,7 @@ public class MarketTests
         var lemonContext = new ActionContext { TradeToSubmit = lemonSale, MarketToSubmitTo = testMarket, Period = period };
         testMarket.QueueOrder(lemonContext);
         testMarket.ProcessCompanyOrders();
+        testMarket.FulfillDemand();
         testMarket.ConsumeGoods();
         
         //only one inventory entry per good in Markets
@@ -135,6 +136,7 @@ public class MarketTests
         // Assert
         Assert.AreEqual(expected, actual.quantity);
     }
+    
 #endregion
 #region Perishability tests
     [Test]
@@ -473,6 +475,46 @@ public class MarketTests
         }
         // Assert
         Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void MarketsShouldIgnoreTradesWhereMarketIsTheBuyerWhenCallingProcessCompanyOrders()
+    {
+        // Arrange
+        var period = 0;
+        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+        testMarket.RegisterCompany(company1);
+        testMarket.RegisterCompany(company2);
+        
+        
+        var lemonade = Good.CreateInstance("Lemonade", band2, Rarity_enum.Uncommon);
+        lemonade.IsProducedGood = true;
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", band2, Rarity_enum.Very_Rare);
+        radioactiveLemonade.IsProducedGood = true;
+
+        company1.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 3.0m, period));
+        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3.0m, period));
+
+        var radioactiveLemonadeTrade = new Trade(testMarket, company1, radioactiveLemonade, 10, 3.0m);
+        var radioactiveLemonadeContext = new ActionContext{TradeToSubmit = radioactiveLemonadeTrade, MarketToSubmitTo = testMarket, Period = period};
+
+        var lemonadeTrade = new Trade( company1,company2, lemonade, 10, 3.0m);
+        var lemonadeContext = new ActionContext{TradeToSubmit = lemonadeTrade, MarketToSubmitTo = testMarket, Period = period};
+
+        var expectedFilledQuantityForRadioactiveLemonade = 0;
+        var expectedFilledQuantityForLemonade = 10;
+
+        // Act
+        testMarket.QueueOrder(radioactiveLemonadeContext);
+        testMarket.QueueOrder(lemonadeContext);
+        testMarket.ProcessCompanyOrders();
+        var actualFilledQuantityForRadioactiveLemonade = radioactiveLemonadeTrade.FilledQuantity;
+        var actualFilledQuantityForLemonade = lemonadeTrade.FilledQuantity;
+        // Assert
+        Assert.AreEqual(expectedFilledQuantityForRadioactiveLemonade, actualFilledQuantityForRadioactiveLemonade);
+        Assert.AreEqual(expectedFilledQuantityForLemonade, actualFilledQuantityForLemonade);
     }
    #endregion
 

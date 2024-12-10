@@ -50,6 +50,7 @@ public class Market : ScriptableObject, iCompany
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
+    public void RecordMarketTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
     public void RecordTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
     public void SetCash(decimal new_cash) => cash = new_cash;
@@ -108,9 +109,15 @@ public class Market : ScriptableObject, iCompany
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
 #endregion
 #region Company Interactions
+    
+    public void ProcessOrder(ActionContext context)
+    {
+        _transactionManager.ProcessTransaction(context);
+    }
     public List<Trade> ProcessCompanyOrders()
     {
-        return _tradeProcessor.ProcessCompanyOrders(this);
+        var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
+        return CompanyOrdersExecuted;
     }
     public void RegisterCompany(Company company)
     {

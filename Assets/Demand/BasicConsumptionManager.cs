@@ -12,9 +12,13 @@ public class BasicConsumptionManager : iConsumptionManager
     public void FulfillDemand(Market market)
     {
         var demand = market.GetMarketDemand();
-        var ordersSentToMarket = market.GetOrdersSentToMarket();
+        var ordersSentToMarket = market.GetOrdersSentToMarket()
+                                       .Where(order=>order.Buyer is Market
+                                       &&
+                                        order.Buyer.Equals(market)
+                                            ).ToList();
 
-        foreach(var good in demand.Keys.Where(good=>good.IsProducedGood))
+        foreach(var good in demand.Keys)
         {
             var remainingDemand = demand[good].CurrentDemand;
             
@@ -23,7 +27,13 @@ public class BasicConsumptionManager : iConsumptionManager
             foreach(var order in processedOrders)
             {
                 order.Buyer = market;
-                market.AddOrderToSendToEconomy(order);
+                var context = new ActionContext
+                {
+                    TradeToSubmit = order,
+                    MarketToSubmitTo = market,
+                    Period = market.CurrentPeriod
+                };
+                market.ProcessOrder(context);
                 remainingDemand -= order.Quantity;
             }
         }

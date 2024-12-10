@@ -43,7 +43,10 @@ public class BasicTradeProcessor : iTradeProcessor
     internal List<Trade> ExecuteBestTradesForGood(Good good, List<Trade> OrdersSentToMarket)
     {
         List<Trade> executedTrades = new();
-        var relevantOrders = OrdersSentToMarket.Where(x => x.Good == good).ToList();
+        var relevantOrders = OrdersSentToMarket.Where(x => x.Good == good
+                                               && x.Buyer is not Market
+                                               )
+                                               .ToList();
         foreach (var prioritizer in _orderPrioritizers)
         {
             var prioritizedOrders = prioritizer.Filter(relevantOrders);
