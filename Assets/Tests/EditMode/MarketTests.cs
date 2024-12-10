@@ -136,8 +136,104 @@ public class MarketTests
         Assert.AreEqual(expected, actual.quantity);
     }
 #endregion
-   
-   #region Production tests
+#region Perishability tests
+    [Test]
+    public void PerishableGoodsShouldExpire()
+    {
+        // Arrange
+        var tradingPeriod = 1;
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        testMarket.RegisterCompany(company);
+        var francium = Good.CreateInstance("Uranium", band2, Rarity_enum.Very_Rare);
+        francium.ExpiresAfterPeriods = 1;
+        company.GetInventory().AddGood(new InventoryEntry(francium, 1,10000m,0));
+        var expected = 0;
+        // Act
+        testMarket.ExpireGoods(tradingPeriod);
+        var franciumEntry = company.GetInventory().GetInventoryEntriesByGood(francium.good_name).FirstOrDefault();
+        var actual = franciumEntry?.quantity??0;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void NonPerishableGoodsShouldNotExpire()
+    {
+        // Arrange
+        var period = 1;
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        testMarket.RegisterCompany(company);
+        var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, Rarity_enum.Common);
+        ripeLemon.ExpiresAfterPeriods = 1;
+        var ripeLemonInventoryEntry = new InventoryEntry(ripeLemon, 10, 3.0m,0);
+        var waterInventoryEntry = new InventoryEntry(water, 10, 1.0m,0);
+        var sugarInventoryEntry = new InventoryEntry(sugar, 10, 1.0m,0);
+        company.GetInventory().AddGood(ripeLemonInventoryEntry);
+        company.GetInventory().AddGood(waterInventoryEntry);
+        company.GetInventory().AddGood(sugarInventoryEntry);
+        var expectedWaterQuantity = 10;
+        var expectedRipeLemonQuantity = 0;
+        // Act
+        testMarket.ExpireGoods(period);
+        var actualWaterQuantity = company.GetInventory().GetInventoryEntriesByGood(water.good_name).FirstOrDefault().quantity;
+        var ripeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.good_name).FirstOrDefault();
+        var actualRipeLemonQuantity = ripeLemonEntries?.quantity??0;
+        // Assert
+        Assert.IsTrue(expectedWaterQuantity==actualWaterQuantity && expectedRipeLemonQuantity==actualRipeLemonQuantity);
+    }
+
+    [Test]
+    public void OnlyPerishableGoodsAtTheirExpiryPeriodShouldExpire()
+    {
+        // Arrange
+        var tradingPeriod = 1;
+        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        testMarket.RegisterCompany(company);
+        company.GetInventory().AddGood(new InventoryEntry(lemon, 10, 3.0m,0));
+        lemon.ExpiresAfterPeriods=2;
+        var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, Rarity_enum.Common);
+        ripeLemon.ExpiresAfterPeriods=1;
+        company.GetInventory().AddGood(new InventoryEntry(ripeLemon, 10, 3.0m,0));
+        var expectedLemonQuantity = 10;
+        var expectedRipeLemonQuantity = 0;
+        // Act
+        testMarket.ExpireGoods(tradingPeriod);
+        var actualLemonEntries = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actualRipeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.good_name).FirstOrDefault();
+        var actualLemonQuantity = actualLemonEntries?.quantity??0;
+        var actualRipeLemonQuantity = actualRipeLemonEntries?.quantity??0;
+        // Assert
+        Assert.AreEqual(expectedLemonQuantity, actualLemonQuantity);
+        Assert.AreEqual(expectedRipeLemonQuantity, actualRipeLemonQuantity);
+    }
+
+    [Test]
+    public void TheSameGoodBoughtAtDifferentTimesExpiresAtDifferentPeriods()
+    {
+        // Arrange
+        var tradingPeriod = 1;
+        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        testMarket.RegisterCompany(company);
+        
+        var apple = Good.CreateInstance("Apple", band2, Rarity_enum.Common);
+        apple.ExpiresAfterPeriods=1;
+        company.GetInventory().AddGood(new InventoryEntry(apple, 10, 3.0m,0));
+        company.GetInventory().AddGood(new InventoryEntry(apple, 10, 3.0m,1));
+        var expectedAppleQuantity = 10;
+        // Act
+        testMarket.ExpireGoods(tradingPeriod); //only 1 batch of apples expires
+        var actualAppleEntry = company.GetInventory().GetInventoryEntriesByGood(apple.good_name).FirstOrDefault();
+        var actualAppleQuantity = actualAppleEntry?.quantity??0;
+        // Assert
+        Assert.AreEqual(expectedAppleQuantity, actualAppleQuantity);
+        }
+
+#endregion   
+#region Production tests
    [Test]
    public void Companies_cannot_make_goods_without_a_recipe()
    {

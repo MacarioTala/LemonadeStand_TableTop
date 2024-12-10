@@ -161,7 +161,8 @@ public class Market : ScriptableObject, iCompany
         }
     public void ExpireGoods(int period)
         {
-            //inventory.ExpireGoods(period); //maybe goods in market just don't expire?
+            foreach(var company in CompaniesInThisMarket)
+                company.GetInventory().ExpireGoods(period); 
         }
 #endregion
 #region Fixed costs
