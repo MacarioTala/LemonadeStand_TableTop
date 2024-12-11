@@ -109,7 +109,13 @@ public class Market : ScriptableObject, iCompany
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
 #endregion
 #region Company Interactions
-    
+    public void BankruptCompany(Company company)
+    {
+        if(company.IsBankrupt())
+        {
+            TheEconomy.Instance.HandleBankruptcy(this,company);
+        }
+    }
     public void ProcessOrder(ActionContext context)
     {
         _transactionManager.ProcessTransaction(context);
@@ -136,13 +142,15 @@ public class Market : ScriptableObject, iCompany
         _tradeProcessor.QueueOrder(context);
     }
 
-    internal void UpdateCompanyStatuses()
+    internal void UpdateCompanyStatuses(int period)
     {
         foreach (var company in CompaniesInThisMarket)
         {
             //Update Company Statuses
-            company.UpdateCurrentPeriod(CurrentPeriod);
-            company.ExpireGoods(CurrentPeriod);
+            company.UpdateCurrentPeriod(period);
+            company.ExpireGoods(period);
+            company.SubtractFixedCostsForPeriod(period);
+            BankruptCompany(company);
         }
     }
 #endregion
@@ -304,7 +312,7 @@ public class Market : ScriptableObject, iCompany
         AdjustDemand();
         UpdatePrices();
         ConsumeGoods();
-        UpdateCompanyStatuses();
+        UpdateCompanyStatuses(period);
     }
 #endregion
 #region Overrides

@@ -118,7 +118,31 @@ public class TheEconomy : MonoBehaviour
         //in the future, have a concept of rarity driving the initial price
         }
     }
+    public void HandleBankruptcy(Market market,Company bankruptCompany)
+    {
+        Debug.Log($"{bankruptCompany.Name} in {market.Name} has gone bankrupt");
+        ShowBankruptcySummary(bankruptCompany);
+        if(bankruptCompany.IsPlayer)
+        {
+            EndGame();
+        }
+    }
+    public void HandleMarketFailure(Market market)
+    {
+        throw new NotImplementedException();
+    }
+    public void ShowBankruptcySummary(Company bankruptCompany)
+    {
+        Debug.Log($"{bankruptCompany.Name} has gone bankrupt after {tradingPeriod} trading periods");
+    }
+
+    private void EndGame()
+    {
+        Debug.Log("Game Over");
+        Time.timeScale = 0;
+    }
 }
+
 
 
 #region Exceptions

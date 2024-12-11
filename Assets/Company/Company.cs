@@ -13,6 +13,8 @@ public class Company : ScriptableObject, iCompany
         set => _company_name = value;
     }
     public CompanyLevelEnum companyLevel;
+    public bool IsBankrupt() => cash <= 0;
+    public bool IsPlayer {get;set;} = false;
 
     private Company(){}
     internal void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
@@ -220,8 +222,10 @@ public class Company : ScriptableObject, iCompany
     {
         CurrentPeriod = period;
     }
-#endregion
-#region Market Actions
+    #endregion
+    #region Market Actions
+
+    public void SubtractFixedCostsForPeriod(int period) => SetCash(cash - CalculateFixedCostsForPeriod(period));
     public void QueueOrder(ActionContext context)
     {
         var MarketToSubmitTo = context.MarketToSubmitTo;
