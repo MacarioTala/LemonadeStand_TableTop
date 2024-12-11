@@ -14,7 +14,6 @@ public class TheEconomy : MonoBehaviour
     //These are the goods, but not the inventory items, that will exist in the market when initialized
     public List<Good> goods = new();
     
-    internal readonly List<Order> tradeQueue = new();
     internal ITradeLogger _trade_logger;
     
     public List<iCompany> companies = new();
@@ -51,7 +50,6 @@ public class TheEconomy : MonoBehaviour
     {
         companies.Clear();
         goods.Clear();
-        tradeQueue.Clear();
     }
 
     private void CreateInitialMarket()
