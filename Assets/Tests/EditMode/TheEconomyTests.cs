@@ -9,7 +9,7 @@ public class TheEconomyTests
 {
     private TheEconomy test_economy;
 
-    private Market test_initial_market;
+    private Market testInitialMarket;
     Good lemon;
     Good water;
     Good sugar;
@@ -26,7 +26,7 @@ public class TheEconomyTests
         var market_object = new GameObject();
         test_economy = market_object.AddComponent<TheEconomy>();
         test_economy.Initialize(trade_logger);
-        test_initial_market = (Market)test_economy.GetGlobalMarket(); 
+        testInitialMarket = (Market)test_economy.GetGlobalMarket(); 
 
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
@@ -37,7 +37,7 @@ public class TheEconomyTests
         test_goods.Add(sugar);
 
         //make the market demand a thousand lemons
-        test_initial_market.InitializeDemandForSpecificGood(lemon, 1000);
+        testInitialMarket.InitializeDemandForSpecificGood(lemon, 1000);
     }
 #region  Initialization tests
   [Test]
@@ -57,19 +57,19 @@ public class TheEconomyTests
         // Arrange
         var expected = typeof(Market);
         // Act
-        var actual = test_initial_market.GetType();
+        var actual = testInitialMarket.GetType();
         // Assert
         Assert.AreEqual(expected, actual);
     }
 
     [Test]
-    public void When_TheEconomy_is_initialized_goods_are_created_in_InitialMarket()
+    public void WhenTheEconomyInitializesGoodsAreCreatedInInitialMarket()
     {
         // Arrange
         var expected = "Lemon";
         // Act
-        test_economy.Create_initial_goods(test_goods);
-        var actual = test_initial_market.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
+        test_economy.CreateInitialGoods(test_goods);
+        var actual = testInitialMarket.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -109,8 +109,8 @@ public class TheEconomyTests
         const int expected_floor = 1;
         const int expected_ceiling = 1000;
         // Act
-        test_economy.Create_initial_goods(test_goods);
-        var actual_good = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        test_economy.CreateInitialGoods(test_goods);
+        var actual_good = testInitialMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
         var actual_quantity = actual_good.quantity;
         // Assert
         Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling, 
@@ -124,7 +124,7 @@ public class TheEconomyTests
     {
         test_economy.ClearEconomy();
         UnityEngine.Object.DestroyImmediate(test_economy.gameObject);
-        UnityEngine.Object.DestroyImmediate(test_initial_market);
+        UnityEngine.Object.DestroyImmediate(testInitialMarket);
     }
 
 

@@ -38,7 +38,7 @@ public class TheEconomy : MonoBehaviour
             Destroy(gameObject);
         }
 
-        Create_initial_goods(goods);
+        CreateInitialGoods(goods);
         _trade_logger = trade_logger;
         CreateInitialMarket();
     }
@@ -96,7 +96,7 @@ public class TheEconomy : MonoBehaviour
     }
 
     public iCompany GetGlobalMarket() => InitialMarket;
-    public void Create_initial_goods(List<Good> goods)//move static data to DB in future
+    public void CreateInitialGoods(List<Good> goods)//move static data to DB in future
     {
         //Limits for good quantities
         var common_range = UnityEngine.Random.Range(1, 1001);
@@ -116,7 +116,7 @@ public class TheEconomy : MonoBehaviour
                 Rarity_enum.Very_Rare => very_rare_range,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            InitialMarket.BuyGood(good, quantity, good.GetPrice());
+            InitialMarket.GetInventory().AddGood(new InventoryEntry(good, quantity, good.GetPrice(), tradingPeriod));
         //in the future, have a concept of rarity driving the initial price
         }
     }
