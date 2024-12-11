@@ -16,10 +16,6 @@ public class BasicTradeProcessor : iTradeProcessor
         //_orderPrioritizers.Add(new RandomPrioritizer());
         _transactionManager = new BasicTransactionManager();
     }
-    public void AddOrderToSendToEconomy(Trade trade)
-    {
-        TradesToSendToTheEconomy.Add(trade);
-    }
     public List<Trade> GetOrders()=>_tradesSentToTheMarket;
     public List<Trade> GetOrderResults(ActionContext context)
     {

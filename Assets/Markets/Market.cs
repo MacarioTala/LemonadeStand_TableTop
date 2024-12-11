@@ -147,10 +147,6 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Consumption
-    public void AddOrderToSendToEconomy (Trade trade)
-    {
-        _tradeProcessor.AddOrderToSendToEconomy(trade);
-    }
     public void FulfillDemand()
     {
         _consumptionManager.FulfillDemand(this);

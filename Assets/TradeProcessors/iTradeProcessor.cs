@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 public interface iTradeProcessor
 {   
-    public void AddOrderToSendToEconomy (Trade trade);
     /// <summary>  
     /// Called by entities that placed orders to get the results of their orders
     /// </summary>

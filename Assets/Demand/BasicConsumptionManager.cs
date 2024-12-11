@@ -41,10 +41,10 @@ public class BasicConsumptionManager : iConsumptionManager
 
     internal List<Trade> FillOrderBasedOnPrice(List<Trade> trades, Good good, int remainingDemand)
     {
-        var ordersToSendToEconomy = trades
+        var filledOrders = trades
                                         .Where(trade=>trade.Good.Equals(good))
                                         .OrderBy(trade=>trade.Price);
-        foreach(var order in ordersToSendToEconomy)
+        foreach(var order in filledOrders)
         {
             if (remainingDemand <= 0) break;
             
@@ -59,6 +59,6 @@ public class BasicConsumptionManager : iConsumptionManager
                 remainingDemand = 0;
             }
         }
-        return ordersToSendToEconomy.Where(trade=>trade.FilledQuantity > 0).ToList();
+        return filledOrders.Where(trade=>trade.FilledQuantity > 0).ToList();
     } 
 }
