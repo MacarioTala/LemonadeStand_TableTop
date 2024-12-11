@@ -30,6 +30,7 @@ public class BasicTradeProcessor : iTradeProcessor
     {
         List<Trade> executedTrades = new();
         List<Good> goodsToTradeThisPeriod = market.GetOrdersSentToMarket()
+                                                  .Where(x => x.Buyer is not Market)
                                                   .Select(x => x.Good).Distinct().ToList();
 
         foreach (var good in goodsToTradeThisPeriod)

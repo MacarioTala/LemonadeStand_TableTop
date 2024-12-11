@@ -7,7 +7,7 @@ using UnityEngine;
 [TestFixture]
 public class TheEconomyTests
 {
-    private TheEconomy test_economy;
+    private TheEconomy testEconomy;
 
     private Market testInitialMarket;
     Good lemon;
@@ -24,9 +24,9 @@ public class TheEconomyTests
     {
         //Create the economy
         var market_object = new GameObject();
-        test_economy = market_object.AddComponent<TheEconomy>();
-        test_economy.Initialize(trade_logger);
-        testInitialMarket = (Market)test_economy.GetGlobalMarket(); 
+        testEconomy = market_object.AddComponent<TheEconomy>();
+        testEconomy.Initialize(trade_logger);
+        testInitialMarket = (Market)testEconomy.GetGlobalMarket(); 
 
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
@@ -46,7 +46,7 @@ public class TheEconomyTests
         // Arrange
         var expected_name = "The First Market";
         // Act
-        var actual = test_economy.GetGlobalMarket().Name;
+        var actual = testEconomy.GetGlobalMarket().Name;
         // Assert
         Assert.AreEqual(expected_name, actual);
     }
@@ -68,7 +68,7 @@ public class TheEconomyTests
         // Arrange
         var expected = "Lemon";
         // Act
-        test_economy.CreateInitialGoods(test_goods);
+        testEconomy.CreateInitialGoods(test_goods);
         var actual = testInitialMarket.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -80,10 +80,10 @@ public class TheEconomyTests
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
         company.Name = "Test Company";
-        var expected = test_economy.companies.Count + 1;
+        var expected = testEconomy.companies.Count + 1;
         // Act
-        test_economy.RegisterCompany(company);
-        var actual = test_economy.companies.Count;
+        testEconomy.RegisterCompany(company);
+        var actual = testEconomy.companies.Count;
         
         // Assert
         Assert.AreEqual(expected, actual);
@@ -94,36 +94,40 @@ public class TheEconomyTests
         // Arrange
         var company = ScriptableObject.CreateInstance<Company>();
         company.Name = "Test Company";
-        test_economy.RegisterCompany(company);
+        testEconomy.RegisterCompany(company);
         var company2 = ScriptableObject.CreateInstance<Company>();
         company2.Name = "Test Company";
         // Act
         // Assert
-        Assert.Throws<TheEconomy_CompanyException>(() => test_economy.RegisterCompany(company2));
+        Assert.Throws<TheEconomy_CompanyException>(() => testEconomy.RegisterCompany(company2));
     }
 
     [Test]
-    public void Create_initial_goods_creates_1to1000_goods_if_rarity_is_common()
+    public void CreateInitialGoodsCreates1to1000GoodsIfRarityIsCommon()
     {
         // Arrange
-        const int expected_floor = 1;
-        const int expected_ceiling = 1000;
+        const int expectedFloor = 1;
+        const int expectedCeiling = 1000;
+        testEconomy.ClearEconomy();
+        var testInitialMarket = (Market)testEconomy.GetGlobalMarket();
+        testInitialMarket.GetInventory().Clear();
         // Act
-        test_economy.CreateInitialGoods(test_goods);
-        var actual_good = testInitialMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
-        var actual_quantity = actual_good.quantity;
+        testEconomy.CreateInitialGoods(test_goods);
+        var actualGood = testInitialMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actualQuantity = actualGood.quantity;
         // Assert
-        Assert.IsTrue(actual_quantity >= expected_floor && actual_quantity <= expected_ceiling, 
-        "Expected between:"+expected_floor+" and "+
-        expected_ceiling + 
-        "Actual quantity: " + actual_quantity ); 
+        Assert.IsTrue(actualQuantity >= expectedFloor && actualQuantity <= expectedCeiling, 
+        "Expected between:"+expectedFloor+" and "+
+        expectedCeiling + 
+        "Actual quantity: " + actualQuantity ); 
+        
     }
 
     [TearDown]
     public void TearDown()
     {
-        test_economy.ClearEconomy();
-        UnityEngine.Object.DestroyImmediate(test_economy.gameObject);
+        testEconomy.ClearEconomy();
+        UnityEngine.Object.DestroyImmediate(testEconomy.gameObject);
         UnityEngine.Object.DestroyImmediate(testInitialMarket);
     }
 
