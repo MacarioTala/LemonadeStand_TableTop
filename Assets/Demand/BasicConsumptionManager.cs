@@ -43,20 +43,26 @@ public class BasicConsumptionManager : iConsumptionManager
     {
         var filledOrders = trades
                                         .Where(trade=>trade.Good.Equals(good))
-                                        .OrderBy(trade=>trade.Price);
+                                        .OrderBy(trade=>trade.Price)
+                                        .ToList();
         foreach(var order in filledOrders)
         {
             if (remainingDemand <= 0) break;
             
-            if (order.Quantity <= remainingDemand)
+            switch (order.Quantity)
             {
-                order.FilledQuantity = order.Quantity;
-                remainingDemand -= order.Quantity;
-            }
-            else
-            {
-                order.FilledQuantity += remainingDemand;
-                remainingDemand = 0;
+                case var quantity when quantity > remainingDemand:
+                    order.FilledQuantity = remainingDemand;
+                    remainingDemand = 0;
+                    break;
+                case var quantity when quantity <= remainingDemand:                
+                    order.FilledQuantity = order.Quantity;
+                    remainingDemand -= order.Quantity;
+                    break;
+                default:
+                    order.FilledQuantity += remainingDemand;
+                    remainingDemand = 0;
+                    break;
             }
         }
         return filledOrders.Where(trade=>trade.FilledQuantity > 0).ToList();

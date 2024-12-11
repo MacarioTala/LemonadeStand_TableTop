@@ -151,12 +151,14 @@ public class BasicConsumptionManagerTests
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
+        marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
         var company1Order = new Trade(marketToTest, company1, lemonade, 1500, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var expected = 1000;
         //Act
         company1.QueueOrder(company1Context);
+        marketToTest.ProcessCompanyOrders();
         marketToTest.FulfillDemand();
         var actual=company1Order.FilledQuantity;
         //Assert

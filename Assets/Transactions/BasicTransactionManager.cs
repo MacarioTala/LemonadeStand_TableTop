@@ -14,7 +14,9 @@ public class BasicTransactionManager : iTransactionManager
         var buyer = context.TradeToSubmit.Buyer ?? dummyCorp;
         var seller = context.TradeToSubmit.Seller ?? dummyCorp;
         var good = context.TradeToSubmit.Good;
-        var quantity = context.TradeToSubmit.Quantity;
+        var quantity = context.TradeToSubmit.IsPartiallyFilled
+                            ?context.TradeToSubmit.FilledQuantity
+                            :context.TradeToSubmit.Quantity;
         var price = context.TradeToSubmit.Price;
 
         var sellerInventory = seller.GetInventory();
@@ -44,8 +46,6 @@ public class BasicTransactionManager : iTransactionManager
         //Record trade
         context.TradeToSubmit.FilledQuantity = quantity;
         RecordTrade(buyer, seller, good, quantity, price, tradingPeriod);
-
-
     }
 
     private static void RecordTrade(iCompany buyer, iCompany seller, Good good, int quantity, decimal price, int tradingPeriod)

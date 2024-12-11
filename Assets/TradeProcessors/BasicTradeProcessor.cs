@@ -19,7 +19,9 @@ public class BasicTradeProcessor : iTradeProcessor
     public List<Trade> GetOrders()=>_tradesSentToTheMarket;
     public List<Trade> GetOrderResults(ActionContext context)
     {
-        throw new System.NotImplementedException();
+        return _tradesSentToTheMarket
+                .Where(x => x.Buyer == context.Buyer || x.Seller == context.Seller)
+                .ToList();
     }
 
     public List<Trade> ProcessCompanyOrders(Market market)
