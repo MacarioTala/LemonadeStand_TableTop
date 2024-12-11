@@ -16,7 +16,7 @@ public class ActionContext
     public int Quantity;
     public decimal Price;
     public bool IsBuy;
-    public Trade TradeToSubmit;
+    public Order TradeToSubmit;
 
     //Submit Bid/Ask
     public Market MarketToSubmitTo;

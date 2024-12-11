@@ -1,6 +1,4 @@
-using JetBrains.Annotations;
-
-public class Trade
+public class Order
 {
     public iCompany Buyer;
     public iCompany Seller;
@@ -14,7 +12,7 @@ public class Trade
     public bool IsPartiallyFilled => RemainingQuantity > 0 && FilledQuantity > 0;
 
 
-    public Trade(iCompany buyer, iCompany seller, Good good, int quantity, decimal price)
+    public Order(iCompany buyer, iCompany seller, Good good, int quantity, decimal price)
     {
         Buyer = buyer;
         Seller = seller;

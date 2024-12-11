@@ -3,7 +3,7 @@ using System.Linq;
 
 public class RandomPrioritizer: iOrderPrioritizer
 {
-    public List<Trade> Filter(List<Trade> orders)
+    public List<Order> Filter(List<Order> orders)
     {
         var relevantGood = orders.FirstOrDefault().Good;
         var random = new System.Random();

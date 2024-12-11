@@ -152,7 +152,7 @@ public class GameOfLifeTest
 
         var quantity = Random.Range(1, 10);
         var price = goodToBuy.GetPrice();
-        var trade = new Trade(buyer, seller, goodToBuy, quantity, price);
+        var trade = new Order(buyer, seller, goodToBuy, quantity, price);
         var context = new ActionContext { TradeToSubmit = trade, MarketToSubmitTo = LemonadeMarket };
         LemonadeMarket.QueueOrder(context);
         Debug.Log("Trade queued in cycle: " + cycle + " " + trade);

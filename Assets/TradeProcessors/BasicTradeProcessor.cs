@@ -4,8 +4,8 @@ using System.Linq;
 public class BasicTradeProcessor : iTradeProcessor
 {
      private List<iOrderPrioritizer> _orderPrioritizers = new();
-     private readonly List<Trade> _tradesSentToTheMarket = new();
-     public List<Trade> TradesToSendToTheEconomy = new();
+     private readonly List<Order> _tradesSentToTheMarket = new();
+     public List<Order> TradesToSendToTheEconomy = new();
 
      private readonly iTransactionManager _transactionManager;
 
@@ -16,17 +16,17 @@ public class BasicTradeProcessor : iTradeProcessor
         //_orderPrioritizers.Add(new RandomPrioritizer());
         _transactionManager = new BasicTransactionManager();
     }
-    public List<Trade> GetOrders()=>_tradesSentToTheMarket;
-    public List<Trade> GetOrderResults(ActionContext context)
+    public List<Order> GetOrders()=>_tradesSentToTheMarket;
+    public List<Order> GetOrderResults(ActionContext context)
     {
         return _tradesSentToTheMarket
                 .Where(x => x.Buyer == context.Buyer || x.Seller == context.Seller)
                 .ToList();
     }
 
-    public List<Trade> ProcessCompanyOrders(Market market)
+    public List<Order> ProcessCompanyOrders(Market market)
     {
-        List<Trade> executedTrades = new();
+        List<Order> executedTrades = new();
         List<Good> goodsToTradeThisPeriod = market.GetOrdersSentToMarket()
                                                   .Where(x => x.Buyer is not Market)
                                                   .Select(x => x.Good).Distinct().ToList();
@@ -39,9 +39,9 @@ public class BasicTradeProcessor : iTradeProcessor
         return executedTrades;
     }
 
-    internal List<Trade> ExecuteBestTradesForGood(Good good, List<Trade> OrdersSentToMarket)
+    internal List<Order> ExecuteBestTradesForGood(Good good, List<Order> OrdersSentToMarket)
     {
-        List<Trade> executedTrades = new();
+        List<Order> executedTrades = new();
         var relevantOrders = OrdersSentToMarket.Where(x => x.Good == good
                                                && x.Buyer is not Market
                                                )

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public interface ITradeLogger
 {
-    void LogTrade(Trade trade);
+    void LogTrade(Order trade);
     int GetTradeCount();
-    void SaveDailySummary(List<Trade> trades);
+    void SaveDailySummary(List<Order> trades);
 }

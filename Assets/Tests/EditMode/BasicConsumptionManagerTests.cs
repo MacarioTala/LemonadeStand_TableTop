@@ -60,8 +60,8 @@ public class BasicConsumptionManagerTests
         marketToTest.RegisterCompany(company1);
         marketToTest.RegisterCompany(company2);
 
-        var company1Order = new Trade(marketToTest, company1, lemonade, 1000, 3.5m);
-        var company2Order = new Trade(marketToTest, company2, lemonade, 1000, 4.5m);
+        var company1Order = new Order(marketToTest, company1, lemonade, 1000, 3.5m);
+        var company2Order = new Order(marketToTest, company2, lemonade, 1000, 4.5m);
         var expectedFilledQuantity = 1000;
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
@@ -89,8 +89,8 @@ public class BasicConsumptionManagerTests
         marketToTest.RegisterCompany(company1);
         marketToTest.RegisterCompany(company2);
 
-        var company1Order = new Trade(marketToTest, company1, lemonade, 500, 3.5m);
-        var company2Order = new Trade(marketToTest, company2, lemonade, 500, 3.5m);
+        var company1Order = new Order(marketToTest, company1, lemonade, 500, 3.5m);
+        var company2Order = new Order(marketToTest, company2, lemonade, 500, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var company2Context = new ActionContext{TradeToSubmit = company2Order,
@@ -122,8 +122,8 @@ public class BasicConsumptionManagerTests
         marketToTest.RegisterCompany(company1);
         marketToTest.RegisterCompany(company2);
 
-        var company1Order = new Trade(marketToTest, company1, lemonade, 400, 3.5m);
-        var company2Order = new Trade(marketToTest, company2, lemonade, 400, 3.5m);
+        var company1Order = new Order(marketToTest, company1, lemonade, 400, 3.5m);
+        var company2Order = new Order(marketToTest, company2, lemonade, 400, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var company2Context = new ActionContext{TradeToSubmit = company2Order,
@@ -152,7 +152,7 @@ public class BasicConsumptionManagerTests
         company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
         marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
-        var company1Order = new Trade(marketToTest, company1, lemonade, 1500, 3.5m);
+        var company1Order = new Order(marketToTest, company1, lemonade, 1500, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var expected = 1000;
@@ -178,7 +178,7 @@ public class BasicConsumptionManagerTests
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
-        var company1Order = new Trade(marketToTest, company1, lemonade, 1000, 3.5m);
+        var company1Order = new Order(marketToTest, company1, lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var expected = 0;

@@ -41,7 +41,7 @@ public class IntegrationTests
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
-        var company1Order = new Trade(marketToTest, company1, Lemonade, 1000, 3.5m);
+        var company1Order = new Order(marketToTest, company1, Lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var period = 1;
@@ -64,7 +64,7 @@ public class IntegrationTests
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
-        var company1Order = new Trade(marketToTest, company1, Lemonade, 1000, 3.5m);
+        var company1Order = new Order(marketToTest, company1, Lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var expected = 1000;
@@ -93,8 +93,8 @@ public class IntegrationTests
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
         company2.SetCash(1000000);
 
-        var trade1 = new Trade(company2, company1, Lemonade, 500, 2.0m);
-        var trade2 = new Trade(company2, company1, Lemonade, 1000, 3.5m);
+        var trade1 = new Order(company2, company1, Lemonade, 500, 2.0m);
+        var trade2 = new Order(company2, company1, Lemonade, 1000, 3.5m);
         var theFirstMarket = (Market)TheEconomy.Instance.companies.Where(c => c.Name == "The First Market").FirstOrDefault();
         TheEconomy.Instance.RemoveMarket(theFirstMarket);
         TheEconomy.Instance.RegisterCompany(market);
@@ -123,8 +123,8 @@ public class IntegrationTests
         var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
         company2.SetCash(1000000);
 
-        var trade1 = new Trade(company2, company1, Lemonade, 500, 2.0m);
-        var trade2 = new Trade(company2, company1, Lemonade, 1000, 3.5m);
+        var trade1 = new Order(company2, company1, Lemonade, 500, 2.0m);
+        var trade2 = new Order(company2, company1, Lemonade, 1000, 3.5m);
         var theFirstMarket = (Market)TheEconomy.Instance.companies.Where(c => c.Name == "The First Market").FirstOrDefault();
 
         market.QueueOrder(new ActionContext { TradeToSubmit = trade1, MarketToSubmitTo = market });

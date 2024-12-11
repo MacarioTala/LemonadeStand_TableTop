@@ -3,19 +3,19 @@ using System.Collections.Generic;
 public class MockLogger : ITradeLogger
 {
     int tradesInPeriod;
-    readonly List<Trade> tradesLogged = new();
+    readonly List<Order> tradesLogged = new();
 
     public int GetTradeCount()
     {
         return tradesLogged.Count;
     }
 
-    public void LogTrade(Trade trade)
+    public void LogTrade(Order trade)
     {
         tradesInPeriod++;
     }
     
-    public void SaveDailySummary(List<Trade> trade_queue)
+    public void SaveDailySummary(List<Order> trade_queue)
     {
         tradesLogged.AddRange(trade_queue);
     }

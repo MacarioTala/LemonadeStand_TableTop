@@ -5,9 +5,9 @@ public interface iTradeProcessor
     /// <summary>  
     /// Called by entities that placed orders to get the results of their orders
     /// </summary>
-    List<Trade> GetOrderResults (ActionContext context);
-    List<Trade> GetOrders ();
-    List<Trade> ProcessCompanyOrders(Market market);
+    List<Order> GetOrderResults (ActionContext context);
+    List<Order> GetOrders ();
+    List<Order> ProcessCompanyOrders(Market market);
     /// <summary>
     /// Public interface that lets an entity send an Order 
     /// to any entity that can Process Orders

@@ -3,7 +3,7 @@ using System.Linq;
 
 public class LowPricePrioritizer : iOrderPrioritizer
 {
-    public List<Trade> Filter(List<Trade> Orders)
+    public List<Order> Filter(List<Order> Orders)
     {
         return Orders.OrderBy(x => x.Price).ToList();
     }

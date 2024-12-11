@@ -25,7 +25,7 @@ public class BasicTradeProcessorTests
         testMarket.RegisterCompany(testCompany);
         var lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Uncommon);
         testCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 100, 1m, period));
-        var testOrder = new Trade(testMarket, testCompany, lemonade, 100, 10m);
+        var testOrder = new Order(testMarket, testCompany, lemonade, 100, 10m);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
                     MarketToSubmitTo = testMarket,
@@ -63,8 +63,8 @@ public class BasicTradeProcessorTests
         testCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 100, 1m, period));
         testCompany2.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 10m, period));
 
-        var testOrder = new Trade(testCompany2,testCompany, lemonade, 100, 10m);
-        var testOrder2 = new Trade(testCompany,testCompany2, radioactiveLemonade, 10, 10m);
+        var testOrder = new Order(testCompany2,testCompany, lemonade, 100, 10m);
+        var testOrder2 = new Order(testCompany,testCompany2, radioactiveLemonade, 10, 10m);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
                     MarketToSubmitTo = testMarket,

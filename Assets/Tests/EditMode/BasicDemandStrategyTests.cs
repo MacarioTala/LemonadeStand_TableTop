@@ -31,7 +31,7 @@ public class BasicDemandStrategyTests
         marketToTest.RegisterCompany(company2);
         company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
 
-        var lemonOrder = new Trade(company2, company1, lemon, 500, 3.0m);
+        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
         var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
         marketToTest.QueueOrder(lemonContext);
         marketToTest.QueueOrder(lemonContext);

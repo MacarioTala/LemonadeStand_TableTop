@@ -46,7 +46,7 @@ public class Market : ScriptableObject, iCompany
     //Convenience methods
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
-    public List<Trade>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
+    public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
@@ -114,7 +114,7 @@ public class Market : ScriptableObject, iCompany
     {
         _transactionManager.ProcessTransaction(context);
     }
-    public List<Trade> ProcessCompanyOrders()
+    public List<Order> ProcessCompanyOrders()
     {
         var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
         return CompanyOrdersExecuted;

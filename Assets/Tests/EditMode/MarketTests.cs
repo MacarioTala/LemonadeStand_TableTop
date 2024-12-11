@@ -124,7 +124,7 @@ public class MarketTests
         //that will change the demand
         var expected = 500;
         // Act
-        var lemonSale = new Trade(testMarket, testCompany, lemon, lemonsCompanyWillSellToMarket, 3.0m);
+        var lemonSale = new Order(testMarket, testCompany, lemon, lemonsCompanyWillSellToMarket, 3.0m);
         var lemonContext = new ActionContext { TradeToSubmit = lemonSale, MarketToSubmitTo = testMarket, Period = period };
         testMarket.QueueOrder(lemonContext);
         testMarket.ProcessCompanyOrders();
@@ -366,7 +366,7 @@ public class MarketTests
         company2.SetCash(0);
         const string expected="Insufficient funds to buy good";
         string actual=null;
-        var company2BuysLemons = new Trade(company2, company1, lemon, 4000, 3.0m);
+        var company2BuysLemons = new Order(company2, company1, lemon, 4000, 3.0m);
         var company2Context = new ActionContext{TradeToSubmit = company2BuysLemons,
                                                 MarketToSubmitTo = testMarket};
         // Act
@@ -403,8 +403,8 @@ public class MarketTests
         company2.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
         marketToTest.InitializeDemandForSpecificGood(lemon, 50);
         // Act
-        var trade1 = new Trade(test_initial_market, company1, lemon, 10, 10.0m);
-        var trade2 = new Trade(test_initial_market, company2, lemon, 10, 15.0m);
+        var trade1 = new Order(test_initial_market, company1, lemon, 10, 10.0m);
+        var trade2 = new Order(test_initial_market, company2, lemon, 10, 15.0m);
         var trade1Context = new ActionContext{TradeToSubmit = trade1,
                                                 MarketToSubmitTo = marketToTest};   
         var trade2Context = new ActionContext{TradeToSubmit = trade2,
@@ -435,7 +435,7 @@ public class MarketTests
         var expectedCompany2SugarQuantity = 10 - 1;
 
         // Act
-        var trade = new Trade(company1, company2, sugar, 1, 2.0m);
+        var trade = new Order(company1, company2, sugar, 1, 2.0m);
         var sugarTradeContext = new ActionContext{TradeToSubmit = trade, MarketToSubmitTo = testMarket};
         testMarket.QueueOrder(sugarTradeContext);
         testMarket.ProcessCompanyOrders();
@@ -460,7 +460,7 @@ public class MarketTests
         testMarket.RegisterCompany(company2);
         var expected = "Company does not have enough of the good to sell";
         string actual = null;
-        var company1BuysLemons = new Trade(company1, company2, lemon, 10, 3.0m);
+        var company1BuysLemons = new Order(company1, company2, lemon, 10, 3.0m);
         var lemonBuyingContext = new ActionContext { TradeToSubmit = company1BuysLemons, MarketToSubmitTo = testMarket };
 
         // Act
@@ -497,10 +497,10 @@ public class MarketTests
         company1.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 3.0m, period));
         company2.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3.0m, period));
 
-        var radioactiveLemonadeTrade = new Trade(testMarket, company1, radioactiveLemonade, 10, 3.0m);
+        var radioactiveLemonadeTrade = new Order(testMarket, company1, radioactiveLemonade, 10, 3.0m);
         var radioactiveLemonadeContext = new ActionContext{TradeToSubmit = radioactiveLemonadeTrade, MarketToSubmitTo = testMarket, Period = period};
 
-        var lemonadeTrade = new Trade( company1,company2, lemonade, 10, 3.0m);
+        var lemonadeTrade = new Order( company1,company2, lemonade, 10, 3.0m);
         var lemonadeContext = new ActionContext{TradeToSubmit = lemonadeTrade, MarketToSubmitTo = testMarket, Period = period};
 
         var expectedFilledQuantityForRadioactiveLemonade = 0;

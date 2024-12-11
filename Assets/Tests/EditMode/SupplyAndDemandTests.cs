@@ -51,7 +51,7 @@ public class SupplyAndDemandTests
         // Arrange
         var testMarket = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
         var testPeriod = 0;
-        var buyLemonadeOrder = new Trade(testMarket, null, lemonade, 500, 3.0m);
+        var buyLemonadeOrder = new Order(testMarket, null, lemonade, 500, 3.0m);
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = testMarket, Period = testPeriod };
         testMarket.QueueOrder(buyLemonadeContext);
         var currentLemonadePrice = lemonade.GetPrice();
@@ -77,7 +77,7 @@ public class SupplyAndDemandTests
         var price_increment_rate = lemonade.Get_price_increment_rate();
         var expectedLemonadePrice = Math.Round(currentLemonadePrice * (1 + price_increment_rate), 2);
 
-        var buyLemonadeOrder = new Trade(marketToTest, null, lemonade, 500, 3.0m); 
+        var buyLemonadeOrder = new Order(marketToTest, null, lemonade, 500, 3.0m); 
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = marketToTest, Period = testPeriod };
         marketToTest.QueueOrder(buyLemonadeContext);
         marketToTest.QueueOrder(buyLemonadeContext);
@@ -101,7 +101,7 @@ public class SupplyAndDemandTests
         var period = 0;
         testMarket.GetInventory().AddGood(new InventoryEntry(lemon, 2000, 3.0m, period));
 
-        var sellLemonOrder = new Trade(null, testMarket, lemon, 500, 3.0m); //sending a null buyer or seller to the market sets
+        var sellLemonOrder = new Order(null, testMarket, lemon, 500, 3.0m); //sending a null buyer or seller to the market sets
                                                                             //the counterparty to be the DummyCompany
         var sellLemonContext = new ActionContext { TradeToSubmit = sellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         testMarket.QueueOrder(sellLemonContext);
@@ -134,7 +134,7 @@ public class SupplyAndDemandTests
         //create the ActionContext
         var testContext = new ActionContext
         {
-            TradeToSubmit = new Trade(MarketThatDemandsLemons, sellingCompany, lemon, 1000, 3.0m),
+            TradeToSubmit = new Order(MarketThatDemandsLemons, sellingCompany, lemon, 1000, 3.0m),
             MarketToSubmitTo = MarketThatDemandsLemons,
             Period = period
         };
@@ -165,7 +165,7 @@ public class SupplyAndDemandTests
         var period = 0;
 
         //have the market buy some lemons
-        var marketBuysLemons = new Trade(MarketThatDemandsLemons, sellingCompany, lemon, 500, 3.0m);
+        var marketBuysLemons = new Order(MarketThatDemandsLemons, sellingCompany, lemon, 500, 3.0m);
         var lemonBuyingContext = new ActionContext { TradeToSubmit = marketBuysLemons, MarketToSubmitTo = MarketThatDemandsLemons ,Period= period};
         MarketThatDemandsLemons.QueueOrder(lemonBuyingContext);
         MarketThatDemandsLemons.ProcessCompanyOrders();
@@ -191,7 +191,7 @@ public class SupplyAndDemandTests
 
         //give the selling company some lemons
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemon, 900, 3.0m, 0));
-        var marketBuysLemons = new Trade(marketThatDemandsLemons, sellingCompany, lemon, 600, 3.0m);
+        var marketBuysLemons = new Order(marketThatDemandsLemons, sellingCompany, lemon, 600, 3.0m);
         var lemonBuyingContext =new ActionContext { TradeToSubmit = marketBuysLemons, MarketToSubmitTo = marketThatDemandsLemons, Period = period };
     
         //Act
@@ -222,7 +222,7 @@ public class SupplyAndDemandTests
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3.0m,0));
         //Act
         //have the market buy some lemonade
-        var marketBuysLemonade = new Trade(marketToTest, sellingCompany, lemonade, 1000, 3.0m);
+        var marketBuysLemonade = new Order(marketToTest, sellingCompany, lemonade, 1000, 3.0m);
         var testContext = new ActionContext
         {
             TradeToSubmit = marketBuysLemonade,

@@ -39,7 +39,7 @@ public class BasicConsumptionManager : iConsumptionManager
         }
     }
 
-    internal List<Trade> FillOrderBasedOnPrice(List<Trade> trades, Good good, int remainingDemand)
+    internal List<Order> FillOrderBasedOnPrice(List<Order> trades, Good good, int remainingDemand)
     {
         var filledOrders = trades
                                         .Where(trade=>trade.Good.Equals(good))
