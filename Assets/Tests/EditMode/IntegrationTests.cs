@@ -29,6 +29,37 @@ public class IntegrationTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
+    [Test]
+    public void EndTradingPeriodIncrementsMarketPeriod()
+    {
+        // Arrange
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var currentPeriod = market.CurrentPeriod;
+        var expected = currentPeriod + 1;
+        TheEconomy.Instance.RegisterCompany(market);
+        // Act
+        TestEconomy.EndTradingPeriod();
+        var actual = market.CurrentPeriod;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void EndTradingPeriodIncrementsCompanyPeriod()
+    {
+        // Arrange
+        var company = Company.Factory.Create("Company Test", CompanyLevelEnum.Beginner);
+        var currentPeriod = company.CurrentPeriod;
+        var expected = currentPeriod + 1;
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TheEconomy.Instance.RegisterCompany(market);
+        market.RegisterCompany(company);
+        // Act
+        TestEconomy.EndTradingPeriod();
+        var actual = company.CurrentPeriod;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+        
 #endregion
 #region UnleashMarketForces
     [Test]

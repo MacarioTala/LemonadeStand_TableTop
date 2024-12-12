@@ -153,9 +153,9 @@ public class Market : ScriptableObject, iCompany
         foreach (var company in CompaniesInThisMarket)
         {
             //Update Company Statuses
-            company.UpdateCurrentPeriod(period);
             company.ExpireGoods(period);
             company.SubtractFixedCostsForPeriod(period);
+            company.UpdateCurrentPeriod(period+1);
             BankruptCompany(company);
         }
     }
@@ -319,6 +319,7 @@ public class Market : ScriptableObject, iCompany
         UpdatePrices();
         ConsumeGoods();
         UpdateCompanyStatuses(period);
+        CurrentPeriod++;
     }
 #endregion
 #region Overrides
