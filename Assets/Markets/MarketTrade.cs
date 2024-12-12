@@ -1,15 +1,29 @@
 public class MarketTrade
 {
-    public InventoryEntry InventoryEntry{get; private set;}
+    public Order RecordedTrade{get; private set;}
     public int Period{get; private set;}
 
-    public TradeType TradeType{get; private set;}
-
-    public MarketTrade(InventoryEntry inventoryEntry, int period,TradeType tradeType)
+    public MarketTrade(Order recordedTrade, int period)
     {
-        InventoryEntry = inventoryEntry;
+        RecordedTrade = recordedTrade;
         Period = period;
-        TradeType = tradeType;
+    }
+
+    public override bool Equals(object other)
+    {
+        if (other is MarketTrade otherTrade)
+        {
+            return RecordedTrade == otherTrade.RecordedTrade && Period == otherTrade.Period;
+        }
+        return false;
+    }
+    public override int GetHashCode()
+    {
+        return RecordedTrade.GetHashCode() ^ Period.GetHashCode();
+    }
+    public override string ToString()
+    {
+        return $"Trade: {RecordedTrade} Period: {Period}";
     }
 }
 public enum TradeType

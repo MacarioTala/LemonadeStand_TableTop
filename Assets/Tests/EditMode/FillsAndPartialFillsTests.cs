@@ -14,8 +14,10 @@ public class FillsAndPartialFillsTests
     }
 
     [Test]
-    public void TestThatMarketPartiallyFillsOrderIfOrderIsMarketOrder()
-    { throw new System.NotImplementedException(); }
+    public void TestThatMarketPartiallyFillsOrderIfBuyingCompanyDoesntWantEntireQuantity()
+    { 
+        throw new System.NotImplementedException(); 
+    }
 
     [TearDown]
     public void TearDown()

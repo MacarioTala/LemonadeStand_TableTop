@@ -58,4 +58,79 @@ public class BasicDemandStrategyTests
     {
         Object.DestroyImmediate(TestEconomy.gameObject);
     }
+#region default implementation tests
+
+    [Test]
+    public void CalculateDemandForPeriodReturnsBaseMarketDemandWhenNoOrdersExist()
+    {
+        // Arrange
+        var period = 0;
+        var strategy = new LinearDemandStrategy();
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
+        marketToTest.InitializeDemandForSpecificGood(lemon, 1000);
+        var expected = 1000;
+        // Act
+        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(marketToTest, period)[lemon].CurrentDemand;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void CalculateDemandForPeriodReturnsBaseMarketDemandPlusOrdersWhenOrdersExist()
+    {
+        // Arrange
+        var period = 0;
+        var strategy = new LinearDemandStrategy();
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
+        marketToTest.InitializeDemandForSpecificGood(lemon, 1000);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company1);
+        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company2);
+        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
+
+        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
+        marketToTest.QueueOrder(lemonContext);
+
+        var expected = 1500;
+        // Act
+        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(marketToTest, period)[lemon].CurrentDemand;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void CalculateDemandForPeriodCountsOnlyOrdersIfNoMarketDemandExists()
+    {
+        // Arrange
+        var period = 0;
+        var strategy = new LinearDemandStrategy();
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company1);
+        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company2);
+        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
+
+        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
+        marketToTest.QueueOrder(lemonContext);
+
+        var expected = 500;
+        // Act
+        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(marketToTest, period)[lemon].CurrentDemand;
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void CalculateSupplyForPeriodReturnsTotalQuantityOfAllFilledTrades()
+    {
+        //Arrange
+        var period = 0;
+        var strategy = new LinearDemandStrategy();
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+
+    }
+#endregion
 }

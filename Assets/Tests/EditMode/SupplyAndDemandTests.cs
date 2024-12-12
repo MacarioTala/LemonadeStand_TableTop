@@ -72,19 +72,22 @@ public class SupplyAndDemandTests
     {
         // Arrange
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
         var testPeriod = 0;
         var currentLemonadePrice = lemonade.GetPrice();
         var price_increment_rate = lemonade.Get_price_increment_rate();
         var expectedLemonadePrice = Math.Round(currentLemonadePrice * (1 + price_increment_rate), 2);
+        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company);
+        company.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3.0m, 0));
 
-        var buyLemonadeOrder = new Order(marketToTest, null, lemonade, 500, 3.0m); 
+        var buyLemonadeOrder = new Order(marketToTest, company, lemonade, 1500, 3.0m); 
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = marketToTest, Period = testPeriod };
-        marketToTest.QueueOrder(buyLemonadeContext);
-        marketToTest.QueueOrder(buyLemonadeContext);
         marketToTest.QueueOrder(buyLemonadeContext);
 
         // Act
         marketToTest.ProcessCompanyOrders();
+        marketToTest.FulfillDemand();
         marketToTest.UpdatePrices();
         var actualLemonade = marketToTest.GetInventory().GetInventoryEntriesByGood(lemonade.good_name).FirstOrDefault();
         var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(),2);

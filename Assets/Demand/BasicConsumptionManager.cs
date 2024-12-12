@@ -34,7 +34,7 @@ public class BasicConsumptionManager : iConsumptionManager
                     Period = market.CurrentPeriod
                 };
                 market.ProcessOrder(context);
-                remainingDemand -= order.Quantity;
+                remainingDemand -= order.FilledQuantity;
             }
         }
     }

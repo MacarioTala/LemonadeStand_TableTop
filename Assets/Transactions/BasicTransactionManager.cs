@@ -45,22 +45,20 @@ public class BasicTransactionManager : iTransactionManager
 
         //Record trade
         context.TradeToSubmit.FilledQuantity = quantity;
-        RecordTrade(buyer, seller, good, quantity, price, tradingPeriod);
+        RecordTrade(context.TradeToSubmit, tradingPeriod);
     }
 
-    private static void RecordTrade(iCompany buyer, iCompany seller, Good good, int quantity, decimal price, int tradingPeriod)
+    private static void RecordTrade(Order tradeToRecord, int tradingPeriod)
     {
-        if (seller is Market marketSeller)
+        if (tradeToRecord.Seller is Market marketSeller)
         {
-            var inventoryEntryForTrade = new InventoryEntry(good, quantity, price, tradingPeriod);
-            var trade = new MarketTrade(inventoryEntryForTrade, tradingPeriod, TradeType.Sell);
+            var trade = new MarketTrade(tradeToRecord, tradingPeriod);
             marketSeller.RecordTrade(trade);
         }
 
-        if (buyer is Market marketBuyer)
+        if (tradeToRecord.Buyer is Market marketBuyer)
         {
-            var inventoryEntry = new InventoryEntry(good, quantity, price, tradingPeriod);
-            var trade = new MarketTrade(inventoryEntry, tradingPeriod, TradeType.Buy);
+            var trade = new MarketTrade(tradeToRecord, tradingPeriod);
             marketBuyer.RecordTrade(trade);
         }
     }

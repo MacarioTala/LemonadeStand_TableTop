@@ -38,7 +38,7 @@ public class Market : ScriptableObject, iCompany
     private readonly List<iPriceModifier> _priceModifiers = new();
     
     //Time
-    public int CurrentPeriod{get;set;}
+    public int CurrentPeriod{get;set;}=0;
     public int StartingPeriod{get;set;}
     //Trading
     private readonly List<MarketTrade> _marketTradesInPeriod = new();
@@ -49,7 +49,8 @@ public class Market : ScriptableObject, iCompany
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
-    public List<MarketTrade> GetMarketTradesInPeriod() => _marketTradesInPeriod;
+    public void SetDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
+    public List<MarketTrade> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
     public void RecordMarketTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
     public void RecordTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
@@ -123,6 +124,11 @@ public class Market : ScriptableObject, iCompany
     public List<Order> ProcessCompanyOrders()
     {
         var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
+        foreach(var order in CompanyOrdersExecuted)
+        {
+            RecordTrade(new MarketTrade(order,CurrentPeriod));
+        }
+        
         return CompanyOrdersExecuted;
     }
     public void RegisterCompany(Company company)
