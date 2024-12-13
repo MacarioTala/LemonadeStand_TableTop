@@ -60,7 +60,7 @@ public class DummyCompany : iCompany
         return Inventory;
     }
 
-    public void QueueOrder(ActionContext context)
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
         throw new System.NotImplementedException();
     }

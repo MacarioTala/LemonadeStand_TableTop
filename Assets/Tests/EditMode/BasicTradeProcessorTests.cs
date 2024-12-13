@@ -82,9 +82,8 @@ public class BasicTradeProcessorTests
         testCompany2.QueueOrder(testContext2);
         testMarket.ProcessCompanyOrders();
         
-        var OrdersSentToMarket = testMarket.GetOrdersSentToMarket();
-        var actualLemonadeFill = OrdersSentToMarket.Find(x => x.Good == lemonade).FilledQuantity;
-        var actualRadioactiveLemonadeFill = OrdersSentToMarket.Find(x => x.Good == radioactiveLemonade).FilledQuantity;
+        var actualLemonadeFill = testOrder.FilledQuantity;
+        var actualRadioactiveLemonadeFill = testOrder2.FilledQuantity;
         // Assert
         Assert.AreEqual(expectedLemonadeFill, actualLemonadeFill);
         Assert.AreEqual(expectedRadioactiveLemonadeFill, actualRadioactiveLemonadeFill);

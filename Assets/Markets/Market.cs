@@ -143,9 +143,14 @@ public class Market : ScriptableObject, iCompany
         }
         TheEconomy.Instance.RegisterCompany(company);
     }
-    public void QueueOrder(ActionContext context)
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
+        var contextValidationResult = context.DoesContextContainValidTrade();
+        if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
+            return context.DoesContextContainValidTrade();
+            
         _tradeProcessor.QueueOrder(context);
+        return LemonadeStandResultObject.Success();
     }
 
     internal void UpdateCompanyStatuses(int period)

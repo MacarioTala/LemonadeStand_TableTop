@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -51,7 +52,32 @@ public class BasicDemandStrategyTests
     [Test]
     public void GetTotalBoughtReturnsTotalAmountOfGoodBoughtInAPeriodWithMarketOrders()
     {
-        throw new System.NotImplementedException();
+        // Arrange
+        var period = 0;
+        var strategy = new LinearDemandStrategy();
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
+        marketToTest.InitializeDemandForSpecificGood(lemon, 1000);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company1);
+        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company2);
+        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
+
+        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
+        
+        var marketOrder = new Order(marketToTest, company1, lemon, 500, 3.0m);
+        var marketContext = new ActionContext { TradeToSubmit = marketOrder, MarketToSubmitTo = marketToTest , Period = period};
+        marketToTest.QueueOrder(lemonContext);
+        marketToTest.QueueOrder(marketContext);
+
+        const int expected = 1000;
+        // Act
+        marketToTest.ProcessCompanyOrders();
+        marketToTest.FulfillDemand();
+        var actual = ((iDemandStrategy)strategy).GetTotalBought(marketToTest, lemon, period);
+        // Assert
+        Assert.AreEqual(expected, actual);
     }
     [TearDown]
     public void TearDown()
@@ -130,7 +156,26 @@ public class BasicDemandStrategyTests
         var strategy = new LinearDemandStrategy();
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
         var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company1);
+        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        marketToTest.RegisterCompany(company2);
+        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
+        company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,period));
 
+        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
+        marketToTest.QueueOrder(lemonContext);
+
+        var waterOrder = new Order(company1, company2, water, 500, 3.0m);
+        var waterContext = new ActionContext { TradeToSubmit = waterOrder, MarketToSubmitTo = marketToTest , Period = period};
+        marketToTest.QueueOrder(waterContext);
+
+        var expected = new Dictionary<Good, int> {{lemon, 500}, {water, 500}};
+        //Act
+        marketToTest.ProcessCompanyOrders();
+        var actual = ((iDemandStrategy)strategy).CalculateSupplyForPeriod(marketToTest, period);
+        //Assert
+        Assert.AreEqual(expected, actual);
     }
 #endregion
 }

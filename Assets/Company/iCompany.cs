@@ -35,6 +35,6 @@ public interface iCompany
         void BuyGood(Good good, int quantity, decimal price,int period);
         void SellGood(Good good, int quantity, decimal price,int period);
 
-        void QueueOrder(ActionContext context);
+        LemonadeStandResultObject QueueOrder(ActionContext context);
     #endregion
 }

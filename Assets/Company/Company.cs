@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 public class Company : ScriptableObject, iCompany
 {
 #region Identity and Initialization
@@ -226,27 +227,47 @@ public class Company : ScriptableObject, iCompany
     #region Market Actions
 
     public void SubtractFixedCostsForPeriod(int period) => SetCash(cash - CalculateFixedCostsForPeriod(period));
-    public void QueueOrder(ActionContext context)
+   
+    private LemonadeStandResultObject IsValidOrder(ActionContext context)
     {
-        var MarketToSubmitTo = context.MarketToSubmitTo;
-        if  (
-            (context.Seller == null || context.GoodToBuy == null || context.Quantity == 0 || context.Price == 0)
-                &&
-            (context.TradeToSubmit == null)
-            )
+        var contextValidationResult = context.DoesContextContainValidTrade();
+        if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
+            return context.DoesContextContainValidTrade();
+        
+        var orderValidationResult = context.TradeToSubmit.IsOrderValid();
+        if (!orderValidationResult.Equals(LemonadeStandResultObject.Success()) ) 
+            return orderValidationResult;
+
+        //Validate cash
+        if(context.TradeToSubmit.Buyer.Equals(this))
         {
-            throw new ContextException("Seller, Good, Quantity, Price, or Trade not set in context");
+            if(!HasMoney(context.TradeToSubmit.Price*context.TradeToSubmit.Quantity))
+            {
+                return LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientCash, "Insufficient Cash to queue order");
+            }
         }
-        MarketToSubmitTo.QueueOrder(context);
+
+        return LemonadeStandResultObject.Success();
     }
-    public void SubmitBidAskSpreadToMarket(ActionContext context)
+        
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
+    {
+        var orderValidationResult = IsValidOrder(context);
+        if(!orderValidationResult.Equals(LemonadeStandResultObject.Success())) return orderValidationResult;
+
+        var MarketToSubmitTo = context.MarketToSubmitTo;
+        MarketToSubmitTo.QueueOrder(context);
+        return LemonadeStandResultObject.Success();
+    }
+    public LemonadeStandResultObject SubmitBidAskSpreadToMarket(ActionContext context)
     {
         context.SubmittingCompany = this;
-        if(context.BidToSubmit==0||context.AskToSubmit==0||context.GoodToSubmit==null||context.MarketToSubmitTo==null)
-        {
-            throw new ContextException("Bid, Ask, Good, or Market not set in context");
-        }
+        var bidAskSpreadValidationResult = context.DoesContextContainValidBidAskSpread();
+        if(!bidAskSpreadValidationResult.Equals(LemonadeStandResultObject.Success()))
+           return bidAskSpreadValidationResult;
+       
         context.MarketToSubmitTo.PublishSpreadToMarket(context);
+        return LemonadeStandResultObject.Success();
     }
     #endregion
 #region Overrides

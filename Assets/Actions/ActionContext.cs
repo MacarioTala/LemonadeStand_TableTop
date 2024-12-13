@@ -25,6 +25,20 @@ public class ActionContext
     public decimal BidToSubmit;
     public decimal AskToSubmit;
 
+    public LemonadeStandResultObject DoesContextContainValidTrade()
+    {
+        if (TradeToSubmit == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.ContextHasNoTrade, "Context has no trade");
+        return LemonadeStandResultObject.Success();
+    }
+
+    public LemonadeStandResultObject DoesContextContainValidBidAskSpread()
+    {
+         if(BidToSubmit==0) return LemonadeStandResultObject.Failure(ResultTypeEnum.SpreadHasNoBid, "Spread has no bid");
+         if(AskToSubmit==0) return LemonadeStandResultObject.Failure(ResultTypeEnum.SpreadHasNoAsk, "Spread has no ask");
+         if(GoodToSubmit==null) return LemonadeStandResultObject.Failure(ResultTypeEnum.SpreadHasNoGood, "Spread has no good");
+         if(MarketToSubmitTo==null) return LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
+        return LemonadeStandResultObject.Success();
+    }
 }
 
 public class ContextException : System.Exception

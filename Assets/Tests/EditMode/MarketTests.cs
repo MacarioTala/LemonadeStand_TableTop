@@ -299,24 +299,19 @@ public class MarketTests
         Assert.AreEqual(expected, actual);
     }
     [Test]
-    public void PublishSpreadToMarketThrowsContextExceptionIfActionContextIsIncomplete()
+    public void PublishSpreadToMarketReturnsErrorIfActionContextIsIncomplete()
     {
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         test_economy.RegisterCompany(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
-        System.Exception actual=null;
+        
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
         //Act
-        try
-        {
-            company1.SubmitBidAskSpreadToMarket(context);
-        }
-        catch(System.Exception e)
-        {
-            actual = e;
-        }
+        var actual = company1.SubmitBidAskSpreadToMarket(context);
+        
         // Assert
-        Assert.That(actual, Is.TypeOf<ContextException>());
+        Assert.AreEqual(expected, actual);
     }
                                
    #endregion

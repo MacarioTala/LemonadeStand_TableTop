@@ -104,25 +104,19 @@ public class CompanyTests
     }
 
     [Test]
-    public void QueueTradethrowsContextExceptionWhenActionContextIncomplete()
+    public void QueueTradeReturnsFailureWhenActionContextDoesNotContainTrade()
     {
         //Assert
         var company1 = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         var lemon = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
-        System.Exception actual=null;
-        var expected = new ContextException("Seller, Good, Quantity, Price, or Trade not set in context");
+
+        var expected = new LemonadeStandResultObject{Result = ResultTypeEnum.ContextHasNoTrade, Message = "ActionContext does not contain a trade"};
         //Act
-        try
-        {
-            company1.QueueOrder(context);
-        }
-        catch (System.Exception e)
-        {
-            actual = e;
-        }
+        var actual=company1.QueueOrder(context);
+        
         //Assert
-        Assert.AreEqual(expected.Message, actual.Message);
+        Assert.AreEqual(expected.Result, actual.Result);
         
     }
 }
