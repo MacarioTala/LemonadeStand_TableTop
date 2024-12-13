@@ -33,13 +33,13 @@ public class BasicTradeProcessor : iTradeProcessor
 
         foreach (var good in goodsToTradeThisPeriod)
         {
-           executedTrades.AddRange(ExecuteBestTradesForGood(good,market.GetOrdersSentToMarket()));
+           executedTrades.AddRange(ExecuteBestTradesForGood(good,market,market.GetOrdersSentToMarket().Where(x => x.Buyer is not Market).ToList()));
         }
         _tradesSentToTheMarket.RemoveAll(x=>x.Buyer is not Market);
         return executedTrades;
     }
 
-    internal List<Order> ExecuteBestTradesForGood(Good good, List<Order> OrdersSentToMarket)
+    internal List<Order> ExecuteBestTradesForGood(Good good, Market market, List<Order> OrdersSentToMarket)
     {
         List<Order> executedTrades = new();
         var relevantOrders = OrdersSentToMarket.Where(x => x.Good == good
@@ -56,7 +56,9 @@ public class BasicTradeProcessor : iTradeProcessor
                 {
                     _transactionManager.ProcessTransaction(new ActionContext
                     {
-                        TradeToSubmit = order
+                        TradeToSubmit = order,
+                        MarketToSubmitTo = market,
+                        Period = market.CurrentPeriod
                     });
                     executedTrades.Add(order);
                     relevantOrders.Remove(order);
@@ -75,8 +77,13 @@ public class BasicTradeProcessor : iTradeProcessor
         return executedTrades;
     }
 
-    public void QueueOrder(ActionContext context)
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
+        if(_tradesSentToTheMarket.Contains(context.TradeToSubmit))
+            {
+                return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, "Order already exists in the queue");
+            }
         _tradesSentToTheMarket.Add(context.TradeToSubmit);
+        return LemonadeStandResultObject.Success();
     }
 }

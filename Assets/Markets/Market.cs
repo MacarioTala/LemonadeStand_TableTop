@@ -53,7 +53,10 @@ public class Market : ScriptableObject, iCompany
     public List<MarketTrade> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
     public void RecordMarketTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
-    public void RecordTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
+    public void RecordTrade(MarketTrade trade) 
+    {
+        if(!_marketTradesInPeriod.Contains(trade))_marketTradesInPeriod.Add(trade);
+    }
     public void SetCash(decimal new_cash) => cash = new_cash;
     #endregion
 #region Creation and Initialization
@@ -124,11 +127,6 @@ public class Market : ScriptableObject, iCompany
     public List<Order> ProcessCompanyOrders()
     {
         var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
-        foreach(var order in CompanyOrdersExecuted)
-        {
-            RecordTrade(new MarketTrade(order,CurrentPeriod));
-        }
-        
         return CompanyOrdersExecuted;
     }
     public void RegisterCompany(Company company)
@@ -148,8 +146,11 @@ public class Market : ScriptableObject, iCompany
         var contextValidationResult = context.DoesContextContainValidTrade();
         if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
             return context.DoesContextContainValidTrade();
-            
-        _tradeProcessor.QueueOrder(context);
+        
+        var queueResult = _tradeProcessor.QueueOrder(context);
+        if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
+            return queueResult;
+        
         return LemonadeStandResultObject.Success();
     }
 
@@ -165,10 +166,17 @@ public class Market : ScriptableObject, iCompany
         }
     }
 #endregion
-#region Consumption
+#region Consumption and Demand
+
+    public Dictionary<Good,DemandData> GetDemandForPeriod()
+    {
+        return DemandStrategy.CalculateDemandForPeriod(this,CurrentPeriod);
+    }
+
     public void FulfillDemand()
     {
         _consumptionManager.FulfillDemand(this);
+        
     }
     internal void ConsumeGoods()
         {
@@ -252,13 +260,13 @@ public class Market : ScriptableObject, iCompany
         };
         _transactionManager.ProcessTransaction(context);
     }
-    public int GetTotalBought(int tradingPeriod, Good good)//Currently public for testing purposes
+    public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
     {
-       return DemandStrategy.GetTotalBought(this,good,tradingPeriod);
+       return DemandStrategy.GetTotalBoughtByMarket(this,good,tradingPeriod);
     }
-    public int GetTotalSold(int tradingPeriod, Good good) //currently public for testing purposes
+    public int GetTotalSoldByMarket(int tradingPeriod, Good good) //currently public for testing purposes
     {
-        return DemandStrategy.GetTotalSold(this,tradingPeriod,good);
+        return DemandStrategy.GetTotalSoldByMarket(this,tradingPeriod,good);
     }
 #endregion
 #region Demand

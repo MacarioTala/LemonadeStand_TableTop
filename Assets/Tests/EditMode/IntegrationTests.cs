@@ -16,6 +16,67 @@ public class IntegrationTests
         TestEconomy.Initialize(new MockLogger());
         Lemonade = Good.CreateInstance("Lemonade", new Price_band(.5m, 2m), Rarity_enum.Common);
     }
+#region Recording Trades
+    [Test]
+    public void MarketProcessCompanyOrdersDoesNotDuplicateRecordingTrades()
+    {
+        // Arrange
+        var market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var buyer = Company.Factory.Create("Buyer", CompanyLevelEnum.Beginner);
+        var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
+        market.RegisterCompany(buyer);
+        market.RegisterCompany(seller);
+        var good =Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var sellersInventory = seller.GetInventory();
+        sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
+
+        var actionContext = new ActionContext
+        {
+            TradeToSubmit = new Order(buyer, seller, good, 10, 5),
+            MarketToSubmitTo = market,
+            Period = 0
+        };
+        buyer.QueueOrder(actionContext);
+        // Act
+        market.ProcessCompanyOrders();
+
+        // Assert
+        var recordedTrades = market.GetMarketTradesInPeriod(0);
+        Assert.AreEqual(1, recordedTrades.Count);
+        Assert.AreEqual(buyer, recordedTrades[0].RecordedTrade.Buyer);
+        Assert.AreEqual(seller, recordedTrades[0].RecordedTrade.Seller);
+        Assert.AreEqual(good, recordedTrades[0].RecordedTrade.Good);
+        Assert.AreEqual(10, recordedTrades[0].RecordedTrade.Quantity);
+    }
+    [Test]
+    public void MarketDoesNotAllowQueueingDuplicateTrades()
+    {
+        // Arrange
+        var market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var buyer = Company.Factory.Create("Buyer", CompanyLevelEnum.Beginner);
+        var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
+        market.RegisterCompany(buyer);
+        market.RegisterCompany(seller);
+        var good =Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var sellersInventory = seller.GetInventory();
+        sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
+
+        var actionContext = new ActionContext
+        {
+            TradeToSubmit = new Order(buyer, seller, good, 10, 5),
+            MarketToSubmitTo = market,
+            Period = 0
+        };
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, "Order already exists in the queue");
+        // Act
+        var actual = buyer.QueueOrder(actionContext);
+        actual=buyer.QueueOrder(actionContext);
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+#endregion
 #region Time
     [Test]
     public void EndTradingPeriodIncrementsPeriod()

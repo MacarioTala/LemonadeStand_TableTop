@@ -12,6 +12,5 @@ public enum ResultTypeEnum
     SpreadHasNoBid,
     SpreadHasNoAsk,
     SpreadHasNoGood,
-    
-
+    DuplicateOrder,
 }

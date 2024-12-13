@@ -18,7 +18,7 @@ public interface iDemandStrategy
     public Dictionary<Good, DemandData> CalculateDemandForPeriod(Market market, int tradingPeriod)
     {
         Dictionary<Good, DemandData> calculatedDemand = market.GetMarketDemand();
-        var marketOrders = market.GetOrdersSentToMarket();
+        var marketOrders = market.GetOrdersSentToMarket().Where(x=>x.Buyer is not Market).ToList();
         foreach (var order in marketOrders)
         {   
             var good = order.Good;
@@ -46,38 +46,43 @@ public interface iDemandStrategy
         return calculatedSupply;
     }
      public void CalculateFulfillmentRates(Market market,int tradingPeriod=-1)
-    {
-        var marketDemand = market.GetMarketDemand();
-        if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed
         {
-            //if no parameter was passed, always look at the previous trading period
-            tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
+            
+            if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed
+            {
+                //if no parameter was passed, always look at the previous trading period
+                tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
+            }
+            
+            var marketDemand = CalculateDemandForPeriod(market, tradingPeriod);
+            var marketSupply = CalculateSupplyForPeriod(market, tradingPeriod);
+            foreach(var good in marketDemand.Keys)
+            {
+                var demandedQuantity = marketDemand.TryGetValue(good,out var demandData) ? demandData.CurrentDemand:0;
+                var suppliedQuantity = marketSupply.TryGetValue(good, out var supplyData) ? supplyData : 0;
+                var FulfilmentRate = (float)suppliedQuantity/demandedQuantity;
+                market.GetMarketDemand()[good].FulfilmentRate = FulfilmentRate;
+            }
         }
-        
-        foreach(var good in marketDemand.Keys)
-        {
-            var demandedQuantity = marketDemand[good].CurrentDemand;
-            var suppliedQuantity = market.GetTotalBought(tradingPeriod, good);
-            var FulfilmentRate = (float)suppliedQuantity/demandedQuantity;
-            marketDemand[good].FulfilmentRate = FulfilmentRate;
-        }
-    }
 
-    public int GetTotalBought(Market market,Good good,int tradingPeriod)
+    public int GetTotalBoughtByMarket(Market market,Good good,int tradingPeriod)
     {
          return 
             market.GetMarketTradesInPeriod(tradingPeriod)
             .Where(x => x.Period == tradingPeriod
-                        && x.RecordedTrade.Good.Equals(good))
+                        && x.RecordedTrade.Good.Equals(good)
+                        && x.RecordedTrade.Buyer is Market
+                        )
             .Sum(x => x.RecordedTrade.Quantity);
     }
 
-    public int GetTotalSold(Market market,int tradingPeriod, Good good) //currently public for testing purposes
+    public int GetTotalSoldByMarket(Market market,int tradingPeriod, Good good) //currently public for testing purposes
     {
         return market.GetMarketTradesInPeriod(tradingPeriod)
             .Where(x => x.Period == tradingPeriod
                         && x.RecordedTrade.Good.Equals(good)
-                            )
+                        && x.RecordedTrade.Seller is Market
+                        )
             .Sum(x => x.RecordedTrade.Quantity);
     }
 }

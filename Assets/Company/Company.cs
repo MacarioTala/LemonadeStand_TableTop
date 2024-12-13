@@ -256,7 +256,9 @@ public class Company : ScriptableObject, iCompany
         if(!orderValidationResult.Equals(LemonadeStandResultObject.Success())) return orderValidationResult;
 
         var MarketToSubmitTo = context.MarketToSubmitTo;
-        MarketToSubmitTo.QueueOrder(context);
+        var queueOrderResult=MarketToSubmitTo.QueueOrder(context);
+        if(!queueOrderResult.Equals(LemonadeStandResultObject.Success())) return queueOrderResult;
+        
         return LemonadeStandResultObject.Success();
     }
     public LemonadeStandResultObject SubmitBidAskSpreadToMarket(ActionContext context)

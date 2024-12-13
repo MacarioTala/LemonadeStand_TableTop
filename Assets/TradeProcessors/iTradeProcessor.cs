@@ -13,5 +13,5 @@ public interface iTradeProcessor
     /// to any entity that can Process Orders
     /// </summary>
     /// <param name="context"></param>
-    void QueueOrder (ActionContext context);
+    LemonadeStandResultObject QueueOrder (ActionContext context);
 }

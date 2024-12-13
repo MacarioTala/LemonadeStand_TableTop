@@ -23,7 +23,7 @@ public class MarketTrade
     }
     public override string ToString()
     {
-        return $"Trade: {RecordedTrade} Period: {Period}";
+        return $"Trade: {RecordedTrade.Buyer} buys {RecordedTrade.FilledQuantity} of {RecordedTrade.Good} at Period: {Period}";
     }
 }
 public enum TradeType
