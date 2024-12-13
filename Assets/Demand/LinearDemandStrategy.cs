@@ -12,6 +12,7 @@ public class LinearDemandStrategy : iDemandStrategy
         {
             var demandData = marketDemand[good];
             var elasticity = good.DemandElasticity;
+            if (elasticity == 0) continue;
             
             //Calculate adjustment factor
             var adjustment_factor = 1f;

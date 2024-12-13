@@ -10,6 +10,7 @@ public class Order
 
     public bool IsFullyFilled => RemainingQuantity == 0;
     public bool IsPartiallyFilled => RemainingQuantity > 0 && FilledQuantity > 0;
+    private bool IsSelfTrade => Buyer == Seller;
 
     public LemonadeStandResultObject IsOrderValid()
     {
@@ -18,6 +19,7 @@ public class Order
         if (Good == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoGood, "Order has no good");
         if (Quantity == 0) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidQuantity, "Order has an invalid quantity");
         if (Price <= 0) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidPrice, "Order has an invalid price");
+        if (IsSelfTrade) return LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade, "Order is a self trade");
         return LemonadeStandResultObject.Success();
     }
 

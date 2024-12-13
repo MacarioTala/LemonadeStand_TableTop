@@ -10,6 +10,7 @@ public class Good : ScriptableObject
                         get => _price;
                         set => _price = Math.Round(value,2);}
     public float DemandElasticity { get;  private set; }
+    public void SetDemandElasticity(float elasticity) => DemandElasticity = elasticity;
 
     public string good_name;
     private decimal price_increment_rate;

@@ -232,6 +232,31 @@ public class IntegrationTests
         Assert.AreEqual(expectedTradeCount, actualTradeCount);
         Assert.AreEqual(expectedMarketCount, actualMarketCount);
     }
+
+    [Test]
+    public void CompaniesCannotQueueTradesToThemselves()
+    {
+        //Arrange
+        var period = 0;
+        var good = Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
+        var market = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        market.RegisterCompany(company);
+        company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
+
+        var goodOrder = new Order(company, company, good, 10, 1);
+        var actionContext = new ActionContext
+        {
+            TradeToSubmit = goodOrder,
+            MarketToSubmitTo = market,
+            Period = period
+        };
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade, "Cannot trade with yourself");
+        //Act
+        var actual = company.QueueOrder(actionContext);
+        //Assert
+        Assert.AreEqual(expected.Result, actual.Result);
+    }
 #endregion
     [TearDown]
     public void TearDown()
