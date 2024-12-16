@@ -57,7 +57,7 @@ public class SupplyAndDemandTests
 
         var buyLemonadeOrder = new Order(testMarket, company1, lemonade, 500, 3.0m);
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = testMarket, Period = testPeriod };
-        testMarket.QueueOrder(buyLemonadeContext);
+        testMarket.QueueMarketOrder(buyLemonadeContext);
         var currentLemonadePrice = lemonade.GetPrice();
         var priceIncrementRate = lemonade.Get_price_increment_rate();
         var expectedLemonPrice = Math.Round(currentLemonadePrice * (1 + priceIncrementRate), 2);
@@ -88,7 +88,7 @@ public class SupplyAndDemandTests
 
         var buyLemonadeOrder = new Order(marketToTest, company, lemonade, 1500, 3.0m); 
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = marketToTest, Period = testPeriod };
-        marketToTest.QueueOrder(buyLemonadeContext);
+        marketToTest.QueueMarketOrder(buyLemonadeContext);
 
         // Act
         marketToTest.ProcessCompanyOrders();
@@ -124,9 +124,9 @@ public class SupplyAndDemandTests
         var company2SellLemonContext = new ActionContext { TradeToSubmit = company2SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         var company3SellLemonContext = new ActionContext { TradeToSubmit = company3SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         
-        testMarket.QueueOrder(company1SellLemonContext);
-        testMarket.QueueOrder(company2SellLemonContext);
-        testMarket.QueueOrder(company3SellLemonContext);
+        testMarket.QueueMarketOrder(company1SellLemonContext);
+        testMarket.QueueMarketOrder(company2SellLemonContext);
+        testMarket.QueueMarketOrder(company3SellLemonContext);
         
         testMarket.ProcessCompanyOrders();
         
@@ -161,7 +161,7 @@ public class SupplyAndDemandTests
         };
 
         //have the market buy the lemons
-        MarketThatDemandsLemons.QueueOrder(testContext);
+        MarketThatDemandsLemons.QueueMarketOrder(testContext);
         MarketThatDemandsLemons.ProcessCompanyOrders();
         MarketThatDemandsLemons.FulfillDemand();
         MarketThatDemandsLemons.CalculateFulfillmentRates(testContext.Period);
@@ -218,7 +218,7 @@ public class SupplyAndDemandTests
     
         //Act
         //have the market buy some lemons
-        marketThatDemandsLemons.QueueOrder(lemonBuyingContext);
+        marketThatDemandsLemons.QueueMarketOrder(lemonBuyingContext);
         marketThatDemandsLemons.ProcessCompanyOrders();
         marketThatDemandsLemons.UnleashMarketForces(lemonBuyingContext.Period);
         var actualLemonDemand = marketThatDemandsLemons.GetMarketDemand()[lemon].CurrentDemand;
@@ -251,7 +251,7 @@ public class SupplyAndDemandTests
             MarketToSubmitTo = marketToTest,
             Period = period
         };
-        marketToTest.QueueOrder(testContext);
+        marketToTest.QueueMarketOrder(testContext);
         marketToTest.ProcessCompanyOrders();
         marketToTest.UnleashMarketForces(testContext.Period);
         var actualLemonadeDemand = marketToTest.GetMarketDemand()[lemonade].CurrentDemand;

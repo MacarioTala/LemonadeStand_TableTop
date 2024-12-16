@@ -2,9 +2,11 @@ public class LemonadeStandResultObject
 {
     public ResultTypeEnum Result{get;set;}
     public string Message{get;set;}
+
+    public object ExtraData{get;set;}
     
-    public static LemonadeStandResultObject Success() =>
-        new(){ Result=ResultTypeEnum.Success, Message="Operation Successful"};
+    public static LemonadeStandResultObject Success(object extraData=null) =>
+        new(){ Result=ResultTypeEnum.Success, Message="Operation Successful", ExtraData=extraData};
     public static LemonadeStandResultObject Failure(ResultTypeEnum resultType, string message) =>
         new() { Result=resultType, Message=message};
 

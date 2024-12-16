@@ -48,7 +48,7 @@ public class MarketStatusTests
         marketToTest.QueueOrder(company1Context);
         marketToTest.QueueOrder(company2Context);
 
-        var expected = new List<MarketTrade>
+        var expected = new List<MarketTransaction>
         {
             new(company1Order, period),
             new(company2Order, period)
@@ -90,7 +90,7 @@ public class MarketStatusTests
         var company2Order = new Order(company1, company2, water, 500, 3.0m);
         var company2Context = new ActionContext { TradeToSubmit = company2Order, MarketToSubmitTo = marketToTest , Period = startingPeriod};
 
-        var expected = new List<MarketTrade>
+        var expected = new List<MarketTransaction>
         {
             new(company1Order, startingPeriod)
         };

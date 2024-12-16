@@ -1,8 +1,23 @@
+using System.Collections.Generic;
+
 public class ActionContext
 {
     //General
-    public int Period;
     public ActionEnum Action;
+    public Market MarketToSubmitTo;
+    public int Period;
+
+    private iCompany _submittingCompany;
+    public iCompany SubmittingCompany
+    {
+        get => _submittingCompany;
+        set
+        {
+            _submittingCompany = value;
+            if( TradeToSubmit is not null )
+                { TradeToSubmit.SubmittingCompany = SubmittingCompany; }
+        }
+    }
     
     //Make Recipe
     public Company RecipeMaker;
@@ -10,21 +25,19 @@ public class ActionContext
     public int QuantityToMake;
 
     //QueueTrade/transactions
-    public iCompany Buyer;
-    public iCompany Seller;
-    public Good GoodToBuy;
-    public int Quantity;
-    public decimal Price;
-    public bool IsBuy;
     public Order TradeToSubmit;
+    public List<Order> CounterPartyOrders;
 
     //Submit Bid/Ask
-    public Market MarketToSubmitTo;
-    public Company SubmittingCompany;
     public Good GoodToSubmit;
     public decimal BidToSubmit;
     public decimal AskToSubmit;
 
+    public LemonadeStandResultObject IsContextValid()
+    {
+        if (SubmittingCompany == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoSubmittingCompany, "Order has no submitting company");
+        return LemonadeStandResultObject.Success();
+    }
     public LemonadeStandResultObject DoesContextContainValidTrade()
     {
         if (TradeToSubmit == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.ContextHasNoTrade, "Context has no trade");

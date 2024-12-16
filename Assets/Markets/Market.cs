@@ -41,7 +41,7 @@ public class Market : ScriptableObject, iCompany
     public int CurrentPeriod{get;set;}=0;
     public int StartingPeriod{get;set;}
     //Trading
-    private readonly List<MarketTrade> _marketTradesInPeriod = new();
+    private readonly List<MarketTransaction> _marketTradesInPeriod = new();
 
     //Convenience methods
     public decimal GetCash() => cash;
@@ -50,10 +50,10 @@ public class Market : ScriptableObject, iCompany
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public void SetDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
-    public List<MarketTrade> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
-    public void RecordMarketTrade(MarketTrade trade) => _marketTradesInPeriod.Add(trade);
+    public List<MarketTransaction> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
+    public void RecordMarketTrade(MarketTransaction trade) => _marketTradesInPeriod.Add(trade);
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
-    public void RecordTrade(MarketTrade trade) 
+    public void RecordTrade(MarketTransaction trade) 
     {
         if(!_marketTradesInPeriod.Contains(trade))_marketTradesInPeriod.Add(trade);
     }
@@ -129,6 +129,18 @@ public class Market : ScriptableObject, iCompany
         var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
         return CompanyOrdersExecuted;
     }
+     public LemonadeStandResultObject QueueOrder(ActionContext context)
+    {
+        var contextValidationResult = context.DoesContextContainValidTrade();
+        if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
+            return context.DoesContextContainValidTrade();
+        
+        var queueResult = _tradeProcessor.QueueOrder(context);
+        if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
+            return queueResult;
+        
+        return LemonadeStandResultObject.Success();
+    }
     public void RegisterCompany(Company company)
     {
         if(!CompaniesInThisMarket.Contains(company))
@@ -141,19 +153,7 @@ public class Market : ScriptableObject, iCompany
         }
         TheEconomy.Instance.RegisterCompany(company);
     }
-    public LemonadeStandResultObject QueueOrder(ActionContext context)
-    {
-        var contextValidationResult = context.DoesContextContainValidTrade();
-        if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
-            return context.DoesContextContainValidTrade();
-        
-        var queueResult = _tradeProcessor.QueueOrder(context);
-        if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
-            return queueResult;
-        
-        return LemonadeStandResultObject.Success();
-    }
-
+   
     internal void UpdateCompanyStatuses(int period)
     {
         foreach (var company in CompaniesInThisMarket)
@@ -232,34 +232,6 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Buy and sell 
-    public void BuyGood(Good good, int quantity,decimal price,int period=0)
-    {
-        var context = new ActionContext
-        {
-            Buyer=this,
-            Seller=null,//null because we're buying from the market
-            GoodToBuy=good,
-            Quantity=quantity,
-            Price=price,
-            Period=period
-        };
-            
-        _transactionManager.ProcessTransaction(context);
-    }
-    public void SellGood(Good good, int quantity, decimal price,int period=0)
-    {
-        //period currently does nothing for companies, but is used in Market which implements iCompany
-        var context = new ActionContext
-        {
-            Buyer=null,//null because we're selling to the market
-            Seller=this,
-            GoodToBuy=good,
-            Quantity=quantity,
-            Price=price,
-            Period=period
-        };
-        _transactionManager.ProcessTransaction(context);
-    }
     public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
     {
        return DemandStrategy.GetTotalBoughtByMarket(this,good,tradingPeriod);
@@ -286,6 +258,20 @@ public class Market : ScriptableObject, iCompany
     public void InitializeDemandForSpecificGood(Good good, int InitialDemand)
     {
        DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand);
+    }
+    /// <summary>
+    /// A Market order is an order initiated by the Market
+    /// Use this in order to buy produced goods,
+    /// Have the 'Population' buy goods from the market
+    /// etc.
+    /// </summary>
+    /// <param name="context"></param>
+    public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    {   context.TradeToSubmit.SubmittingCompany = this;
+        var queueResult = QueueOrder(context);
+        if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
+            return queueResult;
+        return LemonadeStandResultObject.Success();
     }
 #endregion
 #region Pricing

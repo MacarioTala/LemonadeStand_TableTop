@@ -36,12 +36,13 @@ public class IntegrationTests
             MarketToSubmitTo = market,
             Period = 0
         };
-        buyer.QueueOrder(actionContext);
+        var queueOrderResult = buyer.QueueOrder(actionContext);
         // Act
         market.ProcessCompanyOrders();
 
         // Assert
         var recordedTrades = market.GetMarketTradesInPeriod(0);
+        Assert.AreEqual(queueOrderResult.Result, LemonadeStandResultObject.Success(ResultTypeEnum.Success).Result);
         Assert.AreEqual(1, recordedTrades.Count);
         Assert.AreEqual(buyer, recordedTrades[0].RecordedTrade.Buyer);
         Assert.AreEqual(seller, recordedTrades[0].RecordedTrade.Seller);
@@ -256,6 +257,30 @@ public class IntegrationTests
         var actual = company.QueueOrder(actionContext);
         //Assert
         Assert.AreEqual(expected.Result, actual.Result);
+    }
+    [Test]
+    public void IfTradeInvolvesMarketThenTheSubmittingCompanyIsTheMarket()
+    {
+        //Arrange
+        var period = 0;
+        var good = Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var TestMarket = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
+        TestMarket.RegisterCompany(company);
+        company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
+        var MarketBuysGoodFromCompany1 = new Order(TestMarket, company, good, 10, 1);
+        var actionContext = new ActionContext
+        {
+            TradeToSubmit = MarketBuysGoodFromCompany1,
+            MarketToSubmitTo = TestMarket,
+            Period = period
+        };
+        var expected = TestMarket;
+        //Act
+        TestMarket.QueueMarketOrder(actionContext);
+        var actual = MarketBuysGoodFromCompany1.SubmittingCompany;
+        //Assert
+        Assert.AreEqual(expected, actual);
     }
 #endregion
     [TearDown]

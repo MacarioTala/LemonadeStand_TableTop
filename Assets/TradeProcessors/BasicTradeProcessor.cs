@@ -20,8 +20,23 @@ public class BasicTradeProcessor : iTradeProcessor
     public List<Order> GetOrderResults(ActionContext context)
     {
         return _tradesSentToTheMarket
-                .Where(x => x.Buyer == context.Buyer || x.Seller == context.Seller)
+                .Where(x => x.Buyer == context.TradeToSubmit.Buyer || x.Seller == context.TradeToSubmit.Seller)
                 .ToList();
+    }
+
+    private bool CounterPartyFoundForOrder (Order order, Market market)
+    {
+        var OrdersSentToMarket = market.GetOrdersSentToMarket();
+        var counterPartyFound = OrdersSentToMarket.
+                                    Any(x => x.Good.Equals(order.Good)
+                                        && x.SubmittingCompany != order.SubmittingCompany
+                                        && (
+                                            x.Buyer.Equals(order.Buyer)
+                                                        ||
+                                            x.Seller.Equals(order.Seller)
+                                           )
+                                        ); 
+        return counterPartyFound;
     }
 
     public List<Order> ProcessCompanyOrders(Market market)
@@ -52,26 +67,21 @@ public class BasicTradeProcessor : iTradeProcessor
             
             foreach (var order in prioritizedOrders)
             {
-                try
+                if (!CounterPartyFoundForOrder(order, market))
+                {
+                    order.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
+                }
+                else
                 {
                     _transactionManager.ProcessTransaction(new ActionContext
-                    {
-                        TradeToSubmit = order,
-                        MarketToSubmitTo = market,
-                        Period = market.CurrentPeriod
-                    });
-                    executedTrades.Add(order);
-                    relevantOrders.Remove(order);
+                        {
+                            TradeToSubmit = order,
+                            MarketToSubmitTo = market,
+                            Period = market.CurrentPeriod
+                        });
+                        executedTrades.Add(order);
+                        relevantOrders.Remove(order);
                 }
-                catch (Company_InsufficientFundsException)
-                {
-                    throw;
-                }
-                catch (Company_InventoryException)
-                {
-                    throw;
-                }
-
             }
         }
         return executedTrades;

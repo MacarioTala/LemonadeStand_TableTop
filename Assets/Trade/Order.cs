@@ -1,5 +1,9 @@
+using System;
+
 public class Order
 {
+    public Guid Id {get;private set;} = Guid.NewGuid();
+    public iCompany SubmittingCompany;
     public iCompany Buyer;
     public iCompany Seller;
     public Good Good;
@@ -11,6 +15,8 @@ public class Order
     public bool IsFullyFilled => RemainingQuantity == 0;
     public bool IsPartiallyFilled => RemainingQuantity > 0 && FilledQuantity > 0;
     private bool IsSelfTrade => Buyer == Seller;
+
+    public LemonadeStandResultObject OrderStatus { get; set; }
 
     public LemonadeStandResultObject IsOrderValid()
     {

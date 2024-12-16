@@ -68,8 +68,8 @@ public class BasicConsumptionManagerTests
         var company2Context = new ActionContext{TradeToSubmit = company2Order,
                                                 MarketToSubmitTo = marketToTest};  
         //Act
-        company1.QueueOrder(company1Context);
-        company2.QueueOrder(company2Context);
+        marketToTest.QueueMarketOrder(company1Context);
+        marketToTest.QueueMarketOrder(company2Context);
         marketToTest.FulfillDemand();
         var actualFilledQuantity=company1Order.FilledQuantity;
         //Assert
@@ -99,8 +99,8 @@ public class BasicConsumptionManagerTests
         var expectedFilledQuantityForCompany1 = 500;
         var expectedFilledQuantityForCompany2 = 500;
         //Act
-        company1.QueueOrder(company1Context);
-        company2.QueueOrder(company2Context);
+        marketToTest.QueueMarketOrder(company1Context);
+        marketToTest.QueueMarketOrder(company2Context);
         marketToTest.FulfillDemand();
         var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
         var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
@@ -132,8 +132,8 @@ public class BasicConsumptionManagerTests
         var expectedFilledQuantityForCompany1 = 400;
         var expectedFilledQuantityForCompany2 = 400;
         //Act
-        company1.QueueOrder(company1Context);
-        company2.QueueOrder(company2Context);
+        marketToTest.QueueMarketOrder(company1Context);
+        marketToTest.QueueMarketOrder(company2Context);
         marketToTest.FulfillDemand();
         var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
         var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
@@ -157,7 +157,7 @@ public class BasicConsumptionManagerTests
                                                 MarketToSubmitTo = marketToTest};
         var expected = 1000;
         //Act
-        company1.QueueOrder(company1Context);
+        marketToTest.QueueMarketOrder(company1Context);
         marketToTest.ProcessCompanyOrders();
         marketToTest.FulfillDemand();
         var actual=company1Order.FilledQuantity;

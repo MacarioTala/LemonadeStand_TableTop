@@ -14,4 +14,10 @@ public enum ResultTypeEnum
     SpreadHasNoGood,
     DuplicateOrder,
     SelfTrade,
+    NoSupplierForGood,
+    NoMatchingCounterParties,
+    PartialFill,
+    OrderHasNoSubmittingCompany,
+    InsufficientFunds,
+    InsufficientGoods
 }

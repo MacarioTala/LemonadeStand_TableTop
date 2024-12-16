@@ -502,7 +502,7 @@ public class MarketTests
         var expectedFilledQuantityForLemonade = 10;
 
         // Act
-        testMarket.QueueOrder(radioactiveLemonadeContext);
+        testMarket.QueueMarketOrder(radioactiveLemonadeContext);
         testMarket.QueueOrder(lemonadeContext);
         testMarket.ProcessCompanyOrders();
         var actualFilledQuantityForRadioactiveLemonade = radioactiveLemonadeTrade.FilledQuantity;

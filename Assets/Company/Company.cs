@@ -206,7 +206,6 @@ public class Company : ScriptableObject, iCompany
         //period currently does nothing for companies, but is used in Market which implements iCompany
         if(HasGood(good, quantity))
         {
-            
             inventory.RemoveGood(good, quantity, price);
             cash += price * quantity;
         }
@@ -230,8 +229,12 @@ public class Company : ScriptableObject, iCompany
    
     private LemonadeStandResultObject IsValidOrder(ActionContext context)
     {
-        var contextValidationResult = context.DoesContextContainValidTrade();
+        var contextValidationResult = context.IsContextValid();
         if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
+            return contextValidationResult;
+            
+        var contextOrderValidationResult = context.DoesContextContainValidTrade();
+        if ( !contextOrderValidationResult.Equals(LemonadeStandResultObject.Success()) )
             return context.DoesContextContainValidTrade();
         
         var orderValidationResult = context.TradeToSubmit.IsOrderValid();
@@ -252,6 +255,7 @@ public class Company : ScriptableObject, iCompany
         
     public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
+        context.SubmittingCompany = this;
         var orderValidationResult = IsValidOrder(context);
         if(!orderValidationResult.Equals(LemonadeStandResultObject.Success())) return orderValidationResult;
 

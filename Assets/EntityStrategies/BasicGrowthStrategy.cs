@@ -35,11 +35,11 @@ public class BasicGrowthStrategy : iStrategy
         switch(context.Action)
         {
             case ActionEnum.QueueTradeBuy:
-                context.Buyer.QueueOrder(context);
+                context.TradeToSubmit.Buyer.QueueOrder(context);
                 break;
 
             case ActionEnum.QueueTradeSell:
-                context.Seller.QueueOrder(context);
+                context.TradeToSubmit.Seller.QueueOrder(context);
                 break;
 
             case ActionEnum.MakeRecipe:
@@ -47,7 +47,8 @@ public class BasicGrowthStrategy : iStrategy
                 break;
             
             case ActionEnum.PublishBidAsk:
-                context.SubmittingCompany.SubmitBidAskSpreadToMarket(context);
+                var publisher = (Company)context.SubmittingCompany;
+                publisher.SubmitBidAskSpreadToMarket(context);
                 break;
 
             default :

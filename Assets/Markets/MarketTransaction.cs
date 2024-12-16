@@ -1,17 +1,25 @@
-public class MarketTrade
+using System;
+using System.Collections.Generic;
+
+public class MarketTransaction
 {
+    public Guid TransactionId {get;private set;} = Guid.NewGuid();
     public Order RecordedTrade{get; private set;}
+    public List<Order> CounterPartyTrades{get; private set;} = new List<Order>();
     public int Period{get; private set;}
 
-    public MarketTrade(Order recordedTrade, int period)
+    public MarketTransaction(Order recordedTrade, int period)
     {
         RecordedTrade = recordedTrade;
         Period = period;
     }
-
+    public void AddCounterPartyTrade(Order counterPartyTrade)
+    {
+        CounterPartyTrades.Add(counterPartyTrade);
+    }
     public override bool Equals(object other)
     {
-        if (other is MarketTrade otherTrade)
+        if (other is MarketTransaction otherTrade)
         {
             return RecordedTrade == otherTrade.RecordedTrade && Period == otherTrade.Period;
         }
