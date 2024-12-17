@@ -20,8 +20,7 @@ public class Order
 
     public LemonadeStandResultObject IsOrderValid()
     {
-        if (Seller == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoSeller, "Order has no seller");
-        if (Buyer == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoBuyer, "Order has no buyer");
+        if ((Seller == null) && (Buyer == null)) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoActors, "Order has no actors");
         if (Good == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoGood, "Order has no good");
         if (Quantity == 0) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidQuantity, "Order has an invalid quantity");
         if (Price <= 0) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidPrice, "Order has an invalid price");
@@ -40,6 +39,8 @@ public class Order
 
     public override string ToString()
     {
-        return "Trade: " + Buyer.Name + " buys " + Quantity + " " + Good.good_name + " from " + Seller.Name + " at " + Price;
+        var action = Buyer.Equals(SubmittingCompany) ? " buys " : " sells ";
+        var counterParty = Buyer.Equals(SubmittingCompany) ? Seller : Buyer;
+        return "Order: " + SubmittingCompany + action + Quantity + " " + Good.good_name + " from " + counterParty + " at " + Price;
     }
 }

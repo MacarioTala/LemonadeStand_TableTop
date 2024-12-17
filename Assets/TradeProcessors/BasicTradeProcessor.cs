@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,17 +27,7 @@ public class BasicTradeProcessor : iTradeProcessor
 
     private bool CounterPartyFoundForOrder (Order order, Market market)
     {
-        var OrdersSentToMarket = market.GetOrdersSentToMarket();
-        var counterPartyFound = OrdersSentToMarket.
-                                    Any(x => x.Good.Equals(order.Good)
-                                        && x.SubmittingCompany != order.SubmittingCompany
-                                        && (
-                                            x.Buyer.Equals(order.Buyer)
-                                                        ||
-                                            x.Seller.Equals(order.Seller)
-                                           )
-                                        ); 
-        return counterPartyFound;
+        throw new NotImplementedException();
     }
 
     public List<Order> ProcessCompanyOrders(Market market)
@@ -87,6 +78,87 @@ public class BasicTradeProcessor : iTradeProcessor
         return executedTrades;
     }
 
+    internal Order GeneratePrimaryOrder(Market market)
+    {
+        var buyOrders = market.GetOrdersSentToMarket()
+                            .Where(static x => (x.Buyer??default) == x.SubmittingCompany)
+                            .OrderByDescending(x=>x.Quantity)
+                            .ThenByDescending(x=>x.Price)
+                            .ToList();
+        
+        if ( buyOrders.Any() ) return buyOrders.First();
+
+        var sellOrders = market.GetOrdersSentToMarket()
+                            .Where(static x => (x.Seller??default) == x.SubmittingCompany)
+                            .OrderByDescending(x=>x.Quantity)
+                            .ThenBy(x=>x.Price)
+                            .ToList();
+        return sellOrders.Any() ? sellOrders.First() : null;
+    }
+
+    private bool SellOrdersExistInMarket()
+    {
+        var sellOrdersExist = _tradesSentToTheMarket.Any(x => x.Seller!=null);
+        return sellOrdersExist;
+    }
+    private bool BuyOrdersExistInMarket()
+    {
+        var buyOrdersExist = _tradesSentToTheMarket.Any(x => x.Buyer!=null);
+        return buyOrdersExist;
+    }
+
+    public LemonadeStandResultObject FindCounterPartiesForOrder(ActionContext context)
+    {
+        var primaryOrder = GeneratePrimaryOrder(context.MarketToSubmitTo);
+        var counterPartiesForOrder = context.MarketToSubmitTo.GetOrdersSentToMarket()
+                                    .Where (x=>IsValidCounterParty(x, primaryOrder))
+                                    .ToList();
+
+        if (!counterPartiesForOrder.Any()) 
+           return LemonadeStandResultObject.Failure(
+                            ResultTypeEnum.NoMatchingCounterParties
+                            , "No matching counterparties found");
+                                    
+        return LemonadeStandResultObject.Success(counterPartiesForOrder);
+    }
+
+    internal bool IsValidCounterParty(Order order, Order primaryOrder)
+    {
+        //Goods must match
+        if(order.Good != primaryOrder.Good) return false;
+        //The submitting company cannot be the counterparty
+        if(order.SubmittingCompany == primaryOrder.SubmittingCompany) return false;
+        
+        //Readability helpers for final condition
+        var orderIsASellPrimaryIsBuy=order.Seller is not null
+                                    &&
+                                    primaryOrder.Buyer is not null;
+        var orderIsABuyPrimaryIsSell=order.Buyer is not null
+                                    &&
+                                    primaryOrder.Seller is not null;
+        var orderIsASellPrimaryIsSell=order.Seller is not null
+                                    || primaryOrder.Seller is not null;
+        var orderIsABuyPrimaryIsBuy=order.Buyer is not null
+                                    || primaryOrder.Buyer is not null;
+        var buyOrdersExistInMarket = BuyOrdersExistInMarket();
+        var sellOrdersExistInMarket = SellOrdersExistInMarket();
+        
+        //If only buys or sells exist, there is no counterparty
+        if(orderIsASellPrimaryIsSell && !buyOrdersExistInMarket) return false;
+        if(orderIsABuyPrimaryIsBuy && !sellOrdersExistInMarket) return false;
+
+        //Valid counterparty for buy order is a sell order
+        //in a market where buy orders exist
+        var isCounterPartyForBuy =  orderIsASellPrimaryIsBuy 
+                                    && buyOrdersExistInMarket;
+                                
+        //Valid counterparty for sell order is a buy order
+        //in a market where sell orders exist
+        var isCounterPartyForSell = orderIsABuyPrimaryIsSell 
+                                    && sellOrdersExistInMarket;
+
+        return isCounterPartyForBuy || isCounterPartyForSell;
+    }
     public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
         if(_tradesSentToTheMarket.Contains(context.TradeToSubmit))

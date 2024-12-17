@@ -19,5 +19,6 @@ public enum ResultTypeEnum
     PartialFill,
     OrderHasNoSubmittingCompany,
     InsufficientFunds,
-    InsufficientGoods
+    InsufficientGoods,
+    OrderHasNoActors
 }

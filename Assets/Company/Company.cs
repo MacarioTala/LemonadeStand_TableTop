@@ -15,6 +15,7 @@ public class Company : ScriptableObject, iCompany
     }
     public CompanyLevelEnum companyLevel;
     public bool IsBankrupt() => cash <= 0;
+
     public bool IsPlayer {get;set;} = false;
 
     private Company(){}
@@ -242,7 +243,7 @@ public class Company : ScriptableObject, iCompany
             return orderValidationResult;
 
         //Validate cash
-        if(context.TradeToSubmit.Buyer.Equals(this))
+        if(context.TradeToSubmit.Buyer?.Equals(this)==true)
         {
             if(!HasMoney(context.TradeToSubmit.Price*context.TradeToSubmit.Quantity))
             {
