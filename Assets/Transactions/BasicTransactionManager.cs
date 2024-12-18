@@ -3,15 +3,29 @@ using System.Linq;
 
 public class BasicTransactionManager : iTransactionManager
 {
-    internal bool HasGood(Good good, int quantity,Inventory inventory)
+    internal bool HasGood(Good good, Inventory inventory)
     {
         var goodInInventory = inventory.GetInventoryEntriesByGood(good.good_name).FirstOrDefault();
-        return goodInInventory != null && goodInInventory.quantity >= quantity;
+        return goodInInventory != null && goodInInventory.quantity >= 1;
     }
 
-    public void ProcessPairedOrders(ActionContext context)
+    public LemonadeStandResultObject ProcessTransaction(ActionContext context)
     {
-        var primaryOrder = context.TradeToSubmit;
+        var processOrderResult = ProcessPairedOrders(context);   
+        if (!processOrderResult.Result.Equals(LemonadeStandResultObject.Success().Result))
+            return processOrderResult;
+        
+        return LemonadeStandResultObject.Success();
+    }
+
+    internal LemonadeStandResultObject ProcessPairedOrders(ActionContext context)
+    {
+        var containsValidPairedOrders = context.ContainsValidPairedOrders().Result
+            .Equals(LemonadeStandResultObject.Success().Result);
+        if(!containsValidPairedOrders) 
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.InvalidTransaction,"Invalid Transaction");
+                
+        var primaryOrder = context.PrimaryOrder;
         var counterPartyOrders = context.CounterPartyOrders;
         var _counterPartyOrdersToRecord = new List<Order>();
         foreach(var order in counterPartyOrders)
@@ -21,14 +35,17 @@ public class BasicTransactionManager : iTransactionManager
                 break;
             }
 
-            ProcessTransaction(primaryOrder,order,context.Period);
+            ProcessTransactionPair(primaryOrder,order,context.Period);
             _counterPartyOrdersToRecord.Add(order);
         }
+        //You are here -- Once the Primary Order is filled, this exits
+        //We should do something about the remaining unfilled orders
         //Record trade
-        RecordTrade(context.TradeToSubmit,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
+        RecordTrade(context.PrimaryOrder,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
+        return LemonadeStandResultObject.Success();
     }
 
-    internal LemonadeStandResultObject ProcessTransaction(Order primaryOrder, Order counterPartyOrder,int period)
+    internal LemonadeStandResultObject ProcessTransactionPair(Order primaryOrder, Order counterPartyOrder,int period)
     {
         var buyer= primaryOrder.Buyer;
         var seller = counterPartyOrder.Seller;
@@ -39,9 +56,9 @@ public class BasicTransactionManager : iTransactionManager
         var buyerInventory = buyer.GetInventory();
         var sellerInventory = seller.GetInventory();
 
-        var quantity = counterPartyOrder.Quantity>=primaryOrder.RemainingQuantity
+        var quantity = counterPartyOrder.RemainingQuantity>=primaryOrder.RemainingQuantity
             ?primaryOrder.RemainingQuantity
-            :counterPartyOrder.Quantity;
+            :counterPartyOrder.RemainingQuantity;
 
         var costOfThisLeg = quantity * price;
 
@@ -61,12 +78,20 @@ public class BasicTransactionManager : iTransactionManager
         sellerInventory.RemoveGood(good, quantity, price);
 
         //Set filled quantity and status
-        primaryOrder.FilledQuantity = quantity;
+        if(primaryOrder.FilledQuantity == 0)
+            primaryOrder.FilledQuantity = quantity;
+        else
+            primaryOrder.FilledQuantity += quantity;
+
         primaryOrder.OrderStatus = primaryOrder.IsFullyFilled
             ? LemonadeStandResultObject.Success()
             : LemonadeStandResultObject.Failure(
                 ResultTypeEnum.PartialFill, "Order partially filled"
                                             );
+        if(counterPartyOrder.FilledQuantity == 0)
+            counterPartyOrder.FilledQuantity = quantity;
+        else
+            counterPartyOrder.FilledQuantity += quantity;
     
         return LemonadeStandResultObject.Success();
     }
@@ -95,19 +120,16 @@ public class BasicTransactionManager : iTransactionManager
             return primaryOrder.OrderStatus;
         }
 
-        if (!HasGood(counterPartyOrder.Good, counterPartyOrder.Quantity, sellerInventory))
+        if (!HasGood(counterPartyOrder.Good, sellerInventory))
         {
             counterPartyOrder.OrderStatus = LemonadeStandResultObject.Failure
-                (ResultTypeEnum.InsufficientGoods,"Seller does not have enough goods to complete the transaction");
+                (ResultTypeEnum.InsufficientGoods,$"Seller must have at least 1 quantity of {counterPartyOrder.Good} to trade");
             return counterPartyOrder.OrderStatus;
         }
 
         return LemonadeStandResultObject.Success();
     }
-    public void ProcessTransaction(ActionContext context)
-    {
-      throw new System.NotImplementedException("Refactoring to ProcessPairedOrders!");   
-    }
+    
 
     internal static void RecordTrade(Order tradeToRecord, Market marketToRecordIn
             , int tradingPeriod,List<Order> counterPartyOrders)

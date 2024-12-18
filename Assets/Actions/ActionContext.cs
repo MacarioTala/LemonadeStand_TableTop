@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public class ActionContext
@@ -27,6 +28,7 @@ public class ActionContext
     //QueueTrade/transactions
     public Order TradeToSubmit;
     public List<Order> CounterPartyOrders;
+    public Order PrimaryOrder;
 
     //Submit Bid/Ask
     public Good GoodToSubmit;
@@ -50,6 +52,17 @@ public class ActionContext
          if(AskToSubmit==0) return LemonadeStandResultObject.Failure(ResultTypeEnum.SpreadHasNoAsk, "Spread has no ask");
          if(GoodToSubmit==null) return LemonadeStandResultObject.Failure(ResultTypeEnum.SpreadHasNoGood, "Spread has no good");
          if(MarketToSubmitTo==null) return LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
+        return LemonadeStandResultObject.Success();
+    }
+
+    internal LemonadeStandResultObject ContainsValidPairedOrders()
+    {
+        if (MarketToSubmitTo == null) 
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
+        if (PrimaryOrder == null)
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.PrimaryOrderNotSet, "Primary order not set");
+        if (CounterPartyOrders == null || CounterPartyOrders.Count == 0)
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
         return LemonadeStandResultObject.Success();
     }
 }

@@ -39,8 +39,22 @@ public class Order
 
     public override string ToString()
     {
-        var action = Buyer.Equals(SubmittingCompany) ? " buys " : " sells ";
-        var counterParty = Buyer.Equals(SubmittingCompany) ? Seller : Buyer;
-        return "Order: " + SubmittingCompany + action + Quantity + " " + Good.good_name + " from " + counterParty + " at " + Price;
+        string action;
+        string counterParty;
+        string preposition;
+        if (Buyer !=null)
+        {
+            action = Buyer.Equals(SubmittingCompany) ? " buys " : " sells ";
+            counterParty = Seller?.Name?? " anyone ";
+            preposition = " from ";
+        }
+        else
+        {
+            action = " sells ";
+            counterParty = Buyer?.Name?? " anyone ";
+            preposition=" to ";
+        }
+        
+        return "Order: " + SubmittingCompany + action + RemainingQuantity + " " + Good.good_name + preposition + counterParty + " at " + Price;
     }
 }

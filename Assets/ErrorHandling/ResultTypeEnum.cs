@@ -20,5 +20,7 @@ public enum ResultTypeEnum
     OrderHasNoSubmittingCompany,
     InsufficientFunds,
     InsufficientGoods,
-    OrderHasNoActors
+    OrderHasNoActors,
+    InvalidTransaction,
+    PrimaryOrderNotSet
 }

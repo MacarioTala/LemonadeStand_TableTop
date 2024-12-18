@@ -41,7 +41,7 @@ public class BasicTradeProcessorTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
-
+#region ProcessCompanyOrders Tests
     [Test]
     public void GetOrdersGetsUpdatedFillsForOrdersBetweenCompanies()
     {
@@ -53,6 +53,8 @@ public class BasicTradeProcessorTests
         var demandStrategy = new LinearDemandStrategy();
         var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,demandStrategy);
         testMarket.SetCash(1000000);
+        var tradeProcessor = new BasicTradeProcessor();
+        testMarket.SetTradeProcessor(tradeProcessor);
         
         var testCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(testCompany);
@@ -77,10 +79,10 @@ public class BasicTradeProcessorTests
                                             };
         var expectedLemonadeFill=100;
         var expectedRadioactiveLemonadeFill=10;
-        // Act
         testCompany.QueueOrder(testContext);
         testCompany2.QueueOrder(testContext2);
-        testMarket.ProcessCompanyOrders();
+        // Act
+        tradeProcessor.ProcessCompanyOrders(testMarket);
         
         var actualLemonadeFill = testOrder.FilledQuantity;
         var actualRadioactiveLemonadeFill = testOrder2.FilledQuantity;
@@ -88,6 +90,7 @@ public class BasicTradeProcessorTests
         Assert.AreEqual(expectedLemonadeFill, actualLemonadeFill);
         Assert.AreEqual(expectedRadioactiveLemonadeFill, actualRadioactiveLemonadeFill);
     }
+#endregion
 #region GeneratePrimaryOrder Tests
     [Test]
     public void IfOnlyTwoOrdersExistBuyOrderIsPrimary_MatchedOrders()
@@ -294,6 +297,43 @@ public class BasicTradeProcessorTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
+    [Test]
+    public void FullyFilledOrdersCannotBePrimary()
+    {
+        // Arrange
+        var period = 0;
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 30), Rarity_enum.Uncommon);
+        var Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        Company2.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 10m, period));
+        var tradeProcessor = new BasicTradeProcessor();
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        testMarket.SetTradeProcessor(tradeProcessor);
+        testMarket.RegisterCompany(Company1);
+        testMarket.RegisterCompany(Company2);
+        var company1BuysRLFromAnyByCompany1 = new Order(Company1, null, radioactiveLemonade, 10, 10m);
+        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, radioactiveLemonade, 10, 10m);
+        company1BuysRLFromAnyByCompany1.FilledQuantity = 10;
+        var Company1Context = new ActionContext
+        {
+            TradeToSubmit = company1BuysRLFromAnyByCompany1,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company1.QueueOrder(Company1Context);
+        var Company2Context = new ActionContext
+        {
+            TradeToSubmit = company2SellsRLToCompany1ByCompany2,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company2.QueueOrder(Company2Context);
+        var expected = company2SellsRLToCompany1ByCompany2;
+        // Act
+        var actual=tradeProcessor.GeneratePrimaryOrder(testMarket);
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
 #endregion
 #region CounterParty Tests
     [Test]
@@ -328,7 +368,7 @@ public class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = company2SellsRLToCompany1ByCompany2;
         // Act
-        var actual=(tradeProcessor.FindCounterPartiesForOrder(Company1Context).ExtraData as List<Order>)?.FirstOrDefault();
+        var actual=(tradeProcessor.FindCounterPartiesForOrder(testMarket).ExtraData as List<Order>)?.FirstOrDefault();
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -375,7 +415,7 @@ public class BasicTradeProcessorTests
         Company3.QueueOrder(Company3Context);
         var expected = 2;
         // Act
-        var actual=(tradeProcessor.FindCounterPartiesForOrder(Company1Context).ExtraData as List<Order>)?.Count;
+        var actual=(tradeProcessor.FindCounterPartiesForOrder(testMarket).ExtraData as List<Order>)?.Count;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -412,7 +452,7 @@ public class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = 0;
         // Act
-        var actual=(tradeProcessor.FindCounterPartiesForOrder(Company1Context)
+        var actual=(tradeProcessor.FindCounterPartiesForOrder(testMarket)
                         .ExtraData as List<Order>)?.Count??0;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -447,7 +487,7 @@ public class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = 0;
         // Act
-        var actual = (tradeProcessor.FindCounterPartiesForOrder(Company1Context)
+        var actual = (tradeProcessor.FindCounterPartiesForOrder(testMarket)
                         .ExtraData as List<Order>)?.Count??0;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -455,6 +495,160 @@ public class BasicTradeProcessorTests
     //You are here. Add condition where only Sell orders exist.
     //Add condition where only Buy orders exist.
     //If only buy or sell orders exist, the counterparty is the market.
+#endregion
+#region ExecuteBestTradesForGood Tests
+    [Test]
+    public void EBTFG_BuyOrderThatPerfectlyMatchesSellOrderFills_TwoOrders()
+    {
+        // Arrange
+        var period = 0;
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 30), Rarity_enum.Uncommon);
+        var Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        Company2.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 10m, period));
+        var tradeProcessor = new BasicTradeProcessor();
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        testMarket.SetTradeProcessor(tradeProcessor);
+        testMarket.RegisterCompany(Company1);
+        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, radioactiveLemonade, 10, 10m);
+        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, radioactiveLemonade, 10, 10m);
+        var Company1Context = new ActionContext
+        {
+            TradeToSubmit = company1BuysRLFromCompany2ByCompany1,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company1.QueueOrder(Company1Context);
+        var Company2Context = new ActionContext
+        {
+            TradeToSubmit = company2SellsRLToCompany1ByCompany2,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company2.QueueOrder(Company2Context);
+        var expectedCompany1Fills = 10;
+        var expectedCompany2Fills = 10;
+        var OrdersSentToMarket = tradeProcessor.GetOrders();
+        // Act
+        tradeProcessor.ExecuteBestTradesForGood(radioactiveLemonade,testMarket,OrdersSentToMarket);
+        var actualCompany1Fills = company1BuysRLFromCompany2ByCompany1.FilledQuantity;
+        var actualCompany2Fills = company2SellsRLToCompany1ByCompany2.FilledQuantity;
+        // Assert
+        Assert.AreEqual(expectedCompany1Fills, actualCompany1Fills, "Company 1 did not fill the order");
+        Assert.AreEqual(expectedCompany2Fills, actualCompany2Fills, "Company 2 did not fill the order");
+    }
+    [Test]
+    public void EBTFG_WhenMultipleSellersFillBuyOrderAllFillsRecordedProperly()
+    {
+        // Arrange
+        var period = 0;
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 30), Rarity_enum.Uncommon);
+        var Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
+        Company2.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 15, 10m, period));
+        Company3.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 10m, period));
+        var tradeProcessor = new BasicTradeProcessor();
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        testMarket.SetTradeProcessor(tradeProcessor);
+        testMarket.RegisterCompany(Company1);
+        testMarket.RegisterCompany(Company2);
+        testMarket.RegisterCompany(Company3);
+        var company1BuysRLFromAnyoneByCompany1 = new Order(Company1, null, radioactiveLemonade, 20, 10m);
+        var company2SellsRLToAnyone1ByCompany2 = new Order(null, Company2, radioactiveLemonade, 11, 10m);
+        var company3SellsRLToAnyone2ByCompany3 = new Order(null, Company3, radioactiveLemonade, 9, 10m);
+        var Company1Context = new ActionContext
+        {
+            TradeToSubmit = company1BuysRLFromAnyoneByCompany1,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company1.QueueOrder(Company1Context);
+        var Company2Context = new ActionContext
+        {
+            TradeToSubmit = company2SellsRLToAnyone1ByCompany2,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company2.QueueOrder(Company2Context);
+        var Company3Context = new ActionContext
+        {
+            TradeToSubmit = company3SellsRLToAnyone2ByCompany3,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company3.QueueOrder(Company3Context);
+        var expectedCompany1Fills = 20;
+        var expectedCompany2Fills = 11;
+        var expectedCompany3Fills = 9;
+        var OrdersSentToMarket = tradeProcessor.GetOrders();
+        // Act
+        tradeProcessor.ExecuteBestTradesForGood(radioactiveLemonade,testMarket,OrdersSentToMarket);
+        var actualCompany1Fills = company1BuysRLFromAnyoneByCompany1.FilledQuantity;
+        var actualCompany2Fills = company2SellsRLToAnyone1ByCompany2.FilledQuantity;
+        var actualCompany3Fills = company3SellsRLToAnyone2ByCompany3.FilledQuantity;
+        // Assert
+        Assert.AreEqual(expectedCompany1Fills, actualCompany1Fills, "Company 1 did not fill the order");
+        Assert.AreEqual(expectedCompany2Fills, actualCompany2Fills, "Company 2 did not fill the order");
+        Assert.AreEqual(expectedCompany3Fills, actualCompany3Fills, "Company 3 did not fill the order");
+        Assert.IsTrue(company1BuysRLFromAnyoneByCompany1.IsFullyFilled);
+        Assert.IsTrue(company2SellsRLToAnyone1ByCompany2.IsFullyFilled);
+        Assert.IsTrue(company3SellsRLToAnyone2ByCompany3.IsFullyFilled);
+    }
+    [Test]
+    public void EBTFG_WhenMultipleBuyersWhaleIsFilledFirst()
+    {
+        // Arrange
+        var period = 0;
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 30), Rarity_enum.Uncommon);
+        var Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
+        Company3.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 30, 10m, period));
+        var tradeProcessor = new BasicTradeProcessor();
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        testMarket.SetTradeProcessor(tradeProcessor);
+        testMarket.RegisterCompany(Company1);
+        testMarket.RegisterCompany(Company2);
+        testMarket.RegisterCompany(Company3);
+        var company1BuysRLFromAnyoneByCompany1 = new Order(Company1, null, radioactiveLemonade, 20, 10m);
+        var company2BuysRLFromAnyoneByCompany2 = new Order(Company2, null, radioactiveLemonade, 15, 10m);
+        var company3SellsRLToAnyoneByCompany3 = new Order(null, Company3, radioactiveLemonade, 30, 10m);
+        var Company1Context = new ActionContext
+        {
+            TradeToSubmit = company1BuysRLFromAnyoneByCompany1,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company1.QueueOrder(Company1Context);
+        var Company2Context = new ActionContext
+        {
+            TradeToSubmit = company2BuysRLFromAnyoneByCompany2,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company2.QueueOrder(Company2Context);
+        var Company3Context = new ActionContext
+        {
+            TradeToSubmit = company3SellsRLToAnyoneByCompany3,
+            MarketToSubmitTo = testMarket,
+            Period = period
+        };
+        Company3.QueueOrder(Company3Context);
+        var expectedCompany1Fills = 20;
+        var expectedCompany2Fills = 10;
+        var expectedCompany3Fills = 30;
+        var OrdersSentToMarket = tradeProcessor.GetOrders();
+        // Act
+        tradeProcessor.ExecuteBestTradesForGood(radioactiveLemonade,testMarket,OrdersSentToMarket);
+        var actualCompany1Fills = company1BuysRLFromAnyoneByCompany1.FilledQuantity;
+        var actualCompany2Fills = company2BuysRLFromAnyoneByCompany2.FilledQuantity;
+        var actualCompany3Fills = company3SellsRLToAnyoneByCompany3.FilledQuantity;
+        // Assert
+        Assert.AreEqual(expectedCompany1Fills, actualCompany1Fills, "Company 1 did not fill the order correctly");
+        Assert.AreEqual(expectedCompany2Fills, actualCompany2Fills, "Company 2 did not fill the order correctly");
+        Assert.AreEqual(expectedCompany3Fills, actualCompany3Fills, "Company 3 did not fill the order correctly");
+    }
 #endregion
     [TearDown]
     public void TearDown()

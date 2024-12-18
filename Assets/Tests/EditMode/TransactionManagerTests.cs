@@ -159,7 +159,7 @@ public class TransactionManagerTests
         var expected = LemonadeStandResultObject.Success();
         var transactionManager = new BasicTransactionManager();
         //Act
-        var actual = transactionManager.ProcessTransaction(order, counterPartyOrder, period);
+        var actual = transactionManager.ProcessTransactionPair(order, counterPartyOrder, period);
         //Assert
         Assert.AreEqual(expected.Result, actual.Result);
     }
@@ -188,7 +188,7 @@ public class TransactionManagerTests
         var expectedBuyerLemonQuantity = 1;
         var expectedSellerLemonQuantity = 0;
         //Act
-        transactionManager.ProcessTransaction(order, counterPartyOrder, period);
+        transactionManager.ProcessTransactionPair(order, counterPartyOrder, period);
         var actualBuyerCash = Company1.GetCash();
         var actualSellerCash = Company2.GetCash();
         var actualBuyerLemonQuantity = Company1.GetInventory()
@@ -230,7 +230,7 @@ public class TransactionManagerTests
         var expectedBuyerOrderFullyFilledStatus = false;
         var expectedBuyerOrderPartiallyFilledStatus = true;
         //Act
-        transactionManager.ProcessTransaction(order, counterPartyOrder, period);
+        transactionManager.ProcessTransactionPair(order, counterPartyOrder, period);
         var actualBuyerCash = Company1.GetCash();
         var actualSellerCash = Company2.GetCash();
         var actualBuyerLemonQuantity = Company1.GetInventory()
