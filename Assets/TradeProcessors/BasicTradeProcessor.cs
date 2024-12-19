@@ -12,9 +12,8 @@ public class BasicTradeProcessor : iTradeProcessor
 
 
     public BasicTradeProcessor()
-    {
-        _orderPrioritizers.Add(new LowPricePrioritizer());
-        //_orderPrioritizers.Add(new RandomPrioritizer());
+    {   
+        _orderPrioritizers.Add(new LessaizfairePrioritizer());
         _transactionManager = new BasicTransactionManager();
     }
     public List<Order> GetOrders()=>_tradesSentToTheMarket;
@@ -55,7 +54,13 @@ public class BasicTradeProcessor : iTradeProcessor
                 if(prioritizedOrders.Count == 1) break;
                 var order = prioritizedOrders[i];
 
-                if (order.IsFullyFilled) continue;
+                if (order.IsFullyFilled) 
+                {
+                    prioritizedOrders.RemoveAt(i); 
+                    i--;
+                    continue;
+                }
+                
                 if (FindCounterPartiesForOrder(market).ExtraData is not List<Order> counterParties)
                 {
                     order.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
@@ -124,6 +129,7 @@ public class BasicTradeProcessor : iTradeProcessor
         var primaryOrder = GeneratePrimaryOrder(market);
         var counterPartiesForOrder = market.GetOrdersSentToMarket()
                                     .Where (x=>IsValidCounterParty(x, primaryOrder))
+                                    .OrderBy(x=>x.Buyer != null? -x.Price:x.Price)
                                     .ToList();
 
         if (!counterPartiesForOrder.Any()) 

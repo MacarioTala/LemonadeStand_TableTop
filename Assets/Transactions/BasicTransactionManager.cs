@@ -35,7 +35,12 @@ public class BasicTransactionManager : iTransactionManager
                 break;
             }
 
-            ProcessTransactionPair(primaryOrder,order,context.Period);
+            var processTransactionResult = ProcessTransactionPair(primaryOrder,order,context.Period);
+            if (!processTransactionResult.Equals(LemonadeStandResultObject.Success()))
+            {
+                primaryOrder.OrderStatus = processTransactionResult;
+                break;
+            }
             _counterPartyOrdersToRecord.Add(order);
         }
         //You are here -- Once the Primary Order is filled, this exits

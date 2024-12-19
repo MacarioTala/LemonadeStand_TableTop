@@ -342,7 +342,7 @@ public class TransactionManagerTests
         };
         counterPartyOrders.Add(counterPartyOrder); 
 
-        var orderContext = new ActionContext{TradeToSubmit = order
+        var orderContext = new ActionContext{PrimaryOrder = order
                 ,CounterPartyOrders=counterPartyOrders,
                 MarketToSubmitTo = testMarket,
                 Period = period};
@@ -385,7 +385,7 @@ public class TransactionManagerTests
         counterPartyOrders.Add(company2Sells1LemonToCompany1);
         counterPartyOrders.Add(company3Sells1LemonToCompany1);
 
-        var orderContext = new ActionContext{TradeToSubmit = Company1Buys2LemonFromMultiple
+        var orderContext = new ActionContext{PrimaryOrder = Company1Buys2LemonFromMultiple
             ,CounterPartyOrders=counterPartyOrders,
             MarketToSubmitTo = testMarket,
             Period = period};
