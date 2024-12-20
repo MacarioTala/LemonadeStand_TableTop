@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
@@ -8,13 +6,35 @@ using UnityEngine;
 public partial class BasicTradeProcessorTests
 {
     TheEconomy TestEconomy;
+    int Period = 0;
+    Market TestMarket;
+    BasicTradeProcessor TestTradeProcessor;
+
+    Good Lemonade;
+    Good RadioactiveLemonade;
+
+    Company Company1;
+    Company Company2;
+
     [SetUp]
     public void SetUp()
     {
         var economyObject = new GameObject();
         TestEconomy = economyObject.AddComponent<TheEconomy>();
         TestEconomy.Initialize(new MockLogger());
+
+        Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestTradeProcessor = new BasicTradeProcessor();
+        TestMarket.SetTradeProcessor(TestTradeProcessor);
+        TestMarket.SetCash(1000000);
+        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterCompany(Company2);
         
+        Lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Uncommon);
+        RadioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 20), Rarity_enum.Very_Rare);
     }
     
 #region ProcessCompanyOrders Tests
@@ -22,23 +42,16 @@ public partial class BasicTradeProcessorTests
     public void ProcessCompanyOrdersIgnoresOrdersWhereSellerIsMarket()
     {
         // Arrange
-        var period = 0;
-        var demandStrategy = new LinearDemandStrategy();
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,demandStrategy);
-        var testCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(testCompany);
-        var lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Uncommon);
-        testCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 100, 1m, period));
-        var testOrder = new Order(testMarket, testCompany, lemonade, 100, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
+        var testOrder = new Order(TestMarket, Company1, Lemonade, 100, 10m);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
-                    MarketToSubmitTo = testMarket,
-                    Period = period
-                                            };
+                    MarketToSubmitTo = TestMarket,
+                    Period = Period};
         var expected=0;
         // Act
-        testCompany.QueueOrder(testContext);
-        testMarket.ProcessCompanyOrders();
+        Company1.QueueOrder(testContext);
+        TestMarket.ProcessCompanyOrders();
         var actual = testOrder.FilledQuantity;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -48,43 +61,27 @@ public partial class BasicTradeProcessorTests
     public void GetOrdersGetsUpdatedFillsForOrdersBetweenCompanies()
     {
         // Arrange
-        var period = 0;
-        var lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Uncommon);
-        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10,20), Rarity_enum.Very_Rare);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
 
-        var demandStrategy = new LinearDemandStrategy();
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,demandStrategy);
-        testMarket.SetCash(1000000);
-        var tradeProcessor = new BasicTradeProcessor();
-        testMarket.SetTradeProcessor(tradeProcessor);
-        
-        var testCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(testCompany);
-        
-        var testCompany2 = Company.Factory.Create("Test Company 2", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(testCompany2);
-
-        testCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 100, 1m, period));
-        testCompany2.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 10m, period));
-
-        var testOrder = new Order(testCompany2,testCompany, lemonade, 100, 10m);
-        var testOrder2 = new Order(testCompany,testCompany2, radioactiveLemonade, 10, 10m);
+        var testOrder = new Order(Company2,Company1, Lemonade, 100, 10m);
+        var testOrder2 = new Order(Company1,Company2, RadioactiveLemonade, 10, 10m);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
-                    MarketToSubmitTo = testMarket,
-                    Period = period
+                    MarketToSubmitTo = TestMarket,
+                    Period = Period
                                             };
         var testContext2 = new ActionContext{
                     TradeToSubmit = testOrder2,
-                    MarketToSubmitTo = testMarket,
-                    Period = period
+                    MarketToSubmitTo = TestMarket,
+                    Period = Period
                                             };
         var expectedLemonadeFill=100;
         var expectedRadioactiveLemonadeFill=10;
-        testCompany.QueueOrder(testContext);
-        testCompany2.QueueOrder(testContext2);
+        Company1.QueueOrder(testContext);
+        Company2.QueueOrder(testContext2);
         // Act
-        tradeProcessor.ProcessCompanyOrders(testMarket);
+        TestTradeProcessor.ProcessCompanyOrders(TestMarket);
         
         var actualLemonadeFill = testOrder.FilledQuantity;
         var actualRadioactiveLemonadeFill = testOrder2.FilledQuantity;
@@ -99,5 +96,11 @@ public partial class BasicTradeProcessorTests
     public void TearDown()
     {
         Object.DestroyImmediate(TestEconomy.gameObject);
+        TestMarket = null;
+        TestTradeProcessor = null;
+        Company1 = null;
+        Company2 = null;
+        Lemonade = null;
+        RadioactiveLemonade = null;
     }
 }

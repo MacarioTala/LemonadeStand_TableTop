@@ -6,7 +6,6 @@ public class BasicTradeProcessor : iTradeProcessor
 {
      private List<iOrderPrioritizer> _orderPrioritizers = new();
      private readonly List<Order> _tradesSentToTheMarket = new();
-     public List<Order> TradesToSendToTheEconomy = new();
 
      private readonly iTransactionManager _transactionManager;
 
