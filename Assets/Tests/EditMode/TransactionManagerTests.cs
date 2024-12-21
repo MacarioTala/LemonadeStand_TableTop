@@ -8,7 +8,14 @@ public class TransactionManagerTests
 {
     TheEconomy TestEconomy;
     Good Lemon;
+    Good Lemonade;
+    Market TestMarket;
+    int Period;
+
+    Company Company1;
+    Company Company2;
     readonly Price_band PriceBand1 = new(.5m, 1.0m);
+    readonly Price_band PriceBand2 = new(5.0m, 10m);
 
     [SetUp]
     public void Setup()
@@ -17,15 +24,22 @@ public class TransactionManagerTests
         TestEconomy = TestEconomyObject.AddComponent<TheEconomy>();
         TestEconomy.Initialize(new MockLogger());
 
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterCompany(Company2);
+
+        Period=0;
+
         Lemon = Good.CreateInstance("Lemon", PriceBand1, Rarity_enum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", PriceBand2, Rarity_enum.Uncommon);
     }
 #region ValidateTransactionTests
     [Test]
     public void ValidateTransactionShouldReturnSelfTradeWhenCompanySubmitsTwoIdenticalTrades()
     {
         //Arrange
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
         var order = new Order(Company1,Company2,Lemon,1,1m)
         {
@@ -49,7 +63,6 @@ public class TransactionManagerTests
     public void ValidateTransactionShouldReturnSelfTradeWhenCompanyTriesToTradeWithItself()
     {
         //Arrange
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
         var order = new Order(Company1,Company1,Lemon,1,1m)
         {
             SubmittingCompany = Company1
@@ -69,8 +82,6 @@ public class TransactionManagerTests
     public void ValidateTransactionReturnsSuccessForValidOrderPair()
     {
         //Arrange
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company1.SetCash(1000m);
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
@@ -94,8 +105,6 @@ public class TransactionManagerTests
     public void ValidateTransactionReturnsInsufficientFundsWhenBuyerDoesNotHaveEnoughCash()
     {
         //Arrange
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company1.SetCash(0m);
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
         {
@@ -118,8 +127,6 @@ public class TransactionManagerTests
     public void ValidateTransactionReturnsInsufficientGoodsWhenSellerDoesNotHaveEnoughGoods()
     {
         //Arrange
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company1.SetCash(1000m);
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
         {
@@ -143,9 +150,6 @@ public class TransactionManagerTests
     public void ForFullyFilledTradesProcessTransactionShouldReturnSuccess()
     {
         //Arrange
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company1.SetCash(1000m);
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
@@ -159,7 +163,7 @@ public class TransactionManagerTests
         var expected = LemonadeStandResultObject.Success();
         var transactionManager = new BasicTransactionManager();
         //Act
-        var actual = transactionManager.ProcessTransactionPair(order, counterPartyOrder, period);
+        var actual = transactionManager.ProcessTransactionPair(order, counterPartyOrder, Period);
         //Assert
         Assert.AreEqual(expected.Result, actual.Result);
     }
@@ -167,9 +171,6 @@ public class TransactionManagerTests
     public void FullyFilledTradesTransferCashAndGoodsCorrectly()
     {
         //Arrange
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company1.SetCash(1000m);
         Company2.SetCash(0);
         Company1.GetInventory().Clear();
@@ -188,7 +189,7 @@ public class TransactionManagerTests
         var expectedBuyerLemonQuantity = 1;
         var expectedSellerLemonQuantity = 0;
         //Act
-        transactionManager.ProcessTransactionPair(order, counterPartyOrder, period);
+        transactionManager.ProcessTransactionPair(order, counterPartyOrder, Period);
         var actualBuyerCash = Company1.GetCash();
         var actualSellerCash = Company2.GetCash();
         var actualBuyerLemonQuantity = Company1.GetInventory()
@@ -207,9 +208,6 @@ public class TransactionManagerTests
     public void PartiallyFilledTradesTransferCashAndGoodsCorrectly()
     {
         //Arrange
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         Company1.SetCash(1000m);
         Company2.SetCash(0);
         Company1.GetInventory().Clear();
@@ -230,7 +228,7 @@ public class TransactionManagerTests
         var expectedBuyerOrderFullyFilledStatus = false;
         var expectedBuyerOrderPartiallyFilledStatus = true;
         //Act
-        transactionManager.ProcessTransactionPair(order, counterPartyOrder, period);
+        transactionManager.ProcessTransactionPair(order, counterPartyOrder, Period);
         var actualBuyerCash = Company1.GetCash();
         var actualSellerCash = Company2.GetCash();
         var actualBuyerLemonQuantity = Company1.GetInventory()
@@ -255,11 +253,6 @@ public class TransactionManagerTests
     public void RecordTradeRecordsOrderAndCounterPartyOrderWhenCalledInIsolationOnePairOnly()
     {
         //Arrange
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
-        
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
         {
             SubmittingCompany = Company1
@@ -276,9 +269,9 @@ public class TransactionManagerTests
         var expectedOrder = order;
         var expectedCounterPartyOrder = counterPartyOrder;
         //Act
-        BasicTransactionManager.RecordTrade(order, testMarket, period, counterPartyOrders);
-        var actualOrder = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.RecordedTrade;
-        var actualCounterPartyOrder = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.CounterPartyTrades.FirstOrDefault();
+        BasicTransactionManager.RecordTrade(order, TestMarket, Period, counterPartyOrders);
+        var actualOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
+        var actualCounterPartyOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades.FirstOrDefault();
         //Assert
         Assert.AreEqual(expectedOrder, actualOrder);
         Assert.AreEqual(expectedCounterPartyOrder, actualCounterPartyOrder);
@@ -287,11 +280,7 @@ public class TransactionManagerTests
     public void RecordTradeRecordsOrderAndCounterPartyOrdersWithTwoCounterpartyOrders()
     {
         //Arrange
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
         
         var Company1BuysFromCompany2Order = new Order(Company1, Company2, Lemon, 1, 1m)
         {
@@ -312,9 +301,9 @@ public class TransactionManagerTests
         };
         var expectedPrimaryOrder = Company1BuysFromCompany2Order;
         //Act
-        BasicTransactionManager.RecordTrade(Company1BuysFromCompany2Order, testMarket, period, counterPartyOrders);
-        var actualPrimaryOrder = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.RecordedTrade;
-        var actualCounterPartyOrders = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.CounterPartyTrades;
+        BasicTransactionManager.RecordTrade(Company1BuysFromCompany2Order, TestMarket, Period, counterPartyOrders);
+        var actualPrimaryOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
+        var actualCounterPartyOrders = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades;
         //Assert
         Assert.AreEqual(expectedPrimaryOrder, actualPrimaryOrder);
         Assert.Contains(Company2SellsToCompany1Order, actualCounterPartyOrders);
@@ -326,10 +315,6 @@ public class TransactionManagerTests
     {
         //Arrange
         var basicTransactionManager = new BasicTransactionManager();
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
         {
@@ -344,15 +329,15 @@ public class TransactionManagerTests
 
         var orderContext = new ActionContext{PrimaryOrder = order
                 ,CounterPartyOrders=counterPartyOrders,
-                MarketToSubmitTo = testMarket,
-                Period = period};
+                MarketToSubmitTo = TestMarket,
+                Period = Period};
 
         var expectedOrder = order;
         var expectedCounterPartyOrder = counterPartyOrder;
         //Act
         basicTransactionManager.ProcessPairedOrders(orderContext);
-        var actualOrder = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.RecordedTrade;
-        var actualCounterPartyOrder = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.CounterPartyTrades.FirstOrDefault();
+        var actualOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
+        var actualCounterPartyOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades.FirstOrDefault();
         //Assert
         Assert.AreEqual(expectedOrder, actualOrder);
         Assert.AreEqual(expectedCounterPartyOrder, actualCounterPartyOrder);
@@ -362,11 +347,8 @@ public class TransactionManagerTests
     {
         //Arrange
         var basicTransactionManager = new BasicTransactionManager();
-        var period = 0;
-        var Company1 = Company.Factory.Create("Company 1",CompanyLevelEnum.Beginner);
-        var Company2 = Company.Factory.Create("Company 2",CompanyLevelEnum.Beginner);
         var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
         Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
         var Company1Buys2LemonFromMultiple = new Order(Company1, Company2, Lemon, 2, 1m)
@@ -387,19 +369,72 @@ public class TransactionManagerTests
 
         var orderContext = new ActionContext{PrimaryOrder = Company1Buys2LemonFromMultiple
             ,CounterPartyOrders=counterPartyOrders,
-            MarketToSubmitTo = testMarket,
-            Period = period};
+            MarketToSubmitTo = TestMarket,
+            Period = Period};
 
         var expectedOrder = Company1Buys2LemonFromMultiple;
         //Act
         basicTransactionManager.ProcessPairedOrders(orderContext);
-        var actualOrder = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.RecordedTrade;
-        var actualCounterPartyOrders = testMarket.GetMarketTradesInPeriod(period).FirstOrDefault()?.CounterPartyTrades;
+        var actualOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
+        var actualCounterPartyOrders = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades;
         //Assert
         Assert.AreEqual(expectedOrder, actualOrder);
         Assert.Contains(company2Sells1LemonToCompany1, actualCounterPartyOrders);
         Assert.Contains(company3Sells1LemonToCompany1, actualCounterPartyOrders);
         Assert.AreEqual(2, actualCounterPartyOrders.Count);
+    }
+    [Test]
+    public void RTStaticOneBuyerOneSellerCounterPartyIsSeller()
+    {
+        //Arrange
+        var PrimaryOrder = new Order(Company1, null, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company1
+        };
+        var CounterPartyOrder = new Order(null, Company2, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company2
+        };
+
+        var CounterPartyOrders = new List<Order>{CounterPartyOrder};
+
+        //Act
+        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,Period,CounterPartyOrders);
+        
+        //Assert
+        var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
+        var recordedTransaction = transactionsRecorded?.FirstOrDefault();
+        Assert.IsNotNull(recordedTransaction);
+        Assert.IsTrue(recordedTransaction.CounterPartyTrades.Count == 1);
+        Assert.AreEqual(Company2,recordedTransaction.CounterPartyTrades.FirstOrDefault().Seller);
+        Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Buyer);
+    }
+
+    [Test]
+    public void RTStaticOneBuyerOneSellerCounterPartyIsBuyer()
+    {
+        //Arrange
+        var PrimaryOrder = new Order(null, Company1, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company1
+        };
+        var CounterPartyOrder = new Order(Company2, null, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company2
+        };
+
+        var CounterPartyOrders = new List<Order>{CounterPartyOrder};
+
+        //Act
+        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,Period,CounterPartyOrders);
+        
+        //Assert
+        var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
+        var recordedTransaction = transactionsRecorded?.FirstOrDefault();
+        Assert.IsNotNull(recordedTransaction);
+        Assert.IsTrue(recordedTransaction.CounterPartyTrades.Count == 1);
+        Assert.AreEqual(Company2,recordedTransaction.CounterPartyTrades.FirstOrDefault().Buyer);
+        Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Seller);
     }
 #endregion
 
@@ -407,5 +442,9 @@ public class TransactionManagerTests
     public void TearDown()
     {
         Object.DestroyImmediate(TestEconomy.gameObject);
+        TestMarket = null;
+        Lemon = null;
+        Company1 = null;
+        Company2 = null;
     }
 }

@@ -13,6 +13,8 @@ public partial class BasicTradeProcessorTests
     Good Lemonade;
     Good RadioactiveLemonade;
 
+    Good Lemon;
+
     Company Company1;
     Company Company2;
 
@@ -33,6 +35,7 @@ public partial class BasicTradeProcessorTests
         TestMarket.RegisterCompany(Company1);
         TestMarket.RegisterCompany(Company2);
         
+        Lemon = Good.CreateInstance("Lemons", new Price_band(1, 3), Rarity_enum.Common);
         Lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Uncommon);
         RadioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 20), Rarity_enum.Very_Rare);
     }

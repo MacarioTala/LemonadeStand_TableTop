@@ -47,6 +47,8 @@ public class BasicTransactionManager : iTransactionManager
         //We should do something about the remaining unfilled orders
         //Record trade
         RecordTrade(context.PrimaryOrder,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
+        foreach (var order in _counterPartyOrdersToRecord)
+        {RecordTrade(order,context.MarketToSubmitTo, context.Period,new List<Order>{context.PrimaryOrder});}
         return LemonadeStandResultObject.Success();
     }
 
@@ -140,6 +142,17 @@ public class BasicTransactionManager : iTransactionManager
             , int tradingPeriod,List<Order> counterPartyOrders)
     {
        var executedTrade = new MarketTransaction(tradeToRecord, tradingPeriod);
+       if ( counterPartyOrders.Count == 1)
+         {
+            var counterPartyOrder = counterPartyOrders[0];
+            var counterPartyOrderIsSeller = counterPartyOrder.Seller != null 
+                && counterPartyOrder.SubmittingCompany.Equals(counterPartyOrder.Seller);
+
+            if (counterPartyOrderIsSeller)
+            { tradeToRecord.Seller = counterPartyOrder.Seller; }
+            else
+            { tradeToRecord.Buyer = counterPartyOrder.Buyer; }
+         }
        foreach (var order in counterPartyOrders)
        {
            executedTrade.AddCounterPartyTrade(order);

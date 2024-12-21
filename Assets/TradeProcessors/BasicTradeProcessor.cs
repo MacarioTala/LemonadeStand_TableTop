@@ -33,7 +33,7 @@ public class BasicTradeProcessor : iTradeProcessor
         {
            executedTrades.AddRange(ExecuteBestTradesForGood(good,market,market.GetOrdersSentToMarket().Where(x => x.Buyer is not Market).ToList()));
         }
-        _tradesSentToTheMarket.RemoveAll(x=>x.Buyer is not Market);
+        _tradesSentToTheMarket.RemoveAll(x=>x.Buyer is not Market && !x.IsFullyFilled);
         return executedTrades;
     }
 

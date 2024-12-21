@@ -14,6 +14,8 @@ public class Order
 
     public bool IsFullyFilled => RemainingQuantity == 0;
     public bool IsPartiallyFilled => RemainingQuantity > 0 && FilledQuantity > 0;
+
+    public bool IsUnfilled => RemainingQuantity == Quantity;
     private bool IsSelfTrade => Buyer == Seller;
 
     public LemonadeStandResultObject OrderStatus { get; set; }
