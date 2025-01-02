@@ -3,20 +3,34 @@ using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
-
+using static TestHelpers;
 [TestFixture]
 public class MarketStatusTests
 {
     TheEconomy TestEconomy;
+    Market TestMarket;
+    Company Company1;
+    Company Company2;
+    int Period;
+
     Good lemon;
     Good water;
     Good sugar;
     [SetUp]
     public void Setup ()
     {
+        Period = 0;
         var economyObject = new GameObject();
         TestEconomy = economyObject.AddComponent<TheEconomy>();
         TestEconomy.Initialize(new MockLogger());
+
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+        
+        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterCompany(Company2);
+
         lemon = Good.CreateInstance("Lemon", new Price_band(.5m, 1.0m), Rarity_enum.Common);
         water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", new Price_band(.5m, 1.0m), Rarity_enum.Common);
@@ -25,37 +39,32 @@ public class MarketStatusTests
     public void GetMarketTradesInPeriodReturnsAllExecutedTrades()
     {
         // Arrange
-        var period = 0;
-        var strategy = new LinearDemandStrategy();
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company1.SetCash(5000);
+
+        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,Period));
+        Company2.SetCash(5000);
+
+        var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3.0m);
+        var company2SellWaterOrder = new Order(null, Company2, water, 500, 3.0m);
+        var company1BuyWaterOrder = new Order(Company1,null,water,500,3.0m);
+        var company2BuyLemonOrder = new Order(Company2,null,lemon,500,3.0m);
         
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company1);
-        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
-        company1.SetCash(5000);
-
-        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company2);
-        company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,period));
-        company2.SetCash(5000);
-
-        var company1Order = new Order(company2, company1, lemon, 500, 3.0m);
-        var company1Context = new ActionContext { TradeToSubmit = company1Order, MarketToSubmitTo = marketToTest , Period = period};
-
-        var company2Order = new Order(company1, company2, water, 500, 3.0m);
-        var company2Context = new ActionContext { TradeToSubmit = company2Order, MarketToSubmitTo = marketToTest , Period = period};
-
-        marketToTest.QueueOrder(company1Context);
-        marketToTest.QueueOrder(company2Context);
+        Company1.QueueOrder(CreateActionContext(company1SellLemonOrder, TestMarket, Period));
+        Company1.QueueOrder(CreateActionContext(company1BuyWaterOrder, TestMarket, Period));
+        Company2.QueueOrder(CreateActionContext(company2SellWaterOrder, TestMarket, Period));
+        Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, TestMarket, Period));
 
         var expected = new List<MarketTransaction>
         {
-            new(company1Order, period),
-            new(company2Order, period)
+            new(company1SellLemonOrder, Period),
+            new(company2SellWaterOrder, Period),
+            new(company1BuyWaterOrder, Period),
+            new(company2BuyLemonOrder, Period)
         };
         // Act
-        marketToTest.ProcessCompanyOrders();
-        var actual=marketToTest.GetMarketTradesInPeriod(period);
+        TestMarket.ProcessCompanyOrders();
+        var actual=TestMarket.GetMarketTradesInPeriod(Period);
         // Assert
         var inExpectedNotInActual = expected.Except(actual).ToList();
         var inActualNotInExpected = actual.Except(expected).ToList();
@@ -69,37 +78,40 @@ public class MarketStatusTests
     public void GetMarketTradesInPeriodOnlyReturnsTradesForTheCurrentPeriod()
     {
         // Arrange
-        var startingPeriod = 0;
         var strategy = new LinearDemandStrategy();
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
         
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company1);
-        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,startingPeriod));
-        company1.SetCash(5000);
-
-        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company2);
-        company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,startingPeriod));
-        company2.SetCash(5000);
-
-        var company1Order = new Order(company2, company1, lemon, 500, 3.0m);
-        var company1Context = new ActionContext { TradeToSubmit = company1Order, MarketToSubmitTo = marketToTest , Period = startingPeriod};
-        marketToTest.QueueOrder(company1Context);
         
-        var company2Order = new Order(company1, company2, water, 500, 3.0m);
-        var company2Context = new ActionContext { TradeToSubmit = company2Order, MarketToSubmitTo = marketToTest , Period = startingPeriod};
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company1.SetCash(5000);
 
+        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,Period));
+        Company2.SetCash(5000);
+
+        //Period 0 orders
+        var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3.0m);
+        var company2BuyLemonOrder = new Order(Company2,null,lemon,500,3.0m);
+
+        //Period 1 orders
+        var company2SellWaterOrder = new Order(null, Company2, water, 500, 3.0m);
+        var company1BuyWaterOrder = new Order(Company1,null,water,500,3.0m);
+        
+        Company1.QueueOrder(CreateActionContext(company1SellLemonOrder, marketToTest, Period));
+        Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, marketToTest, Period));
+
+       
         var expected = new List<MarketTransaction>
         {
-            new(company1Order, startingPeriod)
+            new(company1SellLemonOrder, Period),
+            new(company2BuyLemonOrder, Period)
         };
         // Act
         marketToTest.ProcessCompanyOrders();
-        company2.QueueOrder(company2Context);
+        Company2.QueueOrder(CreateActionContext(company2SellWaterOrder, marketToTest, Period+1));
+        Company1.QueueOrder(CreateActionContext(company1BuyWaterOrder, marketToTest, Period+1));
         marketToTest.CurrentPeriod++;
         marketToTest.ProcessCompanyOrders();
-        var actual=marketToTest.GetMarketTradesInPeriod(startingPeriod);
+        var actual=marketToTest.GetMarketTradesInPeriod(Period);
         // Assert
         var inExpectedNotInActual = expected.Except(actual).ToList();
         var inActualNotInExpected = actual.Except(expected).ToList();
@@ -110,9 +122,27 @@ public class MarketStatusTests
         Assert.IsTrue(listsAreEqual);
     }
 
+    [Test]
+    public void PeriodsWithNoCounterPartiesRecordNoTrades()
+    {
+        // Arrange
+        var Company1BuyLemonOrder = new Order(Company1,null,lemon,500,3.0m);
+        var Company2BuyWaterOrder = new Order(Company2,null,water,500,3.0m);
+        Company1.QueueOrder(CreateActionContext(Company1BuyLemonOrder, TestMarket, Period));
+        Company2.QueueOrder(CreateActionContext(Company2BuyWaterOrder, TestMarket, Period));
+        // Act
+        TestMarket.ProcessCompanyOrders();
+        var actual=TestMarket.GetMarketTradesInPeriod(Period);
+        // Assert
+        Assert.IsEmpty(actual);
+    }
+
     [TearDown]
     public void TearDown()
     {
         Object.DestroyImmediate(TestEconomy.gameObject);
+        TestMarket = null;
+        Company1 = null;
+        Company2 = null;
     }
 }

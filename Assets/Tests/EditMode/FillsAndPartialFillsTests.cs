@@ -1,15 +1,23 @@
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using UnityEngine;
+using static TestHelpers;
 
 [TestFixture]
 public class FillsAndPartialFillsTests
 {
     TheEconomy testEconomy;
+    Market TestMarket;
+
+    Company TestCompany1;
+    Company TestCompany2;
+
     Good Lemon;
     Good Water;
     Good Sugar;
     Good Lemonade;
+    int Period;
 
     [SetUp]
     public void Setup()
@@ -17,34 +25,33 @@ public class FillsAndPartialFillsTests
         var economyObject = new GameObject();
         testEconomy = economyObject.AddComponent<TheEconomy>();
         testEconomy.Initialize(new MockLogger());
+
+        TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
+
+        TestCompany1 = Company.Factory.Create("TestCompany1", CompanyLevelEnum.Beginner);
+        TestCompany2 = Company.Factory.Create("TestCompany2", CompanyLevelEnum.Beginner);
+
+        TestMarket.RegisterCompany(TestCompany1);
+        TestMarket.RegisterCompany(TestCompany2);
+        
         Lemon = Good.CreateInstance("Lemon", new Price_band(.5m, 2m), Rarity_enum.Common);
         Water = Good.CreateInstance("Water", new Price_band(.5m, 1m), Rarity_enum.Common);
         Sugar = Good.CreateInstance("Sugar", new Price_band(.5m, 1m), Rarity_enum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new Price_band(1m, 3m), Rarity_enum.Uncommon);
+        Period = 0;
     }
 
     [Test]
     public void TestThatOrdersAreNotFilledIfThereIsNoCounterParty()
     {
         //Arrange
-        var period =0;
-        var TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
-        
-        var TestCompany1 = Company.Factory.Create("TestCompany1", CompanyLevelEnum.Beginner);
-        TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemon,100,2m,0));
-
-        var TestCompany2 = Company.Factory.Create("TestCompany2", CompanyLevelEnum.Beginner);
-        TestCompany2.GetInventory().AddGood(new InventoryEntry(Water,100,1m,0));
-
-        TestMarket.RegisterCompany(TestCompany1);
-        TestMarket.RegisterCompany(TestCompany2);
+        TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemon,100,2,Period));
+        TestCompany2.GetInventory().AddGood(new InventoryEntry(Water,100,1m,Period));
 
         var Company1BuysWaterFromCompany2 = new Order(TestCompany1, TestCompany2, Water, 50, 1m);
-        var orderContext = new ActionContext{
-            TradeToSubmit=Company1BuysWaterFromCompany2,
-            MarketToSubmitTo=TestMarket,
-            Period=period
-            };
+        var orderContext = CreateActionContext(Company1BuysWaterFromCompany2, TestMarket, Period);
         TestCompany1.QueueOrder(orderContext);
+
         var expected = LemonadeStandResultObject
                 .Failure(ResultTypeEnum.NoMatchingCounterParties, "No counterparty was found for this offer");
         //Act
@@ -57,29 +64,13 @@ public class FillsAndPartialFillsTests
     public void TestThatOrderFullyFillsIfCounterPartyMatchesQuantity()
     {
         //Arrange
-        var period =0;
-        var TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
-        
-        var TestCompany1 = Company.Factory.Create("TestCompany1", CompanyLevelEnum.Beginner);
-        TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemon,100,2m,0));
-        var TestCompany2 = Company.Factory.Create("TestCompany2", CompanyLevelEnum.Beginner);
-
-        TestMarket.RegisterCompany(TestCompany1);
-        TestMarket.RegisterCompany(TestCompany2);
-
+        TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemon,100,2m,Period));
+     
         var Company2BuysLemonFromCompany1 = new Order(TestCompany2, TestCompany1, Lemon, 50, 2m);
         var Company1SellsLemonToCompany2 = new Order(TestCompany2, TestCompany1, Lemon, 50, 2m);
 
-        var Company1Context = new ActionContext{
-            TradeToSubmit=Company2BuysLemonFromCompany1,
-            MarketToSubmitTo=TestMarket,
-            Period=period
-            };
-        var Company2Context = new ActionContext{
-            TradeToSubmit=Company1SellsLemonToCompany2,
-            MarketToSubmitTo=TestMarket,
-            Period=period
-            };
+        var Company1Context = CreateActionContext(Company1SellsLemonToCompany2, TestMarket, Period);
+        var Company2Context = CreateActionContext(Company2BuysLemonFromCompany1, TestMarket, Period);
         
         TestCompany1.QueueOrder(Company1Context);
         TestCompany2.QueueOrder(Company2Context);
@@ -103,12 +94,37 @@ public class FillsAndPartialFillsTests
     [Test]
     public void TestThatMarketPartiallyFillsOrderIfBuyingCompanyDoesntWantEntireQuantity()
     { 
-        throw new System.NotImplementedException(); 
+        //Arrange
+        TestCompany2.GetInventory().AddGood(new InventoryEntry(Lemon,100,2m,Period));
+        var Company1BuysLemonsFromAnyone = new Order(TestCompany1, null, Lemon, 50, 2m);
+        var Company2SellsLemonsToAnyone = new Order(null, TestCompany2, Lemon, 100, 2m);
+        TestCompany1.QueueOrder(CreateActionContext(Company1BuysLemonsFromAnyone, TestMarket, Period));
+        TestCompany2.QueueOrder(CreateActionContext(Company2SellsLemonsToAnyone, TestMarket, Period));
+        var expectedLemonBuyFillQuantity = 50;
+        var expectedLemonSellFillQuantity = 50;
+        //Act
+        TestMarket.ProcessCompanyOrders();
+        var actualLemonBuyFillQuantity = Company1BuysLemonsFromAnyone.FilledQuantity;
+        var actualLemonSellFillQuantity = Company2SellsLemonsToAnyone.FilledQuantity;
+        //Assert
+        Assert.AreEqual(expectedLemonBuyFillQuantity, actualLemonBuyFillQuantity
+                        ,$"Expected {TestCompany1}'s order to fill with {expectedLemonBuyFillQuantity}, "
+                          +"but was filled with {actualLemonBuyFillQuantity} lemons");
+        Assert.AreEqual(expectedLemonSellFillQuantity, actualLemonSellFillQuantity
+                        ,$"Expected {TestCompany2}'s order to fill with {expectedLemonSellFillQuantity}, "
+                          +"but was filled with {actualLemonSellFillQuantity} lemons");
     }
 
     [TearDown]
     public void TearDown()
     {
         Object.DestroyImmediate(testEconomy.gameObject);
+        TestMarket = null;
+        TestCompany1 = null;
+        TestCompany2 = null;
+        Lemon = null;
+        Water = null;
+        Sugar = null;
+        Lemonade = null;
     }
 }
