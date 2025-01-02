@@ -13,5 +13,15 @@ public string ListToString(List<InventoryEntry> inventory)
     }
     return sb.ToString();
 }
+
+public static ActionContext CreateActionContext(Order order, Market market,int period)
+{
+    return new ActionContext()
+    {
+        TradeToSubmit = order,
+        MarketToSubmitTo = market,
+        Period = period
+    };
+}
 #endregion
 }

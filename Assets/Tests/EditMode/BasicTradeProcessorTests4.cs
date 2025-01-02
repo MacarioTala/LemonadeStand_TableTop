@@ -28,7 +28,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = company2SellsRLToCompany1ByCompany2;
         // Act
-        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket).ExtraData as List<Order>)?.FirstOrDefault();
+        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade).ExtraData as List<Order>)?.FirstOrDefault();
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -67,7 +67,7 @@ public partial class BasicTradeProcessorTests
         Company3.QueueOrder(Company3Context);
         var expected = 2;
         // Act
-        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket).ExtraData as List<Order>)?.Count;
+        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade).ExtraData as List<Order>)?.Count;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -95,7 +95,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = 0;
         // Act
-        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket)
+        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade)
                         .ExtraData as List<Order>)?.Count??0;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -121,7 +121,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = 0;
         // Act
-        var actual = (TestTradeProcessor.FindCounterPartiesForOrder(TestMarket)
+        var actual = (TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade)
                         .ExtraData as List<Order>)?.Count??0;
         // Assert
         Assert.AreEqual(expected, actual);

@@ -18,6 +18,9 @@ public class Order
     public bool IsUnfilled => RemainingQuantity == Quantity;
     private bool IsSelfTrade => Buyer == Seller;
 
+    public bool IsBuy() => Buyer == SubmittingCompany;
+    public bool IsSell() => Seller == SubmittingCompany;
+
     public LemonadeStandResultObject OrderStatus { get; set; }
 
     public LemonadeStandResultObject IsOrderValid()
