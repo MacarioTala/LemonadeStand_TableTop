@@ -123,7 +123,7 @@ public class BasicTransactionManager : iTransactionManager
         if (buyer.GetCash() < costOfThisLeg)
         {
             primaryOrder.OrderStatus = LemonadeStandResultObject.Failure
-                (ResultTypeEnum.InsufficientFunds,"Buyer does not have enough cash to complete the transaction");
+                (ResultTypeEnum.InsufficientCash,"Buyer does not have enough cash to complete the transaction");
             return primaryOrder.OrderStatus;
         }
 

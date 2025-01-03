@@ -250,6 +250,14 @@ public class Company : ScriptableObject, iCompany
                 return LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientCash, "Insufficient Cash to queue order");
             }
         }
+        //Validate inventory
+        if(context.TradeToSubmit.Seller?.Equals(this)==true)
+        {
+            if(!HasGood(context.TradeToSubmit.Good, context.TradeToSubmit.Quantity))
+            {
+                return LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientGoods, "Insufficient Inventory to queue order");
+            }
+        }
 
         return LemonadeStandResultObject.Success();
     }

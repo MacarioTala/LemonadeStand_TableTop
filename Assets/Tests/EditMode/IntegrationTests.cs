@@ -1,49 +1,59 @@
 using System.Linq;
-using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using UnityEngine;
+using static TestHelpers;
 
 [TestFixture]
 public class IntegrationTests
 {
     TheEconomy TestEconomy;
+    Market TestMarket;
+    Company Company1;
+    Company Company2;
+
     Good Lemonade;
+    const int Period = 0;
+
     [SetUp]
     public void SetUp()
     {
         var EconomyObject = new GameObject();
         TestEconomy = EconomyObject.AddComponent<TheEconomy>();
         TestEconomy.Initialize(new MockLogger());
+
+        TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+
+        Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+
+        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterCompany(Company2);
+
         Lemonade = Good.CreateInstance("Lemonade", new Price_band(.5m, 2m), Rarity_enum.Common);
     }
 #region Recording Trades
     [Test]
-    public void MarketProcessCompanyOrdersDoesNotDuplicateRecordingTrades()
+    public void MarketRecordsBothSidesOfTrade()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var buyer = Company.Factory.Create("Buyer", CompanyLevelEnum.Beginner);
-        var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
-        market.RegisterCompany(buyer);
-        market.RegisterCompany(seller);
+        var buyer = Company1;
+        var seller = Company2;
         var good =Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
         var sellersInventory = seller.GetInventory();
         sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
-
-        var actionContext = new ActionContext
-        {
-            TradeToSubmit = new Order(buyer, seller, good, 10, 5),
-            MarketToSubmitTo = market,
-            Period = 0
-        };
-        var queueOrderResult = buyer.QueueOrder(actionContext);
+        
+        var buyerBuysGoodFromSeller = new Order(buyer, seller, good, 10, 5);
+        var sellerSellsGoodToBuyer = new Order(buyer, seller, good, 10, 5);
+        var queueOrderResult = buyer.QueueOrder(CreateActionContext(buyerBuysGoodFromSeller, TestMarket,Period));
+        var queueOrderResult2 = seller.QueueOrder(CreateActionContext(sellerSellsGoodToBuyer, TestMarket,Period));
         // Act
-        market.ProcessCompanyOrders();
+        TestMarket.ProcessCompanyOrders();
 
         // Assert
-        var recordedTrades = market.GetMarketTradesInPeriod(0);
+        var recordedTrades = TestMarket.GetMarketTradesInPeriod(0);
         Assert.AreEqual(queueOrderResult.Result, LemonadeStandResultObject.Success(ResultTypeEnum.Success).Result);
-        Assert.AreEqual(1, recordedTrades.Count);
+        Assert.AreEqual(queueOrderResult2.Result, LemonadeStandResultObject.Success(ResultTypeEnum.Success).Result);
+        Assert.AreEqual(2, recordedTrades.Count);
         Assert.AreEqual(buyer, recordedTrades[0].RecordedTrade.Buyer);
         Assert.AreEqual(seller, recordedTrades[0].RecordedTrade.Seller);
         Assert.AreEqual(good, recordedTrades[0].RecordedTrade.Good);
@@ -287,5 +297,8 @@ public class IntegrationTests
     public void TearDown()
     {
         Object.DestroyImmediate(TestEconomy.gameObject);
+        TestMarket = null;
+        Company1 = null;
+        Company2 = null;
     }
 }

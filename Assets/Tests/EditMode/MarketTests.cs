@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using UnityEngine;
+using static TestHelpers;
 
 [TestFixture]
 public class MarketTests
@@ -10,6 +13,12 @@ public class MarketTests
     private TheEconomy test_economy;
 
     private Market test_initial_market;
+    Company Company1;
+    Company Company2;
+    Market TestMarket;
+
+    const int Period = 0;
+
     //Goods
     Good lemon;
     Good water;
@@ -30,6 +39,16 @@ public class MarketTests
         var economy_object = new GameObject();
         test_economy = economy_object.AddComponent<TheEconomy>();
         test_economy.Initialize(trade_logger);
+
+        //Setup Market
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+
+        //Setup Companies
+        Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterCompany(Company2);
+
         SetupGoodsAndRecipes();
 
         //Setup the initial market
@@ -50,6 +69,7 @@ public class MarketTests
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
         lemonade = Good.CreateInstance("Lemonade", band2, Rarity_enum.Uncommon);
+        lemonade.IsProducedGood = true;
         lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 
@@ -111,28 +131,25 @@ public class MarketTests
         var period = 0;
         var initialLemons = 1000;
         var lemonsCompanyWillSellToMarket = 500;
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        testMarket.SetCash(100000);
-        testMarket.GetInventory().AddGood(new InventoryEntry(lemon, initialLemons, 3.0m, period));
-        testMarket.InitializeDemandForSpecificGood(lemon, 1000);
+        
+        TestMarket.SetCash(100000);
+        TestMarket.GetInventory().AddGood(new InventoryEntry(lemon, initialLemons, 3.0m, period));
+        TestMarket.InitializeDemandForSpecificGood(lemon, 1000);
 
-        var testCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(testCompany);
-        testCompany.GetInventory().AddGood(new InventoryEntry(lemon, 2000, 2.0m, period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000, 2.0m, period));
         
         //next line is necessary because of different demand strategies 
         //that will change the demand
         var expected = 500;
         // Act
-        var lemonSale = new Order(testMarket, testCompany, lemon, lemonsCompanyWillSellToMarket, 3.0m);
-        var lemonContext = new ActionContext { TradeToSubmit = lemonSale, MarketToSubmitTo = testMarket, Period = period };
-        testMarket.QueueOrder(lemonContext);
-        testMarket.ProcessCompanyOrders();
-        testMarket.FulfillDemand();
-        testMarket.ConsumeGoods();
+        var lemonSale = new Order(TestMarket, Company1, lemon, lemonsCompanyWillSellToMarket, 3.0m);
+        Company1.QueueOrder(CreateActionContext(lemonSale,TestMarket,0));
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.FulfillDemand();
+        TestMarket.ConsumeGoods();
         
         //only one inventory entry per good in Markets
-        var actual = testMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actual = TestMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
         // Assert
         Assert.AreEqual(expected, actual.quantity);
     }
@@ -349,32 +366,19 @@ public class MarketTests
    #endregion
    #region Trade Tests
    [Test]
-    public void A_Company_cannot_buy_a_good_if_it_has_insufficient_cash()
+    public void ACompanyCannotBuyGoodsWithInsufficientCash()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        testMarket.RegisterCompany(company1);
-        testMarket.RegisterCompany(company2);
-        
-        company2.SetCash(0);
-        const string expected="Insufficient funds to buy good";
-        string actual=null;
-        var company2BuysLemons = new Order(company2, company1, lemon, 4000, 3.0m);
-        var company2Context = new ActionContext{TradeToSubmit = company2BuysLemons,
-                                                MarketToSubmitTo = testMarket};
+        Company2.SetCash(0);
+        var company2BuysLemons = new Order(Company2, null, lemon, 4000, 3.0m);
+        var expected= LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientCash, "").Result;
         // Act
-        try{
-            testMarket.QueueOrder(company2Context);
-            testMarket.ProcessCompanyOrders();
-        }
-        catch(Exception e)
-        {
-            // Assert
-            actual=e.Message;    
-        }
+        var actual = Company2.QueueOrder(CreateActionContext(company2BuysLemons,TestMarket,0)).Result;
+        TestMarket.ProcessCompanyOrders();
+        var marketTradesInPeriod = TestMarket.GetMarketTradesInPeriod(0);
+        // Assert
         Assert.AreEqual(expected, actual);
+        Assert.AreEqual(0, marketTradesInPeriod.Count);
     }
      [Test]
     public void MarketsShouldOnlyHaveASingleInventoryEntryPerGoodEvenWithMultipleBuys()
@@ -412,32 +416,29 @@ public class MarketTests
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
     }
      [Test]
-    public void CompaniesCanBuyGoodsFromEachOtherViaQueueTrade()
+    public void CompaniesCanBuyGoodsFromEachOtherViaMatchingQueuedOrders()
     {
         // Arrange
         var period = 0;
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(company1);
-        testMarket.RegisterCompany(company2);
-        company1.GetInventory().AddGood(new InventoryEntry(sugar,10,2.0m,period));
-        company2.GetInventory().AddGood(new InventoryEntry(sugar,10, 2.0m,period));
+        Company1.GetInventory().AddGood(new InventoryEntry(sugar,10,2.0m,period));
+        Company2.GetInventory().AddGood(new InventoryEntry(sugar,10, 2.0m,period));
         
-        var expectedCompany1Cash = company1.GetCash() - 2;
-        var expectedCompany2Cash = company2.GetCash() + 2;
+        var expectedCompany1Cash = Company1.GetCash() - 2;
+        var expectedCompany2Cash = Company2.GetCash() + 2;
         var expectedCompany1SugarQuantity = 11;
         var expectedCompany2SugarQuantity = 10 - 1;
 
+        var Company1BuysSugarFromCompany2 = new Order(Company1, Company2, sugar, 1, 2.0m);
+        var Company2SellsSugarToCompany1 = new Order(Company1,Company2, sugar, 1, 2.0m);
+        
         // Act
-        var trade = new Order(company1, company2, sugar, 1, 2.0m);
-        var sugarTradeContext = new ActionContext{TradeToSubmit = trade, MarketToSubmitTo = testMarket};
-        testMarket.QueueOrder(sugarTradeContext);
-        testMarket.ProcessCompanyOrders();
-        var actualCompany1Cash = company1.GetCash();
-        var actualCompany2Cash = company2.GetCash();
-        var actualCompany1SugarQuantity = company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.Cost==2.0m).quantity;
-        var actualCompany2SugarQuantity = company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar).quantity;
+        Company1.QueueOrder(CreateActionContext(Company1BuysSugarFromCompany2,TestMarket,0));
+        Company2.QueueOrder(CreateActionContext(Company2SellsSugarToCompany1,TestMarket,0));
+        TestMarket.ProcessCompanyOrders();
+        var actualCompany1Cash = Company1.GetCash();
+        var actualCompany2Cash = Company2.GetCash();
+        var actualCompany1SugarQuantity = Company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.Cost==2.0m).quantity;
+        var actualCompany2SugarQuantity = Company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar).quantity;
         // Assert
         Assert.AreEqual(expectedCompany1Cash, actualCompany1Cash);
         Assert.AreEqual(expectedCompany2Cash, actualCompany2Cash);
@@ -448,65 +449,50 @@ public class MarketTests
     public void ACompanyCannotSellAGoodIfItHasInsufficientInventory()
     {
         // Arrange
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(company1);
-        testMarket.RegisterCompany(company2);
-        var expected = "Company does not have enough of the good to sell";
-        string actual = null;
-        var company1BuysLemons = new Order(company1, company2, lemon, 10, 3.0m);
-        var lemonBuyingContext = new ActionContext { TradeToSubmit = company1BuysLemons, MarketToSubmitTo = testMarket };
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientGoods, "").Result;
+        var Company1BuysLemons = new Order(Company1, null, lemon, 10, 3.0m);
+        var Company2SellsLemons = new Order(null, Company2, lemon, 10, 3.0m);
+        Company2.GetInventory().Clear();
 
         // Act
-        try{
-
-        testMarket.QueueOrder(lemonBuyingContext);
-        testMarket.ProcessCompanyOrders();
-        }
-        catch(Exception e)
-        {
-            actual = e.Message;
-        }
+        Company1.QueueOrder(CreateActionContext(Company1BuysLemons,TestMarket,0));
+        var actual=Company2.QueueOrder(CreateActionContext(Company2SellsLemons,TestMarket,0)).Result;
+        TestMarket.ProcessCompanyOrders();
+        var marketTradesInPeriod = TestMarket.GetMarketTradesInPeriod(0);
+        
         // Assert
         Assert.AreEqual(expected, actual);
+        Assert.AreEqual(0, marketTradesInPeriod.Count);
     }
 
     [Test]
     public void MarketsShouldIgnoreTradesWhereMarketIsTheBuyerWhenCallingProcessCompanyOrders()
     {
         // Arrange
-        var period = 0;
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(company1);
-        testMarket.RegisterCompany(company2);
-        
-        
-        var lemonade = Good.CreateInstance("Lemonade", band2, Rarity_enum.Uncommon);
         lemonade.IsProducedGood = true;
         var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", band2, Rarity_enum.Very_Rare);
         radioactiveLemonade.IsProducedGood = true;
 
-        company1.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 3.0m, period));
-        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3.0m, period));
+        Company1.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 3.0m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3.0m, Period));
 
-        var radioactiveLemonadeTrade = new Order(testMarket, company1, radioactiveLemonade, 10, 3.0m);
-        var radioactiveLemonadeContext = new ActionContext{TradeToSubmit = radioactiveLemonadeTrade, MarketToSubmitTo = testMarket, Period = period};
+        var radioactiveLemonadeTrade = new Order(TestMarket, Company1, radioactiveLemonade, 10, 3.0m);
+        var radioactiveLemonadeContext = new ActionContext{TradeToSubmit = radioactiveLemonadeTrade, MarketToSubmitTo = TestMarket, Period = Period};
 
-        var lemonadeTrade = new Order( company1,company2, lemonade, 10, 3.0m);
-        var lemonadeContext = new ActionContext{TradeToSubmit = lemonadeTrade, MarketToSubmitTo = testMarket, Period = period};
+        var Company1BuysLemonadeFromCompany2 = new Order( Company1,Company2, lemonade, 10, 3.0m);
+        var Company2SellsLemonadeToCompany1 = new Order(Company1,Company2, lemonade, 10, 3.0m);
 
         var expectedFilledQuantityForRadioactiveLemonade = 0;
         var expectedFilledQuantityForLemonade = 10;
 
         // Act
-        testMarket.QueueMarketOrder(radioactiveLemonadeContext);
-        testMarket.QueueOrder(lemonadeContext);
-        testMarket.ProcessCompanyOrders();
+        TestMarket.QueueMarketOrder(radioactiveLemonadeContext);
+        Company1.QueueOrder(CreateActionContext(Company1BuysLemonadeFromCompany2,TestMarket,Period));
+        Company2.QueueOrder(CreateActionContext(Company2SellsLemonadeToCompany1,TestMarket,Period));
+
+        TestMarket.ProcessCompanyOrders();
         var actualFilledQuantityForRadioactiveLemonade = radioactiveLemonadeTrade.FilledQuantity;
-        var actualFilledQuantityForLemonade = lemonadeTrade.FilledQuantity;
+        var actualFilledQuantityForLemonade = Company1BuysLemonadeFromCompany2.FilledQuantity;
         // Assert
         Assert.AreEqual(expectedFilledQuantityForRadioactiveLemonade, actualFilledQuantityForRadioactiveLemonade);
         Assert.AreEqual(expectedFilledQuantityForLemonade, actualFilledQuantityForLemonade);
@@ -520,5 +506,9 @@ public class MarketTests
         UnityEngine.Object.DestroyImmediate(water);
         UnityEngine.Object.DestroyImmediate(sugar);
         UnityEngine.Object.DestroyImmediate(test_economy);
+        UnityEngine.Object.DestroyImmediate(test_initial_market);
+        Company1 = null;
+        Company2 = null;
+        TestMarket = null;
     }
 }

@@ -115,7 +115,7 @@ public class TransactionManagerTests
             SubmittingCompany = Company2
         };
         var costOfThisLeg = 1m;
-        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientFunds, "Buyer does not have enough cash to complete the transaction");
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientCash, "");
         var transactionManager = new BasicTransactionManager();
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
