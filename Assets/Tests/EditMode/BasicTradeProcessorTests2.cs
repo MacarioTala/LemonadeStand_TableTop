@@ -103,6 +103,7 @@ public partial class BasicTradeProcessorTests
         Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(Company3);
+        Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 15, 10m, Period));
 
         var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 8, 10m);
         var company3SellsRLToCompany1ByCompany3 = new Order(Company1, Company3, RadioactiveLemonade, 15, 10m);
@@ -149,15 +150,16 @@ public partial class BasicTradeProcessorTests
     public void SellOrdersArePrimaryEvenWithNoBuyerIfTheyreAlone()
     {
         // Arrange
-        var company1SellsRLFromMarket = new Order(null, Company1, RadioactiveLemonade, 10, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
+        var company1SellsRLToAnyone = new Order(null, Company1, RadioactiveLemonade, 10, 10m);
         var Company1Context = new ActionContext
         {
-            TradeToSubmit = company1SellsRLFromMarket,
+            TradeToSubmit = company1SellsRLToAnyone,
             MarketToSubmitTo = TestMarket,
             Period = Period
         };
         Company1.QueueOrder(Company1Context);
-        var expected = company1SellsRLFromMarket;
+        var expected = company1SellsRLToAnyone;
         // Act
         var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
         // Assert
