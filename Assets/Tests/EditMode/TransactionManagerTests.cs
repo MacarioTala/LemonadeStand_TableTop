@@ -248,6 +248,35 @@ public class TransactionManagerTests
         Assert.AreEqual(expectedBuyerOrderPartiallyFilledStatus, actualBuyerOrderPartiallyFilledStatus, "Buyer order partially filled status not as expected");
     }
 #endregion
+#region ProcessMarketTransactionTests
+    [Test]
+    public void ProcessMarketTransactionShouldReturnSuccessForValidOrderPair()
+    {
+        //Arrange
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
+        var Company1SellsLemonsToAnyone = new Order(Company1, null, Lemon, 1, 1m)
+        {
+            SubmittingCompany = Company1
+        };
+        var marketGeneratedCounterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        {
+            SubmittingCompany = Company2
+        };
+        var context = new ActionContext
+        {
+            PrimaryOrder = Company1SellsLemonsToAnyone,
+            CounterPartyOrders = new List<Order>{marketGeneratedCounterPartyOrder},
+            MarketToSubmitTo = TestMarket,
+            Period = Period
+        };
+        var expected = LemonadeStandResultObject.Success();
+        var transactionManager = new BasicTransactionManager();
+        //Act
+        var actual = transactionManager.ProcessMarketTransaction(context);
+        //Assert
+        Assert.AreEqual(expected.Result, actual.Result);
+    }
+#endregion
 #region RecordTrade Tests
     [Test]
     public void RecordTradeRecordsOrderAndCounterPartyOrderWhenCalledInIsolationOnePairOnly()

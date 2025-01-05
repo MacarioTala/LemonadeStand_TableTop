@@ -18,6 +18,21 @@ public class BasicTransactionManager : iTransactionManager
         return LemonadeStandResultObject.Success();
     }
 
+    public LemonadeStandResultObject ProcessMarketTransaction(ActionContext context)
+    {
+        //This is ugly.
+        //We're just going to record the transaction sent to us by the consumption manager
+        //Instead of processing it like we do company orders
+        //Find a way to refactor this
+        //Maybe this is ok in case we decide that there's more processing to be done for 
+        //other implementations of iTransactionManager
+        var primaryOrder = context.PrimaryOrder;
+        var counterPartyOrders = context.CounterPartyOrders;
+        RecordTrade(primaryOrder,context.MarketToSubmitTo, context.Period,counterPartyOrders);
+        
+        return LemonadeStandResultObject.Success();
+    }
+
     internal LemonadeStandResultObject ProcessPairedOrders(ActionContext context)
     {
         var containsValidPairedOrders = context.ContainsValidPairedOrders().Result
@@ -43,12 +58,10 @@ public class BasicTransactionManager : iTransactionManager
             }
             _counterPartyOrdersToRecord.Add(order);
         }
-        //You are here -- Once the Primary Order is filled, this exits
-        //We should do something about the remaining unfilled orders
+       
         //Record trade
         RecordTrade(context.PrimaryOrder,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
-        foreach (var order in _counterPartyOrdersToRecord)
-        {RecordTrade(order,context.MarketToSubmitTo, context.Period,new List<Order>{context.PrimaryOrder});}
+        
         return LemonadeStandResultObject.Success();
     }
 
@@ -142,6 +155,7 @@ public class BasicTransactionManager : iTransactionManager
             , int tradingPeriod,List<Order> counterPartyOrders)
     {
        var executedTrade = new MarketTransaction(tradeToRecord, tradingPeriod);
+       //Record Primary Order
        if ( counterPartyOrders.Count == 1)
          {
             var counterPartyOrder = counterPartyOrders[0];
@@ -153,10 +167,18 @@ public class BasicTransactionManager : iTransactionManager
             else
             { tradeToRecord.Buyer = counterPartyOrder.Buyer; }
          }
+       //Add CounterParty Orders to Primary Order
        foreach (var order in counterPartyOrders)
        {
            executedTrade.AddCounterPartyTrade(order);
        }
        marketToRecordIn.RecordTrade(executedTrade);
+       //Record CounterParty Orders as their own Market Trades
+       foreach (var order in counterPartyOrders)
+        {
+            var counterPartyTrade = new MarketTransaction(order, tradingPeriod);
+            counterPartyTrade.AddCounterPartyTrade(tradeToRecord);
+            marketToRecordIn.RecordTrade(counterPartyTrade);
+        }
     }
 }

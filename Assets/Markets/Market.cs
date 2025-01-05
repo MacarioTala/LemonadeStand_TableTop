@@ -124,6 +124,10 @@ public class Market : ScriptableObject, iCompany
     {
         _transactionManager.ProcessTransaction(context);
     }
+    public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
+    {
+        return _transactionManager.ProcessMarketTransaction(context);
+    }
     public List<Order> ProcessCompanyOrders()
     {
         var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
@@ -173,9 +177,9 @@ public class Market : ScriptableObject, iCompany
         return DemandStrategy.CalculateDemandForPeriod(this,CurrentPeriod);
     }
 
-    public void FulfillDemand()
+    public LemonadeStandResultObject FulfillDemand()
     {
-        _consumptionManager.FulfillDemand(this);
+        return _consumptionManager.FulfillDemand(this);
         
     }
     internal void ConsumeGoods()

@@ -3,6 +3,7 @@ using NUnit.Framework.Internal;
 using UnityEngine;
 
 [TestFixture]
+//This partial class tests the ProcessCompanyOrders method in BasicTradeProcessor
 public partial class BasicTradeProcessorTests
 {
     TheEconomy TestEconomy;

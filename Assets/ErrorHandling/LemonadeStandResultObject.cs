@@ -15,7 +15,7 @@ public class LemonadeStandResultObject
     {
         if(other is LemonadeStandResultObject result)
         {
-            return Result == result.Result && Message == result.Message;
+            return Result == result.Result;
         }
         return false;   
     }

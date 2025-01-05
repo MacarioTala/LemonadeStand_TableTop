@@ -26,4 +26,5 @@ public enum ResultTypeEnum
     OrderHasNoActors=20,
     InvalidTransaction=21,
     PrimaryOrderNotSet=22,
+    SomeOrdersNotProcessed = 23,
 }

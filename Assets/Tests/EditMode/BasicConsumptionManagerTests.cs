@@ -1,11 +1,20 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using UnityEngine;
+using static TestHelpers;
 
 [TestFixture]
 public class BasicConsumptionManagerTests
 {
     TheEconomy TestEconomy;
+    Market TestMarket;
+    iConsumptionManager TestConsumptionManager;
+    const int Period = 0;
+
+    Company Company1;
+    Company Company2;
+
     Good lemon;
     Good water;
     Good sugar;
@@ -26,6 +35,16 @@ public class BasicConsumptionManagerTests
         var EconomyObject = new GameObject();
         TestEconomy = EconomyObject.AddComponent<TheEconomy>();
         TestEconomy.Initialize(new MockLogger());
+
+        TestConsumptionManager = new BasicConsumptionManager();
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket.SetConsumptionManager(TestConsumptionManager); 
+
+        Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterCompany(Company2);
+
         SetupGoodsAndRecipes();
     }
 
@@ -46,62 +65,36 @@ public class BasicConsumptionManagerTests
         testGoods.Add(lemonade);
     }
     [Test]
-    public void FillOrderBasedOnPriceFillsDemandOf1000WithLowestPricedOrder()
+    public void FD_FillsDemandOf1000WithLowestPricedOrder()
     {
         //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
-        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 4m,0));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 4m,0));
 
-        marketToTest.RegisterCompany(company1);
-        marketToTest.RegisterCompany(company2);
-
-        var company1Order = new Order(marketToTest, company1, lemonade, 1000, 3.5m);
-        var company2Order = new Order(marketToTest, company2, lemonade, 1000, 4.5m);
+        var company1Order = new Order(TestMarket, Company1, lemonade, 1000, 3.5m);
+        var company2Order = new Order(TestMarket, Company2, lemonade, 1000, 4.5m);
         var expectedFilledQuantity = 1000;
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
-        var company2Context = new ActionContext{TradeToSubmit = company2Order,
-                                                MarketToSubmitTo = marketToTest};  
         //Act
-        marketToTest.QueueMarketOrder(company1Context);
-        marketToTest.QueueMarketOrder(company2Context);
-        marketToTest.FulfillDemand();
+        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
+        TestMarket.QueueMarketOrder(CreateActionContext(company2Order, TestMarket,Period));
+        TestMarket.FulfillDemand();
         var actualFilledQuantity=company1Order.FilledQuantity;
         //Assert
         Assert.AreEqual(expectedFilledQuantity, actualFilledQuantity);
     }
     [Test]
-    public void FillOrderBasedOnPriceFillsBothOrdersWhenLessThanDemandedQuantity()
+    public void FD_FillsBothOrdersWhenLessThanDemandedQuantity()
     {
         //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
-        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
-        marketToTest.RegisterCompany(company1);
-        marketToTest.RegisterCompany(company2);
-
-        var company1Order = new Order(marketToTest, company1, lemonade, 500, 3.5m);
-        var company2Order = new Order(marketToTest, company2, lemonade, 500, 3.5m);
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
-        var company2Context = new ActionContext{TradeToSubmit = company2Order,
-                                                MarketToSubmitTo = marketToTest};
-
+        var company1Order = new Order(TestMarket, Company1, lemonade, 500, 3.5m);
+        var company2Order = new Order(TestMarket, Company2, lemonade, 500, 3.5m);
+        
         var expectedFilledQuantityForCompany1 = 500;
         var expectedFilledQuantityForCompany2 = 500;
         //Act
-        marketToTest.QueueMarketOrder(company1Context);
-        marketToTest.QueueMarketOrder(company2Context);
-        marketToTest.FulfillDemand();
+        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
+        TestMarket.QueueMarketOrder(CreateActionContext(company2Order, TestMarket,Period));
+        TestMarket.FulfillDemand();
         var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
         var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
         //Assert
@@ -109,32 +102,21 @@ public class BasicConsumptionManagerTests
         Assert.AreEqual(expectedFilledQuantityForCompany2, actualFilledQuantityForCompany2);
     }
     [Test]
-    public void IfBothOrdersAreLessThanDemandedQuantityBothAreFilled()
+    public void FD_IfBothOrdersAreLessThanDemandedQuantityBothAreFilled()
     {
          //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
-        company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
-        marketToTest.RegisterCompany(company1);
-        marketToTest.RegisterCompany(company2);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
 
-        var company1Order = new Order(marketToTest, company1, lemonade, 400, 3.5m);
-        var company2Order = new Order(marketToTest, company2, lemonade, 400, 3.5m);
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
-        var company2Context = new ActionContext{TradeToSubmit = company2Order,
-                                                MarketToSubmitTo = marketToTest};
-
+        var company1Order = new Order(TestMarket, Company1, lemonade, 400, 3.5m);
+        var company2Order = new Order(TestMarket, Company2, lemonade, 400, 3.5m);
+    
         var expectedFilledQuantityForCompany1 = 400;
         var expectedFilledQuantityForCompany2 = 400;
         //Act
-        marketToTest.QueueMarketOrder(company1Context);
-        marketToTest.QueueMarketOrder(company2Context);
-        marketToTest.FulfillDemand();
+        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
+        TestMarket.QueueMarketOrder(CreateActionContext(company2Order, TestMarket,Period));
+        TestMarket.FulfillDemand();
         var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
         var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
         //Assert
@@ -142,56 +124,86 @@ public class BasicConsumptionManagerTests
         Assert.AreEqual(expectedFilledQuantityForCompany2, actualFilledQuantityForCompany2);
     }
     [Test]
-    public void FillOrderBasedOnPriceOnlyPartiallyFillsWhenSupplyExceedsDemand()
+    public void FD_FillsWhenExcessSupplyFromCompanyTradesOccurs()
     {
         //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
-        marketToTest.RegisterCompany(company1);
-        marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
-        var company1Order = new Order(marketToTest, company1, lemonade, 1500, 3.5m);
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
+
+        var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 3.5m);
+        var Company2BuysLemonadeFromAnyone = new Order(Company2,null, lemonade, 100, 3.5m);
+
+        var ExpectedCompany1LemonadeSellFillQuantity = 1000;
+        var ExpectedCompany2LemonadeBuyFillQuantity = 100;
+        
+        //Act
+        Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
+        Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone, TestMarket,Period));
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.FulfillDemand();
+        var ActualCompany1LemonadeSellFillQuantity = Company1SellsLemonadeToAnyone.FilledQuantity;
+        var ActualCompany2LemonadeBuyFillQuantity = Company2BuysLemonadeFromAnyone.FilledQuantity;
+        //Assert
+        Assert.AreEqual(ExpectedCompany1LemonadeSellFillQuantity, ActualCompany1LemonadeSellFillQuantity);
+        Assert.AreEqual(ExpectedCompany2LemonadeBuyFillQuantity, ActualCompany2LemonadeBuyFillQuantity);
+    }
+    [Test]
+    public void FD_OnlyPartiallyFillsWhenSupplyExceedsDemand()
+    {
+        //Arrange
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
+        
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
+        var company1Order = new Order(TestMarket, Company1, lemonade, 1500, 3.5m);
         var expected = 1000;
         //Act
-        marketToTest.QueueMarketOrder(company1Context);
-        marketToTest.ProcessCompanyOrders();
-        marketToTest.FulfillDemand();
+        Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period));
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.FulfillDemand();
         var actual=company1Order.FilledQuantity;
         //Assert
         Assert.AreEqual(expected, actual);
     }
+    [Test]
+    public void FD_RecordsTradeWhenMarketOrderIsFilled_MarketOrdersOnly()
+    {
+        //Arrange
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+
+        var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 3.5m);
+
+        var expectedMarketTransactions = 2;
+        //Act
+        Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.FulfillDemand();
+        var actualMarketTransactions = TestMarket.GetMarketTradesInPeriod(Period).Count;
+        //Assert
+        Assert.AreEqual(expectedMarketTransactions, actualMarketTransactions);
+    }
+
     [Test]
     public void FillOrderChoosesRandomOrderWhenPriceIsEqual()
     {throw new System.NotImplementedException();}
     [Test]
-    public void FillOrderDoesNotFillOrderWhenDemandIsZero()
+    public void FD_DoesNotFillOrderWhenDemandIsZero()
     {
         //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        marketToTest.InitializeDemandForSpecificGood(lemonade, 0);
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
-        marketToTest.RegisterCompany(company1);
-        var company1Order = new Order(marketToTest, company1, lemonade, 1000, 3.5m);
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 0);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
+        
+        var company1Order = new Order(TestMarket, Company1, lemonade, 1000, 3.5m);
+        
         var expected = 0;
         //Act
-        company1.QueueOrder(company1Context);
-        marketToTest.FulfillDemand();
+        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
+        TestMarket.FulfillDemand();
         var actual=company1Order.FilledQuantity;
         //Assert
         Assert.AreEqual(expected, actual);
     }
-    [Test]
-    public void FillOrderRejectsOrdersWithNegativePrice()
-    {throw new System.NotImplementedException();}
+    
     [Test]
     public void FillOrderRejectsOrdersWithZeroQuantity()
     {throw new System.NotImplementedException();}
@@ -203,5 +215,9 @@ public class BasicConsumptionManagerTests
         Object.DestroyImmediate(sugar);
         Object.DestroyImmediate(lemonade);
         Object.DestroyImmediate(TestEconomy);
+        TestMarket = null;
+        TestConsumptionManager = null;
+        Company1 = null;
+        Company2 = null;
     }
 }

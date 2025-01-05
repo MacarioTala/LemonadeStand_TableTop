@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
+//This partial class tests the RecordTrade method of the BasicTradeProcessor
 public partial class BasicTradeProcessorTests
 {
     //For RecordTrade

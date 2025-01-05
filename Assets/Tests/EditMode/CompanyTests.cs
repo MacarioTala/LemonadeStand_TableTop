@@ -2,14 +2,30 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using static TestHelpers;
 [TestFixture]
 public class CompanyTests
 {
+    TheEconomy TestEconomy;
     private TestHelpers testHelpers;
+    Market TestMarket;
+    Company Company1;
+    Good Lemonade;
+    const int Period = 0;
+
     [SetUp]
     public void Setup()
     {
+        var EconomyObject = new GameObject();
+        TestEconomy = EconomyObject.AddComponent<TheEconomy>();
+        TestEconomy.Initialize(new MockLogger());
+
         testHelpers = new TestHelpers();
+        Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        Lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Common);
+        
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket.RegisterCompany(Company1);
     }
 
     [Test]
@@ -23,7 +39,7 @@ public class CompanyTests
         Assert.AreEqual(expected_cash, company.GetCash());
     }
     [Test]
-    public void Buy_good_when_buyer_has_enough_cash_removes_cash_from_buyer()
+    public void BuyGoodRemovesCashFromBuyer()
     {
         //arrange
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
@@ -118,5 +134,27 @@ public class CompanyTests
         //Assert
         Assert.AreEqual(expected.Result, actual.Result);
         
+    }
+
+    [Test]
+    public void QO_RejectsOrdersWithNegativePrice()
+    {
+        //Arrange
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 1000, 3m,0));
+        var company1Order = new Order(null, Company1, Lemonade, 1000, -3.5m);
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidPrice,"").Result;
+        //Act
+        var actual = Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period)).Result;
+        //Assert
+        Assert.AreEqual(expected, actual);
+        
+    }
+    [TearDown]
+    public void TearDown()
+    {
+        Object.DestroyImmediate(TestEconomy.gameObject);
+        Object.DestroyImmediate(Lemonade);
+        TestMarket = null;
+        Company1 = null;
     }
 }
