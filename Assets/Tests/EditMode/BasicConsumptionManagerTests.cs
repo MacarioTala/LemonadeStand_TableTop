@@ -184,9 +184,6 @@ public class BasicConsumptionManagerTests
     }
 
     [Test]
-    public void FillOrderChoosesRandomOrderWhenPriceIsEqual()
-    {throw new System.NotImplementedException();}
-    [Test]
     public void FD_DoesNotFillOrderWhenDemandIsZero()
     {
         //Arrange
@@ -203,10 +200,7 @@ public class BasicConsumptionManagerTests
         //Assert
         Assert.AreEqual(expected, actual);
     }
-    
-    [Test]
-    public void FillOrderRejectsOrdersWithZeroQuantity()
-    {throw new System.NotImplementedException();}
+
     [TearDown]
     public void TearDown()
     {

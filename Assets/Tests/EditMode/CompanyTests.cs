@@ -149,6 +149,17 @@ public class CompanyTests
         Assert.AreEqual(expected, actual);
         
     }
+    [Test]
+    public void QO_RejectsOrdersWithZeroQuantity()
+    {
+        //Arrange
+        var Company1BuysLemonade = new Order(Company1,null, Lemonade, 0, 3.5m);
+        var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidQuantity,"").Result;
+        //Act
+        var actual = Company1.QueueOrder(CreateActionContext(Company1BuysLemonade, TestMarket,Period)).Result;
+        //Assert
+        Assert.AreEqual(expected, actual);
+    }
     [TearDown]
     public void TearDown()
     {
