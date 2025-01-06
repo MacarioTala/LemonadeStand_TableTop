@@ -39,7 +39,7 @@ public class BasicTradeProcessor : iTradeProcessor
 
     internal List<Order> ExecuteBestTradesForGood(Good good, Market market, List<Order> OrdersSentToMarket)
     {
-        List<Order> executedTrades = new();
+        List<Order> executedOrders = new();
         var relevantOrders = OrdersSentToMarket.Where(x => x.Good == good
                                                && x.Buyer is not Market
                                                )
@@ -82,14 +82,14 @@ public class BasicTradeProcessor : iTradeProcessor
                     if(!transactionResult.Result.Equals(LemonadeStandResultObject.Success().Result))
                         order.OrderStatus = transactionResult;
                       
-                    executedTrades.Add(order);
+                    executedOrders.Add(order);
                     prioritizedOrders.RemoveAt(i);
                     i--;
                                         
                 }
             }
         }
-        return executedTrades;
+        return executedOrders;
     }
 
     internal Order GeneratePrimaryOrder(Market market, Good good)

@@ -28,7 +28,7 @@ public class BasicTransactionManager : iTransactionManager
         //other implementations of iTransactionManager
         var primaryOrder = context.PrimaryOrder;
         var counterPartyOrders = context.CounterPartyOrders;
-        RecordTrade(primaryOrder,context.MarketToSubmitTo, context.Period,counterPartyOrders);
+        RecordTransaction(primaryOrder,context.MarketToSubmitTo, context.Period,counterPartyOrders);
         
         return LemonadeStandResultObject.Success();
     }
@@ -59,8 +59,8 @@ public class BasicTransactionManager : iTransactionManager
             _counterPartyOrdersToRecord.Add(order);
         }
        
-        //Record trade
-        RecordTrade(context.PrimaryOrder,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
+        //Record transaction
+        RecordTransaction(context.PrimaryOrder,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
         
         return LemonadeStandResultObject.Success();
     }
@@ -151,33 +151,35 @@ public class BasicTransactionManager : iTransactionManager
     }
     
 
-    internal static void RecordTrade(Order tradeToRecord, Market marketToRecordIn
+    internal static void RecordTransaction(Order orderToRecord, Market marketToRecordIn
             , int tradingPeriod,List<Order> counterPartyOrders)
     {
-       var executedTrade = new MarketTransaction(tradeToRecord, tradingPeriod);
+       var executedOrder = new MarketTransaction(orderToRecord, tradingPeriod);
        //Record Primary Order
        if ( counterPartyOrders.Count == 1)
          {
             var counterPartyOrder = counterPartyOrders[0];
-            var counterPartyOrderIsSeller = counterPartyOrder.Seller != null 
-                && counterPartyOrder.SubmittingCompany.Equals(counterPartyOrder.Seller);
-
-            if (counterPartyOrderIsSeller)
-            { tradeToRecord.Seller = counterPartyOrder.Seller; }
+            
+            if (counterPartyOrder.IsSell())
+            { orderToRecord.Seller = counterPartyOrder.Seller; }
             else
-            { tradeToRecord.Buyer = counterPartyOrder.Buyer; }
+            { orderToRecord.Buyer = counterPartyOrder.Buyer; }
          }
        //Add CounterParty Orders to Primary Order
        foreach (var order in counterPartyOrders)
        {
-           executedTrade.AddCounterPartyTrade(order);
+           if (order.IsSell())
+           {order.Buyer=orderToRecord.Buyer;}
+           else
+           {order.Seller=orderToRecord.Seller;}
+           executedOrder.AddCounterPartyTrade(order);
        }
-       marketToRecordIn.RecordTrade(executedTrade);
+       marketToRecordIn.RecordTrade(executedOrder);
        //Record CounterParty Orders as their own Market Trades
        foreach (var order in counterPartyOrders)
         {
             var counterPartyTrade = new MarketTransaction(order, tradingPeriod);
-            counterPartyTrade.AddCounterPartyTrade(tradeToRecord);
+            counterPartyTrade.AddCounterPartyTrade(orderToRecord);
             marketToRecordIn.RecordTrade(counterPartyTrade);
         }
     }

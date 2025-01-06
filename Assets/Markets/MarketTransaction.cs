@@ -21,7 +21,7 @@ public class MarketTransaction
     {
         if (other is MarketTransaction otherTrade)
         {
-            return RecordedTrade == otherTrade.RecordedTrade && Period == otherTrade.Period;
+            return TransactionId == otherTrade.TransactionId;
         }
         return false;
     }
@@ -31,7 +31,21 @@ public class MarketTransaction
     }
     public override string ToString()
     {
-        return $"Trade: {RecordedTrade.Buyer} bought {RecordedTrade.FilledQuantity} of {RecordedTrade.Good} at Period: {Period}";
+        var actor = "";
+        var action = "";
+        int quantity = RecordedTrade.FilledQuantity;;
+
+        if (RecordedTrade.IsBuy())
+        { 
+            actor = RecordedTrade.Buyer.ToString();
+            action = "bought";
+        }
+        else
+        {
+            actor = RecordedTrade.Seller.ToString();
+            action = "sold";
+        }
+        return $"Executed: {actor} {action} {quantity} of {RecordedTrade.Good} in Period: {Period}";
     }
 }
 public enum TradeType

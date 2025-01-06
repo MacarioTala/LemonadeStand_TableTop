@@ -5,7 +5,7 @@ using static TestHelpers;
 
 public partial class BasicTradeProcessorTests
 {
-[Test]
+[TestCase(TestName = "ProcessMarketOrder returns LemonadeStandResultObject.Success() when called with a valid order")]
 public void PMO_SucceedsWhenCalledWithValidOrderAndCounterpartyOrder()
 {
     //Note: fills happen as part of FulfillDemand, not ProcessMarketOrder

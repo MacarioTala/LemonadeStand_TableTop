@@ -85,6 +85,7 @@ public class BasicConsumptionManager : iConsumptionManager
         }
         
         order.FilledQuantity = order.Quantity;
+        order.OrderStatus = LemonadeStandResultObject.Success();
         return remainingDemand - order.Quantity;
     }
 }

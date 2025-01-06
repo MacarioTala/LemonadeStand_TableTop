@@ -339,7 +339,7 @@ public class BasicTransactionManagerTests
         var expectedOrder = order;
         var expectedCounterPartyOrder = counterPartyOrder;
         //Act
-        BasicTransactionManager.RecordTrade(order, TestMarket, Period, counterPartyOrders);
+        BasicTransactionManager.RecordTransaction(order, TestMarket, Period, counterPartyOrders);
         var actualOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
         var actualCounterPartyOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades.FirstOrDefault();
         //Assert
@@ -371,7 +371,7 @@ public class BasicTransactionManagerTests
         };
         var expectedPrimaryOrder = Company1BuysFromCompany2Order;
         //Act
-        BasicTransactionManager.RecordTrade(Company1BuysFromCompany2Order, TestMarket, Period, counterPartyOrders);
+        BasicTransactionManager.RecordTransaction(Company1BuysFromCompany2Order, TestMarket, Period, counterPartyOrders);
         var actualPrimaryOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
         var actualCounterPartyOrders = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades;
         //Assert
@@ -428,7 +428,7 @@ public class BasicTransactionManagerTests
         var CounterPartyOrders = new List<Order>{CounterPartyOrder};
 
         //Act
-        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,Period,CounterPartyOrders);
+        BasicTransactionManager.RecordTransaction(PrimaryOrder,TestMarket,Period,CounterPartyOrders);
         
         //Assert
         var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
@@ -455,7 +455,7 @@ public class BasicTransactionManagerTests
         var CounterPartyOrders = new List<Order>{CounterPartyOrder};
 
         //Act
-        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,Period,CounterPartyOrders);
+        BasicTransactionManager.RecordTransaction(PrimaryOrder,TestMarket,Period,CounterPartyOrders);
         
         //Assert
         var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
@@ -487,7 +487,7 @@ public class BasicTransactionManagerTests
             new(CounterPartyOrder,Period)
         };
         //Act
-        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,
+        BasicTransactionManager.RecordTransaction(PrimaryOrder,TestMarket,
                                             Period,
                                             new List<Order>{CounterPartyOrder});
         var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
@@ -522,7 +522,7 @@ public class BasicTransactionManagerTests
             new(CounterPartyOrder2,Period)
         };
         //Act
-        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,
+        BasicTransactionManager.RecordTransaction(PrimaryOrder,TestMarket,
                                             Period,
                                             new List<Order>{CounterPartyOrder1,CounterPartyOrder2});
         var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
@@ -548,7 +548,7 @@ public class BasicTransactionManagerTests
         var expectedCounterPartyOrderForFirstTrade = CounterPartyOrder;
         var expectedCounterPartyOrderForSecondTrade = PrimaryOrder;
         //Act
-        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,
+        BasicTransactionManager.RecordTransaction(PrimaryOrder,TestMarket,
                                             Period,
                                             new List<Order>{CounterPartyOrder});
         var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
