@@ -178,9 +178,30 @@ public class BasicConsumptionManagerTests
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
         TestMarket.ProcessCompanyOrders();
         TestMarket.FulfillDemand();
-        var actualMarketTransactions = TestMarket.GetMarketTradesInPeriod(Period).Count;
+        var actualMarketTransactions = TestMarket.GetMarketTradesInPeriod(Period);
         //Assert
-        Assert.AreEqual(expectedMarketTransactions, actualMarketTransactions);
+        Assert.AreEqual(expectedMarketTransactions, actualMarketTransactions.Count);
+    }
+
+    [Test]
+    public void FD_RecordsTradeWhenMarketOrderIsFilled_MarketAndCompanyOrders()
+    {
+        //Arrange
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+
+        var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 3.5m);
+        var Company2BuysLemonadeFromAnyone = new Order(Company2,null, lemonade, 100, 3.5m);
+
+        var expectedMarketTransactions = 4;
+        //Act
+        Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
+        Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone, TestMarket,Period));
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.FulfillDemand();
+        var actualMarketTransactions = TestMarket.GetMarketTradesInPeriod(Period);
+        //Assert
+        Assert.AreEqual(expectedMarketTransactions, actualMarketTransactions.Count);
     }
 
     [Test]

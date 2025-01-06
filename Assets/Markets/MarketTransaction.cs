@@ -31,7 +31,7 @@ public class MarketTransaction
     }
     public override string ToString()
     {
-        return $"Trade: {RecordedTrade.Buyer} buys {RecordedTrade.FilledQuantity} of {RecordedTrade.Good} at Period: {Period}";
+        return $"Trade: {RecordedTrade.Buyer} bought {RecordedTrade.FilledQuantity} of {RecordedTrade.Good} at Period: {Period}";
     }
 }
 public enum TradeType

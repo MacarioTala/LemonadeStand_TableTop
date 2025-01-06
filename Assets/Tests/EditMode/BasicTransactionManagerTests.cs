@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
-public class TransactionManagerTests
+public class BasicTransactionManagerTests
 {
     TheEconomy TestEconomy;
     Good Lemon;
@@ -247,6 +247,47 @@ public class TransactionManagerTests
         Assert.AreEqual(expectedBuyerOrderFullyFilledStatus, actualBuyerOrderFullyFilledStatus, "Buyer order fully filled status not as expected");
         Assert.AreEqual(expectedBuyerOrderPartiallyFilledStatus, actualBuyerOrderPartiallyFilledStatus, "Buyer order partially filled status not as expected");
     }
+    [Test]
+    public void ProcessTransactionRecordsTwoCounterPartiesWhenTwoCounterPartiesArePresent()
+    {
+        //Arrange
+        var basicTransactionManager = new BasicTransactionManager();
+        var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
+        
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
+        var Company1Buys2LemonFromMultiple = new Order(Company1, Company2, Lemon, 2, 1m)
+        {
+            SubmittingCompany = Company1
+        };
+        var counterPartyOrders = new List<Order>();
+        var company2Sells1LemonToCompany1 = new Order(Company1,Company2,Lemon,1,1m)
+        {
+            SubmittingCompany = Company2
+        };
+        var company3Sells1LemonToCompany1 = new Order(Company1,Company3,Lemon,1,1m)
+        {
+            SubmittingCompany = Company3
+        };
+        counterPartyOrders.Add(company2Sells1LemonToCompany1);
+        counterPartyOrders.Add(company3Sells1LemonToCompany1);
+
+        var orderContext = new ActionContext{PrimaryOrder = Company1Buys2LemonFromMultiple
+            ,CounterPartyOrders=counterPartyOrders,
+            MarketToSubmitTo = TestMarket,
+            Period = Period};
+
+        var expectedOrder = Company1Buys2LemonFromMultiple;
+        //Act
+        basicTransactionManager.ProcessPairedOrders(orderContext);
+        var actualOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
+        var actualCounterPartyOrders = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades;
+        //Assert
+        Assert.AreEqual(expectedOrder, actualOrder);
+        Assert.Contains(company2Sells1LemonToCompany1, actualCounterPartyOrders);
+        Assert.Contains(company3Sells1LemonToCompany1, actualCounterPartyOrders);
+        Assert.AreEqual(2, actualCounterPartyOrders.Count);
+    }
 #endregion
 #region ProcessMarketTransactionTests
     [Test]
@@ -279,7 +320,7 @@ public class TransactionManagerTests
 #endregion
 #region RecordTrade Tests
     [Test]
-    public void RecordTradeRecordsOrderAndCounterPartyOrderWhenCalledInIsolationOnePairOnly()
+    public void RT_RecordsOrderAndCounterPartyOrderWhenCalledInIsolationOnePairOnly()
     {
         //Arrange
         var order = new Order(Company1, Company2, Lemon, 1, 1m)
@@ -306,7 +347,7 @@ public class TransactionManagerTests
         Assert.AreEqual(expectedCounterPartyOrder, actualCounterPartyOrder);
     }
     [Test]
-    public void RecordTradeRecordsOrderAndCounterPartyOrdersWithTwoCounterpartyOrders()
+    public void RT_RecordsOrderAndCounterPartyOrdersWithTwoCounterpartyOrders()
     {
         //Arrange
         var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
@@ -372,48 +413,7 @@ public class TransactionManagerTests
         Assert.AreEqual(expectedCounterPartyOrder, actualCounterPartyOrder);
     }
     [Test]
-    public void ProcessTransactionRecordsTwoCounterPartiesWhenTwoCounterPartiesArePresent()
-    {
-        //Arrange
-        var basicTransactionManager = new BasicTransactionManager();
-        var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
-        
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var Company1Buys2LemonFromMultiple = new Order(Company1, Company2, Lemon, 2, 1m)
-        {
-            SubmittingCompany = Company1
-        };
-        var counterPartyOrders = new List<Order>();
-        var company2Sells1LemonToCompany1 = new Order(Company1,Company2,Lemon,1,1m)
-        {
-            SubmittingCompany = Company2
-        };
-        var company3Sells1LemonToCompany1 = new Order(Company1,Company3,Lemon,1,1m)
-        {
-            SubmittingCompany = Company3
-        };
-        counterPartyOrders.Add(company2Sells1LemonToCompany1);
-        counterPartyOrders.Add(company3Sells1LemonToCompany1);
-
-        var orderContext = new ActionContext{PrimaryOrder = Company1Buys2LemonFromMultiple
-            ,CounterPartyOrders=counterPartyOrders,
-            MarketToSubmitTo = TestMarket,
-            Period = Period};
-
-        var expectedOrder = Company1Buys2LemonFromMultiple;
-        //Act
-        basicTransactionManager.ProcessPairedOrders(orderContext);
-        var actualOrder = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.RecordedTrade;
-        var actualCounterPartyOrders = TestMarket.GetMarketTradesInPeriod(Period).FirstOrDefault()?.CounterPartyTrades;
-        //Assert
-        Assert.AreEqual(expectedOrder, actualOrder);
-        Assert.Contains(company2Sells1LemonToCompany1, actualCounterPartyOrders);
-        Assert.Contains(company3Sells1LemonToCompany1, actualCounterPartyOrders);
-        Assert.AreEqual(2, actualCounterPartyOrders.Count);
-    }
-    [Test]
-    public void RTStaticOneBuyerOneSellerCounterPartyIsSeller()
+    public void RT_StaticOneBuyerOneSellerCounterPartyIsSeller()
     {
         //Arrange
         var PrimaryOrder = new Order(Company1, null, Lemonade, 5, 10m)
@@ -440,7 +440,7 @@ public class TransactionManagerTests
     }
 
     [Test]
-    public void RTStaticOneBuyerOneSellerCounterPartyIsBuyer()
+    public void RT_StaticOneBuyerOneSellerCounterPartyIsBuyer()
     {
         //Arrange
         var PrimaryOrder = new Order(null, Company1, Lemonade, 5, 10m)
@@ -464,6 +464,101 @@ public class TransactionManagerTests
         Assert.IsTrue(recordedTransaction.CounterPartyTrades.Count == 1);
         Assert.AreEqual(Company2,recordedTransaction.CounterPartyTrades.FirstOrDefault().Buyer);
         Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Seller);
+    }
+    [Test]
+    public void RT_OneOrderOneCounterpartyTwoMarketTrades()
+    {
+        //A single primary order that has a single counterparty
+        //results in two market trades being recorded in the Market
+        //Arrange
+        var PrimaryOrder = new Order(Company1, null, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company1
+        };
+        var CounterPartyOrder = new Order(null, Company2, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company2
+        };
+
+        var expectedMarketTransactionCount = 2;
+        var expectedMarketTransactions = new List<MarketTransaction>()
+        {
+            new(PrimaryOrder,Period),
+            new(CounterPartyOrder,Period)
+        };
+        //Act
+        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,
+                                            Period,
+                                            new List<Order>{CounterPartyOrder});
+        var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
+        //Assert
+        Assert.AreEqual(expectedMarketTransactionCount,transactionsRecorded.Count);
+        Assert.AreEqual(expectedMarketTransactions,transactionsRecorded);
+    }
+    [Test]
+    public void RT_OneOrderTwoCounterpartiesThreeMarketTrades()
+    {
+        //A single primary order that has two counterparties
+        //results in three market trades being recorded in the Market
+        //Arrange
+        var PrimaryOrder = new Order(Company1, null, Lemonade, 10, 10m)
+        {
+            SubmittingCompany = Company1
+        };
+        var CounterPartyOrder1 = new Order(null, Company2, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company2
+        };
+        var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
+        var CounterPartyOrder2 = new Order(null, Company3, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company3
+        };
+        var expectedMarketTransactionCount = 3;
+        var expectedMarketTransactions = new List<MarketTransaction>()
+        {
+            new(PrimaryOrder,Period),
+            new(CounterPartyOrder1,Period),
+            new(CounterPartyOrder2,Period)
+        };
+        //Act
+        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,
+                                            Period,
+                                            new List<Order>{CounterPartyOrder1,CounterPartyOrder2});
+        var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
+        //Assert
+        Assert.AreEqual(expectedMarketTransactionCount,transactionsRecorded.Count);
+        Assert.AreEqual(expectedMarketTransactions,transactionsRecorded);
+    }
+    [Test]
+    public void RT_OneOrderOneCounterPartyEachIsRecordedCounterparty()
+    {
+        //Two market trades should be recorded
+        //The counterparty in each MarketTrade.RecordedTrade should be the other PrimaryOrder
+        //Arrange
+        var PrimaryOrder = new Order(Company1, null, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company1
+        };
+        var CounterPartyOrder = new Order(null, Company2, Lemonade, 5, 10m)
+        {
+            SubmittingCompany = Company2
+        };
+        
+        var expectedCounterPartyOrderForFirstTrade = CounterPartyOrder;
+        var expectedCounterPartyOrderForSecondTrade = PrimaryOrder;
+        //Act
+        BasicTransactionManager.RecordTrade(PrimaryOrder,TestMarket,
+                                            Period,
+                                            new List<Order>{CounterPartyOrder});
+        var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
+        var firstTrade = transactionsRecorded.FirstOrDefault();
+        var secondTrade = transactionsRecorded.LastOrDefault();
+        var actualCounterPartyOrderForFirstTrade = firstTrade.CounterPartyTrades.FirstOrDefault();
+        var actualCounterPartyOrderForSecondTrade = secondTrade.CounterPartyTrades.FirstOrDefault();
+        //Assert
+        Assert.AreEqual(expectedCounterPartyOrderForFirstTrade,actualCounterPartyOrderForFirstTrade);
+        Assert.AreEqual(expectedCounterPartyOrderForSecondTrade,actualCounterPartyOrderForSecondTrade);
     }
 #endregion
 
