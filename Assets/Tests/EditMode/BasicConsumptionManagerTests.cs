@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
@@ -71,12 +72,13 @@ public class BasicConsumptionManagerTests
         Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
         Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 4m,0));
 
-        var company1Order = new Order(TestMarket, Company1, lemonade, 1000, 3.5m);
-        var company2Order = new Order(TestMarket, Company2, lemonade, 1000, 4.5m);
+        var company1Order = new Order(null, Company1, lemonade, 1000, 3.5m);
+        var company2Order = new Order(null, Company2, lemonade, 1000, 4.5m);
         var expectedFilledQuantity = 1000;
         //Act
-        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
-        TestMarket.QueueMarketOrder(CreateActionContext(company2Order, TestMarket,Period));
+        Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period));
+        Company2.QueueOrder(CreateActionContext(company2Order, TestMarket,Period));
+        TestMarket.ProcessCompanyOrders();
         TestMarket.FulfillDemand();
         var actualFilledQuantity=company1Order.FilledQuantity;
         //Assert
@@ -135,6 +137,7 @@ public class BasicConsumptionManagerTests
 
         var ExpectedCompany1LemonadeSellFillQuantity = 1000;
         var ExpectedCompany2LemonadeBuyFillQuantity = 100;
+        var ExpectedMarketFillQuantity = 900;
         
         //Act
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
@@ -143,9 +146,24 @@ public class BasicConsumptionManagerTests
         TestMarket.FulfillDemand();
         var ActualCompany1LemonadeSellFillQuantity = Company1SellsLemonadeToAnyone.FilledQuantity;
         var ActualCompany2LemonadeBuyFillQuantity = Company2BuysLemonadeFromAnyone.FilledQuantity;
+        var ActualMarketTrade = TestMarket.GetMarketTradesInPeriod(Period)
+                                                 .Where(x=>x.RecordedTrade.Buyer.Equals(TestMarket)
+                                                 && x.RecordedTrade.Good.Equals(lemonade)
+                                                 && x.RecordedTrade.Seller.Equals(Company1)
+                                                 && x.RecordedTrade.SubmittingCompany.Equals(TestMarket))
+                                                 .FirstOrDefault();
+        var ActualMarketFillQuantity = ActualMarketTrade.RecordedTrade.Quantity;
+
         //Assert
-        Assert.AreEqual(ExpectedCompany1LemonadeSellFillQuantity, ActualCompany1LemonadeSellFillQuantity);
-        Assert.AreEqual(ExpectedCompany2LemonadeBuyFillQuantity, ActualCompany2LemonadeBuyFillQuantity);
+        Assert.AreEqual(ExpectedCompany1LemonadeSellFillQuantity, 
+                        ActualCompany1LemonadeSellFillQuantity,
+                        $"Expected {ExpectedCompany1LemonadeSellFillQuantity} but got {ActualCompany1LemonadeSellFillQuantity}");
+        Assert.AreEqual( ExpectedCompany2LemonadeBuyFillQuantity,
+                         ActualCompany2LemonadeBuyFillQuantity,
+                         $"Expected {ExpectedCompany2LemonadeBuyFillQuantity} but got {ActualCompany2LemonadeBuyFillQuantity}");
+        Assert.AreEqual(ExpectedMarketFillQuantity, 
+                        ActualMarketFillQuantity,
+                        $"Expected {ExpectedMarketFillQuantity} but got {ActualMarketFillQuantity}");
     }
     [Test]
     public void FD_OnlyPartiallyFillsWhenSupplyExceedsDemand()
@@ -154,13 +172,13 @@ public class BasicConsumptionManagerTests
         Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3m,0));
         
         TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
-        var company1Order = new Order(TestMarket, Company1, lemonade, 1500, 3.5m);
+        var company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1500, 3.5m);
         var expected = 1000;
         //Act
-        Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period));
+        Company1.QueueOrder(CreateActionContext(company1SellsLemonadeToAnyone, TestMarket,Period));
         TestMarket.ProcessCompanyOrders();
         TestMarket.FulfillDemand();
-        var actual=company1Order.FilledQuantity;
+        var actual=company1SellsLemonadeToAnyone.FilledQuantity;
         //Assert
         Assert.AreEqual(expected, actual);
     }

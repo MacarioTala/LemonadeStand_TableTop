@@ -12,43 +12,30 @@ public class BasicConsumptionManager : iConsumptionManager
     public LemonadeStandResultObject FulfillDemand(Market market)
     {
         var demand = market.GetMarketDemand();
-        var ordersSentToMarket = market.GetOrdersSentToMarket().ToList();
+        var ordersSentToMarket = market.GetOrdersSentToMarket()
+                                       .ToList();
+
+        bool hasOrderFailures = false;
 
         foreach(var good in demand.Keys)
         {
             var remainingDemand = demand[good].CurrentDemand;
             
-            var processedOrders = FillOrderBasedOnPrice(ordersSentToMarket,good,remainingDemand).ExtraData as List<Order>;
-            
-            foreach(var order in processedOrders)
+            var processedOrders = FillOrderBasedOnPrice(market,ordersSentToMarket,good,remainingDemand);
+
+            if(processedOrders.Result!=LemonadeStandResultObject.Success().Result)
             {
-                order.Buyer = market;
-                var marketCounterPartyOrder = new Order(buyer: market
-                                                     , seller: order.Seller
-                                                     , good: order.Good
-                                                     , price: order.Price
-                                                     , quantity: order.FilledQuantity)
-                {
-                    SubmittingCompany = market
-                };
-
-                var context = new ActionContext
-                {
-                    PrimaryOrder = order,
-                    TradeToSubmit = order,
-                    MarketToSubmitTo = market,
-                    Period = market.CurrentPeriod,
-                    CounterPartyOrders = new List<Order>{marketCounterPartyOrder}
-                };
-                market.ProcessMarketOrder(context);
-                remainingDemand -= order.FilledQuantity;
-            }
+                hasOrderFailures = true;
+            }    
         }
-
-        return LemonadeStandResultObject.Success();
+        return hasOrderFailures?LemonadeStandResultObject.Failure(ResultTypeEnum.SomeOrdersNotProcessed,"See individual orders for details"):LemonadeStandResultObject.Success();
     }
 
-    internal LemonadeStandResultObject FillOrderBasedOnPrice(List<Order> trades, Good good, int remainingDemand)
+    internal LemonadeStandResultObject FillOrderBasedOnPrice(
+                                        Market market, 
+                                        List<Order> trades, 
+                                        Good good, 
+                                        int remainingDemand)
     {
         var filledOrders = trades
                                         .Where(trade=>trade.Good.Equals(good))
@@ -65,7 +52,7 @@ public class BasicConsumptionManager : iConsumptionManager
                 order.OrderStatus = orderStatus;
                 hasOrderFailures = true;
             }
-            remainingDemand = CalculateFilledQuantity(order, remainingDemand);
+            remainingDemand = CalculateFilledQuantity(market, order, remainingDemand);
         }
         if (hasOrderFailures)
         {
@@ -76,16 +63,52 @@ public class BasicConsumptionManager : iConsumptionManager
         return returnObject;
     }
 
-    private int CalculateFilledQuantity(Order order, int remainingDemand)
+    private int CalculateFilledQuantity(Market market, Order order, int remainingDemand)
     {
-        if (order.Quantity >= remainingDemand)
-        {
-            order.FilledQuantity = remainingDemand;
-            return 0;
-        }
+        order.Buyer = market;
+        int demandToReturn = 0;
+        var marketCounterPartyOrder = new Order(buyer: market
+                                                     , seller: order.Seller
+                                                     , good: order.Good
+                                                     , price: order.Price
+                                                     , quantity: 0)
+                {
+                    SubmittingCompany = market
+                };
         
-        order.FilledQuantity = order.Quantity;
+
+        if (order.RemainingQuantity >= remainingDemand)
+        {
+            order.FilledQuantity += remainingDemand;
+            marketCounterPartyOrder.Quantity = remainingDemand;
+            marketCounterPartyOrder.FilledQuantity = remainingDemand;
+            demandToReturn = 0;
+        }
+        else
+            {
+                var tempRemainingQuantity = order.RemainingQuantity;//need this because order.RemainingQuantity will be updated in the next line
+                order.FilledQuantity += order.RemainingQuantity;
+                marketCounterPartyOrder.Quantity = tempRemainingQuantity;
+                marketCounterPartyOrder.FilledQuantity = tempRemainingQuantity;
+                demandToReturn = remainingDemand - tempRemainingQuantity;
+            }
+
         order.OrderStatus = LemonadeStandResultObject.Success();
-        return remainingDemand - order.Quantity;
+        marketCounterPartyOrder.OrderStatus = LemonadeStandResultObject.Success();
+
+        var marketOrderContext = new ActionContext
+                {
+                    PrimaryOrder = order,
+                    TradeToSubmit = order,
+                    MarketToSubmitTo = market,
+                    Period = market.CurrentPeriod,
+                    CounterPartyOrders = new List<Order>{marketCounterPartyOrder},
+                };
+        
+        market.ProcessMarketOrder(marketOrderContext);
+
+        
+    
+        return demandToReturn;
     }
 }
