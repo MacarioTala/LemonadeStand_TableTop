@@ -66,7 +66,8 @@ public class BasicConsumptionManager : iConsumptionManager
     private int CalculateFilledQuantity(Market market, Order order, int remainingDemand)
     {
         order.Buyer = market;
-        int demandToReturn = 0;
+        int demandToReturn;
+        decimal cashToRemoveFromMarket;
         var marketCounterPartyOrder = new Order(buyer: market
                                                      , seller: order.Seller
                                                      , good: order.Good
@@ -79,6 +80,7 @@ public class BasicConsumptionManager : iConsumptionManager
 
         if (order.RemainingQuantity >= remainingDemand)
         {
+            cashToRemoveFromMarket = remainingDemand * order.Price;
             order.FilledQuantity += remainingDemand;
             marketCounterPartyOrder.Quantity = remainingDemand;
             marketCounterPartyOrder.FilledQuantity = remainingDemand;
@@ -87,12 +89,14 @@ public class BasicConsumptionManager : iConsumptionManager
         else
             {
                 var tempRemainingQuantity = order.RemainingQuantity;//need this because order.RemainingQuantity will be updated in the next line
+                cashToRemoveFromMarket = order.RemainingQuantity * order.Price;
                 order.FilledQuantity += order.RemainingQuantity;
                 marketCounterPartyOrder.Quantity = tempRemainingQuantity;
                 marketCounterPartyOrder.FilledQuantity = tempRemainingQuantity;
                 demandToReturn = remainingDemand - tempRemainingQuantity;
             }
 
+        market.SetCash(market.GetCash() - cashToRemoveFromMarket);
         order.OrderStatus = LemonadeStandResultObject.Success();
         marketCounterPartyOrder.OrderStatus = LemonadeStandResultObject.Success();
 

@@ -239,6 +239,24 @@ public class BasicConsumptionManagerTests
         //Assert
         Assert.AreEqual(expected, actual);
     }
+    [Test]
+    public void FD_MarketCashDecrementsAfterFulfilingDemand()
+    {
+        //Arrange
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
+
+        var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 3.5m);
+        var expectedMarketCash = TestMarket.GetCash()-(1000 * 3.5m);
+
+        Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
+        //Act
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.FulfillDemand();
+        var actualMarketCash = TestMarket.GetCash();
+        //Assert
+        Assert.AreEqual(expectedMarketCash, actualMarketCash);
+    }
 
     [TearDown]
     public void TearDown()

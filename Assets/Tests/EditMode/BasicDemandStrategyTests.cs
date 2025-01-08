@@ -41,6 +41,10 @@ public class BasicDemandStrategyTests
     public void TearDown()
     {
         Object.DestroyImmediate(TestEconomy.gameObject);
+        Company1 = null;
+        Company2 = null;
+        TestMarket = null;
+        TestEconomy = null;
     }
 
     [Test]
@@ -136,22 +140,16 @@ public class BasicDemandStrategyTests
     public void CalculateDemandForPeriodCountsOnlyOrdersIfNoMarketDemandExists()
     {
         // Arrange
-        var period = 0;
         var strategy = new LinearDemandStrategy();
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company1);
-        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company2);
-        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
 
-        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
-        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
-        marketToTest.QueueOrder(lemonContext);
+        var lemonOrder = new Order(Company2, Company1, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = TestMarket , Period = Period};
+        TestMarket.QueueOrder(lemonContext);
 
         var expected = 500;
         // Act
-        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(marketToTest, period)[lemon].CurrentDemand;
+        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(TestMarket, Period)[lemon].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
