@@ -7,6 +7,7 @@ using UnityEngine;
 public class Market : ScriptableObject, iCompany
 {
 #region Fields, Properties, and Convenience Methods
+    public Guid MarketId = Guid.NewGuid();
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField] private string _companyName;
     public string Name
@@ -26,6 +27,17 @@ public class Market : ScriptableObject, iCompany
 
     //Companies
     public List<Company> CompaniesInThisMarket = new();
+
+    //Demographic data
+    public int Population { get; set; }
+
+    //Event Handlers
+    public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent);
+    public event OrderFulfillmentHandler OrderFulfilled;
+    public void RaiseOrderFulfilledEvent(OrderFulfilledEvent orderFulfilledEvent)
+    {
+        OrderFulfilled?.Invoke(orderFulfilledEvent);
+    }
 
     //Goals
     public List<Goal> Goals {get;set;}
@@ -49,7 +61,7 @@ public class Market : ScriptableObject, iCompany
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
-    public void SetDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
+    public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
     public List<MarketTransaction> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
     public void RecordMarketTrade(MarketTransaction trade) => _marketTradesInPeriod.Add(trade);
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
@@ -58,7 +70,7 @@ public class Market : ScriptableObject, iCompany
         if(!_marketTradesInPeriod.Contains(trade))_marketTradesInPeriod.Add(trade);
     }
     public void SetCash(decimal new_cash) => cash = new_cash;
-    #endregion
+#endregion
 #region Creation and Initialization
     //Instantiate Markets using a factory
     private Market ()
@@ -111,6 +123,9 @@ public class Market : ScriptableObject, iCompany
     public void SetTradeProcessor(iTradeProcessor tradeProcessor) => _tradeProcessor = tradeProcessor;
     private iTransactionManager _transactionManager;
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
+    private iMarketDataService _marketDataService;
+    public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
+
 #endregion
 #region Company Interactions
     public void BankruptCompany(Company company)
@@ -216,6 +231,39 @@ public class Market : ScriptableObject, iCompany
             throw new NotImplementedException();
         }
 #endregion
+#region History
+    public float GetMetricPercentageChangeInPeriod<T>
+        (
+            Func<Guid, IEnumerable<T>> getHistoryFunc,
+            Func<T, float> getMetricValueFunc
+        )
+        where T : iHistorical
+    {
+        if(CurrentPeriod == 0) return 0;
+
+        var history = getHistoryFunc(MarketId);
+
+        var metricValues = history
+                            .Where(x=>x.Period == CurrentPeriod
+                            || x.Period == CurrentPeriod-1)
+                            .ToDictionary(x=>x.Period, x=>getMetricValueFunc(x));
+
+        var currentMetricValue = metricValues.GetValueOrDefault(CurrentPeriod,0);
+        var previousMetricValue = metricValues.GetValueOrDefault(CurrentPeriod-1,0);
+
+        var valueToReturn = (currentMetricValue - previousMetricValue)
+                            /(previousMetricValue==0?1:previousMetricValue);
+
+        return valueToReturn;
+    }
+
+    public float GetPopulationPercentageChangeInPeriod()
+    {
+        return GetMetricPercentageChangeInPeriod(
+            _marketDataService.GetPopulationHistory,
+            x=>x.Population);       
+    }
+#endregion
 #region Inventory Management
     public void AddRecipe(Recipe recipe)
     {
@@ -246,13 +294,18 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Demand
-    internal void AdjustDemand()
-    {
-        DemandStrategy.AdjustDemand(this);
-    }
      internal void CalculateFulfillmentRates(int tradingPeriod=-1)
     {
         DemandStrategy.CalculateFulfillmentRates(this,tradingPeriod);
+    }
+
+    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity, out float elasticityValue)
+    {
+        if(!good.Elasticities.TryGetValue(elasticity, out elasticityValue))
+        {
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
+        }
+        return LemonadeStandResultObject.Success();
     }
     public int GetMarketDemandForGood(string good_name)
     {
@@ -318,7 +371,6 @@ public class Market : ScriptableObject, iCompany
     {
         FulfillDemand();
         CalculateFulfillmentRates(period);
-        AdjustDemand();
         UpdatePrices();
         ConsumeGoods();
         UpdateCompanyStatuses(period);

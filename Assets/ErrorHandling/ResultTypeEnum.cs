@@ -27,4 +27,5 @@ public enum ResultTypeEnum
     InvalidTransaction=21,
     PrimaryOrderNotSet=22,
     SomeOrdersNotProcessed = 23,
+    ElasticityNotFound = 24,
 }

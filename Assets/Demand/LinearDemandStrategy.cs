@@ -5,42 +5,46 @@ public class LinearDemandStrategy : iDemandStrategy
 {
     private const int MinDemand = 0;
     private const int MaxDemand = 1000000;
-    public void AdjustDemand(Market market)
+
+public void AdjustDemandForPopulation(Market market,Good good)
+{
+    var populationChangeInPeriod = market.GetPopulationPercentageChangeInPeriod();
+    if(populationChangeInPeriod == 0) return;
+    
+    AdjustDemandBasedOnElasticity(market,good,ElasticityTypeEnum.PopulationElasticity,populationChangeInPeriod);
+    
+}
+public LemonadeStandResultObject AdjustDemandBasedOnElasticity(Market market, Good good, ElasticityTypeEnum elasticity,float percentageChangeInMetric)
+{
+    var marketDemand = market.GetMarketDemand();
+
+    if(!marketDemand.ContainsKey(good))
     {
-        var marketDemand = market.GetMarketDemand();
-        foreach(var good in marketDemand.Keys)
-        {
-            var demandData = marketDemand[good];
-            var elasticity = good.DemandElasticity;
-            if (elasticity == 0) continue;
-            
-            //Calculate adjustment factor
-            var adjustment_factor = 1f;
-
-            //increase demand if fulfilment rate is 60% or lower
-            if(demandData.FulfilmentRate <= .6f)
-            {
-                adjustment_factor += (1f- demandData.FulfilmentRate) * elasticity;  
-            }
-            //make adjustment_factor equal elasticity if fulfilment rate is 60 to 95%
-            else if(demandData.FulfilmentRate > .6f && demandData.FulfilmentRate < .95f)
-            {
-                adjustment_factor = elasticity;
-            }
-            //decrease demand if fulfilment rate is 95% or higher
-            else if(demandData.FulfilmentRate >= .95f)
-            {
-                adjustment_factor -= .1f * elasticity;
-            }
-
-            demandData.CurrentDemand = Mathf.Clamp(
-                Mathf.RoundToInt(demandData.CurrentDemand * adjustment_factor)
-                                ,demandData.MinDemand
-                                ,demandData.MaxDemand
-                                );
-        }
+        market.InitializeDemandForSpecificGood(good, 0);
     }
+    var demandData = marketDemand[good];
+    var doesElasticityExist = market.GetEffectiveElasticityForGood(good, elasticity, out var elasticityValue);
+    
+    if(!doesElasticityExist.Equals(LemonadeStandResultObject.Success())) 
+    {
+        Debug.Log($"Elasticity not found for {good.good_name}");
+        return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
+    }
+    
+    var currentDemand = demandData.CurrentDemand;
+    var MinDemand = demandData.MinDemand;
+    var MaxDemand = demandData.MaxDemand;
 
+    var adjustmentFactor = Math.Round(currentDemand * elasticityValue * percentageChangeInMetric);
+
+    if (elasticityValue == 0) return LemonadeStandResultObject.Success();
+
+    var newDemand = Math.Clamp(currentDemand + adjustmentFactor, MinDemand, MaxDemand);
+
+    demandData.CurrentDemand = (int)Math.Round(newDemand,0);
+
+    return LemonadeStandResultObject.Success();
+}
      private decimal CalculateAskForProducedGood (Market market,Good good)
     {
         if(!good.IsProducedGood) return 0;
@@ -85,23 +89,9 @@ public class LinearDemandStrategy : iDemandStrategy
         }
     }
 
-    public void InitializeDemand(Market market)
+    public void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent)
     {
         throw new NotImplementedException();
     }
-
-    public float GetDemandElasticityForGood(Good good)
-    {
-        throw new NotImplementedException();
-    }
-
-    public float GetIncomeElasticityForGood(Good good)
-    {
-        throw new NotImplementedException();
-    }
-
-    public float GetPriceElasticityForGood(Good good)
-    {
-        throw new NotImplementedException();
-    }
+   
 }

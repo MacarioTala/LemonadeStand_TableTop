@@ -19,7 +19,7 @@ public class DemandElasticityTests
         water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
         sugar = Good.CreateInstance("Sugar", new Price_band(.5m, 1.0m), Rarity_enum.Common);
 
-        water.SetDemandElasticity(0f);
+        water.AddElasticity(ElasticityTypeEnum.SaturationElasticity,0f);
     }
    
     [Test]
@@ -52,7 +52,7 @@ public class DemandElasticityTests
         Company1.QueueOrder(waterContext);
         Company2.QueueOrder(lemonContext);
         TestMarket.ProcessCompanyOrders();
-        TestMarket.AdjustDemand();
+        throw new System.Exception("Test not implemented");
         var actualWaterDemand = TestMarket.GetMarketDemand()[water].CurrentDemand;
         var actualLemonDemand = TestMarket.GetMarketDemand()[lemon].CurrentDemand;
         //Assert

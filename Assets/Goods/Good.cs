@@ -9,8 +9,8 @@ public class Good : ScriptableObject
     private decimal Price{
                         get => _price;
                         set => _price = Math.Round(value,2);}
-    public float DemandElasticity { get;  private set; }
-    public void SetDemandElasticity(float elasticity) => DemandElasticity = elasticity;
+    public Dictionary<ElasticityTypeEnum, float> Elasticities = new();
+    public void AddElasticity(ElasticityTypeEnum key, float value) => Elasticities.Add(key, value);
 
     public string good_name;
     private decimal price_increment_rate;
@@ -37,13 +37,11 @@ public class Good : ScriptableObject
 
     private void Initialize(string good_name, 
                             Price_band price_band,
-                            Rarity_enum rarity=Rarity_enum.Common,
-                            float demandElasticity=1) 
+                            Rarity_enum rarity=Rarity_enum.Common) 
     {
         this.good_name = good_name;
         PriceBand = price_band;
         Rarity = rarity;
-        DemandElasticity = demandElasticity;
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
         Set_initial_price_thresholds();

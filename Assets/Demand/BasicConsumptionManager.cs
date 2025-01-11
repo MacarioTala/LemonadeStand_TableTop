@@ -4,11 +4,6 @@ using System.Runtime.CompilerServices;
 [assembly:InternalsVisibleTo("Tests")]
 public class BasicConsumptionManager : iConsumptionManager
 {
-    public void AdjustDemand(ActionContext context)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public LemonadeStandResultObject FulfillDemand(Market market)
     {
         var demand = market.GetMarketDemand();
@@ -68,6 +63,7 @@ public class BasicConsumptionManager : iConsumptionManager
         order.Buyer = market;
         int demandToReturn;
         decimal cashToRemoveFromMarket;
+        int quantityToFill;
         var marketCounterPartyOrder = new Order(buyer: market
                                                      , seller: order.Seller
                                                      , good: order.Good
@@ -81,19 +77,22 @@ public class BasicConsumptionManager : iConsumptionManager
         if (order.RemainingQuantity >= remainingDemand)
         {
             cashToRemoveFromMarket = remainingDemand * order.Price;
-            order.FilledQuantity += remainingDemand;
-            marketCounterPartyOrder.Quantity = remainingDemand;
-            marketCounterPartyOrder.FilledQuantity = remainingDemand;
+            quantityToFill = remainingDemand;
+
+            order.FilledQuantity += quantityToFill;
+            marketCounterPartyOrder.Quantity = quantityToFill;
+            marketCounterPartyOrder.FilledQuantity = quantityToFill;
             demandToReturn = 0;
         }
         else
             {
-                var tempRemainingQuantity = order.RemainingQuantity;//need this because order.RemainingQuantity will be updated in the next line
-                cashToRemoveFromMarket = order.RemainingQuantity * order.Price;
-                order.FilledQuantity += order.RemainingQuantity;
-                marketCounterPartyOrder.Quantity = tempRemainingQuantity;
-                marketCounterPartyOrder.FilledQuantity = tempRemainingQuantity;
-                demandToReturn = remainingDemand - tempRemainingQuantity;
+                quantityToFill = order.RemainingQuantity;//need this because order.RemainingQuantity will be updated in the next line
+
+                cashToRemoveFromMarket = quantityToFill * order.Price;
+                order.FilledQuantity += quantityToFill;
+                marketCounterPartyOrder.Quantity = quantityToFill;
+                marketCounterPartyOrder.FilledQuantity = quantityToFill;
+                demandToReturn = remainingDemand - quantityToFill;
             }
 
         market.SetCash(market.GetCash() - cashToRemoveFromMarket);
@@ -111,7 +110,19 @@ public class BasicConsumptionManager : iConsumptionManager
         
         market.ProcessMarketOrder(marketOrderContext);
 
-        
+        market.RaiseOrderFulfilledEvent(
+            new OrderFulfilledEvent
+            {
+                Good = order.Good,
+                FulfilledQuantity = quantityToFill,
+                OriginalQuantity = order.Quantity,
+                FillPrice = order.Price,
+                OrderMarket = market,
+                Period = market.CurrentPeriod,
+                PrimaryOrder = order,
+                CounterPartyOrders = new List<Order>{marketCounterPartyOrder}
+            }
+        );
     
         return demandToReturn;
     }
