@@ -29,6 +29,8 @@ public class Market : ScriptableObject, iCompany
     public List<Company> CompaniesInThisMarket = new();
 
     //Demographic data
+    public float MarketInstability { get; set; }//0-1. 1 is most unstable
+    public float PopulationGrowthRate { get; set; }
     public int Population { get; set; }
 
     //Event Handlers
@@ -58,12 +60,15 @@ public class Market : ScriptableObject, iCompany
     //Convenience methods
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
+
+    public float GetMarketInstability()=>MarketInstability;
+    public void SetMarketInstability(float newInstability)=>MarketInstability = newInstability;
+    public float GetPopulationGrowthRate()=>PopulationGrowthRate;
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
     public List<MarketTransaction> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
-    public void RecordMarketTrade(MarketTransaction trade) => _marketTradesInPeriod.Add(trade);
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
     public void RecordTrade(MarketTransaction trade) 
     {
@@ -82,16 +87,16 @@ public class Market : ScriptableObject, iCompany
         public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
             var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, null);
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            market.Initialize(companyName, companyLevel, null);
             return market;
         }
 
         public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
             var market = CreateInstance<Market>();
-            market.Initialize(companyName, companyLevel, null);
             market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            market.Initialize(companyName, companyLevel, null);
             _initializer.InitializeMarket(market);
             return market;
         }
@@ -101,6 +106,10 @@ public class Market : ScriptableObject, iCompany
         Name = companyName;
         company_level = companyLevel;
         _marketStrategy = strategy;
+        
+        //Event Handlers
+        OrderFulfilled += DemandStrategy.OnOrderFulfilled;
+
         //Managers
         _consumptionManager = new BasicConsumptionManager();
         _marketDataManager = new BasicMarketDataManager();
@@ -299,22 +308,23 @@ public class Market : ScriptableObject, iCompany
         DemandStrategy.CalculateFulfillmentRates(this,tradingPeriod);
     }
 
-    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity, out float elasticityValue)
+    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
     {
-        if(!good.Elasticities.TryGetValue(elasticity, out elasticityValue))
+        if (!good.Elasticities.TryGetValue(elasticity, out float elasticityValue))
         {
             return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
         }
-        return LemonadeStandResultObject.Success();
+
+        return LemonadeStandResultObject.Success(extraData:elasticityValue);
     }
     public int GetMarketDemandForGood(string good_name)
     {
         var good = _marketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
         return _marketDemand[good].CurrentDemand;
     }
-    public void InitializeDemandForSpecificGood(Good good, int InitialDemand)
+    public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand=iDemandStrategy.MinDemand, int maxDemand=iDemandStrategy.MaxDemand)
     {
-       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand);
+       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand,minDemand,maxDemand);
     }
     /// <summary>
     /// A Market order is an order initiated by the Market

@@ -3,9 +3,19 @@ using System.Linq;
 
 public interface iDemandStrategy
 {
-    const int MinDemand = 0;
-    const int MaxDemand = 10000;
+    public const int MinDemand = 0;
+    public const int MaxDemand = 10000;
     void InitializeDemandForSpecificGood(Market market, Good good, int initialDemand, int minDemand = MinDemand, int maxDemand = MaxDemand);
+    void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent);
+#region Default Implementations
+
+    public void AddParabolicDemanForGood(Market market, Good good, float curvature, float steepness, float shift)
+    {
+        var demandData = market.GetMarketDemand()[good];
+        demandData.Curvature = curvature;
+        demandData.Steepness = steepness;
+        demandData.Shift = shift;
+    }
     
     public Dictionary<Good, DemandData> CalculateDemandForPeriod(Market market, int tradingPeriod)
     {
@@ -24,6 +34,7 @@ public interface iDemandStrategy
     {
         Dictionary<Good, int> calculatedSupply = new();
         var executedTrades = market.GetMarketTradesInPeriod(tradingPeriod);
+
         foreach (var trade in executedTrades)
         {
             if(calculatedSupply.ContainsKey(trade.RecordedTrade.Good))
@@ -77,4 +88,5 @@ public interface iDemandStrategy
                         )
             .Sum(x => x.RecordedTrade.Quantity);
     }
+#endregion
 }
