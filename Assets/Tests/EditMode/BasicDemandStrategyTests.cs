@@ -77,16 +77,11 @@ public class BasicDemandStrategyTests
         TestMarket.InitializeDemandForSpecificGood(lemon, 1000);
         Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
 
-        var Company1SellsLemonsToCompany2 = new Order(Company2, Company1, lemon, 500, 3.0m);
-        var Company2BuysLemonsFromCompany1 = new Order(Company2,Company1, lemon, 500, 3.0m);
-        var Company1SellsLemonsToAnyone = new Order(null, Company1, lemon, 500, 3.0m);
-        var MarketBuysLemonsFromCompany1 = new Order(TestMarket, Company1, lemon, 500, 3.0m);
-        
+        var Company1SellsLemonsToAnyone = new Order(null, Company1, lemon, 1000, 3.0m);
+        var Company2BuysLemonsFromAnyone = new Order(Company2,null, lemon, 500, 3.0m);
 
-        Company1.QueueOrder(CreateActionContext(Company1SellsLemonsToCompany2, TestMarket, Period));
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonsToAnyone, TestMarket, Period));
-        Company2.QueueOrder(CreateActionContext(Company2BuysLemonsFromCompany1, TestMarket, Period));
-        TestMarket.QueueOrder(CreateActionContext(MarketBuysLemonsFromCompany1, TestMarket, Period));
+        Company2.QueueOrder(CreateActionContext(Company2BuysLemonsFromAnyone, TestMarket, Period));
 
         const int expected = 500;
         // Act
@@ -116,23 +111,18 @@ public class BasicDemandStrategyTests
     public void CalculateDemandForPeriodReturnsBaseMarketDemandPlusOrdersWhenOrdersExist()
     {
         // Arrange
-        var period = 0;
         var strategy = new LinearDemandStrategy();
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
-        marketToTest.InitializeDemandForSpecificGood(lemon, 1000);
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company1);
-        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company2);
-        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
+        
+        TestMarket.InitializeDemandForSpecificGood(lemon, 1000);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
 
-        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
-        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
-        marketToTest.QueueOrder(lemonContext);
+        var Company1BuysLemonsFromAnyone = new Order(Company1, null, lemon, 500, 3.0m);
+        var lemonContext = new ActionContext { TradeToSubmit = Company1BuysLemonsFromAnyone, MarketToSubmitTo = TestMarket , Period = Period};
+        TestMarket.QueueOrder(lemonContext);
 
         var expected = 1500;
         // Act
-        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(marketToTest, period)[lemon].CurrentDemand;
+        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(TestMarket, Period)[lemon].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -158,28 +148,27 @@ public class BasicDemandStrategyTests
     public void CalculateSupplyForPeriodReturnsTotalQuantityOfAllFilledTrades()
     {
         //Arrange
-        var period = 0;
-        var strategy = new LinearDemandStrategy();
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company1);
-        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company2);
-        company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,period));
-        company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,Period));
 
-        var lemonOrder = new Order(company2, company1, lemon, 500, 3.0m);
-        var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = marketToTest , Period = period};
-        marketToTest.QueueOrder(lemonContext);
+        var Company2BuysLemonsFromAnyone = new Order(Company2, null, lemon, 500, 3.0m);
+        var Company1SellsLemonsToAnyone = new Order(null, Company1, lemon, 500, 3.0m);
+        var Company2lemonContext = new ActionContext { TradeToSubmit = Company2BuysLemonsFromAnyone, MarketToSubmitTo = TestMarket , Period = Period};
+        var Company1LemonContext = new ActionContext { TradeToSubmit = Company1SellsLemonsToAnyone, MarketToSubmitTo = TestMarket , Period = Period};
+        Company2.QueueOrder(Company2lemonContext);
+        Company1.QueueOrder(Company1LemonContext);
 
-        var waterOrder = new Order(company1, company2, water, 500, 3.0m);
-        var waterContext = new ActionContext { TradeToSubmit = waterOrder, MarketToSubmitTo = marketToTest , Period = period};
-        marketToTest.QueueOrder(waterContext);
+        var Company1BuysWaterFromAnyone = new Order(Company1, null, water, 500, 3.0m);
+        var Company2SellsWaterToAnyone = new Order(null, Company2, water, 500, 3.0m);
+        var Company1waterContext = new ActionContext { TradeToSubmit = Company1BuysWaterFromAnyone, MarketToSubmitTo = TestMarket , Period = Period};
+        var Company2WaterContext = new ActionContext { TradeToSubmit = Company2SellsWaterToAnyone, MarketToSubmitTo = TestMarket , Period = Period};
+        Company1.QueueOrder(Company1waterContext);
+        Company2.QueueOrder(Company2WaterContext);
 
         var expected = new Dictionary<Good, int> {{lemon, 500}, {water, 500}};
         //Act
-        marketToTest.ProcessCompanyOrders();
-        var actual = ((iDemandStrategy)strategy).CalculateSupplyForPeriod(marketToTest, period);
+        TestMarket.ProcessCompanyOrders();
+        var actual = ((iDemandStrategy)strategy).CalculateSupplyForPeriod(TestMarket, Period);
         //Assert
         Assert.AreEqual(expected, actual);
     }

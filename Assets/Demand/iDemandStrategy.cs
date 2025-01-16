@@ -33,7 +33,8 @@ public interface iDemandStrategy
     public Dictionary<Good, int> CalculateSupplyForPeriod(Market market, int tradingPeriod)
     {
         Dictionary<Good, int> calculatedSupply = new();
-        var executedTrades = market.GetMarketTradesInPeriod(tradingPeriod);
+        var executedTrades = market.GetMarketTradesInPeriod(tradingPeriod)
+                                   .Where(x => x.RecordedTrade.IsSell());
 
         foreach (var trade in executedTrades)
         {
@@ -70,13 +71,13 @@ public interface iDemandStrategy
 
     public int GetTotalBoughtByMarket(Market market,Good good,int tradingPeriod)
     {
-         return 
-            market.GetMarketTradesInPeriod(tradingPeriod)
-            .Where(x => x.Period == tradingPeriod
+         return market.GetMarketTradesInPeriod(tradingPeriod)
+                         .Where(x => x.Period == tradingPeriod
                         && x.RecordedTrade.Good.Equals(good)
+                        && x.RecordedTrade.IsBuy()
                         && x.RecordedTrade.Buyer is Market
                         )
-            .Sum(x => x.RecordedTrade.Quantity);
+                        .Sum(x => x.RecordedTrade.Quantity);
     }
 
     public int GetTotalSoldByMarket(Market market,int tradingPeriod, Good good) //currently public for testing purposes

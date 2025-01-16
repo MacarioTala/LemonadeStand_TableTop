@@ -5,14 +5,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Good", menuName = "GameObjects/Good", order = 1)]
 public class Good : ScriptableObject
 {
+    public string good_name;
+    
     private decimal _price;
     private decimal Price{
                         get => _price;
                         set => _price = Math.Round(value,2);}
+    
+    //Demand
     public Dictionary<ElasticityTypeEnum, float> Elasticities = new();
     public void AddElasticity(ElasticityTypeEnum key, float value) => Elasticities.Add(key, value);
+    public bool isDemandInelastic => Elasticities.Count == 0;
 
-    public string good_name;
     private decimal price_increment_rate;
     private Price_band PriceBand;
 
