@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
-public class LinearDemandStrategyTests
+public partial class LinearDemandStrategyTests
 {
     TheEconomy TestEconomy;
     Good Lemonade;
@@ -20,6 +20,7 @@ public class LinearDemandStrategyTests
     public void SetUp()
     {
         Lemonade = Good.CreateInstance("Lemonade", new Price_band(.5m, 2m), Rarity_enum.Uncommon);
+        Lemonade.IsProducedGood = true;
 
         var EconomyObject = new GameObject();
         TestEconomy = EconomyObject.AddComponent<TheEconomy>();
@@ -127,8 +128,8 @@ public class LinearDemandStrategyTests
     public void ADFP_DemandIncreasesBySeventyPercentWhenPopulationDoubles()
     {
         //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
         Lemonade.Elasticities.Add(ElasticityTypeEnum.PopulationElasticity, .7f);
+        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
         
         TestMarket.CurrentPeriod = 1;
 
@@ -181,7 +182,7 @@ public class LinearDemandStrategyTests
             lemonadeDemand.Curvature = 1;
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,100,1);
+        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,100,1){SubmittingCompany=Company1};
         TestMarket.RecordTrade(new MarketTransaction(Company1SellsLemonadeToAnyone,0));
 
         var expectedDemand = 100;
@@ -214,13 +215,13 @@ public class LinearDemandStrategyTests
     {
         //Arrange
         const int initialDemand = 100;
+        Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
             var marketDemand = TestMarket.GetMarketDemand();
             var lemonadeDemand = marketDemand[Lemonade];
             lemonadeDemand.Curvature = 1;
         
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,200,1);
+        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,200,1){SubmittingCompany=Company1};
         TestMarket.RecordTrade(new MarketTransaction(Company1SellsLemonadeToAnyone,0));
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
@@ -245,7 +246,6 @@ public class LinearDemandStrategyTests
         //Assert
         Assert.IsTrue(0< actualDemand && actualDemand < doubleDemand,$"Demand was expected to increase less than double from 100, but was {actualDemand}");
     }
-
 #endregion
     [TearDown]
     public void TearDown()

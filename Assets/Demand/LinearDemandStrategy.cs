@@ -67,25 +67,17 @@ public class LinearDemandStrategy : iDemandStrategy
             ask = good.GetPrice();
         }
 
-        if(marketDemand.ContainsKey(good))
-        {
-            marketDemand[good].CurrentDemand = initialDemand;
-            marketDemand[good].MinDemand = minDemand;
-            marketDemand[good].MaxDemand = maxDemand;
-            marketDemand[good].Ask = ask;
-        }
-        else
-        {
-            var demandData = new DemandData
-                            { 
-                                CurrentDemand = initialDemand,
-                                FulfilmentRate = 0f,
-                                MinDemand = minDemand,
-                                MaxDemand = maxDemand,
-                                Ask = ask
-                            };
-            marketDemand.Add(good, demandData);
-        }
+        if(marketDemand.ContainsKey(good)) marketDemand.Remove(good);
+    
+        var demandData = new DemandData
+                        { 
+                            CurrentDemand = initialDemand,
+                            FulfilmentRate = 0f,
+                            MinDemand = minDemand,
+                            MaxDemand = maxDemand,
+                            Ask = ask
+                        };
+        marketDemand.Add(good, demandData);
     }
 
     public void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent)
