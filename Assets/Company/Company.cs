@@ -194,7 +194,7 @@ public class Company : ScriptableObject, iCompany
 
     internal bool HasGood(Good good, int quantity)
     {
-        var good_in_inventory = inventory.GetInventoryEntriesByGood(good.good_name).FirstOrDefault();
+        var good_in_inventory = inventory.GetInventoryEntriesByGood(good.GoodName).FirstOrDefault();
         if(good_in_inventory == null)
         {
             return false;

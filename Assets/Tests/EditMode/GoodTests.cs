@@ -25,7 +25,7 @@ public class GoodTests
         // Act
         var lemon = Good.CreateInstance(good_name, price_band1,uncommon);
         // Assert
-        Assert.AreEqual(good_name, lemon.good_name);
+        Assert.AreEqual(good_name, lemon.GoodName);
         Assert.AreEqual(expected_rarity, lemon.GetRarity());
         Assert.IsTrue(lemon.GetPrice() >= expected_price_min && lemon.GetPrice() <= expected_price_max);
     }
@@ -43,7 +43,7 @@ public class GoodTests
         // Act
         var lemon = Good.CreateInstance(good_name, price_band1,uncommon);
         // Assert
-        Assert.AreEqual(good_name, lemon.good_name);
+        Assert.AreEqual(good_name, lemon.GoodName);
         Assert.AreEqual(expected_price_increase_threshold, lemon.price_increase_threshold);
         Assert.AreEqual(expected_price_decrease_threshold, lemon.price_decrease_threshold);
         Assert.AreEqual(expected_rarity, lemon.GetRarity());
@@ -61,7 +61,7 @@ public class GoodTests
         // Act
         var lemon = Good.CreateInstance(good_name, price_band1,uncommon);
         // Assert
-        Assert.AreEqual(good_name, lemon.good_name);
+        Assert.AreEqual(good_name, lemon.GoodName);
         Assert.AreEqual(expected_price_increment_rate, lemon.Get_price_increment_rate());
         Assert.AreEqual(expected_rarity, lemon.GetRarity());
     }

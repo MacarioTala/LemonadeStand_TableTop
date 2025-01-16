@@ -28,6 +28,6 @@ public class InventoryEntry
 
     public override string ToString()
     {
-        return $"{good.good_name} {quantity} units at {Cost} ";
+        return $"{good.GoodName} {quantity} units at {Cost} ";
     }
 }

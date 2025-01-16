@@ -89,13 +89,13 @@ public class LinearDemandStrategy : iDemandStrategy
         
         if (!result.Equals(LemonadeStandResultObject.Success())) 
         {
-            Debug.Log($"Elasticity not found for {good.good_name}");
+            Debug.Log($"Elasticity not found for {good.GoodName}");
             return;
         }
 
         MakeDemandMicroAdjustments(orderFulfilledEvent);
 
-        Debug.Log($"Order Fulfilled for {orderFulfilledEvent.Good.good_name}. Quantity: {orderFulfilledEvent.FulfilledQuantity}");
+        Debug.Log($"Order Fulfilled for {orderFulfilledEvent.Good.GoodName}. Quantity: {orderFulfilledEvent.FulfilledQuantity}");
     }
 
     internal static void AdjustDemandForSaturation(Market market,Good good)
@@ -128,7 +128,7 @@ public class LinearDemandStrategy : iDemandStrategy
         var doesElasticityExist = market.GetEffectiveElasticityForGood(good, elasticity);
         if (!doesElasticityExist.Equals(LemonadeStandResultObject.Success()))
         {
-            Debug.Log($"Elasticity not found for {good.good_name}");
+            Debug.Log($"Elasticity not found for {good.GoodName}");
             return 0f;
         }
         else

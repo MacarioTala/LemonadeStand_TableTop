@@ -66,7 +66,7 @@ public class SupplyAndDemandTests
         testMarket.FulfillDemand();
         testMarket.UpdatePrices();   
         // Only one entry per good in market inventories
-        var actualLemonade = testMarket.GetInventory().GetInventoryEntriesByGood(lemonade.good_name).FirstOrDefault();
+        var actualLemonade = testMarket.GetInventory().GetInventoryEntriesByGood(lemonade.GoodName).FirstOrDefault();
         var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(),2);
         // Assert
         Assert.AreEqual(expectedLemonPrice, actualLemonadePrice);
@@ -94,7 +94,7 @@ public class SupplyAndDemandTests
         marketToTest.ProcessCompanyOrders();
         marketToTest.FulfillDemand();
         marketToTest.UpdatePrices();
-        var actualLemonade = marketToTest.GetInventory().GetInventoryEntriesByGood(lemonade.good_name).FirstOrDefault();
+        var actualLemonade = marketToTest.GetInventory().GetInventoryEntriesByGood(lemonade.GoodName).FirstOrDefault();
         var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(),2);
         // Assert
         Assert.AreEqual(expectedLemonadePrice, actualLemonadePrice);

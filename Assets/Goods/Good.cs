@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Good", menuName = "GameObjects/Good", order = 1)]
 public class Good : ScriptableObject
 {
-    public string good_name;
+    public string GoodName;
     
     private decimal _price;
     private decimal Price{
@@ -43,7 +43,7 @@ public class Good : ScriptableObject
                             Price_band price_band,
                             Rarity_enum rarity=Rarity_enum.Common) 
     {
-        this.good_name = good_name;
+        this.GoodName = good_name;
         PriceBand = price_band;
         Rarity = rarity;
         //Initial price will be determined based on price_band
@@ -121,19 +121,19 @@ public class Good : ScriptableObject
     {
         if(obj is Good other)
         {
-            return good_name == other.good_name;
+            return GoodName == other.GoodName;
         }
         return false;
     }
 
     public override int GetHashCode()
     {
-        return good_name?.GetHashCode() ?? 0;
+        return GoodName?.GetHashCode() ?? 0;
     }
 
     public override string ToString()
     {
-        return good_name;
+        return GoodName;
     }
 }
 

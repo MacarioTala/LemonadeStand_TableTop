@@ -103,7 +103,7 @@ public class MarketTests
         // Act
         var actual = test_initial_market.GetMarketDemand().First();
         // Assert
-        Assert.AreEqual(expected_good_name, actual.Key.good_name);
+        Assert.AreEqual(expected_good_name, actual.Key.GoodName);
         Assert.AreEqual(expected_demand, actual.Value.CurrentDemand);
     }
     #endregion
@@ -112,12 +112,12 @@ public class MarketTests
     public void ConsumeGoods_should_decrease_inventory()
     {
         // Arrange
-        var lemonDemand = test_initial_market.GetMarketDemandForGood(lemon.good_name);
-        var initialLemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
+        var lemonDemand = test_initial_market.GetMarketDemandForGood(lemon.GoodName);
+        var initialLemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().quantity;
         var expected = initialLemons - lemonDemand;
         // Act
         test_initial_market.ConsumeGoods();
-        var actual = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().quantity;
+        var actual = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().quantity;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -149,7 +149,7 @@ public class MarketTests
         TestMarket.ConsumeGoods();
         
         //only one inventory entry per good in Markets
-        var actual = TestMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actual = TestMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).FirstOrDefault();
         // Assert
         Assert.AreEqual(expected, actual.quantity);
     }
@@ -170,7 +170,7 @@ public class MarketTests
         var expected = 0;
         // Act
         testMarket.ExpireGoods(tradingPeriod);
-        var franciumEntry = company.GetInventory().GetInventoryEntriesByGood(francium.good_name).FirstOrDefault();
+        var franciumEntry = company.GetInventory().GetInventoryEntriesByGood(francium.GoodName).FirstOrDefault();
         var actual = franciumEntry?.quantity??0;
         // Assert
         Assert.AreEqual(expected, actual);
@@ -196,8 +196,8 @@ public class MarketTests
         var expectedRipeLemonQuantity = 0;
         // Act
         testMarket.ExpireGoods(period);
-        var actualWaterQuantity = company.GetInventory().GetInventoryEntriesByGood(water.good_name).FirstOrDefault().quantity;
-        var ripeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.good_name).FirstOrDefault();
+        var actualWaterQuantity = company.GetInventory().GetInventoryEntriesByGood(water.GoodName).FirstOrDefault().quantity;
+        var ripeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.GoodName).FirstOrDefault();
         var actualRipeLemonQuantity = ripeLemonEntries?.quantity??0;
         // Assert
         Assert.IsTrue(expectedWaterQuantity==actualWaterQuantity && expectedRipeLemonQuantity==actualRipeLemonQuantity);
@@ -220,8 +220,8 @@ public class MarketTests
         var expectedRipeLemonQuantity = 0;
         // Act
         testMarket.ExpireGoods(tradingPeriod);
-        var actualLemonEntries = company.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
-        var actualRipeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.good_name).FirstOrDefault();
+        var actualLemonEntries = company.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).FirstOrDefault();
+        var actualRipeLemonEntries = company.GetInventory().GetInventoryEntriesByGood(ripeLemon.GoodName).FirstOrDefault();
         var actualLemonQuantity = actualLemonEntries?.quantity??0;
         var actualRipeLemonQuantity = actualRipeLemonEntries?.quantity??0;
         // Assert
@@ -245,7 +245,7 @@ public class MarketTests
         var expectedAppleQuantity = 10;
         // Act
         testMarket.ExpireGoods(tradingPeriod); //only 1 batch of apples expires
-        var actualAppleEntry = company.GetInventory().GetInventoryEntriesByGood(apple.good_name).FirstOrDefault();
+        var actualAppleEntry = company.GetInventory().GetInventoryEntriesByGood(apple.GoodName).FirstOrDefault();
         var actualAppleQuantity = actualAppleEntry?.quantity??0;
         // Assert
         Assert.AreEqual(expectedAppleQuantity, actualAppleQuantity);
@@ -289,12 +289,12 @@ public class MarketTests
                                                     companyLevel: CompanyLevelEnum.Market,
                                                     demandStrategy: new LinearDemandStrategy());
         testMarket.GetInventory().AddGood(new InventoryEntry(lemon, 1000, 3.0m, 0));
-        var initialPrice = testMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).First().good.GetPrice();
+        var initialPrice = testMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().good.GetPrice();
         var expected = initialPrice * 1.01m;
         // Act
         testMarket.CalculateNewBidAskSpreadForMarket();
         var marketData = testMarket.MarketData;
-        var actual = marketData.Where(entry => entry.Good.good_name == lemon.good_name
+        var actual = marketData.Where(entry => entry.Good.GoodName == lemon.GoodName
                                         && entry.Company.Name == testMarket.Name)
                                     .First().Ask;
         // Assert
@@ -411,7 +411,7 @@ public class MarketTests
         marketToTest.QueueOrder(trade1Context);
         marketToTest.QueueOrder(trade2Context);
         marketToTest.ProcessCompanyOrders();
-        var actual_number_of_entries = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.good_name).Count();
+        var actual_number_of_entries = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).Count();
         // Assert
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
     }

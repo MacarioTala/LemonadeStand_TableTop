@@ -17,7 +17,7 @@ public class Recipe
         }
         public List<string> Get_Ingredients()
         {
-            return ingredients.Select(ingredient => ingredient.Good.good_name).ToList();
+            return ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
         }
 
         public List<Ingredient> Get_recipe()
@@ -37,12 +37,12 @@ public class Recipe
         public (Good,int) Make_recipe(int quantity, Inventory inventory)
         {
             var stock = inventory.GetInventoryEntries()
-                     .Where(entry => Get_Ingredients().Contains(entry.good.good_name))
+                     .Where(entry => Get_Ingredients().Contains(entry.good.GoodName))
                      .ToList();
 
             if (quantity > Get_max_quantity(stock))
             {
-                throw new RecipeException("Not enough ingredients to make "+quantity+" "+product.good_name);
+                throw new RecipeException("Not enough ingredients to make "+quantity+" "+product.GoodName);
             }
             else
             {
@@ -69,13 +69,13 @@ public class Recipe
         Dictionary<string, decimal> cost_per_good = new();
         foreach (var ingredient in ingredients)
         {
-            var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.good_name);
+            var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.GoodName);
             var costForThisIngredient = inventoryEntries.Sum(entry => entry.Cost*entry.quantity);
             var quantityForThisIngredient = inventoryEntries.Sum(entry => entry.quantity);
             var requiredUnits = ingredient.Quantity_needed;
 
             var costPerUnit = Math.Round(requiredUnits*(costForThisIngredient / quantityForThisIngredient),2);
-            cost_per_good.Add(ingredient.Good.good_name, costPerUnit);
+            cost_per_good.Add(ingredient.Good.GoodName, costPerUnit);
         }
         return Math.Round(cost_per_good.Sum(entry => entry.Value),2);
     }

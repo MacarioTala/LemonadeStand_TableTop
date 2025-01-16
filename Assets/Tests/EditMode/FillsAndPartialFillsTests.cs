@@ -82,8 +82,8 @@ public class FillsAndPartialFillsTests
         TestMarket.ProcessCompanyOrders();
         var actualLemonBuyFillQuantity = Company2BuysLemonFromCompany1.FilledQuantity;
         var actualLemonSellFillQuantity = Company1SellsLemonToCompany2.FilledQuantity;
-        var actualCompany1Lemons = TestCompany1.GetInventory().GetInventoryEntriesByGood(Lemon.good_name)?.FirstOrDefault()?.quantity??0;
-        var actualCompany2Lemons = TestCompany2.GetInventory().GetInventoryEntriesByGood(Lemon.good_name)?.FirstOrDefault()?.quantity??0;
+        var actualCompany1Lemons = TestCompany1.GetInventory().GetInventoryEntriesByGood(Lemon.GoodName)?.FirstOrDefault()?.quantity??0;
+        var actualCompany2Lemons = TestCompany2.GetInventory().GetInventoryEntriesByGood(Lemon.GoodName)?.FirstOrDefault()?.quantity??0;
         //Assert
         Assert.AreEqual(expectedLemonBuyFillQuantity, actualLemonBuyFillQuantity,$"{TestCompany1}'s order was filled with {actualLemonBuyFillQuantity} lemons");
         Assert.AreEqual(expectedLemonSellFillQuantity, actualLemonSellFillQuantity,$"{TestCompany2}'s order was filled with {actualLemonSellFillQuantity} lemons");

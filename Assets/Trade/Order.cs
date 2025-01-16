@@ -60,6 +60,6 @@ public class Order
             preposition=" to ";
         }
         
-        return "Order: " + SubmittingCompany + action + Quantity + " " + Good.good_name + preposition + counterParty + " at " + Price;
+        return "Order: " + SubmittingCompany + action + Quantity + " " + Good.GoodName + preposition + counterParty + " at " + Price;
     }
 }

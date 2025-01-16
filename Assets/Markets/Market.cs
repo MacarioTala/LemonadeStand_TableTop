@@ -213,7 +213,7 @@ public class Market : ScriptableObject, iCompany
             {
                 var demanded_quantity = _marketDemand[good].CurrentDemand;
                 //consume good
-                var unfulfilledDemand = _inventory.TryConsumeGood(good.good_name,demanded_quantity);
+                var unfulfilledDemand = _inventory.TryConsumeGood(good.GoodName,demanded_quantity);
                 // Do something with unfulfilled demand later
             }
         }
@@ -319,7 +319,7 @@ public class Market : ScriptableObject, iCompany
     }
     public int GetMarketDemandForGood(string good_name)
     {
-        var good = _marketDemand.Keys.FirstOrDefault(x=>x.good_name == good_name);
+        var good = _marketDemand.Keys.FirstOrDefault(x=>x.GoodName == good_name);
         return _marketDemand[good].CurrentDemand;
     }
     public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand=iDemandStrategy.MinDemand, int maxDemand=iDemandStrategy.MaxDemand)
@@ -361,7 +361,7 @@ public class Market : ScriptableObject, iCompany
 #region Supply
     public int GetTotalSupply(Good good)
     {
-        return _inventory.GetInventoryEntriesByGood(good.good_name)
+        return _inventory.GetInventoryEntriesByGood(good.GoodName)
             .Sum(x => x.quantity);
     }
 #endregion

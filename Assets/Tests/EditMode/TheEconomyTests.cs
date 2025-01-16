@@ -69,7 +69,7 @@ public class TheEconomyTests
         var expected = "Lemon";
         // Act
         testEconomy.CreateInitialGoods(test_goods);
-        var actual = testInitialMarket.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.good_name == "Lemon").good.good_name;
+        var actual = testInitialMarket.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good.GoodName == "Lemon").good.GoodName;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -113,7 +113,7 @@ public class TheEconomyTests
         testInitialMarket.GetInventory().Clear();
         // Act
         testEconomy.CreateInitialGoods(test_goods);
-        var actualGood = testInitialMarket.GetInventory().GetInventoryEntriesByGood(lemon.good_name).FirstOrDefault();
+        var actualGood = testInitialMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).FirstOrDefault();
         var actualQuantity = actualGood.quantity;
         // Assert
         Assert.IsTrue(actualQuantity >= expectedFloor && actualQuantity <= expectedCeiling, 

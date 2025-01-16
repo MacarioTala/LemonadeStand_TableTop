@@ -193,10 +193,10 @@ public class BasicTransactionManagerTests
         var actualBuyerCash = Company1.GetCash();
         var actualSellerCash = Company2.GetCash();
         var actualBuyerLemonQuantity = Company1.GetInventory()
-                                    .GetInventoryEntriesByGood(Lemon.good_name)
+                                    .GetInventoryEntriesByGood(Lemon.GoodName)
                                     ?.FirstOrDefault()?.quantity ?? 0;
         var actualSellerLemonQuantity = Company2.GetInventory()
-                                    .GetInventoryEntriesByGood(Lemon.good_name)
+                                    .GetInventoryEntriesByGood(Lemon.GoodName)
                                     ?.FirstOrDefault()?.quantity ?? 0;
         //Assert
         Assert.AreEqual(expectedBuyerCash, actualBuyerCash, "Buyer cash not as expected");
@@ -232,10 +232,10 @@ public class BasicTransactionManagerTests
         var actualBuyerCash = Company1.GetCash();
         var actualSellerCash = Company2.GetCash();
         var actualBuyerLemonQuantity = Company1.GetInventory()
-                                    .GetInventoryEntriesByGood(Lemon.good_name)
+                                    .GetInventoryEntriesByGood(Lemon.GoodName)
                                     ?.FirstOrDefault()?.quantity ?? 0;
         var actualSellerLemonQuantity = Company2.GetInventory()
-                                    .GetInventoryEntriesByGood(Lemon.good_name)
+                                    .GetInventoryEntriesByGood(Lemon.GoodName)
                                     ?.FirstOrDefault()?.quantity ?? 0;
         var actualBuyerOrderFullyFilledStatus = order.IsFullyFilled;
         var actualBuyerOrderPartiallyFilledStatus = order.IsPartiallyFilled;

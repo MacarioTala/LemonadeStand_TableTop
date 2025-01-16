@@ -13,7 +13,7 @@ public class Inventory
 
     public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)
     {
-        var items = inventory_items.Where(x => x.good.good_name == goodName)
+        var items = inventory_items.Where(x => x.good.GoodName == goodName)
                               .OrderBy(x => x.Cost)
                               .ToList();
         if (items.Count == 0)
@@ -24,7 +24,7 @@ public class Inventory
     }
     public void AddGood(InventoryEntry entry)
     {
-        var existingGoodAtPriceAndExpiry = inventory_items.Find(item=> item.good.good_name == entry.good.good_name 
+        var existingGoodAtPriceAndExpiry = inventory_items.Find(item=> item.good.GoodName == entry.good.GoodName 
                                             && item.Cost == entry.Cost
                                             && item.PeriodAcquired == entry.PeriodAcquired
                                             );
@@ -116,7 +116,7 @@ public class Inventory
         foreach(var ingredient in ingredients)
         {
             var quantity_to_remove = ingredient.Quantity_needed * quantity;
-            var inventory_entry = inventory_items.Find(x=> x.good.good_name == ingredient.Good.good_name);
+            var inventory_entry = inventory_items.Find(x=> x.good.GoodName == ingredient.Good.GoodName);
             inventory_entry.quantity -= quantity_to_remove;
 
             if(inventory_entry.quantity == 0)

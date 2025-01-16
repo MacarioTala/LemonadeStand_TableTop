@@ -5,7 +5,7 @@ public class BasicTransactionManager : iTransactionManager
 {
     internal bool HasGood(Good good, Inventory inventory)
     {
-        var goodInInventory = inventory.GetInventoryEntriesByGood(good.good_name).FirstOrDefault();
+        var goodInInventory = inventory.GetInventoryEntriesByGood(good.GoodName).FirstOrDefault();
         return goodInInventory != null && goodInInventory.quantity >= 1;
     }
 

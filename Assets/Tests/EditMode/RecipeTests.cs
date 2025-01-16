@@ -128,13 +128,13 @@ public class RecipeTests
 
         // Act
         var actual = basicLemonadeRecipe.Get_recipe()
-                                    .Select(ingredient => (ingredient.Good.good_name, ingredient.Quantity_needed))
+                                    .Select(ingredient => (ingredient.Good.GoodName, ingredient.Quantity_needed))
                                     .ToList();
 
         // Assert
         foreach (var (expectedName, expectedQuantity) in expected)
         {
-            var match = actual.FirstOrDefault(a => a.good_name == expectedName && a.Quantity_needed == expectedQuantity);
+            var match = actual.FirstOrDefault(a => a.GoodName == expectedName && a.Quantity_needed == expectedQuantity);
             Assert.IsNotNull(match, $"Expected ingredient '{expectedName}' with quantity {expectedQuantity} was not found in the recipe.");
         }
     }
