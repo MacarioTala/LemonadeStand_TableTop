@@ -382,6 +382,7 @@ public class Market : ScriptableObject, iCompany
         FulfillDemand();
         CalculateFulfillmentRates(period);
         UpdatePrices();
+        DemandStrategy.AdjustDemandInPeriod(this);
         ConsumeGoods();
         UpdateCompanyStatuses(period);
         CurrentPeriod++;

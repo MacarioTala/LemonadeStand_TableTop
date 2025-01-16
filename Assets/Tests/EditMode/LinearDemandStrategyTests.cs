@@ -15,6 +15,8 @@ public partial class LinearDemandStrategyTests
     MockMarketDataService TestMarketDataService;
 
     LinearDemandStrategy Strategy;
+
+    int Period = 0;
     
     [SetUp]
     public void SetUp()
