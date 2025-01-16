@@ -19,9 +19,8 @@ public class DemandElasticityTests
     [SetUp]
     public void Setup ()
     {
-        var economyObject = new GameObject();
-        TestEconomy = economyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
 

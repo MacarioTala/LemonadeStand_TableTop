@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
@@ -10,7 +8,7 @@ using static TestHelpers;
 [TestFixture]
 public class MarketTests
 {
-    private TheEconomy test_economy;
+    private TheEconomy TestEconomy;
 
     private Market test_initial_market;
     Company Company1;
@@ -36,9 +34,9 @@ public class MarketTests
     [SetUp]
     public void SetUp()
     {
-        var economy_object = new GameObject();
-        test_economy = economy_object.AddComponent<TheEconomy>();
-        test_economy.Initialize(trade_logger);
+        //Create the economy
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         //Setup Market
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
@@ -88,7 +86,7 @@ public class MarketTests
         // Arrange
         var expected = typeof(Market);
         // Act
-        var actual = from company in test_economy.companies
+        var actual = from company in TestEconomy.companies
                      where company.Name == "The First Market"
                      select company.GetType();
         // Assert
@@ -305,7 +303,7 @@ public class MarketTests
     {
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        test_economy.RegisterCompany(company1);
+        TestEconomy.RegisterCompany(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon, MarketToSubmitTo = test_initial_market};
         var expected = new List<MarketData>{new() { Good = lemon, Company = company1, Bid = 2.0m, Ask = 3.0m}};
         //Act
@@ -320,7 +318,7 @@ public class MarketTests
     {
         // Arrange
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        test_economy.RegisterCompany(company1);
+        TestEconomy.RegisterCompany(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
         
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
@@ -505,7 +503,7 @@ public class MarketTests
         UnityEngine.Object.DestroyImmediate(lemon);
         UnityEngine.Object.DestroyImmediate(water);
         UnityEngine.Object.DestroyImmediate(sugar);
-        UnityEngine.Object.DestroyImmediate(test_economy);
+        UnityEngine.Object.DestroyImmediate(TestEconomy);
         UnityEngine.Object.DestroyImmediate(test_initial_market);
         Company1 = null;
         Company2 = null;

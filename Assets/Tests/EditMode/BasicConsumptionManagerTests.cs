@@ -33,9 +33,8 @@ public class BasicConsumptionManagerTests
     [SetUp]
     public void SetUp()
     {
-        var EconomyObject = new GameObject();
-        TestEconomy = EconomyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         TestConsumptionManager = new BasicConsumptionManager();
         TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());

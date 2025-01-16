@@ -20,9 +20,8 @@ public class MarketStatusTests
     public void Setup ()
     {
         Period = 0;
-        var economyObject = new GameObject();
-        TestEconomy = economyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);

@@ -17,9 +17,8 @@ public class IntegrationTests
     [SetUp]
     public void SetUp()
     {
-        var EconomyObject = new GameObject();
-        TestEconomy = EconomyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
 

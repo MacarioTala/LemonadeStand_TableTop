@@ -22,9 +22,8 @@ public class FillsAndPartialFillsTests
     [SetUp]
     public void Setup()
     {
-        var economyObject = new GameObject();
-        testEconomy = economyObject.AddComponent<TheEconomy>();
-        testEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        testEconomy = TheEconomy.Instance;
 
         TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
 

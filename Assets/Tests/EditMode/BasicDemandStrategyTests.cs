@@ -20,9 +20,8 @@ public class BasicDemandStrategyTests
     [SetUp]
     public void Setup ()
     {
-        var economyObject = new GameObject();
-        TestEconomy = economyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         strategy = new LinearDemandStrategy();

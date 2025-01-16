@@ -20,9 +20,8 @@ public class BasicTransactionManagerTests
     [SetUp]
     public void Setup()
     {
-        var TestEconomyObject = new GameObject();
-        TestEconomy = TestEconomyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);

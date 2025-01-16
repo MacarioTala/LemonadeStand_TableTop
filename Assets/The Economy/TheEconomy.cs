@@ -8,7 +8,19 @@ using System.Runtime.CompilerServices;
 public class TheEconomy : MonoBehaviour
 {
     //The Economy is a singleton that manages the market and all companies
-    public static TheEconomy Instance { get; private set; }
+    private static TheEconomy _instance;
+    public static TheEconomy Instance 
+    {
+         get
+            {
+                if(_instance == null)
+                {
+                    var economyObject = new GameObject("Lemonade Stand Economy");
+                    _instance = economyObject.AddComponent<TheEconomy>();
+                }
+                return _instance;
+            }
+    }
     public int tradingPeriod = 0;
 
     //These are the goods, but not the inventory items, that will exist in the market when initialized
@@ -27,19 +39,16 @@ public class TheEconomy : MonoBehaviour
 
     public void Initialize(ITradeLogger trade_logger)
     {
-        //Create the instance
-        if(Instance == null)
+        if(_trade_logger != null)
         {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
+            Debug.LogWarning("The Economy is already initialized");
+            return;
         }
 
-        CreateInitialGoods(goods);
         _trade_logger = trade_logger;
+        CreateInitialGoods(goods);
         CreateInitialMarket();
+        Debug.Log("Lemonade Stand Economy initialized successfully.");
     }
 
     public void RemoveMarket(Market market)
@@ -88,9 +97,25 @@ public class TheEconomy : MonoBehaviour
         }
         
     }
+    private void Awake()
+    {
+        if (Application.isPlaying)
+            {
+                if (_instance == null)
+                    {
+                        _instance = this;
+                        DontDestroyOnLoad(gameObject);
+                    }
+                else if (_instance != this)
+                    {
+                        Debug.LogWarning("Duplicate Economy detected. Destroying...");
+                        Destroy(gameObject);
+                    }
+            }
+    }
     private void Update()
     {
-       throw new NotImplementedException();
+       Debug.Log("The Economy is running");
     }
 
     public iCompany GetGlobalMarket() => InitialMarket;
@@ -134,6 +159,18 @@ public class TheEconomy : MonoBehaviour
     public void ShowBankruptcySummary(Company bankruptCompany)
     {
         Debug.Log($"{bankruptCompany.Name} has gone bankrupt after {tradingPeriod} trading periods");
+    }
+
+    public static void SetupForTests(ITradeLogger logger)
+    {
+        if (_instance != null)
+        {
+            UnityEngine.Object.DestroyImmediate(_instance.gameObject);
+        }
+
+        var obj = new GameObject("TestEconomy");
+        _instance = obj.AddComponent<TheEconomy>();
+        _instance.Initialize(logger);
     }
 
     private void EndGame()

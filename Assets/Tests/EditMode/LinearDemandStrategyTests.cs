@@ -24,9 +24,8 @@ public partial class LinearDemandStrategyTests
         Lemonade = Good.CreateInstance("Lemonade", new Price_band(.5m, 2m), Rarity_enum.Uncommon);
         Lemonade.IsProducedGood = true;
 
-        var EconomyObject = new GameObject();
-        TestEconomy = EconomyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         Strategy = new();
 

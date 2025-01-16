@@ -24,9 +24,8 @@ public class GameOfLifeTest
     public void SetUp()
     {
         // Create the economy
-        var economy_object = new GameObject("LemonadeEconomy");
-        LemonadeEconomy = economy_object.AddComponent<TheEconomy>();
-        LemonadeEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        LemonadeEconomy = TheEconomy.Instance;
 
         // Fill it with goods
         MakeGoodsAndRecipes();

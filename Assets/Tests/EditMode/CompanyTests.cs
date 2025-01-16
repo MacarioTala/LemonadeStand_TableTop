@@ -16,9 +16,8 @@ public class CompanyTests
     [SetUp]
     public void Setup()
     {
-        var EconomyObject = new GameObject();
-        TestEconomy = EconomyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         testHelpers = new TestHelpers();
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);

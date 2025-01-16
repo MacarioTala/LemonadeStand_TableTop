@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -127,8 +126,9 @@ public class TheEconomyTests
     public void TearDown()
     {
         testEconomy.ClearEconomy();
-        UnityEngine.Object.DestroyImmediate(testEconomy.gameObject);
-        UnityEngine.Object.DestroyImmediate(testInitialMarket);
+        Object.DestroyImmediate(testEconomy.gameObject);
+        Object.DestroyImmediate(testInitialMarket);
+        typeof(TheEconomy).GetField("_instance", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).SetValue(null, null);
     }
 
 

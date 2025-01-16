@@ -16,20 +16,17 @@ public class SupplyAndDemandTests
     readonly Price_band band2 = new(1.0m, 3.0m);
     readonly Price_band band3 = new(3.0m, 5.0m);
     readonly Price_band band4 = new(5.0m, 10.0m);
-    readonly ITradeLogger trade_logger = new MockLogger();
+    readonly ITradeLogger MockTradeLogger = new MockLogger();
 
-    GameObject TestEconomy;
+    TheEconomy TestEconomy;
 
     [SetUp]
     public void Setup()
     {
         // Set up the Economy
-        TestEconomy = new GameObject("TestEconomy");
-        var economyComponent=TestEconomy.AddComponent<TheEconomy>();
-        if (TheEconomy.Instance == null)
-        {
-            economyComponent.Initialize(trade_logger);
-        }
+        TheEconomy.SetupForTests(MockTradeLogger);
+        TestEconomy = TheEconomy.Instance;
+
         // Set up goods
         lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
         water = Good.CreateInstance("Water", band1, Rarity_enum.Common);

@@ -23,9 +23,8 @@ public partial class BasicTradeProcessorTests
     [SetUp]
     public void SetUp()
     {
-        var economyObject = new GameObject();
-        TestEconomy = economyObject.AddComponent<TheEconomy>();
-        TestEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        TestEconomy = TheEconomy.Instance;
 
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);

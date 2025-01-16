@@ -8,9 +8,8 @@ public class BankruptcyTests
     [SetUp]
     public void Setup()
     {
-        var economyObject = new GameObject();
-        testEconomy = economyObject.AddComponent<TheEconomy>();
-        testEconomy.Initialize(new MockLogger());
+        TheEconomy.SetupForTests(new MockLogger());
+        testEconomy = TheEconomy.Instance;
     }
 
     [Test]
