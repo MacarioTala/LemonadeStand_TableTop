@@ -1,10 +1,17 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public bool IsGameRunning { get; private set; }
+
+    [SerializeField] private float splashDuration = 3f;
+    [SerializeField] private readonly GameObject splashAnimation;
+    [SerializeField] private readonly GameObject mainMenu;
+    [SerializeField] private readonly GameObject gameScreen;
+
 
     ITradeLogger TradeLogger;
 
@@ -42,7 +49,24 @@ public class GameManager : MonoBehaviour
         TheEconomy.Instance.Initialize(TradeLogger);
         Debug.Log("Game Manager Initialized");
     }
+// Splash screen
+    private void ShowSplashScreen()
+    {
+        splashAnimation.SetActive(true);
+        mainMenu.SetActive(false);
+        gameScreen.SetActive(false);
 
+        StartCoroutine(TransitionToMainMenu());
+    }
+
+    private IEnumerator TransitionToMainMenu()
+    {
+        yield return new WaitForSeconds(splashDuration);
+        splashAnimation.SetActive(false);
+        mainMenu.SetActive(true);
+    }
+
+    // Game Flow
     public void StartTurn()
     {
         if(!IsGameRunning) return;
