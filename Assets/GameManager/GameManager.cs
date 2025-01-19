@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,7 +12,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private readonly GameObject splashAnimation;
     [SerializeField] private readonly GameObject mainMenu;
     [SerializeField] private readonly GameObject gameScreen;
+    [SerializeField] private GameObject splashTypewriterPrefab;
+    [SerializeField] private AudioSource splashScreenAudioSource;
+    [SerializeField] private AudioClip splashScreenSoundClip;
 
+    private TypeWriter typeWriterInstance;
+    [SerializeField] private TextMeshProUGUI typeWrittenText;
 
     ITradeLogger TradeLogger;
 
@@ -32,6 +38,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Initialize();
+        typeWriterInstance.Initialize(typeWrittenText,splashScreenAudioSource,splashScreenSoundClip);
+        StartCoroutine(BlinkCursor());
+        StartCoroutine(typeWriterInstance.TypeText());
     }
 
     private void Initialize()
@@ -47,9 +56,22 @@ public class GameManager : MonoBehaviour
         TradeLogger = new TradeLoggerV1();
         Period = TheEconomy.Instance.tradingPeriod;
         TheEconomy.Instance.Initialize(TradeLogger);
+
+        if(splashTypewriterPrefab != null)
+        {
+            var typeWriterInstanceObject = Instantiate(splashTypewriterPrefab);
+            typeWriterInstance = typeWriterInstanceObject.GetComponent<TypeWriter>();
+        }
+
         Debug.Log("Game Manager Initialized");
     }
 // Splash screen
+//TypeWriter
+    public TextMeshProUGUI GetTypeWrittenText()
+    {
+        return typeWrittenText;
+    }
+
     private void ShowSplashScreen()
     {
         splashAnimation.SetActive(true);
@@ -57,6 +79,20 @@ public class GameManager : MonoBehaviour
         gameScreen.SetActive(false);
 
         StartCoroutine(TransitionToMainMenu());
+    }
+
+
+    [SerializeField] private TextMeshProUGUI cursor;
+    private bool isCursorVisible = true;
+    [SerializeField] private float blinkSpeed = 0.5f;
+    private IEnumerator BlinkCursor()
+    {
+        while (true)
+        {
+            cursor.text = isCursorVisible ? "|" : "";
+            isCursorVisible = !isCursorVisible;
+            yield return new WaitForSeconds(blinkSpeed);
+        }
     }
 
     private IEnumerator TransitionToMainMenu()
