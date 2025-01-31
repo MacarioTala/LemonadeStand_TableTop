@@ -123,6 +123,71 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &672184632
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2527093263623931575, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1660055973}
+    - target: {fileID: 2527093263623931575, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: typewriterAudioSource
+      value: 
+      objectReference: {fileID: 972291645}
+    - target: {fileID: 3768352040678611186, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_Name
+      value: SplashScreenTypeWriter
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 337.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 276.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631419456845972118, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
 --- !u!1 &812997438
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,7 +555,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: Placeholder text for visualisation
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -880,10 +945,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splashDuration: 3
+  splashTypewriterPrefab: {fileID: 3768352040678611186, guid: 6c8dedcefdfae48b88f0c2af9ea33aa2, type: 3}
+  splashScreenAudioSource: {fileID: 972291645}
+  splashScreenSoundClip: {fileID: 8300000, guid: 606b78333fcf24533ba026195c9b0186, type: 3}
   typeWrittenText: {fileID: 1358345798}
-  typewriterSound: {fileID: 972291645}
-  typewriterSoundClip: {fileID: 8300000, guid: 606b78333fcf24533ba026195c9b0186, type: 3}
-  typeSpeed: 0.05
   cursor: {fileID: 0}
   blinkSpeed: 0.5
 --- !u!4 &1660055974

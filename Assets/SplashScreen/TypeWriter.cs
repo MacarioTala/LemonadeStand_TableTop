@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
 public class TypeWriter : MonoBehaviour
 {
     [SerializeField] private GameManager gameManager;
@@ -10,22 +11,26 @@ public class TypeWriter : MonoBehaviour
     private AudioSource typewriterAudioSource;
     private AudioClip typewriterSoundClip;
     private float typeSpeed = 0.05f;
+
+    public static event System.Action OnTypeWriterFinished;
     
     private readonly List<string> splashMessage = new()
     {
-        " 2142 is when we ran out of stuff.",
+        " 2142 is when we stopped buying stuff.",
         " The economic system collapsing under the weight of numbers that were just too big.",
-        " Triple leveraged derivatives that no one understood,"+
-        " mortgages on arcologies that changed hands so many times no one knew who owned them.",
-        " And with aging and hunger genetically edited away, there wasn't even anything to die of.",
-        " When it was time for the missiles, no one even really felt like it. ",
-        " The world didn't end in a ball of fire, we just got bored. ",
+        " Triple leveraged derivatives that no one understood,",
+        " . . . mortgages on arcologies that changed hands so many times no one knew who owned them.",
+        " And with aging and hunger genetically edited away, we couldn't even die.",
+        " When it was time for the missiles ... ", 
+        " .... we were just too confused to end it all. ",
+        " The world didn't end in a ball of fire.",
+        " We just stopped .... DOING things. ",
         " And that's where you come in."
     };
 
     private void Awake()
     {
-        if (typewriterAudioSource is null)
+        if (typewriterAudioSource == null)
         {
             Debug.Log("Audio Source is not assigned to the Typewriter");
         }
@@ -33,7 +38,7 @@ public class TypeWriter : MonoBehaviour
 
     private void Start()
     {
-        if (typewriterAudioSource is null)
+        if (typewriterAudioSource == null)
         {
             Debug.Log("Audio Source is not assigned to the Typewriter");
         }
@@ -102,5 +107,6 @@ public class TypeWriter : MonoBehaviour
                 yield return null;
             }
         }
-    }
+         OnTypeWriterFinished?.Invoke();
+        }
     }
