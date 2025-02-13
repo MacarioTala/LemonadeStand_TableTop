@@ -4,10 +4,16 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 [assembly:InternalsVisibleTo("Tests")]
+[CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
 public class Market : ScriptableObject, iCompany
 {
 #region Fields, Properties, and Convenience Methods
     public Guid MarketId = Guid.NewGuid();
+    public List<MarketFeature> MarketFeatures = new();
+    public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
+    public (int x,int y) MarketSize = (200,200);
+    public int GetWidth() => MarketSize.x;
+    public int GetHeight() => MarketSize.y;
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField] private string _companyName;
     public string Name
@@ -122,6 +128,8 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Managers
+    private iFeatureManager _featureManager;
+    public void SetFeatureManager(iFeatureManager featureManager) => _featureManager = featureManager;
     private iConsumptionManager _consumptionManager;
     public void SetConsumptionManager(iConsumptionManager consumptionManager) => _consumptionManager = consumptionManager;
     private iMarketDataManager _marketDataManager;
