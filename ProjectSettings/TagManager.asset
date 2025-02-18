@@ -44,6 +44,9 @@ TagManager:
   - name: Building
     uniqueID: 3439265911
     locked: 0
+  - name: StandUI
+    uniqueID: 3042335267
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
