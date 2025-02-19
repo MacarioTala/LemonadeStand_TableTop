@@ -115,7 +115,7 @@ public class TheEconomy : MonoBehaviour
     }
     private void Update()
     {
-       Debug.Log("The Economy is running");
+    //   Debug.Log("The Economy is running");
     }
 
     public iCompany GetGlobalMarket() => InitialMarket;

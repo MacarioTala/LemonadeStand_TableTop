@@ -6,15 +6,16 @@ using UnityEngine;
 
 public class TypeWriter : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
+    [SerializeField] private TextBasedGameManager gameManager;
     private TextMeshProUGUI typeWrittenText;
     private AudioSource typewriterAudioSource;
     private AudioClip typewriterSoundClip;
     private float typeSpeed = 0.05f;
+    private bool isTyping = false;
 
     public static event System.Action OnTypeWriterFinished;
     
-    private readonly List<string> splashMessage = new()
+    public static readonly List<string> splashMessage = new()
     {
         " 2142 is when we stopped buying stuff.",
         " The economic system collapsing under the weight of numbers that were just too big.",
@@ -44,6 +45,18 @@ public class TypeWriter : MonoBehaviour
         }
     }
 
+    public void StopTyping()
+    {
+        if(!isTyping) return;
+        
+        isTyping = false;
+        if(typewriterAudioSource != null)
+        {
+            typewriterAudioSource.Stop();
+        }
+        OnTypeWriterFinished?.Invoke();
+    }
+
     public void Initialize(TextMeshProUGUI textbox,AudioSource audioSource, AudioClip soundClip)
     {
 
@@ -58,8 +71,9 @@ public class TypeWriter : MonoBehaviour
         typeWrittenText = textbox;
     }
     
-    public IEnumerator TypeText()
+    public IEnumerator TypeText(List<string> TextToType)
     {
+        isTyping = true;
         var textRecTransform = typeWrittenText.GetComponent<RectTransform>();
         var boxWidth = textRecTransform.rect.width;
         foreach (var line in splashMessage)
@@ -107,6 +121,7 @@ public class TypeWriter : MonoBehaviour
                 yield return null;
             }
         }
+         isTyping = false;
          OnTypeWriterFinished?.Invoke();
         }
     }

@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         Initialize();
         typeWriterInstance.Initialize(typeWrittenText,splashScreenAudioSource,splashScreenSoundClip);
         StartCoroutine(BlinkCursor());
-        StartCoroutine(typeWriterInstance.TypeText());
+        StartCoroutine(typeWriterInstance.TypeText(TypeWriter.splashMessage));
     }
 
     private void Initialize()

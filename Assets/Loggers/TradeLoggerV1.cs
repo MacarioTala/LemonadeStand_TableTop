@@ -1,19 +1,21 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class TradeLoggerV1 : ITradeLogger
 {
     public int GetTradeCount()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("TradeLoggerV1.GetTradeCount() called");
+        return 0;
     }
 
     public void LogTrade(Order trade)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("TradeLoggerV1.LogTrade() called");
     }
 
     public void SaveDailySummary(List<Order> trade_queue)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("TradeLoggerV1.SaveDailySummary() called");
     }
 }
