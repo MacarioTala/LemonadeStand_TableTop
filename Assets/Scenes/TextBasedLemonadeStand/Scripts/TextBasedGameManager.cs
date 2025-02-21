@@ -57,7 +57,7 @@ public class TextBasedGameManager : MonoBehaviour
     {
         Initialize();
         typeWriterInstance.Initialize(typeWrittenText, splashScreenAudioSource, splashScreenSoundClip);
-        StartCoroutine(BlinkCursor());
+//        StartCoroutine(BlinkCursor()); Fix this as soon as we have good game flow.
         typingCoroutine = StartCoroutine(typeWriterInstance.TypeText(TypeWriter.splashMessage));
     }
 

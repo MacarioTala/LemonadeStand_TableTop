@@ -51,6 +51,11 @@ public class TheEconomy : MonoBehaviour
         Debug.Log("Lemonade Stand Economy initialized successfully.");
     }
 
+    public Market GetMarketByName(string marketName)
+    {
+        return companies.OfType<Market>().FirstOrDefault(x => x.Name == marketName);
+    }
+
     public void RemoveMarket(Market market)
     {
         companies.Remove(market);
@@ -97,26 +102,7 @@ public class TheEconomy : MonoBehaviour
         }
         
     }
-    private void Awake()
-    {
-        if (Application.isPlaying)
-            {
-                if (_instance == null)
-                    {
-                        _instance = this;
-                        DontDestroyOnLoad(gameObject);
-                    }
-                else if (_instance != this)
-                    {
-                        Debug.LogWarning("Duplicate Economy detected. Destroying...");
-                        Destroy(gameObject);
-                    }
-            }
-    }
-    private void Update()
-    {
-    //   Debug.Log("The Economy is running");
-    }
+    
 
     public iCompany GetGlobalMarket() => InitialMarket;
     public void CreateInitialGoods(List<Good> goods)//move static data to DB in future
@@ -178,6 +164,39 @@ public class TheEconomy : MonoBehaviour
         Debug.Log("Game Over");
         Time.timeScale = 0;
     }
+#region UnitySection
+    private void Awake()
+    {
+        if (Application.isPlaying)
+            {
+                if (_instance == null)
+                    {
+                        _instance = this;
+                        DontDestroyOnLoad(gameObject);
+                        LoadMarketsFromResources();
+                    }
+                else if (_instance != this)
+                    {
+                        Debug.LogWarning("Duplicate Economy detected. Destroying...");
+                        Destroy(gameObject);
+                    }
+            }
+    }
+    private void LoadMarketsFromResources()
+    {
+        var markets = Resources.LoadAll<Market>("Markets");
+        foreach (var market in markets)
+        {
+            RegisterCompany(market);
+            Debug.Log($"Loaded Market: {market.Name} id:{market.MarketId}");
+        }
+    }
+    private void Update()
+    {
+    //   Debug.Log("The Economy is running");
+    }
+
+#endregion
 }
 
 

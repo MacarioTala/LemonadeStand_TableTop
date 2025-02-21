@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
-
-public class LinearDemandStrategy : iDemandStrategy
+[CreateAssetMenu(menuName = "Demand/LinearDemandStrategy")]
+public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 {
     private const int GlobalMinDemand = 0;
     private const int GlobalMaxDemand = 1000000;

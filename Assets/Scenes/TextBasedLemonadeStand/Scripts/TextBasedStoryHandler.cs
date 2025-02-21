@@ -13,6 +13,8 @@ public class TextBasedStoryHandler : MonoBehaviour
 #region Game Variables
     private Company PlayerCompany;
     private bool isWaitingForPlayerInput = false;
+
+    private Market initialMarket;
 #endregion
     private void Awake()
     {
@@ -24,6 +26,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
     }
 
     private void Update()
@@ -56,6 +59,10 @@ public class TextBasedStoryHandler : MonoBehaviour
         Instance.StartCoroutine(Instance.StartGameLoop());
     }
 
+    private void InitializeMarket()
+    {
+        //initialMarket = TheEconomy
+    }
     private void InitializePlayer()
     {
         PlayerCompany= Company.Factory.Create("Player1",CompanyLevelEnum.Beginner);
@@ -75,12 +82,12 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void DisplayChoices()
     {
-        LogMessage($"You have {PlayerCompany.GetCash()} credits.");
         LogMessage("What would you like to do?");
         LogMessage("1. Check Inventory");
         LogMessage("2. Set Lemonade Price");
         LogMessage("3. Order Supplies");
         LogMessage("4. Check the news");
+        LogMessage("\n");
     }
 
     private void ClearTextScroll()
@@ -89,6 +96,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     }
     public void Choose(int choice)
     {
+        ClearTextScroll();
         switch (choice)
         {
             case 1:
@@ -108,13 +116,16 @@ public class TextBasedStoryHandler : MonoBehaviour
                 DisplayChoices();
                 break;
         }
+        isWaitingForPlayerInput = true;
+        LogMessage("Press Space to continue.");
     }
 
     private void CheckNews()
     {
+        LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
+        LogMessage($"You have {PlayerCompany.GetCash()} credits.");
+        LogMessage($"The people in your neighbourhood are {initialMarket.GetCurrentEnnui()}");
         LogMessage("The news is not available yet.");
-        isWaitingForPlayerInput = true;
-        LogMessage("Press Space to continue.");
     }
     private void DisplayInventory()
     {
@@ -124,22 +135,18 @@ public class TextBasedStoryHandler : MonoBehaviour
         {
             LogMessage($"Item: {item.good} Quantity: {item.quantity} Acquired at: {item.Cost}");
         }
-        isWaitingForPlayerInput = true;
-        LogMessage("Press Space to continue.");
     }
 
     private void SetLemonadePrice()
     {
         LogMessage("Cannot set Lemonade Price yet");
-        isWaitingForPlayerInput = true;
-        LogMessage("Press Space to continue.");
     }
 
     private void OrderSupplies()
     {
+        LogMessage($"The following supplies are available in this market:");
+        
         LogMessage("Cannot order supplies yet");
-        isWaitingForPlayerInput = true;
-        LogMessage("Press Space to continue.");
     }
 
     public void LogMessage(string message)

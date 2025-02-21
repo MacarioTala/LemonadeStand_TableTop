@@ -8,7 +8,23 @@ using UnityEngine;
 public class Market : ScriptableObject, iCompany
 {
 #region Fields, Properties, and Convenience Methods
-    public Guid MarketId = Guid.NewGuid();
+
+    [SerializeField] private string _marketId;
+    public Guid MarketId 
+    {
+        get
+        {
+            if (_marketId == null)
+            {
+                _marketId = Guid.NewGuid().ToString();
+         
+                #if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this);
+                #endif
+            }
+            return Guid.Parse(_marketId);
+        }
+    }
     public List<MarketFeature> MarketFeatures = new();
     public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
     public (int x,int y) MarketSize = (200,200);
@@ -36,6 +52,20 @@ public class Market : ScriptableObject, iCompany
 
     //Demographic data
     public float MarketInstability { get; set; }//0-1. 1 is most unstable
+    public float PopulationEnnui; // 0-1. Ennui of 1 ends the game. 
+                                  // Population is now too bored to do anything.
+
+    public string GetCurrentEnnui()
+    {
+        if (PopulationEnnui == 0) return "Inspired";
+        if (PopulationEnnui > 0 && PopulationEnnui < .25) return "Thriving";
+        if (PopulationEnnui >= .25 && PopulationEnnui < .5) return "Content";
+        if (PopulationEnnui >= .5 && PopulationEnnui < .75) return "Dissatisfied";
+        if (PopulationEnnui >= .75 && PopulationEnnui < 1) return "Bored";
+        if (PopulationEnnui == 1) return "Bored to death";
+        return "Unknown";
+    }
+    public float PopulationHappiness; // 0-1. 1 is happiest
     public float PopulationGrowthRate { get; set; }
     public int Population { get; set; }
 
@@ -49,7 +79,11 @@ public class Market : ScriptableObject, iCompany
 
     //Goals
     public List<Goal> Goals {get;set;}
-    public iDemandStrategy DemandStrategy ;
+
+    [SerializeField] private ScriptableObject _demandStrategy;
+    public iDemandStrategy DemandStrategy
+    { get=> _demandStrategy as iDemandStrategy;
+      set=> _demandStrategy = value as ScriptableObject;} 
     private iStrategy _marketStrategy;
     
     //Pricing  
