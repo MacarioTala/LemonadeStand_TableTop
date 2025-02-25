@@ -43,10 +43,10 @@ public class GameOfLifeTest
 
     private void MakeGoodsAndRecipes()
     {
-        Lemon = Good.CreateInstance("Lemon", new Price_band(1.0m, 3.0m), Rarity_enum.Common);
-        Water = Good.CreateInstance("Water", new Price_band(1.0m, 1.0m), Rarity_enum.Common);
-        Sugar = Good.CreateInstance("Sugar", new Price_band(1.0m, 2.0m), Rarity_enum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(4.0m, 5.0m), Rarity_enum.Uncommon);
+        Lemon = Good.CreateInstance("Lemon", new PriceBand(1.0m, 3.0m), RarityEnum.Common);
+        Water = Good.CreateInstance("Water", new PriceBand(1.0m, 1.0m), RarityEnum.Common);
+        Sugar = Good.CreateInstance("Sugar", new PriceBand(1.0m, 2.0m), RarityEnum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(4.0m, 5.0m), RarityEnum.Uncommon);
         TestGoods.Add(Lemon);
         TestGoods.Add(Water);
         TestGoods.Add(Sugar);

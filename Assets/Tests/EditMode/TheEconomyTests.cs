@@ -13,8 +13,8 @@ public class TheEconomyTests
     Good water;
     Good sugar;
 
-    readonly Price_band band1 = new(.5m, 1.0m);
-    readonly Price_band band2 = new(1.0m, 3.0m);
+    readonly PriceBand band1 = new(.5m, 1.0m);
+    readonly PriceBand band2 = new(1.0m, 3.0m);
     readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 
@@ -27,9 +27,9 @@ public class TheEconomyTests
         testEconomy.Initialize(trade_logger);
         testInitialMarket = (Market)testEconomy.GetGlobalMarket(); 
 
-        lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
-        water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
-        sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
+        lemon = Good.CreateInstance("Lemon", band2, RarityEnum.Common);
+        water = Good.CreateInstance("Water", band1, RarityEnum.Common);
+        sugar = Good.CreateInstance("Sugar", band1, RarityEnum.Common);
         lemon.ExpiresAfterPeriods = 1;
         test_goods.Add(lemon);
         test_goods.Add(water);

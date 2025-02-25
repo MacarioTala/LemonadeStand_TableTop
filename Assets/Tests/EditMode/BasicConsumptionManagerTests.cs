@@ -25,9 +25,9 @@ public class BasicConsumptionManagerTests
     readonly List<Good> testGoods = new();
 
     //Pricing bands
-    readonly Price_band band1 = new(.5m, 2m);
-    readonly Price_band band2 = new(2.1m, 3m);
-    readonly Price_band band3 = new(3.1m, 6m);
+    readonly PriceBand band1 = new(.5m, 2m);
+    readonly PriceBand band2 = new(2.1m, 3m);
+    readonly PriceBand band3 = new(3.1m, 6m);
 
     
     [SetUp]
@@ -50,10 +50,10 @@ public class BasicConsumptionManagerTests
 
     private void SetupGoodsAndRecipes()
     {
-        water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
-        sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
-        lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
-        lemonade = Good.CreateInstance("Lemonade", band3, Rarity_enum.Uncommon);
+        water = Good.CreateInstance("Water", band1, RarityEnum.Common);
+        sugar = Good.CreateInstance("Sugar", band1, RarityEnum.Common);
+        lemon = Good.CreateInstance("Lemon", band2, RarityEnum.Common);
+        lemonade = Good.CreateInstance("Lemonade", band3, RarityEnum.Uncommon);
         lemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 

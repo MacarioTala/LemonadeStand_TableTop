@@ -119,10 +119,10 @@ public class TheEconomy : MonoBehaviour
             //Generate quantity based on rarity
             int quantity = good.GetRarity() switch
             {
-                Rarity_enum.Common => common_range,
-                Rarity_enum.Uncommon => uncommon_range,
-                Rarity_enum.Rare => rare_range,
-                Rarity_enum.Very_Rare => very_rare_range,
+                RarityEnum.Common => common_range,
+                RarityEnum.Uncommon => uncommon_range,
+                RarityEnum.Rare => rare_range,
+                RarityEnum.Very_Rare => very_rare_range,
                 _ => throw new ArgumentOutOfRangeException()
             };
             InitialMarket.GetInventory().AddGood(new InventoryEntry(good, quantity, good.GetPrice(), tradingPeriod));

@@ -28,7 +28,7 @@ public class IntegrationTests
         TestMarket.RegisterCompany(Company1);
         TestMarket.RegisterCompany(Company2);
 
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(.5m, 2m), Rarity_enum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Common);
     }
 #region Recording Trades
     [Test]
@@ -37,7 +37,7 @@ public class IntegrationTests
         // Arrange
         var buyer = Company1;
         var seller = Company2;
-        var good =Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var good =Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var sellersInventory = seller.GetInventory();
         sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
         
@@ -67,7 +67,7 @@ public class IntegrationTests
         var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
         market.RegisterCompany(buyer);
         market.RegisterCompany(seller);
-        var good =Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var good =Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var sellersInventory = seller.GetInventory();
         sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
 
@@ -248,7 +248,7 @@ public class IntegrationTests
     {
         //Arrange
         var period = 0;
-        var good = Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
         var market = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         market.RegisterCompany(company);
@@ -272,7 +272,7 @@ public class IntegrationTests
     {
         //Arrange
         var period = 0;
-        var good = Good.CreateInstance("Good", new Price_band(1m, 2m), Rarity_enum.Common);
+        var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var TestMarket = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(company);

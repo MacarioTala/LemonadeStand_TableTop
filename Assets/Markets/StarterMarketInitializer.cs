@@ -13,10 +13,10 @@ public class StarterMarketInitializer : iMarketInitializer
     private void SeedWithInitialGoods (Market market)
     {
         var _inventory = market.GetInventory();
-        var Lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
-        var Lemon = Good.CreateInstance("Lemon", new Price_band(1.0m, 3.0m), Rarity_enum.Common);
-        var Sugar = Good.CreateInstance("Sugar", new Price_band(1.0m, 2.0m), Rarity_enum.Common);
-        var Water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
+        var Lemonade = Good.CreateInstance("Lemonade", new PriceBand(8.0m, 13.0m), RarityEnum.Uncommon);
+        var Lemon = Good.CreateInstance("Lemon", new PriceBand(1.0m, 3.0m), RarityEnum.Common);
+        var Sugar = Good.CreateInstance("Sugar", new PriceBand(1.0m, 2.0m), RarityEnum.Common);
+        var Water = Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common);
         _inventory.AddGood(new InventoryEntry(Lemon, 10000, 2.0m, 0));
         _inventory.AddGood(new InventoryEntry(Sugar, 10000, 1.5m, 0));
         _inventory.AddGood(new InventoryEntry(Water, 10000, .75m, 0));
@@ -52,7 +52,7 @@ public class StarterMarketInitializer : iMarketInitializer
         //Initialize demand data
         //If no demand data is passed, demand defaults to 1000 units of Lemonade
         //This is a placeholder and will be replaced with a more sophisticated system
-        var lemonade = Good.CreateInstance("Lemonade", new Price_band(8.0m, 13.0m), Rarity_enum.Uncommon);
+        var lemonade = Good.CreateInstance("Lemonade", new PriceBand(8.0m, 13.0m), RarityEnum.Uncommon);
         lemonade.IsProducedGood = true;
         market.InitializeDemandForSpecificGood(lemonade, 1000);
     }

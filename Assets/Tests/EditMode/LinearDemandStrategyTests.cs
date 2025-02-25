@@ -21,7 +21,7 @@ public partial class LinearDemandStrategyTests
     [SetUp]
     public void SetUp()
     {
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(.5m, 2m), Rarity_enum.Uncommon);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Uncommon);
         Lemonade.IsProducedGood = true;
 
         TheEconomy.SetupForTests(new MockLogger());

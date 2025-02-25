@@ -26,8 +26,8 @@ public class MarketTests
     //Recipes
     private Recipe lemonade_recipe;
 
-    readonly Price_band band1 = new(.5m, 1.0m);
-    readonly Price_band band2 = new(1.0m, 3.0m);
+    readonly PriceBand band1 = new(.5m, 1.0m);
+    readonly PriceBand band2 = new(1.0m, 3.0m);
     readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 
@@ -63,10 +63,10 @@ public class MarketTests
 
     private void SetupGoodsAndRecipes()
     {
-        lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
-        water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
-        sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
-        lemonade = Good.CreateInstance("Lemonade", band2, Rarity_enum.Uncommon);
+        lemon = Good.CreateInstance("Lemon", band2, RarityEnum.Common);
+        water = Good.CreateInstance("Water", band1, RarityEnum.Common);
+        sugar = Good.CreateInstance("Sugar", band1, RarityEnum.Common);
+        lemonade = Good.CreateInstance("Lemonade", band2, RarityEnum.Uncommon);
         lemonade.IsProducedGood = true;
         lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
                                      product: lemonade, 
@@ -162,7 +162,7 @@ public class MarketTests
         var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
         var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(company);
-        var francium = Good.CreateInstance("Uranium", band2, Rarity_enum.Very_Rare);
+        var francium = Good.CreateInstance("Uranium", band2, RarityEnum.Very_Rare);
         francium.ExpiresAfterPeriods = 1;
         company.GetInventory().AddGood(new InventoryEntry(francium, 1,10000m,0));
         var expected = 0;
@@ -182,7 +182,7 @@ public class MarketTests
         var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
         var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(company);
-        var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, Rarity_enum.Common);
+        var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
         ripeLemon.ExpiresAfterPeriods = 1;
         var ripeLemonInventoryEntry = new InventoryEntry(ripeLemon, 10, 3.0m,0);
         var waterInventoryEntry = new InventoryEntry(water, 10, 1.0m,0);
@@ -211,7 +211,7 @@ public class MarketTests
         testMarket.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(lemon, 10, 3.0m,0));
         lemon.ExpiresAfterPeriods=2;
-        var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, Rarity_enum.Common);
+        var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
         ripeLemon.ExpiresAfterPeriods=1;
         company.GetInventory().AddGood(new InventoryEntry(ripeLemon, 10, 3.0m,0));
         var expectedLemonQuantity = 10;
@@ -236,7 +236,7 @@ public class MarketTests
         var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
         testMarket.RegisterCompany(company);
         
-        var apple = Good.CreateInstance("Apple", band2, Rarity_enum.Common);
+        var apple = Good.CreateInstance("Apple", band2, RarityEnum.Common);
         apple.ExpiresAfterPeriods=1;
         company.GetInventory().AddGood(new InventoryEntry(apple, 10, 3.0m,0));
         company.GetInventory().AddGood(new InventoryEntry(apple, 10, 3.0m,1));
@@ -338,7 +338,7 @@ public class MarketTests
         var testMarket = Market.Factory.CreateMarket(companyName: "TestMarket", 
                                                     companyLevel: CompanyLevelEnum.Market,
                                                     demandStrategy: new LinearDemandStrategy());
-        var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, Rarity_enum.Uncommon);
+        var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, RarityEnum.Uncommon);
         testMarket.SetCash(100000);
         enhancedlemonade.IsProducedGood = true;
         var enhancedLemonadeRecipe = new Recipe(RecipeName: "Enhanced Lemonade",
@@ -468,7 +468,7 @@ public class MarketTests
     {
         // Arrange
         lemonade.IsProducedGood = true;
-        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", band2, Rarity_enum.Very_Rare);
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", band2, RarityEnum.Very_Rare);
         radioactiveLemonade.IsProducedGood = true;
 
         Company1.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 3.0m, Period));

@@ -30,9 +30,9 @@ public class DemandElasticityTests
         TestMarket.RegisterCompany(Company1);
         TestMarket.RegisterCompany(Company2);
 
-        lemon = Good.CreateInstance("Lemon", new Price_band(.5m, 1.0m), Rarity_enum.Common);
-        water = Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common);
-        sugar = Good.CreateInstance("Sugar", new Price_band(.5m, 1.0m), Rarity_enum.Common);
+        lemon = Good.CreateInstance("Lemon", new PriceBand(.5m, 1.0m), RarityEnum.Common);
+        water = Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common);
+        sugar = Good.CreateInstance("Sugar", new PriceBand(.5m, 1.0m), RarityEnum.Common);
 
         water.AddElasticity(ElasticityTypeEnum.SaturationElasticity,0f);
     }

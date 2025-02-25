@@ -15,6 +15,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     private bool isWaitingForPlayerInput = false;
 
     private Market initialMarket;
+
+    private MenuStateEnum CurrentMenuState = MenuStateEnum.Splash;
 #endregion
     private void Awake()
     {
@@ -26,26 +28,34 @@ public class TextBasedStoryHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
+        InitializeMarket();
     }
 
     private void Update()
     {
-        if(isWaitingForPlayerInput && Input.GetKeyDown(KeyCode.Space))
+        if(!isWaitingForPlayerInput) return;
+
+        if(Input.GetKeyDown(KeyCode.Space))
         {
             isWaitingForPlayerInput = false;
             ClearTextScroll();
             DisplayChoices();
         }
-        ChooseFromDailyMenu();
+
+        if(CurrentMenuState==MenuStateEnum.MainMenu) ChoicesMainMenu();
+
+        if(CurrentMenuState==MenuStateEnum.OrderSupplies) ChoicesOrderSupplies();
     }
 
-    private void ChooseFromDailyMenu()
+    private void ChoicesMainMenu()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) Choose(1);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) Choose(2);
-        if (Input.GetKeyDown(KeyCode.Alpha3)) Choose(3);
-        if (Input.GetKeyDown(KeyCode.Alpha4)) Choose(4);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) ChooseFromMainMenu(1);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) ChooseFromMainMenu(2);
+    }
+
+    private void ChoicesOrderSupplies()
+    {
+
     }
 
     public void StartTextBasedGame()
@@ -61,7 +71,15 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void InitializeMarket()
     {
-        //initialMarket = TheEconomy
+        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
+        var inventory = initialMarket.GetInventory();
+        var period = TheEconomy.Instance.tradingPeriod;
+        var Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);
+        var Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 3), RarityEnum.Common);
+        var Water = Good.CreateInstance("Water", new PriceBand(1, 3), RarityEnum.Common);
+        inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(),period));
+        inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(),period));
+        inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(),period));
     }
     private void InitializePlayer()
     {
@@ -80,21 +98,11 @@ public class TextBasedStoryHandler : MonoBehaviour
         DisplayChoices();
     }
 
-    private void DisplayChoices()
-    {
-        LogMessage("What would you like to do?");
-        LogMessage("1. Check Inventory");
-        LogMessage("2. Set Lemonade Price");
-        LogMessage("3. Order Supplies");
-        LogMessage("4. Check the news");
-        LogMessage("\n");
-    }
-
     private void ClearTextScroll()
     {
         if(textScroll!=null) textScroll.text = "";
     }
-    public void Choose(int choice)
+    private void ChooseFromMainMenu(int choice)
     {
         ClearTextScroll();
         switch (choice)
@@ -105,12 +113,6 @@ public class TextBasedStoryHandler : MonoBehaviour
             case 2:
                 SetLemonadePrice();
                 break;
-            case 3:
-                OrderSupplies();
-                break;
-            case 4:
-                CheckNews();
-                break;
             default:
                 LogMessage("Invalid choice. Please choose again.");
                 DisplayChoices();
@@ -118,6 +120,21 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
         isWaitingForPlayerInput = true;
         LogMessage("Press Space to continue.");
+    }
+
+    private void ChooseFromOrderSuppliesMenu(int choice)
+    {
+        
+    }
+
+    private void DisplayChoices()
+    {
+        isWaitingForPlayerInput = true;
+        CurrentMenuState = MenuStateEnum.MainMenu;
+        LogMessage("What would you like to do?");
+        LogMessage("1. Check Inventory");
+        LogMessage("2. Set Lemonade Price");
+        LogMessage("\n");
     }
 
     private void CheckNews()
@@ -144,9 +161,23 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void OrderSupplies()
     {
-        LogMessage($"The following supplies are available in this market:");
+        var inventory = initialMarket.GetInventory().GetInventoryEntries();
+
+        if (inventory.Count == 0)
+        {
+            LogMessage("The grocery store is out of supplies.");
+        }
+        else
+        {
+            LogMessage($"The following supplies are available in this store:");
         
-        LogMessage("Cannot order supplies yet");
+            foreach (var item in inventory)
+            {
+                LogMessage($"{item.quantity} {item.good} at {item.Cost}");
+            }
+            
+            LogMessage("What would you like to buy?");
+        }
     }
 
     public void LogMessage(string message)
@@ -168,4 +199,15 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
     }
     
+}
+
+internal enum MenuStateEnum
+{
+    Splash = 0,
+    MainMenu,
+    CheckInventory,
+    CheckNews,
+    OrderSupplies,
+    SetPrice,
+
 }

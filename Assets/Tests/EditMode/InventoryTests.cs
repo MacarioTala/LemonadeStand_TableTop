@@ -15,10 +15,10 @@ public class InventoryTests
 
     private readonly TestHelpers testHelpers = new();
 
-    private readonly Price_band price_band1 = new(.05m, 2.0m);
-    private readonly Price_band price_band2 = new(1.0m, 3.0m);
-    private readonly Price_band price_band3 = new(2.0m, 5.0m);
-    private readonly Price_band price_band4 = new(5.0m, 10.0m);
+    private readonly PriceBand price_band1 = new(.05m, 2.0m);
+    private readonly PriceBand price_band2 = new(1.0m, 3.0m);
+    private readonly PriceBand price_band3 = new(2.0m, 5.0m);
+    private readonly PriceBand price_band4 = new(5.0m, 10.0m);
     const int PeriodIsIrrelevant = 0;
     [SetUp]
     public void Setup()

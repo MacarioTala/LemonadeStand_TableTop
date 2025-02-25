@@ -10,10 +10,10 @@ public class DummyCompany : iCompany
 
     public DummyCompany()
     {
-        foreach (var good in new List<Good> {Good.CreateInstance("Lemon", new Price_band(.5m, 1.0m), Rarity_enum.Common),
-                                             Good.CreateInstance("Water", new Price_band(.5m, 1.0m), Rarity_enum.Common),
-                                             Good.CreateInstance("Sugar", new Price_band(.5m, 1.0m), Rarity_enum.Common),
-                                             Good.CreateInstance("Lemonade", new Price_band(1.0m, 3.0m), Rarity_enum.Uncommon)})
+        foreach (var good in new List<Good> {Good.CreateInstance("Lemon", new PriceBand(.5m, 1.0m), RarityEnum.Common),
+                                             Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common),
+                                             Good.CreateInstance("Sugar", new PriceBand(.5m, 1.0m), RarityEnum.Common),
+                                             Good.CreateInstance("Lemonade", new PriceBand(1.0m, 3.0m), RarityEnum.Uncommon)})
         {
             Inventory.AddGood(new InventoryEntry(good, 1000000, 1, 0));
         }

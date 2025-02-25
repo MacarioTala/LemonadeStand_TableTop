@@ -16,11 +16,11 @@ public class RecipeTests
     private Recipe basicLemonadeRecipe;
     private const int Period = 0;
 
-    private readonly Price_band price_band1= new(.5m, 1.0m);
-    private readonly Price_band price_band2= new(1.0m, 5.0m);
-    private readonly Price_band price_band3= new(6.0m, 8.0m);
+    private readonly PriceBand price_band1= new(.5m, 1.0m);
+    private readonly PriceBand price_band2= new(1.0m, 5.0m);
+    private readonly PriceBand price_band3= new(6.0m, 8.0m);
 
-    private readonly Price_band price_band4 = new(10.0m, 15.0m);
+    private readonly PriceBand price_band4 = new(10.0m, 15.0m);
 
     [SetUp]
     public void SetUp()

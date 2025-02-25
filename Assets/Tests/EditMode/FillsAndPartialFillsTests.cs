@@ -33,10 +33,10 @@ public class FillsAndPartialFillsTests
         TestMarket.RegisterCompany(TestCompany1);
         TestMarket.RegisterCompany(TestCompany2);
         
-        Lemon = Good.CreateInstance("Lemon", new Price_band(.5m, 2m), Rarity_enum.Common);
-        Water = Good.CreateInstance("Water", new Price_band(.5m, 1m), Rarity_enum.Common);
-        Sugar = Good.CreateInstance("Sugar", new Price_band(.5m, 1m), Rarity_enum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(1m, 3m), Rarity_enum.Uncommon);
+        Lemon = Good.CreateInstance("Lemon", new PriceBand(.5m, 2m), RarityEnum.Common);
+        Water = Good.CreateInstance("Water", new PriceBand(.5m, 1m), RarityEnum.Common);
+        Sugar = Good.CreateInstance("Sugar", new PriceBand(.5m, 1m), RarityEnum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1m, 3m), RarityEnum.Uncommon);
         Period = 0;
     }
 

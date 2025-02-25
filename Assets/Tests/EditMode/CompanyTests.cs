@@ -21,7 +21,7 @@ public class CompanyTests
 
         testHelpers = new TestHelpers();
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1, 3), RarityEnum.Common);
         
         TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         TestMarket.RegisterCompany(Company1);
@@ -42,7 +42,7 @@ public class CompanyTests
     {
         //arrange
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         const decimal trade_price = 3.0m;
         var expected_cash = 10000 - 3;
         //Act
@@ -59,7 +59,7 @@ public class CompanyTests
         //arrange
         const int PeriodIsIrrelevant = 0;
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         const decimal trade_price = 3.0m;
         var expected_inventory_entry = new InventoryEntry(good, 1, trade_price, PeriodIsIrrelevant);
         
@@ -80,7 +80,7 @@ public class CompanyTests
     {
         //arrange
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         const decimal trade_price = 3.0m;
         const int trade_quantity = 10000;
         //Act
@@ -92,7 +92,7 @@ public class CompanyTests
     {
         //arrange
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         company.BuyGood(good, 1,good.GetPrice());
         var initial_cash = company.GetCash();
         var good_price = 3.0m;
@@ -110,7 +110,7 @@ public class CompanyTests
     {
         //arrange
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var good = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         company.BuyGood(good, 1,good.GetPrice());
         var good_price = 3.0m;
         //Act
@@ -123,7 +123,7 @@ public class CompanyTests
     {
         //Assert
         var company1 = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var lemon = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        var lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
 
         var expected = new LemonadeStandResultObject{Result = ResultTypeEnum.ContextHasNoTrade, Message = "ActionContext does not contain a trade"};

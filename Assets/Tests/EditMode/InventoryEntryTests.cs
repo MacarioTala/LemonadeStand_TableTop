@@ -9,7 +9,7 @@ public class InventoryEntryTests
     public void SetRecipeReturnsNullIfGoodIsNotProducedGood()
     {
         // Arrange
-        var TestGood = Good.CreateInstance("TestGood", new Price_band(1, 3), Rarity_enum.Common);
+        var TestGood = Good.CreateInstance("TestGood", new PriceBand(1, 3), RarityEnum.Common);
         var TestInventoryEntry = new InventoryEntry(good: TestGood, 
                                                     quantity: 1, 
                                                     acquisition_price: 1.0m, 
@@ -25,7 +25,7 @@ public class InventoryEntryTests
     public void CannotSetRecipeIfGoodIsNotProducedGood()
     {
         // Arrange
-        var TestGood = Good.CreateInstance("TestGood", new Price_band(1, 3), Rarity_enum.Common);
+        var TestGood = Good.CreateInstance("TestGood", new PriceBand(1, 3), RarityEnum.Common);
         var TestInventoryEntry = new InventoryEntry(good: TestGood, 
                                                     quantity: 1, 
                                                     acquisition_price: 1.0m, 
@@ -43,7 +43,7 @@ public class InventoryEntryTests
     public void SetRecipeSetsRecipeIfGoodIsProducedGood()
     {
         // Arrange
-        var TestGood = Good.CreateInstance("TestGood", new Price_band(1, 3), Rarity_enum.Common);
+        var TestGood = Good.CreateInstance("TestGood", new PriceBand(1, 3), RarityEnum.Common);
         var TestInventoryEntry = new InventoryEntry(good: TestGood, 
                                                     quantity: 1, 
                                                     acquisition_price: 1.0m, 

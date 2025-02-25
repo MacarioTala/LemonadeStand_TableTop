@@ -18,10 +18,10 @@ public class Good : ScriptableObject
     public bool isDemandInelastic => Elasticities.Count == 0;
 
     private decimal price_increment_rate;
-    private Price_band PriceBand;
+    private PriceBand PriceBand;
 
     public int ExpiresAfterPeriods { get; set; } = int.MaxValue;
-    private Rarity_enum Rarity;
+    private RarityEnum Rarity;
     
     public bool IsProducedGood { get; set; } = false;
     public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
@@ -31,8 +31,8 @@ public class Good : ScriptableObject
 
 
     public static Good CreateInstance(  string good_name, 
-                                        Price_band price_band=null,
-                                        Rarity_enum rarity=Rarity_enum.Common)
+                                        PriceBand price_band=null,
+                                        RarityEnum rarity=RarityEnum.Common)
     {
         var good = ScriptableObject.CreateInstance<Good>();
         good.Initialize(good_name, price_band,rarity);
@@ -40,8 +40,8 @@ public class Good : ScriptableObject
     }
 
     private void Initialize(string good_name, 
-                            Price_band price_band,
-                            Rarity_enum rarity=Rarity_enum.Common) 
+                            PriceBand price_band,
+                            RarityEnum rarity=RarityEnum.Common) 
     {
         this.GoodName = good_name;
         PriceBand = price_band;
@@ -52,12 +52,12 @@ public class Good : ScriptableObject
         Set_initial_price_increment_rate();
     }
 
-    public Price_band Get_price_band() => PriceBand;
+    public PriceBand Get_price_band() => PriceBand;
     public decimal GetPrice() => Price;
     
     internal void Set_price(decimal new_price) => Price = new_price;
 
-    public Rarity_enum GetRarity() => Rarity;
+    public RarityEnum GetRarity() => Rarity;
     public decimal Get_price_increment_rate() => price_increment_rate;
 
     private decimal Generate_initial_price() 
@@ -83,16 +83,16 @@ public class Good : ScriptableObject
         const int rare_decrease_threshold = 10;
         const int very_rare_increase_threshold = 5;
         const int very_rare_decrease_threshold = 1;
-        if(Rarity==Rarity_enum.Common){
+        if(Rarity==RarityEnum.Common){
             Set_price_thresholds(common_increase_threshold, common_decrease_threshold);
         }
-        if(Rarity==Rarity_enum.Uncommon){
+        if(Rarity==RarityEnum.Uncommon){
             Set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
         }
-        if(Rarity==Rarity_enum.Rare){
+        if(Rarity==RarityEnum.Rare){
             Set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
         }
-        if(Rarity==Rarity_enum.Very_Rare){
+        if(Rarity==RarityEnum.Very_Rare){
             Set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
         }
     }
@@ -103,16 +103,16 @@ public class Good : ScriptableObject
         const decimal uncommon_price_increment_rate = 0.15m;
         const decimal rare_price_increment_rate = 0.3m;
         const decimal very_rare_price_increment_rate = 0.4m;
-        if(Rarity==Rarity_enum.Common){
+        if(Rarity==RarityEnum.Common){
             price_increment_rate = common_price_increment_rate;
         }
-        if(Rarity==Rarity_enum.Uncommon){
+        if(Rarity==RarityEnum.Uncommon){
             price_increment_rate = uncommon_price_increment_rate;
         }
-        if(Rarity==Rarity_enum.Rare){
+        if(Rarity==RarityEnum.Rare){
             price_increment_rate = rare_price_increment_rate;
         }
-        if(Rarity==Rarity_enum.Very_Rare){
+        if(Rarity==RarityEnum.Very_Rare){
             price_increment_rate = very_rare_price_increment_rate;
         }
     }
@@ -137,7 +137,7 @@ public class Good : ScriptableObject
     }
 }
 
-public enum Rarity_enum
+public enum RarityEnum
 {
     Common,
     Uncommon,
@@ -147,11 +147,11 @@ public enum Rarity_enum
 }
 
 [System.Serializable]
-public class Price_band{
+public class PriceBand{
     public readonly decimal min;
     public readonly decimal max;
 
-    public Price_band(decimal lower_bound=0, decimal upper_bound=0){
+    public PriceBand(decimal lower_bound=0, decimal upper_bound=0){
         min = lower_bound;
         max = upper_bound;
     }

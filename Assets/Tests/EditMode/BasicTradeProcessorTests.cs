@@ -36,10 +36,10 @@ public partial class BasicTradeProcessorTests
         TestMarket.RegisterCompany(Company1);
         TestMarket.RegisterCompany(Company2);
         
-        Lemon = Good.CreateInstance("Lemons", new Price_band(1, 3), Rarity_enum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", new Price_band(1, 3), Rarity_enum.Uncommon);
-        RadioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new Price_band(10, 20), Rarity_enum.Very_Rare);
-        Radium = Good.CreateInstance("Radium", new Price_band(10, 20), Rarity_enum.Very_Rare);
+        Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1, 3), RarityEnum.Uncommon);
+        RadioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", new PriceBand(10, 20), RarityEnum.Very_Rare);
+        Radium = Good.CreateInstance("Radium", new PriceBand(10, 20), RarityEnum.Very_Rare);
     }
     
 #region ProcessCompanyOrders Tests

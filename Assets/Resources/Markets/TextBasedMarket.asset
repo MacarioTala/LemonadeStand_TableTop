@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec526627f7c774947b19a74d9359ffdf, type: 3}
   m_Name: TextBasedMarket
   m_EditorClassIdentifier: 
+  _marketId: d2b42c18-2d70-4b25-acfc-f0c147768b38
   _companyName: Episode 1 Market
   company_level: 0
   CompaniesInThisMarket: []
+  PopulationEnnui: 0.8
+  PopulationHappiness: 3
+  _demandStrategy: {fileID: 11400000, guid: 602599ce4ef314835aa3df168bf31309, type: 2}

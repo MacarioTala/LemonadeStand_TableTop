@@ -9,7 +9,7 @@ public class CompanyOrderValidationTests
     [SetUp]
     public void Setup()
     {
-        Lemon = Good.CreateInstance("Lemon", new Price_band(1, 3), Rarity_enum.Common);
+        Lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
     }
     [Test]
     public void CompanyQueueOrderReturnsFailureIfOrderWouldResultInNegativeCashBalance()

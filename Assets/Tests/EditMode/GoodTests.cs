@@ -4,7 +4,7 @@ using NUnit.Framework;
 [TestFixture]
 public class GoodTests
 {
-    readonly Price_band price_band1 = new(.5m, 1.0m);
+    readonly PriceBand price_band1 = new(.5m, 1.0m);
 
     [SetUp]
     public void SetUp()
@@ -17,10 +17,10 @@ public class GoodTests
     {
         // Arrange
         var good_name = "lemon";
-        var uncommon = Rarity_enum.Uncommon;
+        var uncommon = RarityEnum.Uncommon;
         var expected_price_min = 0.5m;
         var expected_price_max = 1.0m;
-        var expected_rarity = Rarity_enum.Uncommon;
+        var expected_rarity = RarityEnum.Uncommon;
 
         // Act
         var lemon = Good.CreateInstance(good_name, price_band1,uncommon);
@@ -35,8 +35,8 @@ public class GoodTests
     {
         // Arrange
         var good_name = "lemon";
-        var uncommon = Rarity_enum.Uncommon;
-        var expected_rarity = Rarity_enum.Uncommon;
+        var uncommon = RarityEnum.Uncommon;
+        var expected_rarity = RarityEnum.Uncommon;
         var expected_price_increase_threshold = 250;
         var expected_price_decrease_threshold = 50;
 
@@ -54,8 +54,8 @@ public class GoodTests
     {
         // Arrange
         var good_name = "lemon";
-        var uncommon = Rarity_enum.Uncommon;
-        var expected_rarity = Rarity_enum.Uncommon;
+        var uncommon = RarityEnum.Uncommon;
+        var expected_rarity = RarityEnum.Uncommon;
         var expected_price_increment_rate = .15f;
 
         // Act

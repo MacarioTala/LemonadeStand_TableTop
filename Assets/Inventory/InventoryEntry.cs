@@ -22,7 +22,7 @@ public class InventoryEntry
     {
         this.good = good;
         this.quantity = quantity;
-        this.Cost = acquisition_price;
+        Cost = acquisition_price;
         PeriodAcquired = period;
     }
 

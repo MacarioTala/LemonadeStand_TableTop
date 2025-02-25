@@ -14,8 +14,8 @@ public class BasicTransactionManagerTests
 
     Company Company1;
     Company Company2;
-    readonly Price_band PriceBand1 = new(.5m, 1.0m);
-    readonly Price_band PriceBand2 = new(5.0m, 10m);
+    readonly PriceBand PriceBand1 = new(.5m, 1.0m);
+    readonly PriceBand PriceBand2 = new(5.0m, 10m);
 
     [SetUp]
     public void Setup()
@@ -31,8 +31,8 @@ public class BasicTransactionManagerTests
 
         Period=0;
 
-        Lemon = Good.CreateInstance("Lemon", PriceBand1, Rarity_enum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", PriceBand2, Rarity_enum.Uncommon);
+        Lemon = Good.CreateInstance("Lemon", PriceBand1, RarityEnum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", PriceBand2, RarityEnum.Uncommon);
     }
 #region ValidateTransactionTests
     [Test]

@@ -12,10 +12,10 @@ public class SupplyAndDemandTests
     Good water;
     Good sugar;
     Good lemonade;
-    readonly Price_band band1 = new(.5m, 1.0m);
-    readonly Price_band band2 = new(1.0m, 3.0m);
-    readonly Price_band band3 = new(3.0m, 5.0m);
-    readonly Price_band band4 = new(5.0m, 10.0m);
+    readonly PriceBand band1 = new(.5m, 1.0m);
+    readonly PriceBand band2 = new(1.0m, 3.0m);
+    readonly PriceBand band3 = new(3.0m, 5.0m);
+    readonly PriceBand band4 = new(5.0m, 10.0m);
     readonly ITradeLogger MockTradeLogger = new MockLogger();
 
     TheEconomy TestEconomy;
@@ -28,10 +28,10 @@ public class SupplyAndDemandTests
         TestEconomy = TheEconomy.Instance;
 
         // Set up goods
-        lemon = Good.CreateInstance("Lemon", band2, Rarity_enum.Common);
-        water = Good.CreateInstance("Water", band1, Rarity_enum.Common);
-        sugar = Good.CreateInstance("Sugar", band1, Rarity_enum.Common);
-        lemonade = Good.CreateInstance("Lemonade", band3, Rarity_enum.Uncommon);
+        lemon = Good.CreateInstance("Lemon", band2, RarityEnum.Common);
+        water = Good.CreateInstance("Water", band1, RarityEnum.Common);
+        sugar = Good.CreateInstance("Sugar", band1, RarityEnum.Common);
+        lemonade = Good.CreateInstance("Lemonade", band3, RarityEnum.Uncommon);
 
         // set test_market to the Initial Market
         test_market = Market.Factory.CreateStarterMarket("The First Market"
