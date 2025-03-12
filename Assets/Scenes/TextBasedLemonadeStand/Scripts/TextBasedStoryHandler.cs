@@ -14,6 +14,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     private Company PlayerCompany;
     private bool isWaitingForPlayerInput = false;
 
+    private GameObject OrderPanelHandler;
+
     private Market initialMarket;
 
     private MenuStateEnum CurrentMenuState = MenuStateEnum.Splash;
@@ -55,7 +57,7 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void ChoicesOrderSupplies()
     {
-
+        throw new NotImplementedException();
     }
 
     public void StartTextBasedGame()
@@ -77,9 +79,12 @@ public class TextBasedStoryHandler : MonoBehaviour
         var Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);
         var Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 3), RarityEnum.Common);
         var Water = Good.CreateInstance("Water", new PriceBand(1, 3), RarityEnum.Common);
-        inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(),period));
-        inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(),period));
-        inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(),period));
+        var lemonEntry=inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(),period));
+        lemonEntry.SetPrice(Lemon.GetPrice()*1.1m);
+        var sugarEntry= inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(),period));
+        sugarEntry.SetPrice(Sugar.GetPrice()*1.1m);
+        var waterEntry=inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(),period));
+        waterEntry.SetPrice(Water.GetPrice()*1.1m);
     }
     private void InitializePlayer()
     {

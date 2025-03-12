@@ -3,6 +3,7 @@ public class InventoryEntry
     public Good good;
     public int quantity;
     public decimal Cost;
+    public decimal Price;
     private Recipe recipe;
     public int PeriodAcquired;
     public Recipe GetRecipe()=> good.IsProducedGood?recipe:null;
@@ -26,6 +27,10 @@ public class InventoryEntry
         PeriodAcquired = period;
     }
 
+    public void SetPrice(decimal price)
+    {
+        Price = price;
+    }
     public override string ToString()
     {
         return $"{good.GoodName} {quantity} units at {Cost} ";

@@ -34,7 +34,7 @@ public class Good : ScriptableObject
                                         PriceBand price_band=null,
                                         RarityEnum rarity=RarityEnum.Common)
     {
-        var good = ScriptableObject.CreateInstance<Good>();
+        var good = CreateInstance<Good>();
         good.Initialize(good_name, price_band,rarity);
         return good;
     }
