@@ -29,7 +29,6 @@ public class TextBasedStoryHandler : MonoBehaviour
             Destroy(gameObject);
         }
         InitializeMarket();
-        InitializePlayer();
     }
 
     private void Update()

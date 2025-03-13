@@ -10,9 +10,11 @@ public class OrderPanelHandler : MonoBehaviour
     [SerializeField] private GameObject ItemDropdown;
     [SerializeField] private GameObject QuantityInput;
     [SerializeField] private Button OrderButton;
+    [SerializeField] private Button SummaryButton;
     [SerializeField] private GameObject TurnLabel;
     [SerializeField] private GameObject ValueLabel;
     [SerializeField] private GameObject TotalLabel;
+    [SerializeField] private GameObject OrderSummaryPanel;
     private Company PlayerCompany;
     private Market LocalMarket;
     private List<InventoryEntry> MarketInventoryEntries;
@@ -20,6 +22,7 @@ public class OrderPanelHandler : MonoBehaviour
 #region UnityBuiltIns
     public void Start()
     {
+        var summaryPanelHandler = OrderSummaryPanel.GetComponent<OrderSummaryPopupHandler>();
         if (!gameObject.activeInHierarchy)
         {
             gameObject.SetActive(true);
@@ -28,6 +31,7 @@ public class OrderPanelHandler : MonoBehaviour
         dropdown = ItemDropdown.GetComponent<TMP_Dropdown>();
         LocalMarket = GetMarket();
         OrderButton.onClick.AddListener(SubmitOrder);
+        SummaryButton.onClick.AddListener(summaryPanelHandler.ShowOrderSummary);
         QuantityInput.GetComponent<TMP_InputField>().onValueChanged.AddListener(value => HandleOrderQuantityChange(value));
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
         InitializePlayer();
