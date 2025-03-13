@@ -30,6 +30,7 @@ public class OrderPanelHandler : MonoBehaviour
         OrderButton.onClick.AddListener(SubmitOrder);
         QuantityInput.GetComponent<TMP_InputField>().onValueChanged.AddListener(value => HandleOrderQuantityChange(value));
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
+        InitializePlayer();
         InitializeOrderDropDown();
     }
 
@@ -80,27 +81,48 @@ public class OrderPanelHandler : MonoBehaviour
 
     #endregion
 
-    public void Initialize(Company playerCompany)
+    public void InitializePlayer()
     {
-        PlayerCompany = playerCompany;
+        var companies = TheEconomy.Instance.companies;
+        var playerCompanies = companies.OfType<Company>().Where(c => c.IsPlayer);
+        if (playerCompanies.Count() == 1)
+        {
+            PlayerCompany = playerCompanies.First();
+        }
+        else if (playerCompanies.Count()>1)
+        {
+            throw new Exception("If you are seeing this message, congratulations! We have expanded and now it's your job to implement multipleplayer.");
+        }
+        else
+        {
+            throw new Exception("no players exist.");
+        }
     }
 
     public void SubmitOrder()
     {
         var selectedGood = MarketInventoryEntries[dropdown.value].good;
-        int.TryParse(QuantityInput.GetComponent<InputField>().text, out var quantity);
+        var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
+        var totalprice = decimal.Parse(totalText.text);
+        int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out var quantity);
     
         iCompany seller = null; //Market Order
 
-        var order = new Order(PlayerCompany,seller,selectedGood, quantity, selectedGood.GetPrice());
+        var order = new Order(PlayerCompany,seller,selectedGood, quantity, totalprice);
         var orderContext = new ActionContext
         {
             TradeToSubmit = order,
-            MarketToSubmitTo = null,
+            MarketToSubmitTo = LocalMarket,
             Period = LocalMarket.CurrentPeriod
         };
-
-
         var result = PlayerCompany.QueueOrder(orderContext);
+        if (result != LemonadeStandResultObject.Success())
+        {
+            Debug.Log(result.Message);
+        }
+        else
+        {
+            Debug.Log("Order Submitted");
+        }
     }
 }

@@ -105,6 +105,7 @@ public class Market : ScriptableObject, iCompany
     public void SetMarketInstability(float newInstability)=>MarketInstability = newInstability;
     public float GetPopulationGrowthRate()=>PopulationGrowthRate;
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
+    public List<Order>GetOrdersSentToMarketByCompany(Company company)=>_tradeProcessor.GetOrders().Where(x=>x.SubmittingCompany.Equals(company)).ToList();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;

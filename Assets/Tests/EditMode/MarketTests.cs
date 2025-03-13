@@ -6,7 +6,7 @@ using UnityEngine;
 using static TestHelpers;
 
 [TestFixture]
-public class MarketTests
+public partial class MarketTests
 {
     private TheEconomy TestEconomy;
 
@@ -23,6 +23,9 @@ public class MarketTests
     Good sugar;
     Good lemonade;
 
+    //Market Dependencies
+    iDemandStrategy TestDemandStrategy;
+
     //Recipes
     private Recipe lemonade_recipe;
 
@@ -38,8 +41,11 @@ public class MarketTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
+        //Setup Market Dependencies
+        TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+
         //Setup Market
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
 
         //Setup Companies
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -57,7 +63,7 @@ public class MarketTests
     {
         test_initial_market = Market.Factory.CreateStarterMarket(companyName: "The First Market", 
                                                     companyLevel: CompanyLevelEnum.Market,
-                                                    demandStrategy: new LinearDemandStrategy());
+                                                    demandStrategy: TestDemandStrategy);
         test_initial_market.InitializeDemandForSpecificGood(lemon, 1000);
     }
 
@@ -159,7 +165,7 @@ public class MarketTests
     {
         // Arrange
         var tradingPeriod = 1;
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
         var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(company);
         var francium = Good.CreateInstance("Uranium", band2, RarityEnum.Very_Rare);
@@ -179,7 +185,7 @@ public class MarketTests
     {
         // Arrange
         var period = 1;
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
         var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(company);
         var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
@@ -207,7 +213,7 @@ public class MarketTests
         // Arrange
         var tradingPeriod = 1;
         var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
         testMarket.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(lemon, 10, 3.0m,0));
         lemon.ExpiresAfterPeriods=2;
@@ -233,7 +239,7 @@ public class MarketTests
         // Arrange
         var tradingPeriod = 1;
         var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
         testMarket.RegisterCompany(company);
         
         var apple = Good.CreateInstance("Apple", band2, RarityEnum.Common);
@@ -285,7 +291,7 @@ public class MarketTests
         // Arrange
         var testMarket = Market.Factory.CreateMarket(companyName: "TestMarket", 
                                                     companyLevel: CompanyLevelEnum.Market,
-                                                    demandStrategy: new LinearDemandStrategy());
+                                                    demandStrategy: TestDemandStrategy);
         testMarket.GetInventory().AddGood(new InventoryEntry(lemon, 1000, 3.0m, 0));
         var initialPrice = testMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().good.GetPrice();
         var expected = initialPrice * 1.01m;
@@ -337,7 +343,7 @@ public class MarketTests
          // Arrange
         var testMarket = Market.Factory.CreateMarket(companyName: "TestMarket", 
                                                     companyLevel: CompanyLevelEnum.Market,
-                                                    demandStrategy: new LinearDemandStrategy());
+                                                    demandStrategy: TestDemandStrategy);
         var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, RarityEnum.Uncommon);
         testMarket.SetCash(100000);
         enhancedlemonade.IsProducedGood = true;
@@ -390,7 +396,7 @@ public class MarketTests
         var tradingPeriod = 0;
         var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
                                                               CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
+                                                              TestDemandStrategy);
         const int expected_number_of_entries = 1;
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         marketToTest.RegisterCompany(company1);

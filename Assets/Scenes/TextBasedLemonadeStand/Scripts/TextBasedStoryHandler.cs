@@ -13,10 +13,8 @@ public class TextBasedStoryHandler : MonoBehaviour
 #region Game Variables
     private Company PlayerCompany;
     private bool isWaitingForPlayerInput = false;
-
-    private GameObject OrderPanelHandler;
-
     private Market initialMarket;
+    private int playerActionsRemaining;
 
     private MenuStateEnum CurrentMenuState = MenuStateEnum.Splash;
 #endregion
@@ -31,6 +29,7 @@ public class TextBasedStoryHandler : MonoBehaviour
             Destroy(gameObject);
         }
         InitializeMarket();
+        InitializePlayer();
     }
 
     private void Update()
@@ -75,6 +74,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
         var inventory = initialMarket.GetInventory();
+        initialMarket.SetTradeProcessor(new BasicTradeProcessor());
+
         var period = TheEconomy.Instance.tradingPeriod;
         var Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);
         var Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 3), RarityEnum.Common);
@@ -89,17 +90,20 @@ public class TextBasedStoryHandler : MonoBehaviour
     private void InitializePlayer()
     {
         PlayerCompany= Company.Factory.Create("Player1",CompanyLevelEnum.Beginner);
+        PlayerCompany.IsPlayer= true;
+        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
+        initialMarket.RegisterCompany(PlayerCompany);
     }
 
     private IEnumerator StartGameLoop()
     {
         textScroll.text = "";
         LogMessage("Welcome to Lemonade Stand!");
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         LogMessage("Can you save Capitalism?");
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         LogMessage("Let's find out!");
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         DisplayChoices();
     }
 

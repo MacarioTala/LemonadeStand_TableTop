@@ -54,6 +54,7 @@ public class Company : ScriptableObject, iCompany
     private List<AllowedAction> allowedActions = new();
     private int actionsPerCycle;
     private int actionsRemaining = 0;
+    public int GetActionsRemaining() => actionsRemaining;
     public void ResetActions() => actionsRemaining = actionsPerCycle;
     public void SetActionsPerCycle(int actions) => actionsPerCycle = actions;
     public void AddAllowedAction(AllowedAction action) => allowedActions.Add(action);
