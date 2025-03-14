@@ -31,7 +31,7 @@ public class OrderPanelHandler : MonoBehaviour
         dropdown = ItemDropdown.GetComponent<TMP_Dropdown>();
         LocalMarket = GetMarket();
         OrderButton.onClick.AddListener(SubmitOrder);
-        SummaryButton.onClick.AddListener(summaryPanelHandler.ShowOrderSummary);
+        SummaryButton.onClick.AddListener(() => summaryPanelHandler.ShowOrderSummary(LocalMarket));
         QuantityInput.GetComponent<TMP_InputField>().onValueChanged.AddListener(value => HandleOrderQuantityChange(value));
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
         InitializePlayer();
