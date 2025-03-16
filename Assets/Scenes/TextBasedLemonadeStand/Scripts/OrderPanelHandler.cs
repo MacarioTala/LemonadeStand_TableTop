@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -15,13 +16,17 @@ public class OrderPanelHandler : MonoBehaviour
     [SerializeField] private GameObject ValueLabel;
     [SerializeField] private GameObject TotalLabel;
     [SerializeField] private GameObject OrderSummaryPanel;
+    [SerializeField] private GameObject OrderQueuedLabel;
     private Company PlayerCompany;
     private Market LocalMarket;
     private List<InventoryEntry> MarketInventoryEntries;
     private TMP_Dropdown dropdown;
+    private TextMeshProUGUI OrderConfirmationText;
 #region UnityBuiltIns
     public void Start()
     {
+        OrderConfirmationText = OrderQueuedLabel.GetComponent<TextMeshProUGUI>();
+        OrderConfirmationText.alpha = 0;
         var summaryPanelHandler = OrderSummaryPanel.GetComponent<OrderSummaryPopupHandler>();
         if (!gameObject.activeInHierarchy)
         {
@@ -36,6 +41,36 @@ public class OrderPanelHandler : MonoBehaviour
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
         InitializePlayer();
         InitializeOrderDropDown();
+    }
+
+    private void ShowOrderConfirmation()
+    {
+        StartCoroutine(FadeText());
+    }
+
+    private IEnumerator FadeText()
+    {
+        const float duration = .5f;
+        const float holdTime = 1.5f;
+        float elapsedTime = 0;
+
+        while(elapsedTime < duration)
+        {
+            OrderConfirmationText.alpha = Mathf.Lerp(0, 1, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        OrderConfirmationText.alpha = 1;
+        yield return new WaitForSeconds(holdTime);
+
+        elapsedTime = 0;
+        while(elapsedTime < duration)
+        {
+            OrderConfirmationText.alpha = Mathf.Lerp(1, 0, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        OrderConfirmationText.alpha = 0;
     }
 
     private void HandleOrderQuantityChange(string value)
@@ -120,13 +155,14 @@ public class OrderPanelHandler : MonoBehaviour
             Period = LocalMarket.CurrentPeriod
         };
         var result = PlayerCompany.QueueOrder(orderContext);
-        if (result != LemonadeStandResultObject.Success())
+        
+        if (result.Equals(LemonadeStandResultObject.Success()))
         {
-            Debug.Log(result.Message);
+            ShowOrderConfirmation();
         }
         else
         {
-            Debug.Log("Order Submitted");
+            Debug.Log(result.Message);
         }
     }
 }

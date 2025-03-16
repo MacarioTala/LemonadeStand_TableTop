@@ -24,9 +24,19 @@ public class OrderSummaryPopupHandler : MonoBehaviour
                 var orders = LocalMarket.GetOrdersSentToMarket();
                 var panelText = OrderSummaryText.GetComponent<TextMeshProUGUI>();
                 panelText.text = "";
-                
+
+                panelText.text += "Orders";
+                panelText.text += "\n";
+                panelText.text += "----------------";
+                panelText.text += "\n";
                 foreach(var order in orders){
-                    panelText.text += order.ToString();
+                    var line = new OrderSummaryLineItem{
+                        GoodName = order.Good.ToString(),
+                        Quantity = order.Quantity,
+                        Price = order.Price
+                    };
+                    panelText.text += line.ToString();
+                    panelText.text += "\n";
                 }
                 OrderSummaryPanel.SetActive(true);
             }
