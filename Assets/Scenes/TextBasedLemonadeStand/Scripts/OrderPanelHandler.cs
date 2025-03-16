@@ -13,8 +13,9 @@ public class OrderPanelHandler : MonoBehaviour
     [SerializeField] private Button OrderButton;
     [SerializeField] private Button SummaryButton;
     [SerializeField] private GameObject TurnLabel;
-    [SerializeField] private GameObject ValueLabel;
+    [SerializeField] private TextMeshProUGUI ValueLabel;
     [SerializeField] private GameObject TotalLabel;
+    [SerializeField] private TextMeshProUGUI actionCounter;
     [SerializeField] private GameObject OrderSummaryPanel;
     [SerializeField] private GameObject OrderQueuedLabel;
     private Company PlayerCompany;
@@ -39,6 +40,9 @@ public class OrderPanelHandler : MonoBehaviour
         SummaryButton.onClick.AddListener(() => summaryPanelHandler.ShowOrderSummary(LocalMarket));
         QuantityInput.GetComponent<TMP_InputField>().onValueChanged.AddListener(value => HandleOrderQuantityChange(value));
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
+
+        ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
+
         InitializePlayer();
         InitializeOrderDropDown();
     }
@@ -102,7 +106,7 @@ public class OrderPanelHandler : MonoBehaviour
         var selectedGood = selectedEntry.good;
         int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out int quantity);
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
-        ValueLabel.GetComponent<TextMeshProUGUI>().text = price.ToString();
+        ValueLabel.text = price.ToString();
         totalText.text = (price * quantity).ToString();
     }
 
@@ -155,14 +159,23 @@ public class OrderPanelHandler : MonoBehaviour
             Period = LocalMarket.CurrentPeriod
         };
         var result = PlayerCompany.QueueOrder(orderContext);
-        
-        if (result.Equals(LemonadeStandResultObject.Success()))
+
+        if (result == LemonadeStandResultObject.Success())
         {
             ShowOrderConfirmation();
+            DecrementActionCounter();
         }
         else
         {
             Debug.Log(result.Message);
         }
+    }
+
+    private void DecrementActionCounter()
+    {
+        var actionCounterText = actionCounter.text;
+        int.TryParse(actionCounterText, out var actionsRemaining);
+        actionsRemaining--;
+        actionCounter.text = actionsRemaining.ToString();
     }
 }

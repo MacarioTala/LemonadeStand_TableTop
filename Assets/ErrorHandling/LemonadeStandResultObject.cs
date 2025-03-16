@@ -19,5 +19,18 @@ public class LemonadeStandResultObject
         }
         return false;   
     }
+
+    public static bool operator == (LemonadeStandResultObject left, LemonadeStandResultObject right) 
+    {
+        if (left is null && right is null) return true;
+        if (left is null || right is null) return false;
+        return left.Equals(right);
+    }
+
+    public static bool operator != (LemonadeStandResultObject left, LemonadeStandResultObject right) 
+    {
+        return !(left == right);
+    }
+
     public override int GetHashCode() => Result.GetHashCode() + Message.GetHashCode();
 }

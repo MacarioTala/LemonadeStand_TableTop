@@ -9,6 +9,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textScroll;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button EndTurnButton;
+    [SerializeField] private TextMeshProUGUI ActionPointsText;
     public static TextBasedStoryHandler Instance { get; private set; }
 #region Game Variables
     private Company PlayerCompany;
@@ -61,6 +62,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     public void StartTextBasedGame()
     {
         InitializePlayer();
+        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
+        ActionPointsText.text = playerActionsRemaining.ToString();
         if (Instance == null)
         {
             Debug.Log("TextBasedStoryHandler is not initialized.");
@@ -128,11 +131,6 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
         isWaitingForPlayerInput = true;
         LogMessage("Press Space to continue.");
-    }
-
-    private void ChooseFromOrderSuppliesMenu(int choice)
-    {
-        
     }
 
     private void DisplayChoices()
