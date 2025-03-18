@@ -13,6 +13,8 @@ public class IntegrationTests
 
     Good Lemonade;
     const int Period = 0;
+    readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+    readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
 
     [SetUp]
     public void SetUp()
@@ -20,7 +22,12 @@ public class IntegrationTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
+        TheEconomy.Instance.RemoveMarket(existingMarket);
+
+        TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        TestMarket.SetMarketDataService(TestMarketDataService);
+        TheEconomy.Instance.RegisterCompany(TestMarket);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
@@ -118,12 +125,10 @@ public class IntegrationTests
     public void EndTradingPeriodIncrementsCompanyPeriod()
     {
         // Arrange
-        var company = Company.Factory.Create("Company Test", CompanyLevelEnum.Beginner);
+        var company = Company1;
         var currentPeriod = company.CurrentPeriod;
         var expected = currentPeriod + 1;
-        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        TheEconomy.Instance.RegisterCompany(market);
-        market.RegisterCompany(company);
+        
         // Act
         TestEconomy.EndTradingPeriod();
         var actual = company.CurrentPeriod;
