@@ -148,7 +148,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
         var minDemand = demandData.MinDemand;
         var maxDemand = demandData.MaxDemand;
 
-        if (instability == 0) return;
+        if (instability == 0) return;//If Market is completely stable, demand does not change
 
         var demandAdjustment = UnityEngine.Random.Range(0, currentDemand) * instability;
         demandData.CurrentDemand = (int) Math.Clamp(currentDemand + demandAdjustment, minDemand, maxDemand);

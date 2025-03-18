@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using System.Data.Common;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using Unity.VisualScripting.YamlDotNet.Core;
 using UnityEngine;
 
 [TestFixture]
@@ -16,13 +15,21 @@ public class DemandElasticityTests
     Good lemon;
     Good water;
     Good sugar;
+
+    iDemandStrategy TestDemandStrategy;
+
+    iDemographicManager TestDemographicManager;
+
     [SetUp]
     public void Setup ()
     {
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
+        TestDemographicManager = new MockDemographicManager();
+        TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+        TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,TestDemandStrategy);
+        TestMarket.SetDemographicManager(TestDemographicManager);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
@@ -38,10 +45,9 @@ public class DemandElasticityTests
     }
    
     [Test]
-    public void DemandInelasticGoodsDoNotChangeDemand()
+    public void DemandInelasticGoodsDoNotChangeDemandInStableMarkets()
     {
         // Arrange
-        var TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,new LinearDemandStrategy());
         TestMarket.SetCash(1000000);
         var Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company1.SetCash(10000);
@@ -75,5 +81,48 @@ public class DemandElasticityTests
         lemon = null;
         water = null;
         sugar = null;
+    }
+}
+
+public class MockDemographicManager : iDemographicManager
+{
+    public float GetMarketInstability()
+    {
+        return 0f; // Stable market
+    }
+
+    public int GetPopulation()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float GetPopulationEnnui()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float GetPopulationGrowthRate()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float GetPopulationHappiness()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public LemonadeStandResultObject SetMarketInstability(float newInstability)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public LemonadeStandResultObject SetPopulation(int newPopulation)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)
+    {
+        throw new System.NotImplementedException();
     }
 }
