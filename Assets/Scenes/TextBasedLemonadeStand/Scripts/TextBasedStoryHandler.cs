@@ -29,7 +29,6 @@ public class TextBasedStoryHandler : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        InitializeMarket();
     }
 
     private void Update()
@@ -61,7 +60,9 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     public void StartTextBasedGame()
     {
+        InitializeMarket();
         InitializePlayer();
+        WireUpButtons();
         playerActionsRemaining = PlayerCompany.GetActionsRemaining();
         ActionPointsText.text = playerActionsRemaining.ToString();
         if (Instance == null)
@@ -72,9 +73,21 @@ public class TextBasedStoryHandler : MonoBehaviour
         Instance.StartCoroutine(Instance.StartGameLoop());
     }
 
+    private void WireUpButtons()
+    {
+        EndTurnButton.onClick.AddListener(EndTurn);
+    }
+
+    private void EndTurn()
+    {
+        Debug.Log("End Turn");
+    }
+
     private void InitializeMarket()
     {
         initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
+        var testMarket = TheEconomy.Instance.GetMarketByName("The First Market");
+        TheEconomy.Instance.RemoveMarket(testMarket);
         var inventory = initialMarket.GetInventory();
         initialMarket.SetTradeProcessor(new BasicTradeProcessor());
 

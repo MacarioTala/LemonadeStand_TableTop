@@ -66,10 +66,8 @@ public class MainMenuController : MonoBehaviour
     {
         var canvasGroup = mainMenu.GetComponent<CanvasGroup>();
         mainMenu.SetActive(true);
-        Debug.Log($"Before WinkIn: {mainMenuAnimator.GetBool("WinkIn")}");
         mainMenuAnimator.SetBool("WinkIn", true);
-        Debug.Log($"After WinkIn: {mainMenuAnimator.GetBool("WinkIn")}");
-
+        
         const float duration =.5f;
         float elapsedTime = 0f;
 

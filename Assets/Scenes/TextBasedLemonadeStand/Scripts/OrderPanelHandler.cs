@@ -18,6 +18,8 @@ public class OrderPanelHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI actionCounter;
     [SerializeField] private GameObject OrderSummaryPanel;
     [SerializeField] private GameObject OrderQueuedLabel;
+    [SerializeField] private GameObject DetailedOrderPanel;
+    [SerializeField] private Button ShowDetailedOrderButton;
     private Company PlayerCompany;
     private Market LocalMarket;
     private List<InventoryEntry> MarketInventoryEntries;
@@ -43,17 +45,26 @@ public class OrderPanelHandler : MonoBehaviour
 
         ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
 
+        DetailedOrderPanel.SetActive(false);
+        ShowDetailedOrderButton.onClick.AddListener(ShowDetailedOrderPanel);
+
         InitializePlayer();
         InitializeOrderDropDown();
     }
 
-    private void ShowOrderConfirmation()
+    private void ShowDetailedOrderPanel()
     {
-        StartCoroutine(FadeText());
+        DetailedOrderPanel.SetActive(true);
     }
 
-    private IEnumerator FadeText()
+    private void ShowOrderConfirmation()
     {
+        StartCoroutine(FadeText("Order Queued"));
+    }
+
+    private IEnumerator FadeText(string message)
+    {
+        OrderConfirmationText.text = message;
         const float duration = .5f;
         const float holdTime = 1.5f;
         float elapsedTime = 0;
