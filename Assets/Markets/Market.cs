@@ -49,25 +49,21 @@ public class Market : ScriptableObject, iCompany
 
     //Companies
     public List<Company> CompaniesInThisMarket = new();
-
-    //Demographic data
-    public float MarketInstability { get; set; }//0-1. 1 is most unstable
-    public float PopulationEnnui; // 0-1. Ennui of 1 ends the game. 
-                                  // Population is now too bored to do anything.
-
-    public string GetCurrentEnnui()
-    {
-        if (PopulationEnnui == 0) return "Inspired";
-        if (PopulationEnnui > 0 && PopulationEnnui < .25) return "Thriving";
-        if (PopulationEnnui >= .25 && PopulationEnnui < .5) return "Content";
-        if (PopulationEnnui >= .5 && PopulationEnnui < .75) return "Dissatisfied";
-        if (PopulationEnnui >= .75 && PopulationEnnui < 1) return "Bored";
-        if (PopulationEnnui == 1) return "Bored to death";
-        return "Unknown";
-    }
-    public float PopulationHappiness; // 0-1. 1 is happiest
-    public float PopulationGrowthRate { get; set; }
-    public int Population { get; set; }
+#region Demographic data
+    public float GetMarketInstability() => _demographicManager.GetMarketInstability();
+    public LemonadeStandResultObject SetMarketInstability(float newInstability)
+        =>_demographicManager.SetMarketInstability(newInstability);
+    public float GetPopulationEnnui() => _demographicManager.GetPopulationEnnui();
+    public string GetEnnuiLevel() => _demographicManager.GetEnnuiLevel();
+    
+    public int GetPopulation() => _demographicManager.GetPopulation();
+    public LemonadeStandResultObject SetPopulation(int newPopulation) => _demographicManager.SetPopulation(newPopulation);
+    public float GetPopulationGrowthRate()=>_demographicManager.GetPopulationGrowthRate();
+    public float GetPopulationHappiness()=>_demographicManager.GetPopulationHappiness();
+    public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)=>
+        _demographicManager.SetPopulationHappiness(newHappiness);
+#endregion 
+    
 
     //Event Handlers
     public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent);
@@ -100,10 +96,6 @@ public class Market : ScriptableObject, iCompany
     //Convenience methods
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
-
-    public float GetMarketInstability()=>MarketInstability;
-    public void SetMarketInstability(float newInstability)=>MarketInstability = newInstability;
-    public float GetPopulationGrowthRate()=>PopulationGrowthRate;
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
     public List<Order>GetOrdersSentToMarketByCompany(Company company)=>_tradeProcessor.GetOrders().Where(x=>x.SubmittingCompany.Equals(company)).ToList();
     public List<Recipe> GetRecipes()=>_recipes;
@@ -163,6 +155,8 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Managers
+    private iDemographicManager _demographicManager;
+    public void SetDemographicManager(iDemographicManager demographicManager) => _demographicManager = demographicManager;
     private iFeatureManager _featureManager;
     public void SetFeatureManager(iFeatureManager featureManager) => _featureManager = featureManager;
     private iConsumptionManager _consumptionManager;

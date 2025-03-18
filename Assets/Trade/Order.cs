@@ -62,4 +62,27 @@ public class Order
         
         return "Order: " + SubmittingCompany + action + Quantity + " " + Good.GoodName + preposition + counterParty + " at " + Price;
     }
+    
+    public override bool Equals(object other)
+    {
+        if (other is Order otherOrder)
+        {
+            return SubmittingCompany == otherOrder.SubmittingCompany 
+                     && Buyer == otherOrder.Buyer 
+                     && Seller == otherOrder.Seller 
+                     && Good == otherOrder.Good 
+                     && Quantity == otherOrder.Quantity 
+                     && Price == otherOrder.Price;
+        }
+        return false;
+    }
+    public override int GetHashCode()
+    {
+        return SubmittingCompany.GetHashCode() 
+                ^ Buyer.GetHashCode() 
+                ^ Seller.GetHashCode() 
+                ^ Good.GetHashCode() 
+                ^ Quantity.GetHashCode() 
+                ^ Price.GetHashCode();
+    }
 }

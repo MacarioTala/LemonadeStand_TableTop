@@ -160,7 +160,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
         LogMessage($"You have {PlayerCompany.GetCash()} credits.");
-        LogMessage($"The people in your neighbourhood are {initialMarket.GetCurrentEnnui()}");
+        LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
         LogMessage("The news is not available yet.");
     }
     private void DisplayInventory()

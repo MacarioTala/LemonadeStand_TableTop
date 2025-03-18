@@ -21,7 +21,7 @@ public class MarketTransaction
     {
         if (other is MarketTransaction otherTrade)
         {
-            return TransactionId == otherTrade.TransactionId;
+            return RecordedTrade == otherTrade.RecordedTrade && Period == otherTrade.Period;
         }
         return false;
     }

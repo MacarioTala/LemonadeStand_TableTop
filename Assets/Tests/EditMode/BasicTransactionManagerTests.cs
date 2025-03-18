@@ -465,7 +465,7 @@ public class BasicTransactionManagerTests
         Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Seller);
     }
     [Test]
-    public void RT_OneOrderOneCounterpartyTwoMarketTrades()
+    public void RecordTrade_OneOrderOneCounterpartyTwoMarketTrades()
     {
         //A single primary order that has a single counterparty
         //results in two market trades being recorded in the Market
@@ -492,7 +492,7 @@ public class BasicTransactionManagerTests
         var transactionsRecorded = TestMarket.GetMarketTradesInPeriod(Period);
         //Assert
         Assert.AreEqual(expectedMarketTransactionCount,transactionsRecorded.Count);
-        Assert.AreEqual(expectedMarketTransactions,transactionsRecorded);
+        CollectionAssert.AreEqual(expectedMarketTransactions,transactionsRecorded);
     }
     [Test]
     public void RT_OneOrderTwoCounterpartiesThreeMarketTrades()
