@@ -71,7 +71,7 @@ public class TheEconomy : MonoBehaviour
         InitialMarket = Market.Factory.CreateStarterMarket(
                             "The First Market", 
                             CompanyLevelEnum.Market, 
-                            new LinearDemandStrategy());
+                            ScriptableObject.CreateInstance<LinearDemandStrategy>());
         RegisterCompany(InitialMarket);
     }
 

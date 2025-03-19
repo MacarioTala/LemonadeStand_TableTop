@@ -16,6 +16,8 @@ public partial class LinearDemandStrategyTests
 
     LinearDemandStrategy Strategy;
 
+    iDemographicManager TestDemographicManager;
+
     int Period = 0;
     
     [SetUp]
@@ -33,6 +35,8 @@ public partial class LinearDemandStrategyTests
                                                         CompanyLevelEnum.Market,
                                                         Strategy);
         TestMarketDataService = new MockMarketDataService();
+        TestDemographicManager = new MockDemographicManager();
+        TestMarket.SetDemographicManager(TestDemographicManager);
         TestMarket.SetMarketDataService(TestMarketDataService);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);

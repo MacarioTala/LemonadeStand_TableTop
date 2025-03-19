@@ -69,7 +69,7 @@ public class IntegrationTests
     public void MarketDoesNotAllowQueueingDuplicateTrades()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
         var buyer = Company.Factory.Create("Buyer", CompanyLevelEnum.Beginner);
         var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
         market.RegisterCompany(buyer);
@@ -111,7 +111,7 @@ public class IntegrationTests
     public void EndTradingPeriodIncrementsMarketPeriod()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, TestDemandStrategy);
         var currentPeriod = market.CurrentPeriod;
         var expected = currentPeriod + 1;
         TheEconomy.Instance.RegisterCompany(market);
@@ -142,13 +142,11 @@ public class IntegrationTests
     public void UnleashMarketForcesFulfilsMarketDemandWhenCalledFromMarket()
     {
         //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var marketToTest = TestMarket;
+        var company1 = Company1;
+        marketToTest.InitializeDemandForSpecificGood(Lemonade, 1000);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
-        marketToTest.RegisterCompany(company1);
-        var company1Order = new Order(marketToTest, company1, Lemonade, 1000, 3.5m);
+        var company1Order = new Order(null, company1, Lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var period = 1;
@@ -164,20 +162,16 @@ public class IntegrationTests
     public void UnleashMarketForcesFulfillsMarketDemandWhenCalledFromTheEconomy()
     {
         //Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              new LinearDemandStrategy() );
+        var marketToTest = TestMarket;
+        marketToTest.SetMarketDataService(TestMarketDataService);
         marketToTest.InitializeDemandForSpecificGood(Lemonade, 2000);
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("TestCompany", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
         var company1Order = new Order(marketToTest, company1, Lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var expected = 1000;
-        var theFirstMarket = (Market)TheEconomy.Instance.companies.Where(c => c.Name == "The First Market").FirstOrDefault();
-        TestEconomy.RemoveMarket(theFirstMarket);
-        TestEconomy.RegisterCompany(marketToTest);
 
         //Act
         company1.QueueOrder(company1Context);
@@ -193,7 +187,7 @@ public class IntegrationTests
     public void EndTradingPeriodProcessesNonMarketTradesQueuedInTheMarket()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, TestDemandStrategy);
         market.SetCash(1000000);
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
@@ -221,7 +215,7 @@ public class IntegrationTests
     public void EndTradingPeriodSendsTradesThatMarketHasQueuedWhenTwoMarketsArePresent()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, TestDemandStrategy);
         market.SetCash(1000000);
         TheEconomy.Instance.RegisterCompany(market);
         var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -255,7 +249,7 @@ public class IntegrationTests
         var period = 0;
         var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
-        var market = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var market = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, TestDemandStrategy);
         market.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
 
@@ -278,7 +272,7 @@ public class IntegrationTests
         //Arrange
         var period = 0;
         var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
-        var TestMarket = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var TestMarket = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, TestDemandStrategy);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
