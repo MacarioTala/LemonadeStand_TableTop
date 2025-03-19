@@ -28,4 +28,5 @@ public enum ResultTypeEnum
     PrimaryOrderNotSet=22,
     SomeOrdersNotProcessed = 23,
     ElasticityNotFound = 24,
+    CompanyNotFound = 25,
 }

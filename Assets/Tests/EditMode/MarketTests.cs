@@ -153,7 +153,8 @@ public partial class MarketTests
         TestMarket.ConsumeGoods();
         
         //only one inventory entry per good in Markets
-        var actual = TestMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).FirstOrDefault();
+        var actualInventory = TestMarket.GetInventory();
+        var actual = actualInventory.GetInventoryEntriesByGood(lemon.GoodName).FirstOrDefault();
         // Assert
         Assert.AreEqual(expected, actual.quantity);
     }
@@ -394,13 +395,11 @@ public partial class MarketTests
         
         // Arrange
         var tradingPeriod = 0;
-        var marketToTest = Market.Factory.CreateStarterMarket("Starter Market",
-                                                              CompanyLevelEnum.Market,
-                                                              TestDemandStrategy);
+        var marketToTest = TestMarket;
         const int expected_number_of_entries = 1;
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         marketToTest.RegisterCompany(company1);
-        var company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
+        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
         marketToTest.RegisterCompany(company2);
         company1.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
         company2.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
@@ -418,6 +417,10 @@ public partial class MarketTests
         var actual_number_of_entries = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).Count();
         // Assert
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
+
+        //remove companies from Market
+        marketToTest.RemoveCompany(company1);
+        marketToTest.RemoveCompany(company2);
     }
      [Test]
     public void CompaniesCanBuyGoodsFromEachOtherViaMatchingQueuedOrders()

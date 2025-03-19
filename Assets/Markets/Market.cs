@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
 public class Market : ScriptableObject, iCompany
 {
-#region Fields, Properties, and Convenience Methods
+#region Fields, Properties
 
     [SerializeField] private string _marketId;
     public Guid MarketId 
@@ -49,6 +49,17 @@ public class Market : ScriptableObject, iCompany
 
     //Companies
     public List<Company> CompaniesInThisMarket = new();
+    public LemonadeStandResultObject RemoveCompany(Company company)
+    {
+        if(CompaniesInThisMarket.Contains(company))
+        {
+            CompaniesInThisMarket.Remove(company);
+            return LemonadeStandResultObject.Success();
+        }
+        return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
+    }
+#endregion
+
 #region Demographic data
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
@@ -93,7 +104,7 @@ public class Market : ScriptableObject, iCompany
     //Trading
     private readonly List<MarketTransaction> _marketTradesInPeriod = new();
 
-    //Convenience methods
+#region Convenience Methods
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
@@ -109,6 +120,7 @@ public class Market : ScriptableObject, iCompany
     }
     public void SetCash(decimal new_cash) => cash = new_cash;
 #endregion
+
 #region Creation and Initialization
     //Instantiate Markets using a factory
     private Market ()
