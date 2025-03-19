@@ -4,12 +4,39 @@ using UnityEngine;
 [TestFixture]
 public class BankruptcyTests
 {
-    TheEconomy testEconomy;
+    private readonly TheEconomy testEconomy=TheEconomy.Instance;
+    Market TestMarket;
+    Company Company1;
+
+    readonly iFixedCostStrategy TestFixedCostStrategy = new BasicFixedCostStrategy();
+    readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+    readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
     [SetUp]
     public void Setup()
     {
         TheEconomy.SetupForTests(new MockLogger());
-        testEconomy = TheEconomy.Instance;
+        var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
+        testEconomy.RemoveMarket(existingMarket);
+
+        TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        TestMarket.SetMarketDataService(TestMarketDataService);
+        testEconomy.RegisterCompany(TestMarket);
+
+        Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner, null, TestFixedCostStrategy);
+        TestMarket.RegisterCompany(Company1);
+    }
+
+    [Test]
+    public void CompanyWithoutCashGoesBankrupt()
+    {
+        //Arrange
+        Company1.SetCash(0);
+        var expected = true;
+        //Act
+        testEconomy.EndTradingPeriod();
+        var actual = Company1.IsBankrupt();
+        //Assert
+        Assert.AreEqual(expected, actual);
     }
 
     [Test]
@@ -20,14 +47,8 @@ public class BankruptcyTests
 
         //Arrange
         const int tradingCycles=2;
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        var fixedCostStrategy = new BasicFixedCostStrategy();
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner, null, fixedCostStrategy);
-        company1.SetCash(1000);
-
-        testEconomy.RegisterCompany(testMarket);
-        testMarket.RegisterCompany(company1);
-        
+        Company1.SetCash(1000);
+ 
         var rent = new FixedCost
         {
             Description = "Rent",
@@ -36,14 +57,14 @@ public class BankruptcyTests
             Frequency = 1,
             PeriodAcquired = 0
         };
-        company1.FixedCosts.Add(rent);
+        Company1.FixedCosts.Add(rent);
         var expected = true;
         //Act
         for (int i = 0; i < tradingCycles; i++)
         {
             testEconomy.EndTradingPeriod();
         }
-        var actual = company1.IsBankrupt();
+        var actual = Company1.IsBankrupt();
         //Assert
         Assert.AreEqual(expected, actual);
     }
@@ -51,9 +72,24 @@ public class BankruptcyTests
     [Test]
     public void ACompanyGoingBankruptShouldTriggerAnEvent()
     {throw new System.NotImplementedException();}
+
     [TearDown]
     public void TearDown()
     {
-        Object.DestroyImmediate(testEconomy.gameObject);
+        if(testEconomy != null)
+        {
+            Object.DestroyImmediate(testEconomy.gameObject);
+        }
+        //Cleanup
+        if (Company1 != null)
+        {
+            TestMarket.RemoveCompany(Company1);
+            Company1 = null;
+        }
+        if (TestMarket != null)
+        {
+            testEconomy.RemoveMarket(TestMarket);
+            TestMarket = null;
+        }
     }
 }
