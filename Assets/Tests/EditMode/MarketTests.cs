@@ -166,10 +166,10 @@ public partial class MarketTests
     {
         // Arrange
         var tradingPeriod = 1;
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
-        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var testMarket = TestMarket;
+        var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(company);
-        var francium = Good.CreateInstance("Uranium", band2, RarityEnum.Very_Rare);
+        var francium = Good.CreateInstance("Francium", band2, RarityEnum.Very_Rare);
         francium.ExpiresAfterPeriods = 1;
         company.GetInventory().AddGood(new InventoryEntry(francium, 1,10000m,0));
         var expected = 0;
@@ -179,6 +179,8 @@ public partial class MarketTests
         var actual = franciumEntry?.quantity??0;
         // Assert
         Assert.AreEqual(expected, actual);
+        //Cleanup
+        testMarket.RemoveCompany(company);
     }
 
     [Test]
@@ -186,8 +188,8 @@ public partial class MarketTests
     {
         // Arrange
         var period = 1;
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
-        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
+        var testMarket = TestMarket;
+        var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         testMarket.RegisterCompany(company);
         var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
         ripeLemon.ExpiresAfterPeriods = 1;
@@ -206,6 +208,9 @@ public partial class MarketTests
         var actualRipeLemonQuantity = ripeLemonEntries?.quantity??0;
         // Assert
         Assert.IsTrue(expectedWaterQuantity==actualWaterQuantity && expectedRipeLemonQuantity==actualRipeLemonQuantity);
+        
+        //Cleanup
+        testMarket.RemoveCompany(company);
     }
 
     [Test]
@@ -213,8 +218,8 @@ public partial class MarketTests
     {
         // Arrange
         var tradingPeriod = 1;
-        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
+        var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var testMarket = TestMarket;
         testMarket.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(lemon, 10, 3.0m,0));
         lemon.ExpiresAfterPeriods=2;
@@ -232,15 +237,18 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expectedLemonQuantity, actualLemonQuantity);
         Assert.AreEqual(expectedRipeLemonQuantity, actualRipeLemonQuantity);
-    }
+
+        //Cleanup
+        testMarket.RemoveCompany(company);
+    }   
 
     [Test]
     public void TheSameGoodBoughtAtDifferentTimesExpiresAtDifferentPeriods()
     {
         // Arrange
         var tradingPeriod = 1;
-        var company = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market,TestDemandStrategy);
+        var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        var testMarket = TestMarket;
         testMarket.RegisterCompany(company);
         
         var apple = Good.CreateInstance("Apple", band2, RarityEnum.Common);
@@ -254,6 +262,8 @@ public partial class MarketTests
         var actualAppleQuantity = actualAppleEntry?.quantity??0;
         // Assert
         Assert.AreEqual(expectedAppleQuantity, actualAppleQuantity);
+        //Cleanup
+        testMarket.RemoveCompany(company);
         }
 
 #endregion   
@@ -309,23 +319,25 @@ public partial class MarketTests
     public void PublishSpreadToMarket_should_update_existing_MarketData_if_spread_exists()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        TestEconomy.RegisterCompany(company1);
-        var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon, MarketToSubmitTo = test_initial_market};
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        TestMarket.RegisterCompany(company1);
+        var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon, MarketToSubmitTo = TestMarket};
         var expected = new List<MarketData>{new() { Good = lemon, Company = company1, Bid = 2.0m, Ask = 3.0m}};
         //Act
         company1.SubmitBidAskSpreadToMarket(context);
-        test_initial_market.CalculateNewBidAskSpreadForMarket();
-        var actual = test_initial_market.MarketData.Where(x=>x.Good == lemon).ToList();
+        TestMarket.CalculateNewBidAskSpreadForMarket();
+        var actual = TestMarket.MarketData.Where(x=>x.Good == lemon).ToList();
         // Assert
         Assert.AreEqual(expected, actual);
+        // Cleanup
+        TestMarket.RemoveCompany(company1);
     }
     [Test]
     public void PublishSpreadToMarketReturnsErrorIfActionContextIsIncomplete()
     {
         // Arrange
-        var company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
-        TestEconomy.RegisterCompany(company1);
+        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
+        TestMarket.RegisterCompany(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
         
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
@@ -334,6 +346,9 @@ public partial class MarketTests
         
         // Assert
         Assert.AreEqual(expected, actual);
+
+        // Cleanup
+        TestMarket.RemoveCompany(company1);
     }
                                
    #endregion
