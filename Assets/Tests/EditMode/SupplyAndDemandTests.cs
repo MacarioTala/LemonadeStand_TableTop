@@ -17,6 +17,7 @@ public class SupplyAndDemandTests
     readonly PriceBand band3 = new(3.0m, 5.0m);
     readonly PriceBand band4 = new(5.0m, 10.0m);
     readonly ITradeLogger MockTradeLogger = new MockLogger();
+    iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
 
     TheEconomy TestEconomy;
 
@@ -73,7 +74,7 @@ public class SupplyAndDemandTests
     public void IfMarketBuyingInAPeriodExceedsDemandThresholdIncreasePrices()
     {
         // Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, TestDemandStrategy);
         marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
         var testPeriod = 0;
         var currentLemonadePrice = lemonade.GetPrice();
@@ -83,9 +84,9 @@ public class SupplyAndDemandTests
         marketToTest.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3.0m, 0));
 
-        var buyLemonadeOrder = new Order(marketToTest, company, lemonade, 1500, 3.0m); 
+        var buyLemonadeOrder = new Order(null, company, lemonade, 1500, 3.0m); 
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = marketToTest, Period = testPeriod };
-        marketToTest.QueueMarketOrder(buyLemonadeContext);
+        company.QueueOrder(buyLemonadeContext);
 
         // Act
         marketToTest.ProcessCompanyOrders();
@@ -141,7 +142,7 @@ public class SupplyAndDemandTests
         // Arrange
         var sellingCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
         // Set up a market with demand for lemons
-        Market MarketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var MarketThatDemandsLemons = Market.Factory.CreateStarterMarket("Market That Demands Lemons", CompanyLevelEnum.Market, new LinearDemandStrategy());
         MarketThatDemandsLemons.InitializeDemandForSpecificGood(lemon, 1000);
         var period = 0;
     
@@ -152,13 +153,13 @@ public class SupplyAndDemandTests
         //create the ActionContext
         var testContext = new ActionContext
         {
-            TradeToSubmit = new Order(MarketThatDemandsLemons, sellingCompany, lemon, 1000, 3.0m),
+            TradeToSubmit = new Order(null, sellingCompany, lemon, 1000, 3.0m),
             MarketToSubmitTo = MarketThatDemandsLemons,
             Period = period
         };
 
         //have the market buy the lemons
-        MarketThatDemandsLemons.QueueMarketOrder(testContext);
+        sellingCompany.QueueOrder(testContext);
         MarketThatDemandsLemons.ProcessCompanyOrders();
         MarketThatDemandsLemons.FulfillDemand();
         MarketThatDemandsLemons.CalculateFulfillmentRates(testContext.Period);
@@ -167,6 +168,7 @@ public class SupplyAndDemandTests
         var actualFulfillmentRate = MarketThatDemandsLemons.GetMarketDemand()[lemon].FulfilmentRate;
         // Assert
         Assert.AreEqual(1, actualFulfillmentRate);
+
     }
     [Test]
     public void CalculateFulfillmentRatesReturnsLessThan1WhenDemandIsNotMet()

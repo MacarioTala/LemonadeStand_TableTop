@@ -64,6 +64,7 @@ public class BasicConsumptionManagerTests
         testGoods.Add(sugar);
         testGoods.Add(lemonade);
     }
+#region Fulfill Demand
     [Test]
     public void FD_FillsDemandOf1000WithLowestPricedOrder()
     {
@@ -210,7 +211,7 @@ public class BasicConsumptionManagerTests
         var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 3.5m);
         var Company2BuysLemonadeFromAnyone = new Order(Company2,null, lemonade, 100, 3.5m);
 
-        var expectedMarketTransactions = 4;
+        var expectedMarketTransactions = 3;
         //Act
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone, TestMarket,Period));
@@ -256,6 +257,7 @@ public class BasicConsumptionManagerTests
         //Assert
         Assert.AreEqual(expectedMarketCash, actualMarketCash);
     }
+#endregion
 
     [TearDown]
     public void TearDown()

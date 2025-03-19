@@ -28,6 +28,14 @@ public class BasicTransactionManager : iTransactionManager
         //other implementations of iTransactionManager
         var primaryOrder = context.PrimaryOrder;
         var counterPartyOrders = context.CounterPartyOrders;
+        if(primaryOrder.Buyer.Equals(context.MarketToSubmitTo))
+        {
+            context.MarketToSubmitTo.GetInventory()
+                .AddGood(new InventoryEntry(primaryOrder.Good, 
+                    primaryOrder.RemainingQuantity, 
+                    primaryOrder.Price,
+                    context.Period));
+        }
         RecordTransaction(primaryOrder,context.MarketToSubmitTo, context.Period,counterPartyOrders);
         
         return LemonadeStandResultObject.Success();
