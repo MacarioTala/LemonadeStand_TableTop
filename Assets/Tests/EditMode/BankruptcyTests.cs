@@ -1,4 +1,5 @@
- using NUnit.Framework;
+using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 
 [TestFixture]
@@ -21,6 +22,15 @@ public class BankruptcyTests
         TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
         TestMarket.SetMarketDataService(TestMarketDataService);
         testEconomy.RegisterCompany(TestMarket);
+
+        //Set Demographics
+        var populationHistory = new List<PopulationHistory>() 
+        {
+            new() {MarketId=TestMarket.MarketId,Period=0, Population=1000},
+            new() {MarketId=TestMarket.MarketId,Period=1, Population=1000},
+            new() {MarketId=TestMarket.MarketId,Period=2, Population=1000},
+        };
+        ((MockMarketDataService)TestMarketDataService).SetPopulationHistory(populationHistory);
 
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner, null, TestFixedCostStrategy);
         TestMarket.RegisterCompany(Company1);
@@ -62,6 +72,7 @@ public class BankruptcyTests
         //Act
         for (int i = 0; i < tradingCycles; i++)
         {
+            Debug.Log("Trading cycle: " + i);
             testEconomy.EndTradingPeriod();
         }
         var actual = Company1.IsBankrupt();

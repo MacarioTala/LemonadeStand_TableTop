@@ -7,7 +7,6 @@ public class MockMarketDataService : iMarketDataService
     IEnumerable<PopulationHistory> PopulationHistory;
     private MarketFeatureSpriteDatabase spriteDB;
     
-
     public void SetPopulationHistory(IEnumerable<PopulationHistory> populationHistory)
     {
         PopulationHistory = populationHistory;
