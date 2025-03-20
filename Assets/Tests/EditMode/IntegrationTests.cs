@@ -16,10 +16,12 @@ public class IntegrationTests
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
 
+    readonly ITradeLogger TestTradeLogger = new TradeLoggerV1();
+
     [SetUp]
     public void SetUp()
     {
-        TheEconomy.SetupForTests(new MockLogger());
+        TheEconomy.SetupForTests(TestTradeLogger);
         TestEconomy = TheEconomy.Instance;
 
         var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
@@ -202,7 +204,8 @@ public class IntegrationTests
         
         // Act
         TestEconomy.EndTradingPeriod();
-        var actual = TestEconomy._trade_logger.GetTradeCount();
+        int actual=TestEconomy.GetAllTransactions(0)
+                    .Sum(x=> x.Value.Count());
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -222,11 +225,11 @@ public class IntegrationTests
 
         Company1.QueueOrder(new ActionContext { TradeToSubmit = trade1, MarketToSubmitTo = TestMarket });
         Company2.QueueOrder(new ActionContext { TradeToSubmit = trade2, MarketToSubmitTo = TestMarket });
-        var expectedTradeCount = 1;
+        var expectedTradeCount = 2;
         var expectedMarketCount = 2;
         // Act
         TestEconomy.EndTradingPeriod();
-        var actualTradeCount = TestEconomy._trade_logger.GetTradeCount();
+        var actualTradeCount = TestEconomy.GetAllTransactions(0).Sum(x=> x.Value.Count());
         var actualMarketCount = TheEconomy.Instance.companies.Where(c=>c is Market).Count();
 
         // Assert

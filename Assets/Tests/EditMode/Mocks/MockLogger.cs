@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 #region stubs
 public class MockLogger : ITradeLogger
@@ -18,6 +19,11 @@ public class MockLogger : ITradeLogger
     public void SaveDailySummary(List<Order> trade_queue)
     {
         tradesLogged.AddRange(trade_queue);
+    }
+
+    public Dictionary<Guid, List<MarketTransaction>> GetAllTransactions(List<Market> markets,int period)
+    {
+        throw new NotImplementedException();
     }
 }
 #endregion

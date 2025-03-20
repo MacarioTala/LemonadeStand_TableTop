@@ -113,6 +113,7 @@ public class Market : ScriptableObject, iCompany
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
     public List<MarketTransaction> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
+     
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
     public void RecordTrade(MarketTransaction trade) 
     {

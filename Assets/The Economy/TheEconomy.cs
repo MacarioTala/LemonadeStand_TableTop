@@ -27,6 +27,12 @@ public class TheEconomy : MonoBehaviour
     public List<Good> goods = new();
     
     internal ITradeLogger _trade_logger;
+
+    public Dictionary<Guid,List<MarketTransaction>> GetAllTransactions(int period) 
+    {
+        var markets = companies.OfType<Market>().ToList();
+        return _trade_logger?.GetAllTransactions(markets, period);
+    }
     
     public List<iCompany> companies = new();
 

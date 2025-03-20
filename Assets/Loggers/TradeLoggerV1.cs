@@ -1,8 +1,19 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TradeLoggerV1 : ITradeLogger
 {
+    public Dictionary<Guid, List<MarketTransaction>> GetAllTransactions(List<Market> markets, int period)
+    {
+        var returnDict = new Dictionary<Guid, List<MarketTransaction>>();
+        foreach (var market in markets)
+        {
+            var trades = market.GetMarketTradesInPeriod(period);
+            returnDict.Add(market.MarketId, trades);
+        }
+        return returnDict;
+    }
     public int GetTradeCount()
     {
         Debug.Log("TradeLoggerV1.GetTradeCount() called");
