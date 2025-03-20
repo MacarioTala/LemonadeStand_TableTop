@@ -53,7 +53,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
         return ask;
     }
 
-    public void InitializeDemandForSpecificGood(Market market,Good good,int initialDemand, int minDemand=GlobalMinDemand, int maxDemand=GlobalMaxDemand)
+    public void InitializeDemandForSpecificGood(Market market,Good good,int initialDemand, int minDemand=GlobalMinDemand, int maxDemand=GlobalMaxDemand,float curvature=1f)
     {
         decimal ask;
         bool hasCostForGood = CalculateAskForProducedGood(market,good) > 0;
@@ -75,7 +75,8 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
                             FulfilmentRate = 0f,
                             MinDemand = minDemand,
                             MaxDemand = maxDemand,
-                            Ask = ask
+                            Ask = ask,
+                            Curvature = curvature
                         };
         marketDemand.Add(good, demandData);
     }

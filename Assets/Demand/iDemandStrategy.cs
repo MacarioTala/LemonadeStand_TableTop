@@ -6,7 +6,7 @@ public interface iDemandStrategy
     public const int MinDemand = 0;
     public const int MaxDemand = 10000;
     LemonadeStandResultObject AdjustDemandInPeriod(Market market);
-    void InitializeDemandForSpecificGood(Market market, Good good, int initialDemand, int minDemand = MinDemand, int maxDemand = MaxDemand);
+    void InitializeDemandForSpecificGood(Market market, Good good, int initialDemand, int minDemand = MinDemand, int maxDemand = MaxDemand, float curvature = 1f);
     void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent);
 #region Default Implementations
 

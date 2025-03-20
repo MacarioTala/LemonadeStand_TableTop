@@ -371,9 +371,9 @@ public class Market : ScriptableObject, iCompany
         var good = _marketDemand.Keys.FirstOrDefault(x=>x.GoodName == good_name);
         return _marketDemand[good].CurrentDemand;
     }
-    public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand=iDemandStrategy.MinDemand, int maxDemand=iDemandStrategy.MaxDemand)
+    public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand=iDemandStrategy.MinDemand, int maxDemand=iDemandStrategy.MaxDemand,float curvature=1f)
     {
-       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand,minDemand,maxDemand);
+       DemandStrategy.InitializeDemandForSpecificGood(this,good,InitialDemand,minDemand,maxDemand,curvature);
     }
     /// <summary>
     /// A Market order is an order initiated by the Market
