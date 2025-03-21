@@ -63,6 +63,7 @@ public class BasicConsumptionManager : iConsumptionManager
         order.Buyer = market;
         int demandToReturn;
         decimal cashToRemoveFromMarket;
+        var marketInventory = market.GetInventory();
         int quantityToFill;
         var marketCounterPartyOrder = new Order(buyer: market
                                                      , seller: order.Seller
@@ -78,11 +79,11 @@ public class BasicConsumptionManager : iConsumptionManager
         {
             cashToRemoveFromMarket = remainingDemand * order.Price;
             quantityToFill = remainingDemand;
-
             order.FilledQuantity += quantityToFill;
             marketCounterPartyOrder.Quantity = quantityToFill;
             marketCounterPartyOrder.FilledQuantity = quantityToFill;
             demandToReturn = 0;
+            marketInventory.AddGood(new InventoryEntry(order.Good, quantityToFill, order.Price, market.CurrentPeriod));
         }
         else
             {
@@ -93,6 +94,7 @@ public class BasicConsumptionManager : iConsumptionManager
                 marketCounterPartyOrder.Quantity = quantityToFill;
                 marketCounterPartyOrder.FilledQuantity = quantityToFill;
                 demandToReturn = remainingDemand - quantityToFill;
+                marketInventory.AddGood(new InventoryEntry(order.Good, quantityToFill, order.Price, market.CurrentPeriod));
             }
 
         market.SetCash(market.GetCash() - cashToRemoveFromMarket);

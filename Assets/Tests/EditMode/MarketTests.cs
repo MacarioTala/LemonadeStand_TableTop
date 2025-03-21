@@ -146,7 +146,7 @@ public partial class MarketTests
         //that will change the demand
         var expected = 500;
         // Act
-        var lemonSale = new Order(TestMarket, Company1, lemon, lemonsCompanyWillSellToMarket, 3.0m);
+        var lemonSale = new Order(null, Company1, lemon, lemonsCompanyWillSellToMarket, 3.0m);
         Company1.QueueOrder(CreateActionContext(lemonSale,TestMarket,0));
         TestMarket.ProcessCompanyOrders();
         TestMarket.FulfillDemand();
