@@ -63,7 +63,7 @@ public partial class LinearDemandStrategyTests
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,100,1){SubmittingCompany=Company1};
-        TestMarket.RecordTrade(new MarketTransaction(Company1SellsLemonadeToAnyone,0));
+        TestMarket.RecordTrade(new Execution(Company1SellsLemonadeToAnyone,0));
 
         var expectedDemand = 100;
         //Act

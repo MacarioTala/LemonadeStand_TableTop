@@ -395,7 +395,7 @@ public partial class MarketTests
         // Act
         var actual = Company2.QueueOrder(CreateActionContext(company2BuysLemons,TestMarket,0)).Result;
         TestMarket.ProcessCompanyOrders();
-        var marketTradesInPeriod = TestMarket.GetMarketTradesInPeriod(0);
+        var marketTradesInPeriod = TestMarket.GetExecutionsInPeriod(0);
         // Assert
         Assert.AreEqual(expected, actual);
         Assert.AreEqual(0, marketTradesInPeriod.Count);
@@ -480,7 +480,7 @@ public partial class MarketTests
         Company1.QueueOrder(CreateActionContext(Company1BuysLemons,TestMarket,0));
         var actual=Company2.QueueOrder(CreateActionContext(Company2SellsLemons,TestMarket,0)).Result;
         TestMarket.ProcessCompanyOrders();
-        var marketTradesInPeriod = TestMarket.GetMarketTradesInPeriod(0);
+        var marketTradesInPeriod = TestMarket.GetExecutionsInPeriod(0);
         
         // Assert
         Assert.AreEqual(expected, actual);

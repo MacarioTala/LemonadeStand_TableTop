@@ -102,7 +102,7 @@ public class Market : ScriptableObject, iCompany
     public int CurrentPeriod{get;set;}=0;
     public int StartingPeriod{get;set;}
     //Trading
-    private readonly List<MarketTransaction> _marketTradesInPeriod = new();
+    private readonly List<Execution> _executedTradesInPeriod = new();
 
 #region Convenience Methods
     public decimal GetCash() => cash;
@@ -112,12 +112,12 @@ public class Market : ScriptableObject, iCompany
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
-    public List<MarketTransaction> GetMarketTradesInPeriod(int period) => _marketTradesInPeriod.Where(x=>x.Period == period).ToList();
+    public List<Execution> GetExecutionsInPeriod(int period) => _executedTradesInPeriod.Where(x=>x.Period == period).ToList();
      
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
-    public void RecordTrade(MarketTransaction trade) 
+    public void RecordTrade(Execution trade) 
     {
-        if(!_marketTradesInPeriod.Contains(trade))_marketTradesInPeriod.Add(trade);
+        if(!_executedTradesInPeriod.Contains(trade))_executedTradesInPeriod.Add(trade);
     }
     public void SetCash(decimal new_cash) => cash = new_cash;
 #endregion

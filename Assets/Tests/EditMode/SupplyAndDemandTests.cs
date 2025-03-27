@@ -110,7 +110,7 @@ public class SupplyAndDemandTests
     public void GetTotalSoldReturnsTotalAmountOfGoodSoldByAMarketInAPeriod()
     {
         // Arrange
-        var testMarket = Market.Factory.CreateMarket("Market To Test", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        var testMarket = TestMarket;
         testMarket.SetCash(1000000);
         var period = 0;
         testMarket.GetInventory().AddGood(new InventoryEntry(lemon, 2000, 3.0m, period));
@@ -119,24 +119,21 @@ public class SupplyAndDemandTests
         company1.SetCash(10000);
         var company2 = Company.Factory.Create("Test Company 2", CompanyLevelEnum.Beginner);
         company2.SetCash(10000);
-        var company3 = Company.Factory.Create("Test Company 3", CompanyLevelEnum.Beginner);
-        company3.SetCash(10000);
-
-        var company1SellLemonOrder = new Order(company1, testMarket, lemon, 500, 3.0m); 
-        var company2SellLemonOrder = new Order(company2, testMarket, lemon, 500, 3.0m);
-        var company3SellLemonOrder = new Order(company3, testMarket, lemon, 500, 3.0m);
+        
+        var company1SellLemonOrder = new Order(company1, null, lemon, 500, 3.0m); 
+        var company2SellLemonOrder = new Order(company2, null, lemon, 500, 3.0m);
+        
 
         var company1SellLemonContext = new ActionContext { TradeToSubmit = company1SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         var company2SellLemonContext = new ActionContext { TradeToSubmit = company2SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
-        var company3SellLemonContext = new ActionContext { TradeToSubmit = company3SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         
         testMarket.QueueMarketOrder(company1SellLemonContext);
         testMarket.QueueMarketOrder(company2SellLemonContext);
-        testMarket.QueueMarketOrder(company3SellLemonContext);
         
-        testMarket.ProcessCompanyOrders();
         
-        const int expected = 1500;
+        testMarket.FulfillDemand();
+        
+        const int expected = 1000;
         const int trading_period = 0;
         // Act
         var actual = testMarket.GetTotalSoldByMarket(trading_period,lemon);

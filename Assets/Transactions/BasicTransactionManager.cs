@@ -106,21 +106,35 @@ public class BasicTransactionManager : iTransactionManager
         sellerInventory.RemoveGood(good, quantity, price);
 
         //Set filled quantity and status
-        if(primaryOrder.FilledQuantity == 0)
-            primaryOrder.FilledQuantity = quantity;
-        else
-            primaryOrder.FilledQuantity += quantity;
+        primaryOrder.FilledQuantity += quantity;
 
         primaryOrder.OrderStatus = primaryOrder.IsFullyFilled
             ? LemonadeStandResultObject.Success()
             : LemonadeStandResultObject.Failure(
                 ResultTypeEnum.PartialFill, "Order partially filled"
                                             );
-        if(counterPartyOrder.FilledQuantity == 0)
-            counterPartyOrder.FilledQuantity = quantity;
-        else
-            counterPartyOrder.FilledQuantity += quantity;
-    
+
+        counterPartyOrder.FilledQuantity += quantity;
+
+        //Add this execution to the Order(s)
+        //Primary Order
+        var primaryExecution = new Execution(    order       : primaryOrder
+                                                ,buyer       : buyer
+                                                ,seller      : seller
+                                                ,quantity    : quantity
+                                                ,price       : price 
+                                                ,period      : period
+                                            );
+        primaryOrder.AddExecution(primaryExecution);
+        //CounterParty Order
+        var counterPartyExecution = new Execution(   order       : counterPartyOrder
+                                                    ,buyer       : buyer
+                                                    ,seller      : seller
+                                                    ,quantity    : quantity
+                                                    ,price       : price 
+                                                    ,period      : period
+                                                );
+        counterPartyOrder.AddExecution(counterPartyExecution);
         return LemonadeStandResultObject.Success();
     }
 
@@ -162,7 +176,7 @@ public class BasicTransactionManager : iTransactionManager
     internal static void RecordTransaction(Order orderToRecord, Market marketToRecordIn
             , int tradingPeriod,List<Order> counterPartyOrders)
     {
-       var executedOrder = new MarketTransaction(orderToRecord, tradingPeriod);
+       var executedOrder = new Execution(orderToRecord,orderToRecord.Buyer,orderToRecord.Seller,orderToRecord.FilledQuantity,orderToRecord.Price, tradingPeriod);
        //Record Primary Order
        if ( counterPartyOrders.Count == 1)
          {
@@ -186,7 +200,7 @@ public class BasicTransactionManager : iTransactionManager
        //Record CounterParty Orders as their own Market Trades
        foreach (var order in counterPartyOrders)
         {
-            var counterPartyTrade = new MarketTransaction(order, tradingPeriod);
+            var counterPartyTrade = new Execution(order, order.Buyer,order.Seller,order.FilledQuantity,order.Price, tradingPeriod);
             counterPartyTrade.AddCounterPartyTrade(orderToRecord);
             marketToRecordIn.RecordTrade(counterPartyTrade);
         }

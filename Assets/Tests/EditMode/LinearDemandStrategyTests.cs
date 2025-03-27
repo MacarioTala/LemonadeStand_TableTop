@@ -188,7 +188,7 @@ public partial class LinearDemandStrategyTests
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,100,1){SubmittingCompany=Company1};
-        TestMarket.RecordTrade(new MarketTransaction(Company1SellsLemonadeToAnyone,0));
+        TestMarket.RecordTrade(new Execution(Company1SellsLemonadeToAnyone,0));
 
         var expectedDemand = 100;
         //Act
@@ -227,7 +227,7 @@ public partial class LinearDemandStrategyTests
             lemonadeDemand.Curvature = 1;
         
         var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,200,1){SubmittingCompany=Company1};
-        TestMarket.RecordTrade(new MarketTransaction(Company1SellsLemonadeToAnyone,0));
+        TestMarket.RecordTrade(new Execution(Company1SellsLemonadeToAnyone,0));
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
         var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;

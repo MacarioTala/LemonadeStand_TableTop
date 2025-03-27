@@ -1,25 +1,46 @@
 using System;
 using System.Collections.Generic;
 
-public class MarketTransaction
+public class Execution
 {
     public Guid TransactionId {get;private set;} = Guid.NewGuid();
     public Order RecordedTrade{get; private set;}
     public List<Order> CounterPartyTrades{get; private set;} = new List<Order>();
     public int Period{get; private set;}
+    public iCompany Buyer;
+    public iCompany Seller;
+    public int Quantity;
+    public TradeType TradeType;
+    public decimal Price;
 
-    public MarketTransaction(Order recordedTrade, int period)
+    public Execution(Order recordedTrade, int period)
     {
         RecordedTrade = recordedTrade;
         Period = period;
     }
+
+    public Execution(   Order order, 
+                        iCompany buyer, 
+                        iCompany seller, 
+                        int quantity, 
+                        decimal price,
+                        int period)
+    {
+        RecordedTrade = order;
+        Buyer = buyer;
+        Seller = seller;
+        Quantity = quantity;
+        Price = price;
+        Period = period;
+    }
+
     public void AddCounterPartyTrade(Order counterPartyTrade)
     {
         CounterPartyTrades.Add(counterPartyTrade);
     }
     public override bool Equals(object other)
     {
-        if (other is MarketTransaction otherTrade)
+        if (other is Execution otherTrade)
         {
             return RecordedTrade == otherTrade.RecordedTrade && Period == otherTrade.Period;
         }

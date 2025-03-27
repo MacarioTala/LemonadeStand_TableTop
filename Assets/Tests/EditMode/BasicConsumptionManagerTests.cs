@@ -146,7 +146,7 @@ public class BasicConsumptionManagerTests
         TestMarket.FulfillDemand();
         var ActualCompany1LemonadeSellFillQuantity = Company1SellsLemonadeToAnyone.FilledQuantity;
         var ActualCompany2LemonadeBuyFillQuantity = Company2BuysLemonadeFromAnyone.FilledQuantity;
-        var ActualMarketTrade = TestMarket.GetMarketTradesInPeriod(Period)
+        var ActualMarketTrade = TestMarket.GetExecutionsInPeriod(Period)
                                                  .Where(x=>x.RecordedTrade.Buyer.Equals(TestMarket)
                                                  && x.RecordedTrade.Good.Equals(lemonade)
                                                  && x.RecordedTrade.Seller.Equals(Company1)
@@ -196,7 +196,7 @@ public class BasicConsumptionManagerTests
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
         TestMarket.ProcessCompanyOrders();
         TestMarket.FulfillDemand();
-        var actualMarketTransactions = TestMarket.GetMarketTradesInPeriod(Period);
+        var actualMarketTransactions = TestMarket.GetExecutionsInPeriod(Period);
         //Assert
         Assert.AreEqual(expectedMarketTransactions, actualMarketTransactions.Count);
     }
@@ -217,7 +217,7 @@ public class BasicConsumptionManagerTests
         Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone, TestMarket,Period));
         TestMarket.ProcessCompanyOrders();
         TestMarket.FulfillDemand();
-        var actualMarketTransactions = TestMarket.GetMarketTradesInPeriod(Period);
+        var actualMarketTransactions = TestMarket.GetExecutionsInPeriod(Period);
         //Assert
         Assert.AreEqual(expectedMarketTransactions, actualMarketTransactions.Count);
     }

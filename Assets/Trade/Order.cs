@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public class Order
 {
@@ -11,6 +12,13 @@ public class Order
     public int FilledQuantity=0;
     public int RemainingQuantity=>Quantity-FilledQuantity;
     public decimal Price;
+    private readonly List<Execution> _executions = new();
+    public LemonadeStandResultObject AddExecution(Execution execution)
+    {
+        _executions.Add(execution);
+        return LemonadeStandResultObject.Success();
+    }
+    public List<Execution> GetExecutions() => _executions;
 
     public bool IsFullyFilled => RemainingQuantity == 0;
     public bool IsPartiallyFilled => RemainingQuantity > 0 && FilledQuantity > 0;
@@ -41,7 +49,7 @@ public class Order
         Quantity = quantity;
         Price = price;
     }
-
+#region Overrides
     public override string ToString()
     {
         string action;
@@ -85,4 +93,5 @@ public class Order
                 ^ Quantity.GetHashCode() 
                 ^ Price.GetHashCode();
     }
+#endregion
 }

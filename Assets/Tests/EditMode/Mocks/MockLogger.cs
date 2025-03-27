@@ -21,7 +21,7 @@ public class MockLogger : ITradeLogger
         tradesLogged.AddRange(trade_queue);
     }
 
-    public Dictionary<Guid, List<MarketTransaction>> GetAllTransactions(List<Market> markets,int period)
+    public Dictionary<Guid, List<Execution>> GetAllTransactions(List<Market> markets,int period)
     {
         throw new NotImplementedException();
     }

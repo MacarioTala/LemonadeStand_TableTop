@@ -63,7 +63,7 @@ public class BasicTradeProcessor : iTradeProcessor
                     continue;
                 }
                 
-                if (FindCounterPartiesForOrder(market,good).ExtraData is not List<Order> counterParties)
+                if (FindCounterPartiesForOrder(market,good).ExtraData is not List<Order> counterPartyOrders)
                 {
                     order.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
                 }
@@ -73,7 +73,7 @@ public class BasicTradeProcessor : iTradeProcessor
                         new ActionContext
                         {
                             PrimaryOrder = order,
-                            CounterPartyOrders = counterParties,
+                            CounterPartyOrders = counterPartyOrders,
                             MarketToSubmitTo = market,
                             Period = market.CurrentPeriod
                         }
@@ -84,7 +84,6 @@ public class BasicTradeProcessor : iTradeProcessor
                     executedOrders.Add(order);
                     prioritizedOrders.RemoveAt(i);
                     i--;
-                                        
                 }
             }
         }

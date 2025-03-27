@@ -58,7 +58,7 @@ public class IntegrationTests
         TestMarket.ProcessCompanyOrders();
 
         // Assert
-        var recordedTrades = TestMarket.GetMarketTradesInPeriod(0);
+        var recordedTrades = TestMarket.GetExecutionsInPeriod(0);
         Assert.AreEqual(queueOrderResult.Result, LemonadeStandResultObject.Success(ResultTypeEnum.Success).Result);
         Assert.AreEqual(queueOrderResult2.Result, LemonadeStandResultObject.Success(ResultTypeEnum.Success).Result);
         Assert.AreEqual(2, recordedTrades.Count);

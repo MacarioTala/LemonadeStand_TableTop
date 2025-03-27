@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class TradeLoggerV1 : ITradeLogger
 {
-    public Dictionary<Guid, List<MarketTransaction>> GetAllTransactions(List<Market> markets, int period)
+    public Dictionary<Guid, List<Execution>> GetAllTransactions(List<Market> markets, int period)
     {
-        var returnDict = new Dictionary<Guid, List<MarketTransaction>>();
+        var returnDict = new Dictionary<Guid, List<Execution>>();
         foreach (var market in markets)
         {
-            var trades = market.GetMarketTradesInPeriod(period);
+            var trades = market.GetExecutionsInPeriod(period);
             returnDict.Add(market.MarketId, trades);
         }
         return returnDict;

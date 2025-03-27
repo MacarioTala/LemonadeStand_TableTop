@@ -54,7 +54,7 @@ public class MarketStatusTests
         Company2.QueueOrder(CreateActionContext(company2SellWaterOrder, TestMarket, Period));
         Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, TestMarket, Period));
 
-        var expected = new List<MarketTransaction>
+        var expected = new List<Execution>
         {
             new(company1SellLemonOrder, Period),
             new(company2SellWaterOrder, Period),
@@ -63,7 +63,7 @@ public class MarketStatusTests
         };
         // Act
         TestMarket.ProcessCompanyOrders();
-        var actual=TestMarket.GetMarketTradesInPeriod(Period);
+        var actual=TestMarket.GetExecutionsInPeriod(Period);
         // Assert
         var inExpectedNotInActual = expected.Except(actual).ToList();
         var inActualNotInExpected = actual.Except(expected).ToList();
@@ -99,7 +99,7 @@ public class MarketStatusTests
         Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, marketToTest, Period));
 
        
-        var expected = new List<MarketTransaction>
+        var expected = new List<Execution>
         {
             new(company1SellLemonOrder, Period),
             new(company2BuyLemonOrder, Period)
@@ -110,7 +110,7 @@ public class MarketStatusTests
         Company1.QueueOrder(CreateActionContext(company1BuyWaterOrder, marketToTest, Period+1));
         marketToTest.CurrentPeriod++;
         marketToTest.ProcessCompanyOrders();
-        var actual=marketToTest.GetMarketTradesInPeriod(Period);
+        var actual=marketToTest.GetExecutionsInPeriod(Period);
         // Assert
         var inExpectedNotInActual = expected.Except(actual).ToList();
         var inActualNotInExpected = actual.Except(expected).ToList();
@@ -131,7 +131,7 @@ public class MarketStatusTests
         Company2.QueueOrder(CreateActionContext(Company2BuyWaterOrder, TestMarket, Period));
         // Act
         TestMarket.ProcessCompanyOrders();
-        var actual=TestMarket.GetMarketTradesInPeriod(Period);
+        var actual=TestMarket.GetExecutionsInPeriod(Period);
         // Assert
         Assert.IsEmpty(actual);
     }
