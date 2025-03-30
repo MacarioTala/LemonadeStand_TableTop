@@ -42,19 +42,19 @@ public class Execution
     {
         if (other is Execution otherTrade)
         {
-            return RecordedTrade == otherTrade.RecordedTrade && Period == otherTrade.Period;
+            return TransactionId.Equals(otherTrade.TransactionId);
         }
         return false;
     }
     public override int GetHashCode()
     {
-        return RecordedTrade.GetHashCode() ^ Period.GetHashCode();
+        return TransactionId.GetHashCode();
     }
     public override string ToString()
     {
         var actor = "";
         var action = "";
-        int quantity = RecordedTrade.FilledQuantity;;
+        int quantity = Quantity;
 
         if (RecordedTrade.IsBuy())
         { 

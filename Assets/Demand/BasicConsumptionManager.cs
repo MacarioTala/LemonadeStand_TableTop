@@ -65,6 +65,8 @@ public class BasicConsumptionManager : iConsumptionManager
         decimal cashToRemoveFromMarket;
         var marketInventory = market.GetInventory();
         int quantityToFill;
+        Execution executionForOrder = new(order, order.Buyer, order.Seller, 0, order.Price, market.CurrentPeriod);
+        Execution executionForMarket = new(order, order.Buyer, order.Seller, 0, order.Price, market.CurrentPeriod);
         var marketCounterPartyOrder = new Order(buyer: market
                                                      , seller: order.Seller
                                                      , good: order.Good
@@ -84,6 +86,9 @@ public class BasicConsumptionManager : iConsumptionManager
             marketCounterPartyOrder.FilledQuantity = quantityToFill;
             demandToReturn = 0;
             marketInventory.AddGood(new InventoryEntry(order.Good, quantityToFill, order.Price, market.CurrentPeriod));
+            
+            executionForOrder.Quantity = quantityToFill;
+            executionForMarket.Quantity = quantityToFill;
         }
         else
             {
@@ -95,7 +100,13 @@ public class BasicConsumptionManager : iConsumptionManager
                 marketCounterPartyOrder.FilledQuantity = quantityToFill;
                 demandToReturn = remainingDemand - quantityToFill;
                 marketInventory.AddGood(new InventoryEntry(order.Good, quantityToFill, order.Price, market.CurrentPeriod));
+
+                executionForOrder.Quantity = quantityToFill;
+                executionForMarket.Quantity = quantityToFill;
             }
+
+        order.AddExecution(executionForOrder);
+        marketCounterPartyOrder.AddExecution(executionForMarket);
 
         market.SetCash(market.GetCash() - cashToRemoveFromMarket);
         order.OrderStatus = LemonadeStandResultObject.Success();

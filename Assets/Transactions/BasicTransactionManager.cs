@@ -121,7 +121,7 @@ public class BasicTransactionManager : iTransactionManager
         var primaryExecution = new Execution(    order       : primaryOrder
                                                 ,buyer       : buyer
                                                 ,seller      : seller
-                                                ,quantity    : quantity
+                                                ,quantity    : counterPartyOrder.FilledQuantity
                                                 ,price       : price 
                                                 ,period      : period
                                             );
@@ -130,7 +130,7 @@ public class BasicTransactionManager : iTransactionManager
         var counterPartyExecution = new Execution(   order       : counterPartyOrder
                                                     ,buyer       : buyer
                                                     ,seller      : seller
-                                                    ,quantity    : quantity
+                                                    ,quantity    : counterPartyOrder.FilledQuantity
                                                     ,price       : price 
                                                     ,period      : period
                                                 );
@@ -175,8 +175,7 @@ public class BasicTransactionManager : iTransactionManager
 
     internal static void RecordTransaction(Order orderToRecord, Market marketToRecordIn
             , int tradingPeriod,List<Order> counterPartyOrders)
-    {
-       var executedOrder = new Execution(orderToRecord,orderToRecord.Buyer,orderToRecord.Seller,orderToRecord.FilledQuantity,orderToRecord.Price, tradingPeriod);
+    {  
        //Record Primary Order
        if ( counterPartyOrders.Count == 1)
          {
@@ -187,22 +186,29 @@ public class BasicTransactionManager : iTransactionManager
             else
             { orderToRecord.Buyer = counterPartyOrder.Buyer; }
          }
+        var executedOrder = new Execution(orderToRecord,orderToRecord.Buyer,orderToRecord.Seller,orderToRecord.FilledQuantity,orderToRecord.Price, tradingPeriod);
        //Add CounterParty Orders to Primary Order
-       foreach (var order in counterPartyOrders)
+       foreach (var counterPartyOrder in counterPartyOrders)
        {
-           if (order.IsSell())
-           {order.Buyer=orderToRecord.Buyer;}
+           if (counterPartyOrder.IsSell())
+           {
+            counterPartyOrder.Buyer=orderToRecord.Buyer;
+            executedOrder.Seller=counterPartyOrder.Seller;
+           }
            else
-           {order.Seller=orderToRecord.Seller;}
-           executedOrder.AddCounterPartyTrade(order);
+           {
+            counterPartyOrder.Seller=orderToRecord.Seller;
+            executedOrder.Buyer=counterPartyOrder.Buyer;
+           }
+           executedOrder.AddCounterPartyTrade(counterPartyOrder);
        }
        marketToRecordIn.RecordTrade(executedOrder);
        //Record CounterParty Orders as their own Market Trades
        foreach (var order in counterPartyOrders)
         {
-            var counterPartyTrade = new Execution(order, order.Buyer,order.Seller,order.FilledQuantity,order.Price, tradingPeriod);
-            counterPartyTrade.AddCounterPartyTrade(orderToRecord);
-            marketToRecordIn.RecordTrade(counterPartyTrade);
+            var counterPartyExecution = new Execution(order, order.Buyer,order.Seller,order.FilledQuantity,order.Price, tradingPeriod);
+            counterPartyExecution.AddCounterPartyTrade(orderToRecord);
+            marketToRecordIn.RecordTrade(counterPartyExecution);
         }
     }
 }
