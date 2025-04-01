@@ -16,6 +16,9 @@ public class MarketStatusTests
     Good lemon;
     Good water;
     Good sugar;
+
+    readonly TestComparer<Execution> ExecutionComparer=new(new string[] { "CounterPartyTrades" });
+
     [SetUp]
     public void Setup ()
     {
@@ -23,7 +26,7 @@ public class MarketStatusTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, ScriptableObject.CreateInstance<LinearDemandStrategy>());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
         
@@ -35,7 +38,7 @@ public class MarketStatusTests
         sugar = Good.CreateInstance("Sugar", new PriceBand(.5m, 1.0m), RarityEnum.Common);
     }
     [Test]
-    public void GetMarketTradesInPeriodReturnsAllExecutedTrades()
+    public void GetOrdersExecutedInPeriodReturnsAllExecutedOrders()
     {
         // Arrange
         Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
@@ -54,7 +57,7 @@ public class MarketStatusTests
         Company2.QueueOrder(CreateActionContext(company2SellWaterOrder, TestMarket, Period));
         Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, TestMarket, Period));
 
-        var expected = new List<Execution>
+        var expected = new List<(Order Order,int Period)>
         {
             new(company1SellLemonOrder, Period),
             new(company2SellWaterOrder, Period),
@@ -63,23 +66,17 @@ public class MarketStatusTests
         };
         // Act
         TestMarket.ProcessCompanyOrders();
-        var actual=TestMarket.GetExecutionsInPeriod(Period);
+        var actual=TestMarket.GetOrdersExecutedInPeriod(Period);
         // Assert
-        var inExpectedNotInActual = expected.Except(actual).ToList();
-        var inActualNotInExpected = actual.Except(expected).ToList();
-        var listsAreEqual = inExpectedNotInActual.Count == 0 && inActualNotInExpected.Count == 0;
-        
-        Debug.Log("Expected: " + string.Join(", ", expected));
-        Debug.Log("Actual: " + string.Join(", ", actual));
-        Assert.IsTrue(listsAreEqual);
+        Assert.AreEqual(expected.Count, actual.Count);
+        CollectionAssert.AreEquivalent(expected,actual);
     }
     [Test]
-    public void GetMarketTradesInPeriodOnlyReturnsTradesForTheCurrentPeriod()
+    public void GetOrdersExecutedInPeriodOnlyReturnsTradesForTheCurrentPeriod()
     {
         // Arrange
-        var strategy = new LinearDemandStrategy();
+        var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market,strategy);
-        
         
         Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
         Company1.SetCash(5000);
@@ -98,8 +95,8 @@ public class MarketStatusTests
         Company1.QueueOrder(CreateActionContext(company1SellLemonOrder, marketToTest, Period));
         Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, marketToTest, Period));
 
-       
-        var expected = new List<Execution>
+        
+        var expected = new List<(Order Order,int Period)>
         {
             new(company1SellLemonOrder, Period),
             new(company2BuyLemonOrder, Period)
@@ -110,15 +107,10 @@ public class MarketStatusTests
         Company1.QueueOrder(CreateActionContext(company1BuyWaterOrder, marketToTest, Period+1));
         marketToTest.CurrentPeriod++;
         marketToTest.ProcessCompanyOrders();
-        var actual=marketToTest.GetExecutionsInPeriod(Period);
+        var actual=marketToTest.GetOrdersExecutedInPeriod(Period);
         // Assert
-        var inExpectedNotInActual = expected.Except(actual).ToList();
-        var inActualNotInExpected = actual.Except(expected).ToList();
-        var listsAreEqual = inExpectedNotInActual.Count == 0 && inActualNotInExpected.Count == 0;
-        
-        Debug.Log("Expected: " + string.Join(", ", expected));
-        Debug.Log("Actual: " + string.Join(", ", actual));
-        Assert.IsTrue(listsAreEqual);
+        Assert.AreEqual(expected.Count, actual.Count);
+        CollectionAssert.AreEquivalent(expected,actual);
     }
 
     [Test]

@@ -211,7 +211,7 @@ public class BasicConsumptionManagerTests
         var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 3.5m);
         var Company2BuysLemonadeFromAnyone = new Order(Company2,null, lemonade, 100, 3.5m);
 
-        var expectedMarketTransactions = 3;
+        var expectedMarketTransactions = 4;
         //Act
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone, TestMarket,Period));

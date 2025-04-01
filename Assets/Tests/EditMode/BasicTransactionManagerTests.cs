@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using static TestHelpers;
 
 [TestFixture]
 public class BasicTransactionManagerTests
@@ -17,7 +18,8 @@ public class BasicTransactionManagerTests
     readonly PriceBand PriceBand1 = new(.5m, 1.0m);
     readonly PriceBand PriceBand2 = new(5.0m, 10m);
 
-    iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+    readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+    readonly TestComparer<Execution> ExecutionComparer = new(new string[] { "CounterPartyTrades" });
     [SetUp]
     public void Setup()
     {
@@ -247,7 +249,7 @@ public class BasicTransactionManagerTests
         Assert.AreEqual(expectedBuyerOrderFullyFilledStatus, actualBuyerOrderFullyFilledStatus, "Buyer order fully filled status not as expected");
         Assert.AreEqual(expectedBuyerOrderPartiallyFilledStatus, actualBuyerOrderPartiallyFilledStatus, "Buyer order partially filled status not as expected");
     }
-    [Test]
+    [TestCase(TestName = "ProcessTransaction:One Buyer, two sellers. Expected: 3 executions")]
     public void ProcessTransactionRecordsTwoCounterPartiesWhenTwoCounterPartiesArePresent()
     {
         //Arrange
@@ -277,16 +279,20 @@ public class BasicTransactionManagerTests
             MarketToSubmitTo = TestMarket,
             Period = Period};
 
-        var expectedOrder = Company1Buys2LemonFromMultiple;
+        var expectedExecutions = new List<Execution>()
+        {
+            new(Company1Buys2LemonFromMultiple, Company1, Company2, 1, 1m, Period),
+            new(Company1Buys2LemonFromMultiple, Company1, Company3, 1, 1m, Period),
+            new(company2Sells1LemonToCompany1, Company1, Company2, 1, 1m, Period),
+            new(company3Sells1LemonToCompany1, Company1, Company3, 1, 1m, Period)
+        };
         //Act
         basicTransactionManager.ProcessPairedOrders(orderContext);
-        var actualOrder = TestMarket.GetExecutionsInPeriod(Period).FirstOrDefault()?.RecordedTrade;
-        var actualCounterPartyOrders = TestMarket.GetExecutionsInPeriod(Period).FirstOrDefault()?.CounterPartyTrades;
+        var actualExecutions = TestMarket.GetExecutionsInPeriod(Period);
+        var actualCounterPartyOrders = TestMarket.GetExecutionsInPeriod(Period);
         //Assert
-        Assert.AreEqual(expectedOrder, actualOrder);
-        Assert.Contains(company2Sells1LemonToCompany1, actualCounterPartyOrders);
-        Assert.Contains(company3Sells1LemonToCompany1, actualCounterPartyOrders);
-        Assert.AreEqual(2, actualCounterPartyOrders.Count);
+        Assert.AreEqual(4, actualCounterPartyOrders.Count);
+        Assert.IsTrue(ExecutionComparer.ListsAreEquivalent(expectedExecutions, actualCounterPartyOrders,ExecutionComparer));
     }
 #endregion
 #region ProcessMarketTransactionTests

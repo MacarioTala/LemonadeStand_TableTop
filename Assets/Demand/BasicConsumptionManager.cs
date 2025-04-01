@@ -66,7 +66,7 @@ public class BasicConsumptionManager : iConsumptionManager
         var marketInventory = market.GetInventory();
         int quantityToFill;
         Execution executionForOrder = new(order, order.Buyer, order.Seller, 0, order.Price, market.CurrentPeriod);
-        Execution executionForMarket = new(order, order.Buyer, order.Seller, 0, order.Price, market.CurrentPeriod);
+        
         var marketCounterPartyOrder = new Order(buyer: market
                                                      , seller: order.Seller
                                                      , good: order.Good
@@ -75,7 +75,7 @@ public class BasicConsumptionManager : iConsumptionManager
                 {
                     SubmittingCompany = market
                 };
-        
+        Execution executionForMarket = new(marketCounterPartyOrder, order.Buyer, order.Seller, 0, order.Price, market.CurrentPeriod);
 
         if (order.RemainingQuantity >= remainingDemand)
         {

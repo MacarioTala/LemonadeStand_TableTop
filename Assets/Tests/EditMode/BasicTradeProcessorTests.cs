@@ -29,7 +29,7 @@ public partial class BasicTradeProcessorTests
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, ScriptableObject.CreateInstance<LinearDemandStrategy>());
         TestTradeProcessor = new BasicTradeProcessor();
         TestMarket.SetTradeProcessor(TestTradeProcessor);
         TestMarket.SetCash(1000000);

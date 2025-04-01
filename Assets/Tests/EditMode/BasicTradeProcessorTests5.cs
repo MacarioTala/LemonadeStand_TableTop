@@ -1,12 +1,16 @@
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using static TestHelpers;
 
-//This partial class tests the RecordTrade method of the BasicTradeProcessor
+//This partial class exercises the path from ExecuteBestTradesForGood through to
+//the transaction manager and recording the orders and executions in the market
 public partial class BasicTradeProcessorTests
 {
-    //For RecordTrade
-    [Test]
-    public void RT_OneBuyerOneSeller()
+    readonly TestComparer<Execution> ExecutionComparer=new(new string[] { "CounterPartyTrades" });
+
+    [TestCase(TestName="ExecuteBestTradesForGood: One Buyer, One Seller, both fill with executions recorded")]
+    public void EBTG_OneBuyerOneSeller_BothExecutionsRecorded()
     {
         //Arrange
         Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9m,Period));
@@ -34,23 +38,23 @@ public partial class BasicTradeProcessorTests
         var recordedTransaction = transactionsRecorded?.FirstOrDefault();
         Assert.IsNotNull(recordedTransaction);
         Assert.IsTrue(transactionsRecorded.Count == 2);
-        Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Buyer);
-        Assert.AreEqual(Company2,recordedTransaction.RecordedTrade.Seller);
+        Assert.AreEqual(Company1,recordedTransaction.Buyer);
+        Assert.AreEqual(Company2,recordedTransaction.Seller);
         Assert.AreEqual(Lemonade,recordedTransaction.RecordedTrade.Good);
-        Assert.AreEqual(5,recordedTransaction.RecordedTrade.FilledQuantity);
-        Assert.AreEqual(10m,recordedTransaction.RecordedTrade.Price);
+        Assert.AreEqual(5,recordedTransaction.Quantity);
+        Assert.AreEqual(10m,recordedTransaction.Price);
 
     }
-    
      
-    [Test,Description("One Buyer, Multiple Sellers, both sellers fill")]
-    public void RT_OneBuyerMultSellerBothSellersFill()
+    [TestCase(TestName="One Buyer, Multiple Sellers, both sellers fill. 4 executions recorded")]
+    public void EBTG_OneBuyerMultSellerBothSellersFill_4ExecutionsRecorded()
     {
         //Arrange
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(Company3);
         Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 3,9m,Period));
         Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,9m,Period));
+
         var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10m);
         var Company1Context = new ActionContext
         {
@@ -76,24 +80,25 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         Company3.QueueOrder(Company3Context);
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
+
+        var ExpectedExecutions = new List<Execution>
+        {
+            new(Company2SellsLemonadeToAny,Company1,Company2,3,10m,Period),
+            new(Company3SellsLemonadeToAny,Company1,Company3,2,10m,Period),
+            new(Company1BuysLemonadeFromAny,Company1,Company2,3,10m,Period),
+            new(Company1BuysLemonadeFromAny,Company1,Company3,2,10m,Period),
+        };
+
         //Act
         TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,TestMarket,OrdersSentToMarket);
         //Assert
-        var transactionsInMarket = TestMarket.GetExecutionsInPeriod(Period); 
-        var recordedTransaction = transactionsInMarket.FirstOrDefault();
-        Assert.IsNotNull(recordedTransaction);
-        Assert.IsTrue(transactionsInMarket.Count == 3);
-        Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Buyer);
-        Assert.AreEqual(null,recordedTransaction.RecordedTrade.Seller);
-        Assert.AreEqual(Lemonade,recordedTransaction.RecordedTrade.Good);
-        Assert.AreEqual(5,recordedTransaction.RecordedTrade.FilledQuantity);
-        Assert.AreEqual(10m,recordedTransaction.RecordedTrade.Price);
-        Assert.IsTrue(recordedTransaction.CounterPartyTrades.Select(x=>x.Seller).Contains(Company2));
-        Assert.IsTrue(recordedTransaction.CounterPartyTrades.Select(x=>x.Seller).Contains(Company3));
+        var ActualExecutions = TestMarket.GetExecutionsInPeriod(Period);
+        Assert.IsTrue(ActualExecutions.Count == 4);
+        Assert.IsTrue(ExecutionComparer.ListsAreEquivalent(ExpectedExecutions,ActualExecutions,ExecutionComparer));
     }
 
-    [Test,Description("One Buyer, Multiple Sellers, Low Price seller fills")]
-    public void RT_OneBuyerMultSellerOneSellerFills()
+    [TestCase(TestName ="ExecuteBestTradesForGood: One Buyer, Multiple Sellers, Low Price seller fills")]
+    public void EBTFG_OneBuyerMultSellerOneSellerFills()
     {
         //Arrange
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
@@ -125,21 +130,18 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         Company3.QueueOrder(Company3Context);
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
+        var ExpectedExecutions = new List<Execution>
+        {
+            new(Company2SellsLemonadeToAny,Company1,Company2,5,10m,Period),
+            new(Company1BuysLemonadeFromAny,Company1,Company2,5,10m,Period)
+        };
         //Act
         TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,TestMarket,OrdersSentToMarket);
         //Assert
-        var transactionsInMarket = TestMarket.GetExecutionsInPeriod(Period);
-        var recordedTransaction = transactionsInMarket?.FirstOrDefault();
-        Assert.IsNotNull(recordedTransaction);
-        Assert.IsTrue(transactionsInMarket.Count == 2); //Note: Company 3's order might be processed
+        var ActualExecutions = TestMarket.GetExecutionsInPeriod(Period);
+        Assert.IsTrue(ActualExecutions.Count == 2); //Note: Company 3's order might be processed
                                                         //downstream, during market trade processing
-        Assert.AreEqual(Company1,recordedTransaction.RecordedTrade.Buyer);
-        Assert.AreEqual(Company2,recordedTransaction.RecordedTrade.Seller);
-        Assert.AreEqual(Lemonade,recordedTransaction.RecordedTrade.Good);
-        Assert.AreEqual(5,recordedTransaction.RecordedTrade.FilledQuantity);
-        Assert.AreEqual(10m,recordedTransaction.RecordedTrade.Price);
-        Assert.IsTrue(recordedTransaction.CounterPartyTrades.Select(x=>x.Seller).Contains(Company2),"Company 2 should be a counterparty");
-        Assert.IsFalse(recordedTransaction.CounterPartyTrades.Select(x=>x.Seller).Contains(Company3),"Company 3 should not be a counterparty");
+        Assert.IsTrue(ExecutionComparer.ListsAreEquivalent(ExpectedExecutions,ActualExecutions,ExecutionComparer));
     }
 
     

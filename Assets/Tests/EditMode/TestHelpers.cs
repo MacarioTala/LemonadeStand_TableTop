@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
 
 public class TestHelpers
 {
@@ -51,7 +53,10 @@ public class TestComparer<T> : IEqualityComparer<T>
             var xValue = property.GetValue(x);
             var yValue = property.GetValue(y);
 
-            if (!NullSafeEquals(xValue,yValue)) return false;
+            if (!NullSafeEquals(xValue,yValue)) 
+            {
+                return false;
+            }
         }
         foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance)
                         .Where(f => f.FieldType != typeof(Guid)
@@ -96,12 +101,32 @@ public class TestComparer<T> : IEqualityComparer<T>
         if (x == null && y == null) return true;
         if (x == null || y == null) return false;
 
-        if (x is IEnumerable<object> xList && y is IEnumerable<object> yList)
+        if (x is IEnumerable xEnum && y is IEnumerable yEnum)
         {
+            var xList = xEnum.Cast<object>().ToList();
+            var yList = yEnum.Cast<object>().ToList();
+
+            if (xList.Count != yList.Count) return false;
+            
             return xList.SequenceEqual(yList);
         }
         return x.Equals(y);
     }
+
+    public bool ListsAreEquivalent (IEnumerable<T> Expected, IEnumerable<T> Actual,IEqualityComparer<T> comparer)
+    {
+        if (Expected == null && Actual == null) return true;
+        if (Expected == null || Actual == null) return false;
+
+        var expectedList = Expected.ToList();
+        var actualList = Actual.ToList();
+
+        if (expectedList.Count != actualList.Count) return false;
+
+        return expectedList.All(expected=> actualList.Any(actual => comparer.Equals(expected, actual)))
+            && actualList.All(actual => expectedList.Any(expected => comparer.Equals(actual, expected)));
+    }
+    
 }
 #endregion
 }

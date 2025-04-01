@@ -103,18 +103,36 @@ public class Market : ScriptableObject, iCompany
     public int StartingPeriod{get;set;}
     //Trading
     private readonly List<Execution> _executedTradesInPeriod = new();
+    private readonly List<(Order Order,int Period)> _ordersExecutedInPeriod = new();
+    public List<Execution> GetExecutionsInPeriod(int period)
+    {
+      var executions =  _ordersExecutedInPeriod
+                        .Where(x=>x.Period==period)
+                        .SelectMany(x=>x.Order.GetExecutions()).ToList();
+      return executions;
+    }
 
 #region Convenience Methods
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
+    public List<(Order Order,int Period)> GetOrdersExecutedInPeriod(params int[] periods) => _ordersExecutedInPeriod.Where(x=>periods.Contains(x.Period)).ToList();
     public List<Order>GetOrdersSentToMarketByCompany(Company company)=>_tradeProcessor.GetOrders().Where(x=>x.SubmittingCompany.Equals(company)).ToList();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
-    public List<Execution> GetExecutionsInPeriod(int period) => _executedTradesInPeriod.Where(x=>x.Period == period).ToList();
      
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
+
+    public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
+    {
+        if(!_ordersExecutedInPeriod.Contains((order,period)))
+        {
+            _ordersExecutedInPeriod.Add((order,period));
+            return LemonadeStandResultObject.Success();
+        }
+        return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder,"Order already recorded");
+    }
     public void RecordTrade(Execution trade) 
     {
         if(!_executedTradesInPeriod.Contains(trade))_executedTradesInPeriod.Add(trade);

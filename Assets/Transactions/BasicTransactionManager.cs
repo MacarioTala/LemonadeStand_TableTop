@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Jobs.LowLevel.Unsafe;
 
 public class BasicTransactionManager : iTransactionManager
 {
@@ -36,7 +37,12 @@ public class BasicTransactionManager : iTransactionManager
                     primaryOrder.Price,
                     context.Period));
         }
-        RecordTransaction(primaryOrder,context.MarketToSubmitTo, context.Period,counterPartyOrders);
+        //Record the orders
+        RecordOrder(primaryOrder, context.MarketToSubmitTo, context.Period);
+        foreach(var counterPartyOrder in counterPartyOrders)
+        {
+            RecordOrder(counterPartyOrder, context.MarketToSubmitTo, context.Period);
+        }
         
         return LemonadeStandResultObject.Success();
     }
@@ -51,24 +57,26 @@ public class BasicTransactionManager : iTransactionManager
         var primaryOrder = context.PrimaryOrder;
         var counterPartyOrders = context.CounterPartyOrders;
         var _counterPartyOrdersToRecord = new List<Order>();
-        foreach(var order in counterPartyOrders)
+        foreach(var counterPartyOrder in counterPartyOrders)
         {
             if (primaryOrder.IsFullyFilled)
             {
                 break;
             }
 
-            var processTransactionResult = ProcessTransactionPair(primaryOrder,order,context.Period);
+            var processTransactionResult = ProcessTransactionPair(primaryOrder,counterPartyOrder,context.Period);
             if (!processTransactionResult.Equals(LemonadeStandResultObject.Success()))
             {
                 primaryOrder.OrderStatus = processTransactionResult;
                 break;
             }
-            _counterPartyOrdersToRecord.Add(order);
+            _counterPartyOrdersToRecord.Add(counterPartyOrder);
+            //Record CounterParty Order
+            RecordOrder(counterPartyOrder, context.MarketToSubmitTo, context.Period);
         }
        
-        //Record transaction
-        RecordTransaction(context.PrimaryOrder,context.MarketToSubmitTo, context.Period,_counterPartyOrdersToRecord);
+        //Record the primary order
+        RecordOrder(primaryOrder, context.MarketToSubmitTo, context.Period);
         
         return LemonadeStandResultObject.Success();
     }
@@ -121,7 +129,7 @@ public class BasicTransactionManager : iTransactionManager
         var primaryExecution = new Execution(    order       : primaryOrder
                                                 ,buyer       : buyer
                                                 ,seller      : seller
-                                                ,quantity    : counterPartyOrder.FilledQuantity
+                                                ,quantity    : quantity
                                                 ,price       : price 
                                                 ,period      : period
                                             );
@@ -130,7 +138,7 @@ public class BasicTransactionManager : iTransactionManager
         var counterPartyExecution = new Execution(   order       : counterPartyOrder
                                                     ,buyer       : buyer
                                                     ,seller      : seller
-                                                    ,quantity    : counterPartyOrder.FilledQuantity
+                                                    ,quantity    : quantity
                                                     ,price       : price 
                                                     ,period      : period
                                                 );
@@ -172,6 +180,10 @@ public class BasicTransactionManager : iTransactionManager
         return LemonadeStandResultObject.Success();
     }
     
+    internal static LemonadeStandResultObject RecordOrder(Order orderToRecord, Market marketToRecordIn, int tradingPeriod)
+    {
+        return marketToRecordIn.RecordOrderInPeriod(orderToRecord, tradingPeriod);
+    }
 
     internal static void RecordTransaction(Order orderToRecord, Market marketToRecordIn
             , int tradingPeriod,List<Order> counterPartyOrders)
