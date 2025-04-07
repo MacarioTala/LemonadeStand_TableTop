@@ -37,7 +37,7 @@ public class BasicConsumptionManagerTests
         TestEconomy = TheEconomy.Instance;
 
         TestConsumptionManager = new BasicConsumptionManager();
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, ScriptableObject.CreateInstance<LinearDemandStrategy>());
         TestMarket.SetConsumptionManager(TestConsumptionManager); 
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -88,14 +88,17 @@ public class BasicConsumptionManagerTests
     public void FD_FillsBothOrdersWhenLessThanDemandedQuantity()
     {
         //Arrange
-        var company1Order = new Order(TestMarket, Company1, lemonade, 500, 3.5m);
-        var company2Order = new Order(TestMarket, Company2, lemonade, 500, 3.5m);
+        var company1Order = new Order(null, Company1, lemonade, 500, 3.5m);
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 500, 3m,0));
+        var company2Order = new Order(null, Company2, lemonade, 500, 3.5m);
+        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 500, 3m,0));
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 2000);
         
         var expectedFilledQuantityForCompany1 = 500;
         var expectedFilledQuantityForCompany2 = 500;
         //Act
-        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
-        TestMarket.QueueMarketOrder(CreateActionContext(company2Order, TestMarket,Period));
+        var result1 = Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period));
+        var result2 = Company2.QueueOrder(CreateActionContext(company2Order, TestMarket,Period));
         TestMarket.FulfillDemand();
         var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
         var actualFilledQuantityForCompany2=company2Order.FilledQuantity;
@@ -107,17 +110,18 @@ public class BasicConsumptionManagerTests
     public void FD_IfBothOrdersAreLessThanDemandedQuantityBothAreFilled()
     {
          //Arrange
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
         Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
         Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3m,0));
 
-        var company1Order = new Order(TestMarket, Company1, lemonade, 400, 3.5m);
-        var company2Order = new Order(TestMarket, Company2, lemonade, 400, 3.5m);
+        var company1Order = new Order(null, Company1, lemonade, 400, 3.5m);
+        var company2Order = new Order(null, Company2, lemonade, 400, 3.5m);
     
         var expectedFilledQuantityForCompany1 = 400;
         var expectedFilledQuantityForCompany2 = 400;
         //Act
-        TestMarket.QueueMarketOrder(CreateActionContext(company1Order, TestMarket,Period));
-        TestMarket.QueueMarketOrder(CreateActionContext(company2Order, TestMarket,Period));
+        Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period));
+        Company2.QueueOrder(CreateActionContext(company2Order, TestMarket,Period));
         TestMarket.FulfillDemand();
         var actualFilledQuantityForCompany1=company1Order.FilledQuantity;
         var actualFilledQuantityForCompany2=company2Order.FilledQuantity;

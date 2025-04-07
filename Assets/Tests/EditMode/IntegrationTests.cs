@@ -15,6 +15,7 @@ public class IntegrationTests
     const int Period = 0;
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
+    readonly iSupplyProvider TestSupplyProvider = new MockSupplyProvider();
 
     readonly ITradeLogger TestTradeLogger = new TradeLoggerV1();
 
@@ -29,6 +30,7 @@ public class IntegrationTests
 
         TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, TestDemandStrategy);
         TestMarket.SetMarketDataService(TestMarketDataService);
+        TestMarket.SetSupplyProvider(TestSupplyProvider);
         TheEconomy.Instance.RegisterCompany(TestMarket);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -113,10 +115,9 @@ public class IntegrationTests
     public void EndTradingPeriodIncrementsMarketPeriod()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Market Test", CompanyLevelEnum.Market, TestDemandStrategy);
+        var market = TestMarket;
         var currentPeriod = market.CurrentPeriod;
         var expected = currentPeriod + 1;
-        TheEconomy.Instance.RegisterCompany(market);
         // Act
         TestEconomy.EndTradingPeriod();
         var actual = market.CurrentPeriod;
@@ -170,7 +171,8 @@ public class IntegrationTests
         var company1 = Company.Factory.Create("TestCompany", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
         marketToTest.RegisterCompany(company1);
-        var company1Order = new Order(marketToTest, company1, Lemonade, 1000, 3.5m);
+
+        var company1Order = new Order(null, company1, Lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = marketToTest};
         var expected = 1000;
@@ -215,6 +217,8 @@ public class IntegrationTests
     {
         // Arrange
         var SecondMarket = Market.Factory.CreateMarket("Second Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        SecondMarket.SetMarketDataService(TestMarketDataService);
+        SecondMarket.SetSupplyProvider(TestSupplyProvider);
         TheEconomy.Instance.RegisterCompany(SecondMarket);
         TestMarket.SetCash(1000000);
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));

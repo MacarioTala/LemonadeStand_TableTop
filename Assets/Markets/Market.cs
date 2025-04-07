@@ -60,7 +60,7 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 
-#region Demographic data
+#region Demographics
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
         =>_demographicManager.SetMarketInstability(newInstability);
@@ -196,6 +196,8 @@ public class Market : ScriptableObject, iCompany
     public void SetMarketDataManager(iMarketDataManager marketDataManager) => _marketDataManager = marketDataManager;
     private iPriceManager _priceManager;
     public void SetPriceManager(iPriceManager priceManager) => _priceManager = priceManager;
+    private iSupplyProvider _supplyProvider;
+    public void SetSupplyProvider(iSupplyProvider supplyProvider) => _supplyProvider = supplyProvider;
     private iTradeProcessor _tradeProcessor;
     public void SetTradeProcessor(iTradeProcessor tradeProcessor) => _tradeProcessor = tradeProcessor;
     private iTransactionManager _transactionManager;
@@ -266,7 +268,7 @@ public class Market : ScriptableObject, iCompany
 
     public Dictionary<Good,DemandData> GetDemandForPeriod()
     {
-        return DemandStrategy.CalculateDemandForPeriod(this,CurrentPeriod);
+        return DemandStrategy.GetDemandInPeriod(this,CurrentPeriod);
     }
 
     public LemonadeStandResultObject FulfillDemand()
@@ -371,9 +373,20 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Demand
-     internal void CalculateFulfillmentRates(int tradingPeriod=-1)
+     internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod=-1)
     {
-        DemandStrategy.CalculateFulfillmentRates(this,tradingPeriod);
+        //Get the demand and supply for the period
+        var demandInPeriod = DemandStrategy.GetDemandInPeriod(this, tradingPeriod);
+        var supplyInPeriod = _supplyProvider.GetSupplyInPeriod(this, tradingPeriod)
+                            .GroupBy(x=>x.Good)
+                            .ToDictionary(x=>x.Key, x=>x.Sum(y=>y.Quantity));
+        var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(demandInPeriod,supplyInPeriod);
+       
+        foreach(var fulfillmentRate in fulfillmentRates)
+        {
+            _marketDemand[fulfillmentRate.Good].FulfilmentRate = fulfillmentRate.FulfillmentRate;
+        }
+        return LemonadeStandResultObject.Success();
     }
 
     public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
@@ -448,7 +461,7 @@ public class Market : ScriptableObject, iCompany
     public void UnleashMarketForces(int period)
     {
         FulfillDemand();
-        CalculateFulfillmentRates(period);
+        UpdateFulfillmentRates(period);
         UpdatePrices();
         DemandStrategy.AdjustDemandInPeriod(this);
         ConsumeGoods();

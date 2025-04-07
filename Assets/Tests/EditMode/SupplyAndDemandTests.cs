@@ -84,6 +84,10 @@ public class SupplyAndDemandTests
         // Arrange
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", CompanyLevelEnum.Market, TestDemandStrategy);
         marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
+        var demographicManger = new MockDemographicManager();
+        demographicManger.SetMarketInstability(1f);
+        marketToTest.SetDemographicManager(demographicManger);
+
         var testPeriod = 0;
         var currentLemonadePrice = lemonade.GetPrice();
         var price_increment_rate = lemonade.Get_price_increment_rate();
@@ -106,8 +110,8 @@ public class SupplyAndDemandTests
         Assert.AreEqual(expectedLemonadePrice, actualLemonadePrice);
     }
     #endregion
-    [Test]
-    public void GetTotalSoldReturnsTotalAmountOfGoodSoldByAMarketInAPeriod()
+    [TestCase(TestName = "Market Sells 1000 Lemons, GetTotalSoldByMarket should return 1000")]
+    public void MarketSells1000Lemon_Expect1000InSales()
     {
         // Arrange
         var testMarket = TestMarket;
@@ -122,14 +126,12 @@ public class SupplyAndDemandTests
         
         var company1SellLemonOrder = new Order(company1, null, lemon, 500, 3.0m); 
         var company2SellLemonOrder = new Order(company2, null, lemon, 500, 3.0m);
-        
 
         var company1SellLemonContext = new ActionContext { TradeToSubmit = company1SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         var company2SellLemonContext = new ActionContext { TradeToSubmit = company2SellLemonOrder, MarketToSubmitTo = testMarket, Period = period };
         
         testMarket.QueueMarketOrder(company1SellLemonContext);
         testMarket.QueueMarketOrder(company2SellLemonContext);
-        
         
         testMarket.FulfillDemand();
         
@@ -167,7 +169,7 @@ public class SupplyAndDemandTests
         sellingCompany.QueueOrder(testContext);
         MarketThatDemandsLemons.ProcessCompanyOrders();
         MarketThatDemandsLemons.FulfillDemand();
-        MarketThatDemandsLemons.CalculateFulfillmentRates(testContext.Period);
+        MarketThatDemandsLemons.UpdateFulfillmentRates(testContext.Period);
         
         // Act
         var actualFulfillmentRate = MarketThatDemandsLemons.GetMarketDemand()[lemon].FulfilmentRate;
@@ -195,7 +197,7 @@ public class SupplyAndDemandTests
         var lemonBuyingContext = new ActionContext { TradeToSubmit = marketBuysLemons, MarketToSubmitTo = MarketThatDemandsLemons ,Period= period};
         MarketThatDemandsLemons.QueueOrder(lemonBuyingContext);
         MarketThatDemandsLemons.ProcessCompanyOrders();
-        MarketThatDemandsLemons.CalculateFulfillmentRates(lemonBuyingContext.Period);
+        MarketThatDemandsLemons.UpdateFulfillmentRates(lemonBuyingContext.Period);
         //Act
         var actualFulfillmentRate = MarketThatDemandsLemons.GetMarketDemand()[lemon].FulfilmentRate;
         // Assert

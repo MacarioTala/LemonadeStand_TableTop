@@ -18,7 +18,7 @@ public interface iDemandStrategy
         demandData.Shift = shift;
     }
     
-    public Dictionary<Good, DemandData> CalculateDemandForPeriod(Market market, int tradingPeriod)
+    public Dictionary<Good, DemandData> GetDemandInPeriod(Market market, int tradingPeriod)
     {
         Dictionary<Good, DemandData> calculatedDemand = market.GetMarketDemand();
         var marketOrders = market.GetOrdersSentToMarket().Where(x=>x.Buyer is not Market).ToList();
@@ -30,6 +30,10 @@ public interface iDemandStrategy
             calculatedDemand[good] = demandData;
         }
         return calculatedDemand;
+    }
+    public LemonadeStandResultObject CalculateFulfillmentRates(Market market,int tradingPeriod)
+    {
+        throw new System.NotImplementedException();
     }
     public Dictionary<Good, int> CalculateSupplyForPeriod(Market market, int tradingPeriod)
     {
@@ -50,25 +54,6 @@ public interface iDemandStrategy
         }
         return calculatedSupply;
     }
-     public void CalculateFulfillmentRates(Market market,int tradingPeriod=-1)
-        {
-            
-            if (tradingPeriod == -1)//-1 is a sentinel value meaning no parameter was passed
-            {
-                //if no parameter was passed, always look at the previous trading period
-                tradingPeriod = TheEconomy.Instance.tradingPeriod-1;
-            }
-            
-            var marketDemand = CalculateDemandForPeriod(market, tradingPeriod);
-            var marketSupply = CalculateSupplyForPeriod(market, tradingPeriod);
-            foreach(var good in marketDemand.Keys)
-            {
-                var demandedQuantity = marketDemand.TryGetValue(good,out var demandData) ? demandData.CurrentDemand:0;
-                var suppliedQuantity = marketSupply.TryGetValue(good, out var supplyData) ? supplyData : 0;
-                var FulfilmentRate = (float)suppliedQuantity/demandedQuantity;
-                market.GetMarketDemand()[good].FulfilmentRate = FulfilmentRate;
-            }
-        }
 
     public int GetTotalBoughtByMarket(Market market,Good good,int tradingPeriod)
     {

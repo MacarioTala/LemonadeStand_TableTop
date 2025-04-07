@@ -8,6 +8,7 @@ public class BasicConsumptionManager : iConsumptionManager
     {
         var demand = market.GetMarketDemand();
         var ordersSentToMarket = market.GetOrdersSentToMarket()
+                                       .Where(x=>x.IsSell() && x.Buyer is not Market)
                                        .ToList();
 
         bool hasOrderFailures = false;
@@ -47,7 +48,7 @@ public class BasicConsumptionManager : iConsumptionManager
                 order.OrderStatus = orderStatus;
                 hasOrderFailures = true;
             }
-            remainingDemand = CalculateFilledQuantity(market, order, remainingDemand);
+            remainingDemand = FillOrderAndReturnFilledQuantity(market, order, remainingDemand);
         }
         if (hasOrderFailures)
         {
@@ -58,7 +59,7 @@ public class BasicConsumptionManager : iConsumptionManager
         return returnObject;
     }
 
-    private int CalculateFilledQuantity(Market market, Order order, int remainingDemand)
+    private int FillOrderAndReturnFilledQuantity(Market market, Order order, int remainingDemand)
     {
         order.Buyer = market;
         int demandToReturn;

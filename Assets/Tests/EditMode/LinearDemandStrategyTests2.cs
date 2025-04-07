@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using static TestHelpers;
 
 public partial class LinearDemandStrategyTests
 {
@@ -62,11 +63,13 @@ public partial class LinearDemandStrategyTests
             lemonadeDemand.Curvature = 1;
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,100,1){SubmittingCompany=Company1};
-        TestMarket.RecordTrade(new Execution(Company1SellsLemonadeToAnyone,0));
-
+        var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,100,1);
+        _= Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, TestMarket.CurrentPeriod));
+        Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,0));
         var expectedDemand = 100;
+
         //Act
+        TestMarket.FulfillDemand();
         Strategy.AdjustDemandInPeriod(TestMarket);
         var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
         //Assert

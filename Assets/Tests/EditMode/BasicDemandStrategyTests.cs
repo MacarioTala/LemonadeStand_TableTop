@@ -102,7 +102,7 @@ public class BasicDemandStrategyTests
         marketToTest.InitializeDemandForSpecificGood(lemon, 1000);
         var expected = 1000;
         // Act
-        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(marketToTest, period)[lemon].CurrentDemand;
+        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(marketToTest, period)[lemon].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -121,7 +121,7 @@ public class BasicDemandStrategyTests
 
         var expected = 1500;
         // Act
-        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(TestMarket, Period)[lemon].CurrentDemand;
+        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, Period)[lemon].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -138,7 +138,7 @@ public class BasicDemandStrategyTests
 
         var expected = 500;
         // Act
-        var actual = ((iDemandStrategy)strategy).CalculateDemandForPeriod(TestMarket, Period)[lemon].CurrentDemand;
+        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, Period)[lemon].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
