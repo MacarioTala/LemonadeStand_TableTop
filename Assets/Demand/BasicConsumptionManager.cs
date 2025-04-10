@@ -82,23 +82,28 @@ public class BasicConsumptionManager : iConsumptionManager
         {
             cashToRemoveFromMarket = remainingDemand * order.Price;
             quantityToFill = remainingDemand;
-            order.FilledQuantity += quantityToFill;
-            marketCounterPartyOrder.Quantity = quantityToFill;
-            marketCounterPartyOrder.FilledQuantity = quantityToFill;
             demandToReturn = 0;
             marketInventory.AddGood(new InventoryEntry(order.Good, quantityToFill, order.Price, market.CurrentPeriod));
             
+            order.FilledQuantity += quantityToFill;
+            //marketCounterPartyOrder.Quantity = quantityToFill; 
+              marketCounterPartyOrder.Quantity = remainingDemand;//patch before refactoring iConsumtionManager to remove FulfillDemand
+
+            marketCounterPartyOrder.FilledQuantity = quantityToFill;
+
             executionForOrder.Quantity = quantityToFill;
             executionForMarket.Quantity = quantityToFill;
         }
         else
             {
                 quantityToFill = order.RemainingQuantity;//need this because order.RemainingQuantity will be updated in the next line
-
                 cashToRemoveFromMarket = quantityToFill * order.Price;
+                
                 order.FilledQuantity += quantityToFill;
-                marketCounterPartyOrder.Quantity = quantityToFill;
+                //marketCounterPartyOrder.Quantity = quantityToFill;
+                marketCounterPartyOrder.Quantity = remainingDemand; //patch before refactoring iConsumtionManager to remove FulfillDemand
                 marketCounterPartyOrder.FilledQuantity = quantityToFill;
+                
                 demandToReturn = remainingDemand - quantityToFill;
                 marketInventory.AddGood(new InventoryEntry(order.Good, quantityToFill, order.Price, market.CurrentPeriod));
 

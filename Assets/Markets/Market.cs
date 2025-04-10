@@ -97,13 +97,25 @@ public class Market : ScriptableObject, iCompany
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy {get;set;}
     private readonly List<iPriceModifier> _priceModifiers = new();
-    
+
+    //Reporting 
+    readonly List<(Order Order, int Period)> OrdersSubmittedInPeriod = new(); // Read only used to get Order History. 
+    public List<Order> GetOrdersSubmittedInPeriod(int period) => OrdersSubmittedInPeriod.Where(x=>x.Period==period).Select(x=>x.Order).ToList();
+    public void LogOrder(Order order, int period)
+    {
+        if(!OrdersSubmittedInPeriod.Contains((order,period)))
+        {
+            OrdersSubmittedInPeriod.Add((order,period));
+        }
+    }
+
     //Time
     public int CurrentPeriod{get;set;}=0;
     public int StartingPeriod{get;set;}
     //Trading
     private readonly List<Execution> _executedTradesInPeriod = new();
     private readonly List<(Order Order,int Period)> _ordersExecutedInPeriod = new();
+    public List<(Order Order,int Period)> GetOrdersExecutedInPeriod(params int[] periods) => _ordersExecutedInPeriod.Where(x=>periods.Contains(x.Period)).ToList();
     public List<Execution> GetExecutionsInPeriod(int period)
     {
       var executions =  _ordersExecutedInPeriod
@@ -116,7 +128,6 @@ public class Market : ScriptableObject, iCompany
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
-    public List<(Order Order,int Period)> GetOrdersExecutedInPeriod(params int[] periods) => _ordersExecutedInPeriod.Where(x=>periods.Contains(x.Period)).ToList();
     public List<Order>GetOrdersSentToMarketByCompany(Company company)=>_tradeProcessor.GetOrders().Where(x=>x.SubmittingCompany.Equals(company)).ToList();
     public List<Recipe> GetRecipes()=>_recipes;
     public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
@@ -144,6 +155,8 @@ public class Market : ScriptableObject, iCompany
     //Instantiate Markets using a factory
     private Market ()
     {
+        // Intentionally blank. Do not add a constructor.
+        // We want folks to use the factory
     }
     public static class Factory
     { 
@@ -236,6 +249,8 @@ public class Market : ScriptableObject, iCompany
         var queueResult = _tradeProcessor.QueueOrder(context);
         if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
             return queueResult;
+        //Record the order
+        LogOrder(context.TradeToSubmit, context.Period);
         
         return LemonadeStandResultObject.Success();
     }
@@ -376,11 +391,13 @@ public class Market : ScriptableObject, iCompany
      internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod=-1)
     {
         //Get the demand and supply for the period
-        var demandInPeriod = DemandStrategy.GetDemandInPeriod(this, tradingPeriod);
-        var supplyInPeriod = _supplyProvider.GetSupplyInPeriod(this, tradingPeriod)
-                            .GroupBy(x=>x.Good)
-                            .ToDictionary(x=>x.Key, x=>x.Sum(y=>y.Quantity));
-        var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(demandInPeriod,supplyInPeriod);
+        var ordersSubmittedInPeriod = GetOrdersSubmittedInPeriod(tradingPeriod);
+        var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(ordersSubmittedInPeriod);
+        /// Change the fulfillmentRates definition to drop _marketDemand when
+        ///     we refactor out iConsumptionManager.FulfillDemand()
+        /// We'll just have a company that represents the population
+        /// var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(ordersSubmittedInPeriod); 
+        //              -- just in case the refactor isn't clear
        
         foreach(var fulfillmentRate in fulfillmentRates)
         {
@@ -440,11 +457,11 @@ public class Market : ScriptableObject, iCompany
     }
 #endregion
 #region Supply
-    public int GetTotalSupply(Good good)
+    public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
     {
-        return _inventory.GetInventoryEntriesByGood(good.GoodName)
-            .Sum(x => x.quantity);
+        return _supplyProvider.GetSupplyInPeriod(period);
     }
+    
 #endregion
 #region Publishing
     public List<MarketData> PublishMarketData()

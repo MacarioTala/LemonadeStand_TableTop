@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 [CreateAssetMenu(menuName = "Demand/LinearDemandStrategy")]
 public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
@@ -101,19 +102,25 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
     internal static void AdjustDemandForSaturation(Market market,Good good)
     {
-        var totalSupply = market.DemandStrategy.CalculateSupplyForPeriod(market,market.CurrentPeriod);
-        var supply = totalSupply.TryGetValue(good, out var supplyData) ? supplyData : 0;
-        var demandData = market.GetMarketDemand()[good];
+        var demandForGood = market.GetMarketDemand()[good];
+        var totalSupply = market.GetSupplyInPeriod(market.CurrentPeriod);
+        int supplyForGood = 0;
+        if (!(totalSupply == null || totalSupply.Count == 0))
+        {
+        supplyForGood = totalSupply
+                            .Where(x => x.Good == good)
+                            .Sum(x => x.Quantity);
+        }
+        var saturation = demandForGood.CurrentDemand==0?0 
+                            : (float)supplyForGood/demandForGood.CurrentDemand ;
 
-        var saturation = (float)supply/demandData.CurrentDemand ;
-        var curvature = demandData.Curvature;        
+        var curvature = demandForGood.Curvature;        
         
-        var elasticty = GetElasticity(market, good, ElasticityTypeEnum.SaturationElasticity);
+        var elasticity = GetElasticity(market, good, ElasticityTypeEnum.SaturationElasticity);
 
-        var demandAdjustment = demandData.CurrentDemand * MathHelper.GetSingleCoeffientCubicOutput(saturation,curvature) * elasticty;
+        var demandAdjustment = demandForGood.CurrentDemand * (1f-saturation) * elasticity;
 
-        demandData.CurrentDemand = (int)Math.Round(demandData.CurrentDemand + demandAdjustment, 0);
-    
+        demandForGood.CurrentDemand = (int)Math.Round(demandForGood.CurrentDemand + demandAdjustment, 0);
     }
 
 

@@ -42,6 +42,13 @@ public class BasicTransactionManager : iTransactionManager
         foreach(var counterPartyOrder in counterPartyOrders)
         {
             RecordOrder(counterPartyOrder, context.MarketToSubmitTo, context.Period);
+            ///remove this when we refactor iConsumptionManager to remove .FulfillDemand()
+#region RemoveThisPartAfterFulfillDemandRefactor
+            if(counterPartyOrder.SubmittingCompany is Market)
+            {
+                context.MarketToSubmitTo.LogOrder(counterPartyOrder, context.Period);
+            }
+#endregion
         }
         
         return LemonadeStandResultObject.Success();

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
+using static TestHelpers;
 
 [TestFixture]
 public partial class LinearDemandStrategyTests
@@ -17,6 +18,8 @@ public partial class LinearDemandStrategyTests
     LinearDemandStrategy Strategy;
 
     iDemographicManager TestDemographicManager;
+
+    iSupplyProvider TestSupplyProvider= new BasicSupplyProvider();
 
     int Period = 0;
     
@@ -38,6 +41,8 @@ public partial class LinearDemandStrategyTests
         TestDemographicManager = new MockDemographicManager();
         TestMarket.SetDemographicManager(TestDemographicManager);
         TestMarket.SetMarketDataService(TestMarketDataService);
+        TestMarket.SetSupplyProvider(TestSupplyProvider);
+        TestSupplyProvider.Initialize(TestMarket);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
@@ -181,15 +186,19 @@ public partial class LinearDemandStrategyTests
     public void SaturatedGoodElasticityOneDemandUnchanged()
     {
         //Arrange
+        Company1.GetInventory().AddGood(new(Lemonade, 100,10m,0));
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
             var marketDemand = TestMarket.GetMarketDemand();
             var lemonadeDemand = marketDemand[Lemonade];
             lemonadeDemand.Curvature = 1;
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,100,1){SubmittingCompany=Company1};
-        TestMarket.RecordTrade(new Execution(Company1SellsLemonadeToAnyone,0));
-
+        var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,100,1)
+                {
+                    SubmittingCompany=Company1,
+                    FilledQuantity=100
+                };
+        var result = Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));    
         var expectedDemand = 100;
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
@@ -220,14 +229,20 @@ public partial class LinearDemandStrategyTests
     {
         //Arrange
         const int initialDemand = 100;
+        Company1.GetInventory().AddGood(new(Lemonade, 200,10m,0));
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
             var marketDemand = TestMarket.GetMarketDemand();
             var lemonadeDemand = marketDemand[Lemonade];
             lemonadeDemand.Curvature = 1;
         
-        var Company1SellsLemonadeToAnyone = new Order(TestMarket,Company1,Lemonade,200,1){SubmittingCompany=Company1};
-        TestMarket.RecordTrade(new Execution(Company1SellsLemonadeToAnyone,0));
+        var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,200,1)
+                    {
+                        SubmittingCompany=Company1,
+                        FilledQuantity=100
+                    };
+        
+        var result = Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
         var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;

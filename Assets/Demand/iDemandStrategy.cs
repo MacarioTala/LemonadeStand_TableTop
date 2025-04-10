@@ -31,10 +31,6 @@ public interface iDemandStrategy
         }
         return calculatedDemand;
     }
-    public LemonadeStandResultObject CalculateFulfillmentRates(Market market,int tradingPeriod)
-    {
-        throw new System.NotImplementedException();
-    }
     public Dictionary<Good, int> CalculateSupplyForPeriod(Market market, int tradingPeriod)
     {
         Dictionary<Good, int> calculatedSupply = new();
@@ -57,13 +53,11 @@ public interface iDemandStrategy
 
     public int GetTotalBoughtByMarket(Market market,Good good,int tradingPeriod)
     {
-         return market.GetExecutionsInPeriod(tradingPeriod)
-                         .Where(x => x.Period == tradingPeriod
-                        && x.RecordedTrade.Good.Equals(good)
-                        && x.RecordedTrade.IsBuy()
-                        && x.RecordedTrade.Buyer is Market
-                        )
-                        .Sum(x => x.RecordedTrade.Quantity);
+        return market.GetOrdersSubmittedInPeriod(tradingPeriod)
+            .Where(x=> x.Good.Equals(good)
+                    && x.Buyer is Market
+                    && x.SubmittingCompany is Market)
+            .Sum(x => x.FilledQuantity);
     }
 
     public int GetTotalSoldByMarket(Market market,int tradingPeriod, Good good) //currently public for testing purposes

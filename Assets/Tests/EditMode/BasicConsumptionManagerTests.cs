@@ -150,13 +150,11 @@ public class BasicConsumptionManagerTests
         TestMarket.FulfillDemand();
         var ActualCompany1LemonadeSellFillQuantity = Company1SellsLemonadeToAnyone.FilledQuantity;
         var ActualCompany2LemonadeBuyFillQuantity = Company2BuysLemonadeFromAnyone.FilledQuantity;
-        var ActualMarketTrade = TestMarket.GetExecutionsInPeriod(Period)
-                                                 .Where(x=>x.RecordedTrade.Buyer.Equals(TestMarket)
-                                                 && x.RecordedTrade.Good.Equals(lemonade)
-                                                 && x.RecordedTrade.Seller.Equals(Company1)
-                                                 && x.RecordedTrade.SubmittingCompany.Equals(TestMarket))
-                                                 .FirstOrDefault();
-        var ActualMarketFillQuantity = ActualMarketTrade.RecordedTrade.Quantity;
+        var ActualMarketTrade = TestMarket.GetOrdersSubmittedInPeriod(Period)
+            .Where(x => x.SubmittingCompany is Market)
+            .FirstOrDefault();
+
+        var ActualMarketFillQuantity = ActualMarketTrade.FilledQuantity;
 
         //Assert
         Assert.AreEqual(ExpectedCompany1LemonadeSellFillQuantity, 
