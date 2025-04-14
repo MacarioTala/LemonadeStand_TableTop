@@ -1,6 +1,7 @@
 public class MockDemographicManager : iDemographicManager
 {
     private float _marketInstability = 0f; // Stable market by default
+    private int _population; // Default population
     public float GetMarketInstability()
     {
         return _marketInstability;
@@ -8,7 +9,7 @@ public class MockDemographicManager : iDemographicManager
 
     public int GetPopulation()
     {
-        throw new System.NotImplementedException();
+        return _population;
     }
 
     public float GetPopulationEnnui()
@@ -34,7 +35,8 @@ public class MockDemographicManager : iDemographicManager
 
     public LemonadeStandResultObject SetPopulation(int newPopulation)
     {
-        throw new System.NotImplementedException();
+        _population = newPopulation;
+        return LemonadeStandResultObject.Success();
     }
 
     public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using UnityEngine;
 [assembly:InternalsVisibleTo("Tests")]
 [CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
@@ -74,7 +75,6 @@ public class Market : ScriptableObject, iCompany
     public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)=>
         _demographicManager.SetPopulationHappiness(newHappiness);
 #endregion 
-    
 
     //Event Handlers
     public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent);
@@ -93,6 +93,59 @@ public class Market : ScriptableObject, iCompany
       set=> _demandStrategy = value as ScriptableObject;} 
     private iStrategy _marketStrategy;
     
+#region Market Events
+    public List<iMarketEvent> PotentialMarketEvents { get; } = new();
+    List<(iMarketEvent Event, int PeriodStart,int duration)> _activeEvents = new();
+    List<(iMarketEvent Event, int PeriodStart,int periodEnd)> marketEventHistory = new();
+    public void AddPotentialMarketEvent(iMarketEvent marketEvent)
+    {
+        if(!PotentialMarketEvents.Contains(marketEvent))
+        {
+            PotentialMarketEvents.Add(marketEvent);
+        }
+    }
+    public List<(iMarketEvent Event, int PeriodStart,int duration)> GetActiveMarketEvents() => _activeEvents;
+    public void RemovePotentialMarketEvent(iMarketEvent marketEvent)
+    {
+        if(PotentialMarketEvents.Contains(marketEvent))
+        {
+            PotentialMarketEvents.Remove(marketEvent);
+        }
+    }
+    public void ResolveMarketEvents()
+    {
+        //Check if any active events have expired
+        var expiredEvents = _activeEvents
+                            .Where(x=>CurrentPeriod >= x.PeriodStart + x.duration)
+                            .ToList();
+        foreach (var marketEvent in expiredEvents)
+        {
+            _activeEvents.Remove(marketEvent);
+            marketEventHistory.Add((marketEvent.Event,marketEvent.PeriodStart,CurrentPeriod));
+        }
+        
+        //Invoke any active events
+        foreach (var marketEvent in _activeEvents)
+        {
+            marketEvent.Event.Invoke(this);
+        }
+    }
+    public void RollForEvents()
+    {
+        foreach (var marketEvent in PotentialMarketEvents)
+        {
+            var isEventActive = _activeEvents
+                                .Any(x=>x.Event.Equals(marketEvent));
+            var currentRoll = UnityEngine.Random.Range(0, 100);
+            var chanceOfEvent = marketEvent.GetProbabilityOf();
+            if(chanceOfEvent>=currentRoll && !isEventActive)
+            {
+                _activeEvents.Add((marketEvent,CurrentPeriod,marketEvent.GetDuration()));
+            }
+        }
+    }
+
+#endregion
     //Pricing  
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy {get;set;}
@@ -456,13 +509,6 @@ public class Market : ScriptableObject, iCompany
         return _priceManager.GetMarketCostForGood(market,good);
     }
 #endregion
-#region Supply
-    public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
-    {
-        return _supplyProvider.GetSupplyInPeriod(period);
-    }
-    
-#endregion
 #region Publishing
     public List<MarketData> PublishMarketData()
     {
@@ -474,7 +520,21 @@ public class Market : ScriptableObject, iCompany
         _marketDataManager.PublishSpreadToMarket(context);
     }
 #endregion
+#region Supply
+    public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
+    {
+        return _supplyProvider.GetSupplyInPeriod(period);
+    }
+    
+#endregion
+
 #region Interacting with the Economy
+
+    public void StartTradingPeriod()
+    {
+        RollForEvents();
+        ResolveMarketEvents();
+    }
     public void UnleashMarketForces(int period)
     {
         FulfillDemand();

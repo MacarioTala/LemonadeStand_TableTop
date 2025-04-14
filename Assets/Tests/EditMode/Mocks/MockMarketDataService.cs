@@ -14,7 +14,8 @@ public class MockMarketDataService : iMarketDataService
     
     public List<PopulationHistory> GetPopulationHistory(Guid marketId)
     {
-        return PopulationHistory.Where(x => x.MarketId == marketId).ToList();
+        var history = PopulationHistory?.Where(x => x.MarketId == marketId).ToList();
+        return history?? new List<PopulationHistory>();
     }
 
     public List<MarketFeature> GetMarketFeatures(Guid marketId)

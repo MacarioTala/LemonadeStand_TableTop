@@ -108,7 +108,14 @@ public class TheEconomy : MonoBehaviour
         }
         
     }
-    
+    public void StartTradingPeriod()
+    {
+        var markets = companies.OfType<Market>().ToList();
+        foreach (var market in markets)
+        {
+            market.StartTradingPeriod();
+        }
+    }
 
     public iCompany GetGlobalMarket() => InitialMarket;
     public void CreateInitialGoods(List<Good> goods)//move static data to DB in future
