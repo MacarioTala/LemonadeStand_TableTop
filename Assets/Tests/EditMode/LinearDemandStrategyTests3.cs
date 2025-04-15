@@ -18,7 +18,7 @@ public partial class LinearDemandStrategyTests
         
         TestMarket.CurrentPeriod = 1;
 
-        TestMarketDataService.SetPopulationHistory(new List<PopulationHistory>()
+        ((MockDemographicManager)TestDemographicManager).SetPopulationHistory(new List<PopulationHistory>()
         {
             new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId},
             new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId}
@@ -33,14 +33,17 @@ public partial class LinearDemandStrategyTests
         Assert.AreEqual(expectedDemand, actualDemand);
     }
 
-    [TestCase(TestName="From Market. Incremental demand adjustments should happen when Market.ProcessCompanyOrders is called")]
-    public void UMF_DemandChangesWhenDemandIsFulfilled()
+    [TestCase(TestName="From Market. Demand changes only by the market instability if it's 100% filled")]
+    public void UMF_DemandStableWhenDemandIsFulfilled()
     {
         //Arrange
         var initialDemand = 100;
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, .7f);
         TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
         TestMarket.SetMarketInstability(.1f);
+
+        var expectedLowerBound = initialDemand;
+        var expectedUpperBound = initialDemand + (int)(initialDemand * .1f);
         
         Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 100,1m,Period));
         var Company2SellsLemonadeToAnyone = new Order(null,Company2,Lemonade,100,1m);
@@ -53,9 +56,8 @@ public partial class LinearDemandStrategyTests
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
         var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
         //Assert
-        Assert.AreNotEqual(initialDemand, actualDemand);
-        Debug.Log($"Initial Demand: {initialDemand}, Actual Demand: {actualDemand}");
-        
+        Assert.GreaterOrEqual(actualDemand, expectedLowerBound);
+        Assert.LessOrEqual(actualDemand, expectedUpperBound);
     }
     
 }

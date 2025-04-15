@@ -1,10 +1,26 @@
+using System;
+using System.Collections.Generic;
+
 public interface iDemographicManager
 {
+    //PIT Demographics
     float GetMarketInstability();
-    LemonadeStandResultObject SetMarketInstability(float newInstability);
+    int GetPopulation();
     float GetPopulationEnnui();
+    float GetPopulationGrowthRate();
+    float GetPopulationHappiness();
+
+    LemonadeStandResultObject SetMarketInstability(float newInstability); 
+    LemonadeStandResultObject SetPopulation(int newPopulation);
+    LemonadeStandResultObject SetPopulationHappiness(float newHappiness);
+
+    //Demographics History
+    List<PopulationHistory> GetPopulationHistory(Guid marketId);
     
-    string GetEnnuiLevel()
+    //Record History
+    LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period);
+#region default implementations
+string GetEnnuiLevel()
     {
         if (GetPopulationEnnui() == 0) return "Inspired";
         if (GetPopulationEnnui() > 0 && GetPopulationEnnui() < .25) return "Thriving";
@@ -14,10 +30,5 @@ public interface iDemographicManager
         if (GetPopulationEnnui() == 1) return "Bored to death";
         return "Unknown";
     }
-
-    float GetPopulationGrowthRate();
-    int GetPopulation();
-    LemonadeStandResultObject SetPopulation(int newPopulation);
-    float GetPopulationHappiness();
-    LemonadeStandResultObject SetPopulationHappiness(float newHappiness);
+#endregion
 }

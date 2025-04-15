@@ -16,6 +16,7 @@ public class IntegrationTests
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
     readonly iSupplyProvider TestSupplyProvider = new MockSupplyProvider();
+    readonly iDemographicManager TestDemographicManager = new MockDemographicManager();
 
     readonly ITradeLogger TestTradeLogger = new TradeLoggerV1();
 
@@ -31,6 +32,7 @@ public class IntegrationTests
         TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, TestDemandStrategy);
         TestMarket.SetMarketDataService(TestMarketDataService);
         TestMarket.SetSupplyProvider(TestSupplyProvider);
+        TestMarket.SetDemographicManager(TestDemographicManager);
         TheEconomy.Instance.RegisterCompany(TestMarket);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -166,7 +168,6 @@ public class IntegrationTests
     {
         //Arrange
         var marketToTest = TestMarket;
-        marketToTest.SetMarketDataService(TestMarketDataService);
         marketToTest.InitializeDemandForSpecificGood(Lemonade, 2000);
         var company1 = Company.Factory.Create("TestCompany", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));

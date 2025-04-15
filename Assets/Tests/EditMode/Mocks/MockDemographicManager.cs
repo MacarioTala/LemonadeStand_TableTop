@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
+
 public class MockDemographicManager : iDemographicManager
 {
     private float _marketInstability = 0f; // Stable market by default
     private int _population; // Default population
+    IEnumerable<PopulationHistory> _populationHistory;
     public float GetMarketInstability()
     {
         return _marketInstability;
@@ -14,17 +18,27 @@ public class MockDemographicManager : iDemographicManager
 
     public float GetPopulationEnnui()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public float GetPopulationGrowthRate()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public float GetPopulationHappiness()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
+    }
+
+    public List<PopulationHistory> GetPopulationHistory(Guid marketid)
+    {
+        return _populationHistory != null ? new List<PopulationHistory>(_populationHistory) : new List<PopulationHistory>();
+    }
+
+    public LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period)
+    {
+        throw new NotImplementedException();
     }
 
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
@@ -39,8 +53,13 @@ public class MockDemographicManager : iDemographicManager
         return LemonadeStandResultObject.Success();
     }
 
+     public void SetPopulationHistory(IEnumerable<PopulationHistory> populationHistory)
+    {
+        _populationHistory = populationHistory;
+    }
+
     public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

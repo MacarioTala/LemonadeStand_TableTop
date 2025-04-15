@@ -407,7 +407,7 @@ public class Market : ScriptableObject, iCompany
     public float GetPopulationPercentageChangeInPeriod()
     {
         return GetMetricPercentageChangeInPeriod(
-            _marketDataService.GetPopulationHistory,
+            _demographicManager.GetPopulationHistory,
             x=>x.Population);       
     }
 #endregion
