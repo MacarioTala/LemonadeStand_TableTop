@@ -220,6 +220,11 @@ public class IntegrationTests
         var SecondMarket = Market.Factory.CreateMarket("Second Market", CompanyLevelEnum.Market, TestDemandStrategy);
         SecondMarket.SetMarketDataService(TestMarketDataService);
         SecondMarket.SetSupplyProvider(TestSupplyProvider);
+
+        var TestDemographicManager2 = new MockDemographicManager();
+        var TestDataHandler2 = new MockPopulationHistoryDataHandler();
+        TestDemographicManager2.SetPopulationHistoryHandler(TestDataHandler2);
+        SecondMarket.SetDemographicManager(TestDemographicManager2);
         TheEconomy.Instance.RegisterCompany(SecondMarket);
         TestMarket.SetCash(1000000);
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
@@ -243,6 +248,9 @@ public class IntegrationTests
 
         // Clean up
         TheEconomy.Instance.RemoveMarket(SecondMarket);
+        TestDataHandler2 = null;
+        TestDemographicManager2 = null;
+        SecondMarket = null;
     }
 
     [Test]

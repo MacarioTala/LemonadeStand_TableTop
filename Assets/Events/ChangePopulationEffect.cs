@@ -13,4 +13,9 @@ public class ChangePopulationEffect : iMarketEffect
         var delta = (int)Math.Round(population * _conversion,0);
         market.SetPopulation(population + delta);
     }
+
+    public ChangePopulationEffect(float populationChangePercentage)
+    {
+        PopulationChangePercentage = populationChangePercentage;
+    }
 }

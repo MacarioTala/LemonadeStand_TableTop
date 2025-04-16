@@ -7,8 +7,11 @@ public interface iDemographicManager
     float GetMarketInstability();
     int GetPopulation();
     float GetPopulationEnnui();
-    float GetPopulationGrowthRate();
+    float GetPopulationGrowthRate(int startingPeriod, int endingPeriod);
     float GetPopulationHappiness();
+
+    //Set Datahandlers
+    iDemographicManager SetPopulationHistoryHandler(iDataHandler<PopulationHistory> handler);
 
     LemonadeStandResultObject SetMarketInstability(float newInstability); 
     LemonadeStandResultObject SetPopulation(int newPopulation);
@@ -18,7 +21,7 @@ public interface iDemographicManager
     List<PopulationHistory> GetPopulationHistory(Guid marketId);
     
     //Record History
-    LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period);
+    LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period, TurnPhase phase);
 #region default implementations
 string GetEnnuiLevel()
     {

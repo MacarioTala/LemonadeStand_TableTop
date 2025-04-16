@@ -6,6 +6,6 @@ public interface iDataHandler<T>
     void Delete(int id);
     T Load(string path);
     IEnumerable<T> LoadHistorical(Func<T,bool> predicate);
-    void Save(T data, string path);
+    void Save(T data);
     
 }

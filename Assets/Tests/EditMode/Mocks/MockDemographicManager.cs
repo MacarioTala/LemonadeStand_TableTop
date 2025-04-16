@@ -5,7 +5,8 @@ public class MockDemographicManager : iDemographicManager
 {
     private float _marketInstability = 0f; // Stable market by default
     private int _population; // Default population
-    IEnumerable<PopulationHistory> _populationHistory;
+    iDataHandler<PopulationHistory> _populationHistoryHandler;
+    IEnumerable<PopulationHistory> _populationHistory = new List<PopulationHistory>();
     public float GetMarketInstability()
     {
         return _marketInstability;
@@ -21,7 +22,7 @@ public class MockDemographicManager : iDemographicManager
         throw new NotImplementedException();
     }
 
-    public float GetPopulationGrowthRate()
+    public float GetPopulationGrowthRate(int startingPeriod, int endingPeriod)
     {
         throw new NotImplementedException();
     }
@@ -36,9 +37,16 @@ public class MockDemographicManager : iDemographicManager
         return _populationHistory != null ? new List<PopulationHistory>(_populationHistory) : new List<PopulationHistory>();
     }
 
-    public LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period)
+    public LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period,TurnPhase phase)
     {
-        throw new NotImplementedException();
+        ((List<PopulationHistory>)_populationHistory).Add(new PopulationHistory
+        {
+            MarketId = marketId,
+            Period = period,
+            Population = _population,
+            Phase = phase
+        });
+        return LemonadeStandResultObject.Success();
     }
 
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
@@ -61,5 +69,11 @@ public class MockDemographicManager : iDemographicManager
     public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)
     {
         throw new NotImplementedException();
+    }
+
+    public iDemographicManager SetPopulationHistoryHandler(iDataHandler<PopulationHistory> handler)
+    {
+        _populationHistoryHandler = handler;
+        return this;
     }
 }

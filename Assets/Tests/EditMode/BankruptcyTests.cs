@@ -12,6 +12,9 @@ public class BankruptcyTests
     readonly iFixedCostStrategy TestFixedCostStrategy = new BasicFixedCostStrategy();
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
+    readonly iDemographicManager TestDemographicManager = new MockDemographicManager();
+    readonly iSupplyProvider TestSupplyProvider = new MockSupplyProvider();
+
     [SetUp]
     public void Setup()
     {
@@ -21,6 +24,9 @@ public class BankruptcyTests
 
         TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
         TestMarket.SetMarketDataService(TestMarketDataService);
+        TestMarket.SetDemographicManager(TestDemographicManager);
+        TestMarket.SetSupplyProvider(TestSupplyProvider);
+        TestSupplyProvider.Initialize(TestMarket);
         testEconomy.RegisterCompany(TestMarket);
 
         //Set Demographics

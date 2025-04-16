@@ -1,0 +1,142 @@
+using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
+using UnityEngine;
+
+
+[TestFixture]
+public class RecordingDemographicHistoryTests
+{
+    private TheEconomy testEconomy;
+    Market TestMarket;
+    Company Company1;
+
+    readonly iFixedCostStrategy TestFixedCostStrategy = new BasicFixedCostStrategy();
+    readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+    readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
+    iDemographicManager TestDemographicManager;
+    iDataHandler<PopulationHistory> TestPopulationHistoryDataHandler;
+    readonly iSupplyProvider TestSupplyProvider = new MockSupplyProvider();
+
+    [SetUp]
+    public void Setup()
+    {
+        TheEconomy.SetupForTests(new MockLogger());
+        testEconomy = TheEconomy.Instance;
+        var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
+        testEconomy.RemoveMarket(existingMarket);
+
+        TestPopulationHistoryDataHandler= new MockPopulationHistoryDataHandler();
+        TestDemographicManager = new BasicDemographicManager();
+
+        TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        TestMarket.SetMarketDataService(TestMarketDataService);
+        TestMarket.SetDemographicManager(TestDemographicManager);
+        TestMarket.SetSupplyProvider(TestSupplyProvider);
+        TestSupplyProvider.Initialize(TestMarket);
+        TestDemographicManager.SetPopulationHistoryHandler(TestPopulationHistoryDataHandler);
+        
+        testEconomy.RegisterCompany(TestMarket);
+
+        Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner, null, TestFixedCostStrategy);
+        TestMarket.RegisterCompany(Company1);
+    }
+    [TearDown]
+    public void TearDown()
+    {
+        UnityEngine.Object.DestroyImmediate(testEconomy);
+        TestMarket = null;
+        Company1 = null;
+        TestDemographicManager = null;
+        TestPopulationHistoryDataHandler = null;
+    }
+
+    [Test]
+    public void PopulationHistoryRetrievedFromRepositoryWhenSetViaDataHandler()
+    {
+        //Arrange
+        var expected = new List<PopulationHistory>(){
+            new() {MarketId=TestMarket.MarketId,Period=0, Population=1000, Phase=TurnPhase.Beginning},
+            new() {MarketId=TestMarket.MarketId,Period=0, Population=1000, Phase=TurnPhase.End},
+            new() {MarketId=TestMarket.MarketId,Period=1, Population=1000, Phase=TurnPhase.Beginning},
+            new() {MarketId=TestMarket.MarketId,Period=1, Population=1000, Phase=TurnPhase.End},
+            new() {MarketId=TestMarket.MarketId,Period=2, Population=1000, Phase=TurnPhase.Beginning},
+            new() {MarketId=TestMarket.MarketId,Period=2, Population=1000, Phase=TurnPhase.End},
+        };
+        var initialPopulationHistory = TestMarket.GetPopulationHistory();
+        ((MockPopulationHistoryDataHandler)TestPopulationHistoryDataHandler)
+            .SetPopulationHistory(expected);
+        var emptySet = new List<PopulationHistory>();
+        
+        //Act
+        var actual = TestMarket.GetPopulationHistory();
+        //Assert
+        Assert.That(initialPopulationHistory, Is.EqualTo(emptySet));
+        Assert.AreEqual(expected.Count, actual.Count);
+        for (int i = 0; i < expected.Count; i++)
+        {
+            Assert.AreEqual(expected[i].MarketId, actual[i].MarketId);
+            Assert.AreEqual(expected[i].Period, actual[i].Period);
+            Assert.AreEqual(expected[i].Population, actual[i].Population);
+        }
+    }
+
+    [Test]
+    public void StartTradingPeriodAddsRowToPopulationHistory()
+    {
+        //Arrange
+        var expectedPopulationHistory = new List<PopulationHistory>(){
+            new() {MarketId=TestMarket.MarketId,Period=0, Population=1000},
+        };
+        //Act
+        TestMarket.SetInitialPopulation(1000);
+        TestMarket.StartTradingPeriod();
+        var actualPopulationHistory = TestMarket.GetPopulationHistory();
+        //Assert
+        Assert.AreEqual(expectedPopulationHistory.Count, actualPopulationHistory.Count);
+        for (int i = 0; i < expectedPopulationHistory.Count; i++)
+        {
+            Assert.AreEqual(expectedPopulationHistory[i].MarketId, actualPopulationHistory[i].MarketId);
+            Assert.AreEqual(expectedPopulationHistory[i].Period, actualPopulationHistory[i].Period);
+            Assert.AreEqual(expectedPopulationHistory[i].Population, actualPopulationHistory[i].Population);
+        }
+    }
+    [Test]
+    public void UnleashMarketForcesCapturesChangeInPopulation()
+    {
+        //Arrange
+        var MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();
+        MaraudersAttack.Initialize( "Marauders Attack", 
+                                    "Marauders attack the market",
+                                    100f,
+                                    1);
+        var populationChangeEffect = new ChangePopulationEffect(-10f);
+        MaraudersAttack.Effects.Add(populationChangeEffect);
+
+        TestMarket.AddPotentialMarketEvent(MaraudersAttack);
+
+        TestMarket.SetInitialPopulation(1000);
+        const int expectedPopulation = 900;
+        var expectedPopulationHistory = new List<PopulationHistory>(){
+            new() {MarketId=TestMarket.MarketId,Period=0, Population=1000, Phase=TurnPhase.Beginning},
+            new() {MarketId=TestMarket.MarketId,Period=0, Population=900, Phase=TurnPhase.End},
+        };
+
+        //Act
+        TestMarket.StartTradingPeriod();
+        TestMarket.UnleashMarketForces(0);
+        var actualPopulation = TestMarket.GetPopulation();
+        var actualPopulationHistory = TestMarket.GetPopulationHistory();
+
+        //Assert
+        Assert.AreEqual(expectedPopulation, actualPopulation);
+        Assert.AreEqual(expectedPopulationHistory.Count, actualPopulationHistory.Count);
+        for (int i = 0; i < expectedPopulationHistory.Count; i++)
+        {
+            Assert.AreEqual(expectedPopulationHistory[i].MarketId, actualPopulationHistory[i].MarketId);
+            Assert.AreEqual(expectedPopulationHistory[i].Period, actualPopulationHistory[i].Period);
+            Assert.AreEqual(expectedPopulationHistory[i].Population, actualPopulationHistory[i].Population);
+        }
+    }
+}

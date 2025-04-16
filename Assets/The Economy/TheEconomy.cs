@@ -104,7 +104,7 @@ public class TheEconomy : MonoBehaviour
         }
         else
         {
-            throw new TheEconomy_CompanyException("Company already registered");
+            throw new TheEconomy_CompanyException($"{company.Name} already registered");
         }
         
     }
@@ -164,7 +164,7 @@ public class TheEconomy : MonoBehaviour
     {
         if (_instance != null)
         {
-            UnityEngine.Object.DestroyImmediate(_instance.gameObject);
+            DestroyImmediate(_instance.gameObject);
         }
 
         var obj = new GameObject("TestEconomy");

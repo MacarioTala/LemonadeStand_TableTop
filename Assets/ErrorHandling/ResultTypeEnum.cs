@@ -29,4 +29,5 @@ public enum ResultTypeEnum
     SomeOrdersNotProcessed = 23,
     ElasticityNotFound = 24,
     CompanyNotFound = 25,
+    NumericRangeExceeded = 26,
 }

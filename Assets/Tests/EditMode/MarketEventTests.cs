@@ -59,13 +59,13 @@ public class MarketEventTests
                                     eventDescription: "Marauders attack the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
-        MaraudersAttack.Effects.Add(new ChangePopulationEffect { PopulationChangePercentage = -10 });
+        MaraudersAttack.Effects.Add(new ChangePopulationEffect(-10));
 
         GodzillaAttack.Initialize( eventName: "Godzilla Attack",
                                     eventDescription: "Godzilla attacks the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
-        GodzillaAttack.Effects.Add(new ChangePopulationEffect { PopulationChangePercentage = -30 });
+        GodzillaAttack.Effects.Add(new ChangePopulationEffect(-30));
     }
 
     [TearDown]

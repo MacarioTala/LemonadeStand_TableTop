@@ -17,8 +17,11 @@ public partial class LinearDemandStrategyTests
 
         ((MockDemographicManager)TestDemographicManager).SetPopulationHistory(new List<PopulationHistory>()
         {
-            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId},
-            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId}
+            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId,Phase = TurnPhase.Beginning},
+            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId,Phase = TurnPhase.End},
+            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId,Phase = TurnPhase.Beginning},
+            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId,Phase = TurnPhase.End}
+
         });
 
         var expectedDemand = 170;
@@ -40,8 +43,10 @@ public partial class LinearDemandStrategyTests
 
         ((MockDemographicManager)TestDemographicManager).SetPopulationHistory(new List<PopulationHistory>()
         {
-            new() {Population = 200, Period = 0, MarketId = TestMarket.MarketId},
-            new() {Population = 100, Period = 1, MarketId = TestMarket.MarketId}
+            new() {Population = 200, Period = 0, MarketId = TestMarket.MarketId, Phase = TurnPhase.Beginning},
+            new() {Population = 200, Period = 0, MarketId = TestMarket.MarketId, Phase = TurnPhase.End},
+            new() {Population = 100, Period = 1, MarketId = TestMarket.MarketId, Phase = TurnPhase.Beginning},
+            new() {Population = 100, Period = 1, MarketId = TestMarket.MarketId, Phase = TurnPhase.End}
         });
 
         var expectedDemand = 65;

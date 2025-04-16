@@ -67,14 +67,28 @@ public class Market : ScriptableObject, iCompany
         =>_demographicManager.SetMarketInstability(newInstability);
     public float GetPopulationEnnui() => _demographicManager.GetPopulationEnnui();
     public string GetEnnuiLevel() => _demographicManager.GetEnnuiLevel();
-    
+    //Population
     public int GetPopulation() => _demographicManager.GetPopulation();
+    public List<PopulationHistory> GetPopulationHistory() => _demographicManager.GetPopulationHistory(MarketId);
+    public LemonadeStandResultObject SetInitialPopulation(int initialPopulation) 
+    {
+        _demographicManager.SetPopulation(initialPopulation);
+        return LemonadeStandResultObject.Success();
+    }
     public LemonadeStandResultObject SetPopulation(int newPopulation) => _demographicManager.SetPopulation(newPopulation);
-    public float GetPopulationGrowthRate()=>_demographicManager.GetPopulationGrowthRate();
+    public float GetPopulationGrowthRate()=>_demographicManager.GetPopulationGrowthRate(0,CurrentPeriod);
+
+    //Population Happiness
     public float GetPopulationHappiness()=>_demographicManager.GetPopulationHappiness();
     public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)=>
         _demographicManager.SetPopulationHappiness(newHappiness);
-#endregion 
+    
+    public LemonadeStandResultObject RecordDemographicSnapshot(TurnPhase phase)
+    {
+        _demographicManager.RecordDemographicSnapshot(MarketId,CurrentPeriod,phase);
+        return LemonadeStandResultObject.Success();
+    }
+#endregion
 
     //Event Handlers
     public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent);
@@ -382,21 +396,25 @@ public class Market : ScriptableObject, iCompany
     public float GetMetricPercentageChangeInPeriod<T>
         (
             Func<Guid, IEnumerable<T>> getHistoryFunc,
-            Func<T, float> getMetricValueFunc
+            Func<T, float> getMetricValueFunc,
+            int currentPeriod
         )
         where T : iHistorical
     {
-        if(CurrentPeriod == 0) return 0;
+        if(currentPeriod == 0) return 0;
 
         var history = getHistoryFunc(MarketId);
 
         var metricValues = history
-                            .Where(x=>x.Period == CurrentPeriod
-                            || x.Period == CurrentPeriod-1)
+                            .Where(x=>
+                                (x.Period == currentPeriod || x.Period == currentPeriod-1) 
+                                &&
+                                (x.Phase == TurnPhase.End)
+                            )
                             .ToDictionary(x=>x.Period, x=>getMetricValueFunc(x));
 
-        var currentMetricValue = metricValues.GetValueOrDefault(CurrentPeriod,0);
-        var previousMetricValue = metricValues.GetValueOrDefault(CurrentPeriod-1,0);
+        var currentMetricValue = metricValues.GetValueOrDefault(currentPeriod,0);
+        var previousMetricValue = metricValues.GetValueOrDefault(currentPeriod-1,0);
 
         var valueToReturn = (currentMetricValue - previousMetricValue)
                             /(previousMetricValue==0?1:previousMetricValue);
@@ -408,7 +426,8 @@ public class Market : ScriptableObject, iCompany
     {
         return GetMetricPercentageChangeInPeriod(
             _demographicManager.GetPopulationHistory,
-            x=>x.Population);       
+            x=>x.Population,
+            CurrentPeriod);       
     }
 #endregion
 #region Inventory Management
@@ -454,7 +473,10 @@ public class Market : ScriptableObject, iCompany
        
         foreach(var fulfillmentRate in fulfillmentRates)
         {
-            _marketDemand[fulfillmentRate.Good].FulfilmentRate = fulfillmentRate.FulfillmentRate;
+            if(_marketDemand.TryGetValue(fulfillmentRate.Good, out var demandEntry))
+            {
+                demandEntry.FulfilmentRate = fulfillmentRate.FulfillmentRate;
+            }
         }
         return LemonadeStandResultObject.Success();
     }
@@ -532,6 +554,7 @@ public class Market : ScriptableObject, iCompany
 
     public void StartTradingPeriod()
     {
+        _demographicManager.RecordDemographicSnapshot(MarketId,0,TurnPhase.Beginning);
         RollForEvents();
         ResolveMarketEvents();
     }
@@ -543,6 +566,7 @@ public class Market : ScriptableObject, iCompany
         DemandStrategy.AdjustDemandInPeriod(this);
         ConsumeGoods();
         UpdateCompanyStatuses(period);
+        RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
     }
 #endregion
