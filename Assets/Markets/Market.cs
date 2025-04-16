@@ -393,41 +393,13 @@ public class Market : ScriptableObject, iCompany
         }
 #endregion
 #region History
-    public float GetMetricPercentageChangeInPeriod<T>
-        (
-            Func<Guid, IEnumerable<T>> getHistoryFunc,
-            Func<T, float> getMetricValueFunc,
-            int currentPeriod
-        )
-        where T : iHistorical
-    {
-        if(currentPeriod == 0) return 0;
-
-        var history = getHistoryFunc(MarketId);
-
-        var metricValues = history
-                            .Where(x=>
-                                (x.Period == currentPeriod || x.Period == currentPeriod-1) 
-                                &&
-                                (x.Phase == TurnPhase.End)
-                            )
-                            .ToDictionary(x=>x.Period, x=>getMetricValueFunc(x));
-
-        var currentMetricValue = metricValues.GetValueOrDefault(currentPeriod,0);
-        var previousMetricValue = metricValues.GetValueOrDefault(currentPeriod-1,0);
-
-        var valueToReturn = (currentMetricValue - previousMetricValue)
-                            /(previousMetricValue==0?1:previousMetricValue);
-
-        return valueToReturn;
-    }
-
     public float GetPopulationPercentageChangeInPeriod()
     {
-        return GetMetricPercentageChangeInPeriod(
+        return MathHelper.GetMetricPercentageChangeInPeriod(
             _demographicManager.GetPopulationHistory,
             x=>x.Population,
-            CurrentPeriod);       
+            CurrentPeriod,
+            MarketId);       
     }
 #endregion
 #region Inventory Management
@@ -435,7 +407,7 @@ public class Market : ScriptableObject, iCompany
     {
         if(_recipes.Contains(recipe))
         {
-            throw new System.Exception("Recipe already exists in company");
+            throw new Exception("Recipe already exists in company");
         }
         else
         {
