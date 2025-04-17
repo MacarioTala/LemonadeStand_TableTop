@@ -85,4 +85,22 @@ public static class MarketBuilder
         market.AddPriceModifier(priceModifier);
         return market;
     }
+
+    public static Market WithMarketStrategy(this Market market, iStrategy strategy)
+    {
+        market.SetMarketStrategy(strategy);
+        return market;
+    }
+
+    public static Market Named(this Market market, string name)
+    {
+        market.Name = name;
+        return market;
+    }
+
+    public static Market WithLevel(this Market market, CompanyLevelEnum level)
+    {
+        market.company_level = level;
+        return market;
+    }
 }

@@ -100,6 +100,8 @@ public class Market : ScriptableObject, iCompany
     //Goals
     public List<Goal> Goals {get;set;}
     private iStrategy _marketStrategy;
+    public iStrategy GetMarketStrategy() => _marketStrategy;
+    public void SetMarketStrategy(iStrategy strategy) => _marketStrategy = strategy;
     
 #region Market Events
     public List<iMarketEvent> PotentialMarketEvents { get; } = new();
@@ -244,31 +246,21 @@ public class Market : ScriptableObject, iCompany
 
         public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
-            var market = CreateInstance<Market>();
-            market.SetDemandStrategy(demandStrategy);
-            market.Initialize(companyName, companyLevel, null);
+            var market = CreateInstance<Market>()
+                    .WithDemandStrategy(demandStrategy)
+                    .WithConsumptionManager(new BasicConsumptionManager())
+                    .WithMarketDataManager(new BasicMarketDataManager())
+                    .WithPriceManager(new BasicPriceManager())
+                    .WithTradeProcessor(new BasicTradeProcessor())
+                    .WithTransactionManager(new BasicTransactionManager())
+                    .WithPriceModifier(new SupplyDemandModifier())
+                    .WithOrderFulfilledEvents()
+                    .Named(companyName)
+                    .WithLevel(companyLevel);
+            
             _initializer.InitializeMarket(market);
             return market;
         }
-    }
-    internal void Initialize (string companyName,CompanyLevelEnum companyLevel,iStrategy strategy)
-    {
-        Name = companyName;
-        company_level = companyLevel;
-        _marketStrategy = strategy;
-        
-        //Event Handlers
-        OrderFulfilled += DemandStrategy.OnOrderFulfilled;
-
-        //Managers
-        _consumptionManager = new BasicConsumptionManager();
-        _marketDataManager = new BasicMarketDataManager();
-        _priceManager = new BasicPriceManager();
-        _tradeProcessor = new BasicTradeProcessor();
-        _transactionManager = new BasicTransactionManager();
-
-        //Price Modifiers
-        _priceModifiers.Add(new SupplyDemandModifier());
     }
     
 #endregion
