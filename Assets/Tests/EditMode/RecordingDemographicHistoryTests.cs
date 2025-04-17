@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
@@ -139,4 +140,28 @@ public class RecordingDemographicHistoryTests
             Assert.AreEqual(expectedPopulationHistory[i].Population, actualPopulationHistory[i].Population);
         }
     }
+
+[Test]
+public void MultiplePeriodsRecordDistinctSnapshots()
+{
+    // Arrange
+    TestMarket.SetInitialPopulation(1000);
+
+    // Act
+    for (int i = 0; i < 3; i++)
+    {
+        TestMarket.StartTradingPeriod();
+        TestMarket.UnleashMarketForces(i);
+    }
+
+    // Assert
+    var history = TestMarket.GetPopulationHistory();
+    var beginCount = history.Count(h => h.Phase == TurnPhase.Beginning);
+    var endCount = history.Count(h => h.Phase == TurnPhase.End);
+
+    Assert.AreEqual(3, beginCount);
+    Assert.AreEqual(3, endCount);
+    Assert.That(history.Select(h => h.Period).Distinct().Count(), Is.EqualTo(3));
+}
+
 }

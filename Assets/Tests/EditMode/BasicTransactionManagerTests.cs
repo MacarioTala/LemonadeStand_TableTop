@@ -26,7 +26,14 @@ public class BasicTransactionManagerTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+            .WithDemandStrategy(TestDemandStrategy)
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithDemographicManager(new BasicDemographicManager())
+            .WithPopulation(1000)
+            .WithCash(10000);
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(Company1);

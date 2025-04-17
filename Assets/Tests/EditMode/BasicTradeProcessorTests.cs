@@ -10,6 +10,7 @@ public partial class BasicTradeProcessorTests
     int Period = 0;
     Market TestMarket;
     BasicTradeProcessor TestTradeProcessor;
+    iDemandStrategy TestDemandStrategy;
 
     Good Lemonade;
     Good RadioactiveLemonade;
@@ -29,10 +30,16 @@ public partial class BasicTradeProcessorTests
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, ScriptableObject.CreateInstance<LinearDemandStrategy>());
+        TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         TestTradeProcessor = new BasicTradeProcessor();
-        TestMarket.SetTradeProcessor(TestTradeProcessor);
-        TestMarket.SetCash(1000000);
+
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+            .WithDemandStrategy(TestDemandStrategy)
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithTradeProcessor(TestTradeProcessor)
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithCash(1000000);
+
         TestMarket.RegisterCompany(Company1);
         TestMarket.RegisterCompany(Company2);
         

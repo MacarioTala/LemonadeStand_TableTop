@@ -25,8 +25,12 @@ public class SupplyTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+        .WithDemandStrategy(TestDemandStrategy)
+            .WithSupplyProvider(TestSupplyProvider)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithPriceManager(new BasicPriceManager());
         TestSupplyProvider.Initialize(TestMarket);
 
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);

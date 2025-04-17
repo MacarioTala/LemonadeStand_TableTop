@@ -11,6 +11,10 @@ public class BasicConsumptionManagerTests
     TheEconomy TestEconomy;
     Market TestMarket;
     iConsumptionManager TestConsumptionManager;
+    iDemandStrategy TestDemandStrategy ;
+    iMarketDataService TestMarketDataService;
+    iDemographicManager TestDemographicManager;
+    iSupplyProvider TestSupplyProvider;
     const int Period = 0;
 
     Company Company1;
@@ -36,16 +40,28 @@ public class BasicConsumptionManagerTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
+        SetupGoodsAndRecipes();
+
         TestConsumptionManager = new BasicConsumptionManager();
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, ScriptableObject.CreateInstance<LinearDemandStrategy>());
-        TestMarket.SetConsumptionManager(TestConsumptionManager); 
+        TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+        TestMarketDataService = new MockMarketDataService();
+        TestDemographicManager = new MockDemographicManager();
+        TestSupplyProvider= new MockSupplyProvider();
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+                            .WithDemandStrategy(TestDemandStrategy)
+                            .WithConsumptionManager(TestConsumptionManager)
+                            .WithTradeProcessor(new BasicTradeProcessor())
+                            .WithTransactionManager(new BasicTransactionManager())
+                            .WithPriceManager(new BasicPriceManager())
+                            .WithDataService(TestMarketDataService)
+                            .WithSupplyProvider(TestSupplyProvider)
+                            .WithDemographicManager(TestDemographicManager);
+        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(Company1);
         TestMarket.RegisterCompany(Company2);
-
-        SetupGoodsAndRecipes();
     }
 
     private void SetupGoodsAndRecipes()

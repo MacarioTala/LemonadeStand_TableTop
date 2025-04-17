@@ -26,7 +26,14 @@ public class MarketStatusTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, ScriptableObject.CreateInstance<LinearDemandStrategy>());
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithPriceManager(new BasicPriceManager())
+            .WithSupplyProvider(new BasicSupplyProvider())
+            .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithDemographicManager(new BasicDemographicManager());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
         

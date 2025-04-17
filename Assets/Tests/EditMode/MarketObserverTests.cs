@@ -32,8 +32,14 @@ public class MarketObserverTests
 
         TestMarket = Market.Factory.CreateMarket("Test Market"
                                                 , CompanyLevelEnum.Market
-                                                , TestDemandStrategy);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
+                                                )
+                .WithDemandStrategy(TestDemandStrategy)
+                .WithSupplyProvider(TestSupplyProvider)
+                .WithTradeProcessor(new BasicTradeProcessor())
+                .WithConsumptionManager(new BasicConsumptionManager())
+                .WithPriceManager(new BasicPriceManager())
+                .WithTransactionManager(new BasicTransactionManager());
+    
         TestSupplyProvider.Initialize(TestMarket);
 
         TestMarket.RegisterCompany(Company1);

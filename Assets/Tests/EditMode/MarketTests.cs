@@ -45,7 +45,13 @@ public partial class MarketTests
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
 
         //Setup Market
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+            .WithDemandStrategy(TestDemandStrategy).WithDemandStrategy(TestDemandStrategy)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithPriceManager(new BasicPriceManager())
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithMarketDataManager(new BasicMarketDataManager());
 
         //Setup Companies
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -300,9 +306,7 @@ public partial class MarketTests
     public void PublishMarketDataShouldAddOnePercentToPrice()
     {
         // Arrange
-        var testMarket = Market.Factory.CreateMarket(companyName: "TestMarket", 
-                                                    companyLevel: CompanyLevelEnum.Market,
-                                                    demandStrategy: TestDemandStrategy);
+        var testMarket = TestMarket;
         testMarket.GetInventory().AddGood(new InventoryEntry(lemon, 1000, 3.0m, 0));
         var initialPrice = testMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().good.GetPrice();
         var expected = initialPrice * 1.01m;
@@ -357,9 +361,7 @@ public partial class MarketTests
    public void AskForAGoodShouldExceedCost()
    {
          // Arrange
-        var testMarket = Market.Factory.CreateMarket(companyName: "TestMarket", 
-                                                    companyLevel: CompanyLevelEnum.Market,
-                                                    demandStrategy: TestDemandStrategy);
+        var testMarket = TestMarket;
         var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, RarityEnum.Uncommon);
         testMarket.SetCash(100000);
         enhancedlemonade.IsProducedGood = true;

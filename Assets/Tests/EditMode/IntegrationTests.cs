@@ -29,10 +29,16 @@ public class IntegrationTests
         var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
         TheEconomy.Instance.RemoveMarket(existingMarket);
 
-        TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market, TestDemandStrategy);
-        TestMarket.SetMarketDataService(TestMarketDataService);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
-        TestMarket.SetDemographicManager(TestDemographicManager);
+        TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market)
+            .WithDemandStrategy(TestDemandStrategy)
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithDataService(TestMarketDataService)
+            .WithSupplyProvider(TestSupplyProvider)
+            .WithDemographicManager(TestDemographicManager)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithPriceManager(new BasicPriceManager())
+            .WithTransactionManager(new BasicTransactionManager());
+        
         TheEconomy.Instance.RegisterCompany(TestMarket);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -75,7 +81,7 @@ public class IntegrationTests
     public void MarketDoesNotAllowQueueingDuplicateTrades()
     {
         // Arrange
-        var market = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        var market = TestMarket;
         var buyer = Company.Factory.Create("Buyer", CompanyLevelEnum.Beginner);
         var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
         market.RegisterCompany(buyer);
@@ -217,14 +223,19 @@ public class IntegrationTests
     public void EndTradingPeriodSendsTradesThatMarketHasQueuedWhenTwoMarketsArePresent()
     {
         // Arrange
-        var SecondMarket = Market.Factory.CreateMarket("Second Market", CompanyLevelEnum.Market, TestDemandStrategy);
-        SecondMarket.SetMarketDataService(TestMarketDataService);
-        SecondMarket.SetSupplyProvider(TestSupplyProvider);
-
         var TestDemographicManager2 = new MockDemographicManager();
         var TestDataHandler2 = new MockPopulationHistoryDataHandler();
         TestDemographicManager2.SetPopulationHistoryHandler(TestDataHandler2);
-        SecondMarket.SetDemographicManager(TestDemographicManager2);
+
+        var SecondMarket = Market.Factory.CreateMarket("Second Market", CompanyLevelEnum.Market)
+            .WithDemandStrategy(TestDemandStrategy)
+            .WithDataService(TestMarketDataService)
+            .WithSupplyProvider(TestSupplyProvider)
+            .WithDemographicManager(TestDemographicManager2)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithPriceManager(new BasicPriceManager());
+
         TheEconomy.Instance.RegisterCompany(SecondMarket);
         TestMarket.SetCash(1000000);
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
@@ -260,7 +271,7 @@ public class IntegrationTests
         var period = 0;
         var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
-        var market = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        var market = TestMarket;
         market.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
 
@@ -283,7 +294,6 @@ public class IntegrationTests
         //Arrange
         var period = 0;
         var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
-        var TestMarket = Market.Factory.CreateMarket("Market", CompanyLevelEnum.Market, TestDemandStrategy);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));

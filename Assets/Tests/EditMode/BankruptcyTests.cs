@@ -22,10 +22,16 @@ public class BankruptcyTests
         var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
         testEconomy.RemoveMarket(existingMarket);
 
-        TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
-        TestMarket.SetMarketDataService(TestMarketDataService);
-        TestMarket.SetDemographicManager(TestDemographicManager);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
+        TestMarket= Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+                            .WithDataService(TestMarketDataService)
+                            .WithDemographicManager(TestDemographicManager)
+                            .WithSupplyProvider(TestSupplyProvider)
+                            .WithDemandStrategy(TestDemandStrategy)
+                            .WithConsumptionManager(new BasicConsumptionManager())
+                            .WithTradeProcessor(new BasicTradeProcessor())
+                            .WithTransactionManager(new BasicTransactionManager())
+                            .WithPriceManager(new BasicPriceManager());
+
         TestSupplyProvider.Initialize(TestMarket);
         testEconomy.RegisterCompany(TestMarket);
 

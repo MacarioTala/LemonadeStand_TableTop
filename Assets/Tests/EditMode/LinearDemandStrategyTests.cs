@@ -33,6 +33,8 @@ public partial class LinearDemandStrategyTests
         TestEconomy = TheEconomy.Instance;
 
         Strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+        TestMarketDataService = new MockMarketDataService();
+        TestDemographicManager = new MockDemographicManager();
 
         TestMarket = Market.Factory.CreateStarterMarket("Starter Market",
                                                         CompanyLevelEnum.Market,

@@ -1,27 +1,43 @@
-using System;
-using System.Runtime.InteropServices;
 using NUnit.Framework;
+using UnityEngine;
 
 [TestFixture]
 public class CompanyOrderValidationTests
 {
     Good Lemon;
+    Market TestMarket;
+    iDemandStrategy TestDemandStrategy;
     [SetUp]
     public void Setup()
     {
+        TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         Lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithDemographicManager(new BasicDemographicManager())
+            .WithDemandStrategy(TestDemandStrategy);
     }
+
+    [TearDown]
+    public void TearDown()
+    {
+        TestMarket = null;
+        TestDemandStrategy = null;
+        Lemon = null;
+    }
+
     [Test]
     public void CompanyQueueOrderReturnsFailureIfOrderWouldResultInNegativeCashBalance()
     {
         // Arrange
-        var testMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        var order = new Order(company, testMarket, Lemon, 10000, 10m);
+        var order = new Order(company, TestMarket, Lemon, 10000, 10m);
         var context = new ActionContext
         {
             TradeToSubmit = order,
-            MarketToSubmitTo = testMarket,
+            MarketToSubmitTo = TestMarket,
             Period = 0
         };
         var expected = new LemonadeStandResultObject

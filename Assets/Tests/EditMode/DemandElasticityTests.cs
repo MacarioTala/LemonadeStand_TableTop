@@ -28,9 +28,13 @@ public class DemandElasticityTests
 
         TestDemographicManager = new MockDemographicManager();
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market,TestDemandStrategy);
-        TestMarket.SetDemographicManager(TestDemographicManager);
-
+        TestMarket = Market.Factory.CreateMarket("TestMarket", CompanyLevelEnum.Market)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithDemandStrategy(TestDemandStrategy)
+            .WithDemographicManager(TestDemographicManager);
+            
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
 

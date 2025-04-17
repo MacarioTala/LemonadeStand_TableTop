@@ -27,7 +27,12 @@ public class RecordingExecutions
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
+        TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
+        .WithDemandStrategy(TestDemandStrategy)
+            .WithTradeProcessor(new BasicTradeProcessor())
+            .WithConsumptionManager(new BasicConsumptionManager())
+            .WithPriceManager(new BasicPriceManager())
+            .WithTransactionManager(new BasicTransactionManager());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
         TestMarket.RegisterCompany(Company1);

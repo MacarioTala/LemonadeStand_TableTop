@@ -40,14 +40,19 @@ public class SupplyAndDemandTests
         // set test_market to the Initial Market
         var existingMarket = TestEconomy.GetMarketByName("The First Market");
         TheEconomy.Instance.RemoveMarket(existingMarket);
-        TestMarket = Market.Factory.CreateStarterMarket("Supply and Demand Test Market"
-                                                        , CompanyLevelEnum.Market
-                                                        , TestDemandStrategy);             
-        TestMarket.SetMarketDataService(TestMarketDataService);
-        TestMarket.SetDemographicManager(TestDemographicManager);
+        TestMarket = Market.Factory.CreateMarket("Supply and Demand Test Market"
+                                                , CompanyLevelEnum.Market)
+                                                .WithDemandStrategy(TestDemandStrategy)
+                                                .WithConsumptionManager(new BasicConsumptionManager())
+                                                .WithTradeProcessor(new BasicTradeProcessor())
+                                                .WithTransactionManager(new BasicTransactionManager())
+                                                .WithDataService(TestMarketDataService)
+                                                .WithDemographicManager(TestDemographicManager)
+                                                .WithSupplyProvider(TestSupplyProvider)
+                                                .WithPriceManager(new BasicPriceManager())
+                                                .WithPriceModifier(new SupplyDemandModifier());             
         TestEconomy.RegisterCompany(TestMarket);
         TestSupplyProvider.Initialize(TestMarket);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
 
         //Make the market demand lemons and lemonade
         TestMarket.InitializeDemandForSpecificGood(lemonade,1000);

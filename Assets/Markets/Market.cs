@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using UnityEngine;
-[assembly:InternalsVisibleTo("Tests")]
+[assembly: InternalsVisibleTo("Tests")]
 [CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
 public class Market : ScriptableObject, iCompany
 {
@@ -100,11 +99,6 @@ public class Market : ScriptableObject, iCompany
 
     //Goals
     public List<Goal> Goals {get;set;}
-
-    [SerializeField] private ScriptableObject _demandStrategy;
-    public iDemandStrategy DemandStrategy
-    { get=> _demandStrategy as iDemandStrategy;
-      set=> _demandStrategy = value as ScriptableObject;} 
     private iStrategy _marketStrategy;
     
 #region Market Events
@@ -164,6 +158,13 @@ public class Market : ScriptableObject, iCompany
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy {get;set;}
     private readonly List<iPriceModifier> _priceModifiers = new();
+    public void AddPriceModifier(iPriceModifier priceModifier)
+    {
+        if(!_priceModifiers.Contains(priceModifier))
+        {
+            _priceModifiers.Add(priceModifier);
+        }
+    }
 
     //Reporting 
     readonly List<(Order Order, int Period)> OrdersSubmittedInPeriod = new(); // Read only used to get Order History. 
@@ -228,18 +229,23 @@ public class Market : ScriptableObject, iCompany
     public static class Factory
     { 
         public static readonly StarterMarketInitializer _initializer = new();
-        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
+
+        public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel)
         {
             var market = CreateInstance<Market>();
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
-            market.Initialize(companyName, companyLevel, null);
+            market.Name = companyName;
+            market.company_level = companyLevel;
+            if(market==null)
+            {
+                throw new Exception("Market could not be created");
+            }
             return market;
         }
 
         public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
             var market = CreateInstance<Market>();
-            market.DemandStrategy = demandStrategy ?? throw new ArgumentNullException("Markets must have a demand strategy");
+            market.SetDemandStrategy(demandStrategy);
             market.Initialize(companyName, companyLevel, null);
             _initializer.InitializeMarket(market);
             return market;
@@ -264,8 +270,10 @@ public class Market : ScriptableObject, iCompany
         //Price Modifiers
         _priceModifiers.Add(new SupplyDemandModifier());
     }
+    
 #endregion
 #region Managers
+    public iDemographicManager DemographicManager { get => _demographicManager;}
     private iDemographicManager _demographicManager;
     public void SetDemographicManager(iDemographicManager demographicManager) => _demographicManager = demographicManager;
     private iFeatureManager _featureManager;
@@ -284,6 +292,10 @@ public class Market : ScriptableObject, iCompany
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
     private iMarketDataService _marketDataService;
     public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
+    [SerializeField] private ScriptableObject _demandStrategy;
+    public iDemandStrategy DemandStrategy {get => _demandStrategy as iDemandStrategy;}
+    public void SetDemandStrategy(iDemandStrategy demandStrategy)
+    { _demandStrategy = demandStrategy as ScriptableObject; } 
 
 #endregion
 #region Company Interactions
@@ -559,5 +571,5 @@ public class Market : ScriptableObject, iCompany
     {
         return Name.GetHashCode();
     }
-#endregion
+    #endregion
 }
