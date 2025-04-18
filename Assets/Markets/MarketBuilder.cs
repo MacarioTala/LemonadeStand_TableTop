@@ -103,4 +103,15 @@ public static class MarketBuilder
         market.company_level = level;
         return market;
     }
+
+    public static Market InitializedWith(this Market market, iMarketInitializer initializer)
+    {
+        if (initializer == null) 
+        {
+            Debug.LogError("MarketBuilder: initializer is null, cannot initialize");
+            return market;
+        }
+        initializer.InitializeMarket(market);
+        return market;
+    }
 }

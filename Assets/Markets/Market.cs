@@ -105,8 +105,9 @@ public class Market : ScriptableObject, iCompany
     
 #region Market Events
     public List<iMarketEvent> PotentialMarketEvents { get; } = new();
-    List<(iMarketEvent Event, int PeriodStart,int duration)> _activeEvents = new();
-    List<(iMarketEvent Event, int PeriodStart,int periodEnd)> marketEventHistory = new();
+    readonly List<(iMarketEvent Event, int PeriodStart,int duration)> _activeEvents = new();
+    readonly List<(iMarketEvent Event, int PeriodStart,int periodEnd)> marketEventHistory = new();
+    public List<(iMarketEvent Event, int PeriodStart,int periodEnd)> GetMarketEventHistory() => marketEventHistory;
     public void AddPotentialMarketEvent(iMarketEvent marketEvent)
     {
         if(!PotentialMarketEvents.Contains(marketEvent))
@@ -126,7 +127,7 @@ public class Market : ScriptableObject, iCompany
     {
         //Check if any active events have expired
         var expiredEvents = _activeEvents
-                            .Where(x=>CurrentPeriod >= x.PeriodStart + x.duration)
+                            .Where(x=>x.Event.IsExpiredAt(x.PeriodStart,CurrentPeriod))
                             .ToList();
         foreach (var marketEvent in expiredEvents)
         {
@@ -144,15 +145,23 @@ public class Market : ScriptableObject, iCompany
     {
         foreach (var marketEvent in PotentialMarketEvents)
         {
-            var isEventActive = _activeEvents
-                                .Any(x=>x.Event.Equals(marketEvent));
-            var currentRoll = UnityEngine.Random.Range(0, 100);
-            var chanceOfEvent = marketEvent.GetProbabilityOf();
-            if(chanceOfEvent>=currentRoll && !isEventActive)
+            if(_activeEvents.Any(x=>!x.Event.IsCompatibleWith(marketEvent))) continue;
+            
+            if(_activeEvents.Any(x=>x.Event.Equals(marketEvent))) continue;
+
+            if(EventRollSucceeds(marketEvent))
             {
                 _activeEvents.Add((marketEvent,CurrentPeriod,marketEvent.GetDuration()));
             }
         }
+    }
+
+    private static bool EventRollSucceeds(iMarketEvent marketEvent)
+    {
+        var currentRoll = UnityEngine.Random.Range(0, 100);
+        var chanceOfEvent = marketEvent.GetProbabilityOf();
+
+        return chanceOfEvent>=currentRoll;;
     }
 
 #endregion
@@ -230,7 +239,7 @@ public class Market : ScriptableObject, iCompany
     }
     public static class Factory
     { 
-        public static readonly StarterMarketInitializer _initializer = new();
+        public static readonly StarterMarketInitializer starterMarketInitializer = new();
 
         public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel)
         {
@@ -256,9 +265,9 @@ public class Market : ScriptableObject, iCompany
                     .WithPriceModifier(new SupplyDemandModifier())
                     .WithOrderFulfilledEvents()
                     .Named(companyName)
-                    .WithLevel(companyLevel);
+                    .WithLevel(companyLevel)
+                    .InitializedWith(starterMarketInitializer);
             
-            _initializer.InitializeMarket(market);
             return market;
         }
     }

@@ -1,18 +1,53 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class MarketEventSO : ScriptableObject, iMarketEvent
+public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
 {
     public string EventName;
 
     [TextArea(3,10)]public string EventDescription;
     [Tooltip("The chance of this event happening in a given period. 0-100%")]
     public float EventChance; 
-    [Tooltip("The duration of the event in periods. 0 = permanent")]
+    [SerializeField,Tooltip("The duration of the event in periods. 0 = permanent")]
     int _eventDuration;
     
+    [SerializeReference]
     public List<iMarketEffect> Effects = new();
+    
+#region iTaggable
+    [SerializeField]List<string> _tags = new();
+    public List<string> Tags => _tags;
+    List<string> iTaggable.Tags => _tags;
 
+    public List<string> GetTags()
+    {
+        return Tags;
+    }
+    public void AddTag(string tag)
+    {
+        if (!Tags.Contains(tag))
+        {
+            Tags.Add(tag);
+        }
+    }
+    public void RemoveTag(string tag)
+    {
+        if (Tags.Contains(tag))
+        {
+            Tags.Remove(tag);
+        }
+    }
+    public bool HasTag(string tag)
+    {
+        return Tags.Contains(tag);
+    }
+    
+#endregion
+    public bool IsExpiredAt(int startPeriod, int currentPeriod)
+    {
+        return currentPeriod>= startPeriod + _eventDuration;
+    }
     public int GetDuration()
     {
         return _eventDuration;
@@ -30,6 +65,7 @@ public class MarketEventSO : ScriptableObject, iMarketEvent
         }
     }
 
+
     public void Initialize(string eventName, string eventDescription, float eventChance, int eventDuration)
     {
         EventName = eventName;
@@ -37,4 +73,5 @@ public class MarketEventSO : ScriptableObject, iMarketEvent
         EventChance = eventChance;
         _eventDuration = eventDuration;
     }
+    
 }

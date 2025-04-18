@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
@@ -208,6 +210,62 @@ public class MarketEventTests
         //Assert
         Assert.AreEqual(expectedPopulation, actual);
 
+    }
+    [Test]
+    public void MarketEventsAreRecordedInMarketEventHistory()
+    {
+        //Arrange
+        TestMarket.AddPotentialMarketEvent(MaraudersAttack);
+        var duration = TestMarket.CurrentPeriod + MaraudersAttack.GetDuration();
+        var expectedEventEnd = duration;
+        var expected = new List<(iMarketEvent Event, int PeriodStart,int periodEnd)>{
+            (MaraudersAttack,TestMarket.CurrentPeriod,expectedEventEnd)
+        };
+
+        //Act
+        for(var i = 0; i <= duration; i++)
+        {
+            TestMarket.StartTradingPeriod();
+            TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        }
+        var actual = TestMarket.GetMarketEventHistory();
+        //Assert
+        Assert.AreEqual(expected.Count, actual.Count,"counts are different");
+        Assert.AreEqual(expected[0].Event, actual[0].Event,"events are different");
+        Assert.AreEqual(expected[0].PeriodStart, actual[0].PeriodStart,"period start is different");
+        Assert.AreEqual(expected[0].periodEnd, actual[0].periodEnd,"period end is different");
+    }
+    [Test]
+    public void IncompatibleEffectsCannotOccurTogether()
+    {
+        //Arrange
+        var ElNino = ScriptableObject.CreateInstance<MarketEventSO>();
+        ElNino.Initialize(  eventName: "El Nino",
+                            eventDescription: "El Nino causes a drought, increasing water prices.",
+                            eventChance: 100f,
+                            eventDuration: 2);
+        ElNino.AddTag("WeatherDry");
+        var LaNina = ScriptableObject.CreateInstance<MarketEventSO>();
+        LaNina.Initialize(  eventName: "La Nina",
+                            eventDescription: "La Nina causes a flood, dampening demand for Lemonade.",
+                            eventChance: 100f,
+                            eventDuration: 2);
+        LaNina.AddTag("WeatherWet");
+        var expectedEvent = ElNino;
+        TestMarket.AddPotentialMarketEvent(ElNino);
+        
+        //Act
+        TestMarket.StartTradingPeriod();
+        TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        TestMarket.AddPotentialMarketEvent(LaNina);
+        TestMarket.StartTradingPeriod();
+        TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        var actual = TestMarket.GetActiveMarketEvents();
+        var actualEvent = actual.FirstOrDefault().Event;
+        
+        //Assert
+        Assert.AreEqual(1, actual.Count);
+        Assert.AreEqual(expectedEvent, actualEvent);
     }
     
 #endregion
