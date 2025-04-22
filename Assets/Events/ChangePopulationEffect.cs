@@ -4,7 +4,9 @@ using UnityEngine;
 [Tooltip("Population change as a percentage. Use negative values to decrease population.")]
 public class ChangePopulationEffect : iMarketEffect
 {
+    iMarketEvent _parentEvent;
     public float PopulationChangePercentage;
+    float _originalPopulationChangePercentage;
     float _conversion => PopulationChangePercentage / 100f;
     
     public void Apply(Market market)
@@ -17,5 +19,29 @@ public class ChangePopulationEffect : iMarketEffect
     public ChangePopulationEffect(float populationChangePercentage)
     {
         PopulationChangePercentage = populationChangePercentage;
+        _originalPopulationChangePercentage = populationChangePercentage;
+    }
+
+    public void ChangeEffectMultiplier(float multiplier)
+    {
+        PopulationChangePercentage *= multiplier;
+    }
+
+    public void Reset()
+    {
+        PopulationChangePercentage = _originalPopulationChangePercentage;
+    }
+    public void SaveOriginalState()
+    {
+        //Noop: Original state is saved in constructor
+    }
+    public void SetParentEvent(iMarketEvent marketEvent)
+    {
+        _parentEvent = marketEvent;
+    }
+
+    public iMarketEvent GetParentEvent()
+    {
+        return _parentEvent;
     }
 }

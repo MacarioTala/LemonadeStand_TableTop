@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
@@ -11,9 +10,19 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
     public float EventChance; 
     [SerializeField,Tooltip("The duration of the event in periods. 0 = permanent")]
     int _eventDuration;
+    int _originalDuration;
     
     [SerializeReference]
-    public List<iMarketEffect> Effects = new();
+    List<iMarketEffect> Effects = new();
+    public IEnumerable<iMarketEffect> GetEffects()
+    {
+        return Effects;
+    }
+    public void AddEffect(iMarketEffect effect)
+    {
+        Effects.Add(effect);
+        effect.SetParentEvent(this);
+    }
     
 #region iTaggable
     [SerializeField]List<string> _tags = new();
@@ -52,6 +61,10 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
     {
         return _eventDuration;
     }
+    public void SetDuration(int duration)
+    {
+        _eventDuration = duration;
+    }
     public float GetProbabilityOf()
     {
         return EventChance;
@@ -72,6 +85,15 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
         EventDescription = eventDescription;
         EventChance = eventChance;
         _eventDuration = eventDuration;
+        _originalDuration = eventDuration;
     }
-    
+
+    public void Reset()
+    {
+        _eventDuration = _originalDuration;
+        foreach (var effect in Effects)
+        {
+            effect.Reset();
+        }
+    }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 public static class TagIncompatibilities
 {
+    private static readonly HashSet<string> Empty= new();
     public static readonly Dictionary<string, HashSet<string>> Incompatibilities = new()
     {
         { "WeatherWet"   , new HashSet<string> { "WeatherDry"   }  },
@@ -11,5 +12,6 @@ public static class TagIncompatibilities
         { "EnnuiIncrease", new HashSet<string> { "EnnuiDecrease", "SuperDisaster" }},
         { "SuperDisaster", new HashSet<string> { "EnnuiIncrease" } },
         { "EnnuiDecrease", new HashSet<string> { "EnnuiIncrease" } },
+        { "PopulationReduction", Empty}
     };
 }

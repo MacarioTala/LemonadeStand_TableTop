@@ -133,6 +133,7 @@ public class Market : ScriptableObject, iCompany
         {
             _activeEvents.Remove(marketEvent);
             marketEventHistory.Add((marketEvent.Event,marketEvent.PeriodStart,CurrentPeriod));
+            marketEvent.Event.Reset();
         }
         
         //Invoke any active events

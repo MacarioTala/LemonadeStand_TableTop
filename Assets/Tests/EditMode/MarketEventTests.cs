@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -61,20 +62,23 @@ public class MarketEventTests
                                     eventDescription: "Marauders attack the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
-        MaraudersAttack.Effects.Add(new ChangePopulationEffect(-10));
+        MaraudersAttack.AddEffect(new ChangePopulationEffect(-10));
 
         GodzillaAttack.Initialize( eventName: "Godzilla Attack",
                                     eventDescription: "Godzilla attacks the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
-        GodzillaAttack.Effects.Add(new ChangePopulationEffect(-30));
+        GodzillaAttack.AddEffect(new ChangePopulationEffect(-30));
+        GodzillaAttack.AddTag("SuperDisaster");
+        GodzillaAttack.AddTag("Monster");
+        GodzillaAttack.AddEffect(new ModifyMonsterEffect(1, 2f));
     }
 
     [TearDown]
     public void TearDown()
     {
-        Object.DestroyImmediate(TestEconomy.gameObject);
-        Object.DestroyImmediate(Strategy);
+        UnityEngine.Object.DestroyImmediate(TestEconomy.gameObject);
+        UnityEngine.Object.DestroyImmediate(Strategy);
         TestMarket = null;
         Company1 = null;
         Company2 = null;
@@ -262,12 +266,90 @@ public class MarketEventTests
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
         var actual = TestMarket.GetActiveMarketEvents();
         var actualEvent = actual.FirstOrDefault().Event;
-        
+
         //Assert
         Assert.AreEqual(1, actual.Count);
         Assert.AreEqual(expectedEvent, actualEvent);
     }
+    [Test]
+    public void MarketEventCanModifyAnotherEvent()
+    {
+        //Arrange
+        var MothraAttacks = ScriptableObject.CreateInstance<MarketEventSO>();
+        MothraAttacks.Initialize( eventName: "Mothra Attacks",
+                                    eventDescription: "Mothra attacks the neighbourhood, reducing population.",
+                                    eventChance: 100f,
+                                    eventDuration: 3);
+        MothraAttacks.AddTag("SuperDisaster");    
+        MothraAttacks.AddTag("Monster");
+        MothraAttacks.AddEffect(new ChangePopulationEffect(-20));
+        MothraAttacks.AddEffect(new ModifyMonsterEffect(1, 2f));
+        var expectedGodzillaAttackDuration = 1;
+        var expectedMothraAttackDuration = 1;
+        
+        TestMarket.AddPotentialMarketEvent(GodzillaAttack);
+        TestMarket.AddPotentialMarketEvent(MothraAttacks);
+
+        //Act
+        var duration = Math.Max(GodzillaAttack.GetDuration(), MothraAttacks.GetDuration());
+        for(var i = 0; i < duration; i++)//deliberately run for less than the duration of the event.
+                                        // to prevent effect from resetting
+        {
+            TestMarket.StartTradingPeriod();
+            TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        }
+        var actualGodzillaAttackDuration = GodzillaAttack.GetDuration();
+        var actualMothraAttackDuration = MothraAttacks.GetDuration();
+        
+        //Assert
+        Assert.AreEqual(expectedGodzillaAttackDuration, actualGodzillaAttackDuration,"Godzilla attack duration is different");
+        Assert.AreEqual(expectedMothraAttackDuration, actualMothraAttackDuration,"Mothra attack duration is different");
+    }
     
+    [Test]
+    public void EnsureThatEffectsWithModifyMonsterEffectAreAppliedOnlyIfThereIsMoreThanOneMonsterPresent()
+    {
+        //Arrange
+        const int expectedGodzillaAttackDuration = 2;
+        TestMarket.AddPotentialMarketEvent(GodzillaAttack);
+        
+        //Act
+        TestMarket.StartTradingPeriod();
+        TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        var actualGodzillaAttackDuration = GodzillaAttack.GetDuration();
+
+        //Assert
+        Assert.AreEqual(expectedGodzillaAttackDuration, actualGodzillaAttackDuration,"Godzilla attack duration is different");
+    }
+
+    [Test]
+    public void EffectsThatHaveBeenModifiedRevertToOriginalEffectsWhenEffectEnds()
+    {
+        //Arrange
+        var MothraAttacks = ScriptableObject.CreateInstance<MarketEventSO>();
+        MothraAttacks.Initialize( eventName: "Mothra Attacks",
+                                    eventDescription: "Mothra attacks the neighbourhood, reducing population.",
+                                    eventChance: 100f,
+                                    eventDuration: 3);
+        MothraAttacks.AddTag("SuperDisaster");    
+        MothraAttacks.AddTag("Monster");
+        MothraAttacks.AddEffect(new ChangePopulationEffect(-20));
+        MothraAttacks.AddEffect(new ModifyMonsterEffect(1, 2f));
+        var expectedGodzillaAttackDuration = GodzillaAttack.GetDuration();
+
+        //Act
+        TestMarket.AddPotentialMarketEvent(GodzillaAttack);
+        TestMarket.AddPotentialMarketEvent(MothraAttacks);
+        for(var i = 0; i < expectedGodzillaAttackDuration; i++)
+        {
+            TestMarket.StartTradingPeriod();
+            TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        }
+        var actualGodzillaAttackDuration = GodzillaAttack.GetDuration();
+
+        //Assert
+        Assert.AreEqual(expectedGodzillaAttackDuration, actualGodzillaAttackDuration,"Godzilla attack duration is different");
+    }
 #endregion
 
 }

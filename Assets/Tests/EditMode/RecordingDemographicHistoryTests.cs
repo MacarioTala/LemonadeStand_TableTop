@@ -113,7 +113,7 @@ public class RecordingDemographicHistoryTests
                                     100f,
                                     1);
         var populationChangeEffect = new ChangePopulationEffect(-10f);
-        MaraudersAttack.Effects.Add(populationChangeEffect);
+        MaraudersAttack.AddEffect(populationChangeEffect);
 
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
 
