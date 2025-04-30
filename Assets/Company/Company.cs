@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 public class Company : ScriptableObject, iCompany
 {
 #region Identity and Initialization
@@ -48,7 +47,14 @@ public class Company : ScriptableObject, iCompany
             company.FixedCostStrategy = fixedCostStrategy;
             return company;
         }
+
+        public static Company Create()
+        {
+            var company = CreateInstance<Company>();
+            return company;
+        }
     }
+    
 #endregion
 #region Action Economy
     private List<AllowedAction> allowedActions = new();
@@ -151,6 +157,8 @@ public class Company : ScriptableObject, iCompany
 #endregion    
 #region Goals and strategies
     public iStrategy companyStrategy {get; private set;}= null;
+    public void SetStrategy(iStrategy strategy) => companyStrategy = strategy;
+    
     public List<Goal> Goals {get;set;} = new();
     public void CompleteGoal(Goal goal)
     {
