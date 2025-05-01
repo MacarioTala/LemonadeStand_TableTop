@@ -48,12 +48,25 @@ public class Market : ScriptableObject, iCompany
     private readonly List<Recipe> _recipes = new();
 
     //Companies
-    public List<Company> CompaniesInThisMarket = new();
+    private readonly List<Company> _economicActorsInThisMarket = new();
+    public List<Company> GetEconomicActorsInThisMarket() => _economicActorsInThisMarket;
+    public void RegisterCompany(Company company)
+    {
+        if(!_economicActorsInThisMarket.Contains(company))
+        {
+            _economicActorsInThisMarket.Add(company);
+        }
+        else
+        {
+            throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
+        }
+        TheEconomy.Instance.RegisterCompany(company);
+    }
     public LemonadeStandResultObject RemoveCompany(Company company)
     {
-        if(CompaniesInThisMarket.Contains(company))
+        if(_economicActorsInThisMarket.Contains(company))
         {
-            CompaniesInThisMarket.Remove(company);
+            _economicActorsInThisMarket.Remove(company);
             return LemonadeStandResultObject.Success();
         }
         return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
@@ -69,12 +82,21 @@ public class Market : ScriptableObject, iCompany
     //Population
     public int GetPopulation() => _demographicManager.GetPopulation();
     public List<PopulationHistory> GetPopulationHistory() => _demographicManager.GetPopulationHistory(MarketId);
-    public LemonadeStandResultObject SetInitialPopulation(int initialPopulation) 
+   
+    public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationCompany marketParticipant) 
     {
-        _demographicManager.SetPopulation(initialPopulation);
+        var actor = _economicActorsInThisMarket
+            .OfType<PopulationCompany>()
+            .Where(x=>x.Equals(marketParticipant))
+            .FirstOrDefault();
+        if(actor == null)
+        {
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {marketParticipant.Name} not found in Market {Name}");
+        }
+        _demographicManager.SetPopulation(newPopulation,actor);
         return LemonadeStandResultObject.Success();
     }
-    public LemonadeStandResultObject SetPopulation(int newPopulation) => _demographicManager.SetPopulation(newPopulation);
+
     public float GetPopulationGrowthRate()=>_demographicManager.GetPopulationGrowthRate(0,CurrentPeriod);
 
     //Population Happiness
@@ -341,22 +363,10 @@ public class Market : ScriptableObject, iCompany
         
         return LemonadeStandResultObject.Success();
     }
-    public void RegisterCompany(Company company)
-    {
-        if(!CompaniesInThisMarket.Contains(company))
-        {
-            CompaniesInThisMarket.Add(company);
-        }
-        else
-        {
-            throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
-        }
-        TheEconomy.Instance.RegisterCompany(company);
-    }
    
     internal void UpdateCompanyStatuses(int period)
     {
-        foreach (var company in CompaniesInThisMarket)
+        foreach (var company in _economicActorsInThisMarket)
         {
             //Update Company Statuses
             company.ExpireGoods(period);
@@ -391,7 +401,7 @@ public class Market : ScriptableObject, iCompany
         }
     public void ExpireGoods(int period)
         {
-            foreach(var company in CompaniesInThisMarket)
+            foreach(var company in _economicActorsInThisMarket)
                 company.GetInventory().ExpireGoods(period); 
         }
 #endregion

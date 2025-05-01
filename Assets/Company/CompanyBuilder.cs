@@ -39,6 +39,19 @@ public class CompanyBuilder<T> where T : Company
         companyToReturn.companyLevel = companyLevel;
         return this;
     }
+
+    public CompanyBuilder<T> WithPopulation(int population)
+    {
+        if (companyToReturn is PopulationCompany populationCompany)
+        {
+            populationCompany.Population = population;
+        }
+        else
+        {
+            Debug.LogError("Company is not a PopulationCompany.");
+        }
+        return this;
+    }
 }
 
 public static class CompanyBuilder

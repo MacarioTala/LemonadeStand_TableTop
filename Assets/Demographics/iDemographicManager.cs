@@ -11,10 +11,11 @@ public interface iDemographicManager
     float GetPopulationHappiness();
 
     //Set Datahandlers
+    void SetMarket(Market market);
     iDemographicManager SetPopulationHistoryHandler(iDataHandler<PopulationHistory> handler);
 
     LemonadeStandResultObject SetMarketInstability(float newInstability); 
-    LemonadeStandResultObject SetPopulation(int newPopulation);
+    LemonadeStandResultObject SetPopulation(int newPopulation, PopulationCompany marketParticipant);
     LemonadeStandResultObject SetPopulationHappiness(float newHappiness);
 
     //Demographics History

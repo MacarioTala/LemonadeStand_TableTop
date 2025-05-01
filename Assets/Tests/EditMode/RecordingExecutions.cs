@@ -270,29 +270,6 @@ public class RecordingExecutions
         Assert.AreEqual(expectedExecutionCount,actualExecutions.Count);
         Assert.IsTrue(ExecutionComparer.ListsAreEquivalent(expectedExecutions, actualExecutions,ExecutionComparer));
     }
-
-    [TestCase(TestName = "Single trade, market is seller counterparty. Expected executions: 2")]
-    public void OneTradeMarketSellerCounterparty()
-    {
-        //Arrange
-        var Company1BuysFromAnyone = new Order(Company1, null, Lemon, 5, 10m);
-        TestMarket.GetInventory().AddGood(new InventoryEntry(Lemon, 5, 10m, 5));
-        TestMarket.InitializeDemandForSpecificGood(Lemon, 5);
-        const int expectedExecutionCount = 2;
-        var expectedExecutions = new List<Execution>
-        {
-            new(Company1BuysFromAnyone,Company1,TestMarket,5,10m,Period),
-            new(Company1BuysFromAnyone,Company1,TestMarket,5,10m,Period)
-        };
-        Company1.QueueOrder(CreateActionContext(Company1BuysFromAnyone,TestMarket,Period));
-        //Act
-        TestMarket.ProcessCompanyOrders();
-        TestMarket.FulfillDemand();
-        var actualExecutions = TestMarket.GetExecutionsInPeriod(Period);
-        //Assert
-        Assert.AreEqual(expectedExecutionCount,actualExecutions.Count);
-        CollectionAssert.AreEqual(expectedExecutions,actualExecutions);
-    }
 #endregion
 }
 

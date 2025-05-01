@@ -4,6 +4,9 @@ using System.Linq;
 
 public class BasicDemographicManager : iDemographicManager
 {
+    Market _market;
+    public void SetMarket(Market market)=> _market = market;
+    
     //PIT Demographics
     int _population;
     float _populationEnnui;
@@ -27,6 +30,11 @@ public class BasicDemographicManager : iDemographicManager
 
     public int GetPopulation()
     {
+        var economicActors = _market.GetEconomicActorsInThisMarket();
+        // Sum the population of all population companies
+        _population = economicActors
+            .OfType<PopulationCompany>()
+            .Sum(company => company.Population);
         return _population;
     }
 
@@ -76,9 +84,9 @@ public class BasicDemographicManager : iDemographicManager
         return LemonadeStandResultObject.Success();
     }
 
-    public LemonadeStandResultObject SetPopulation(int newPopulation)
+    public LemonadeStandResultObject SetPopulation(int newPopulation , PopulationCompany marketParticipant)
     {
-        _population = newPopulation;
+        marketParticipant.Population = newPopulation;
         return LemonadeStandResultObject.Success();
     }
 
@@ -91,11 +99,12 @@ public class BasicDemographicManager : iDemographicManager
     //Privates
     private void SavePopulationHistory(Guid marketId, int period, TurnPhase phase)
     {
+        var population = GetPopulation();
         var currentPopulationHistory = new PopulationHistory()
         {
             MarketId = marketId,
             Period = period,
-            Population = _population,
+            Population = population,
             Phase = phase
         };
         _populationHistoryHandler.Save(currentPopulationHistory);

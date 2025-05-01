@@ -55,7 +55,7 @@ public class MockDemographicManager : iDemographicManager
         return LemonadeStandResultObject.Success();
     }
 
-    public LemonadeStandResultObject SetPopulation(int newPopulation)
+    public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationCompany marketParticipant)
     {
         _population = newPopulation;
         return LemonadeStandResultObject.Success();
@@ -75,5 +75,11 @@ public class MockDemographicManager : iDemographicManager
     {
         _populationHistoryHandler = handler;
         return this;
+    }
+
+    public void SetMarket(Market market)
+    {
+        // This method is intentionally left empty for the mock implementation.
+        // In a real implementation, you would set the market reference here.
     }
 }

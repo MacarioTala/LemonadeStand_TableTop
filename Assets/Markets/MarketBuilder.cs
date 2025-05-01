@@ -21,6 +21,7 @@ public static class MarketBuilder
     public static Market WithDemographicManager(this Market market, iDemographicManager demographicManager)
     {
         market.SetDemographicManager(demographicManager);
+        demographicManager?.SetMarket(market);
         return market;
     }
 
@@ -57,18 +58,6 @@ public static class MarketBuilder
         market.OrderFulfilled += market.DemandStrategy.OnOrderFulfilled;
         return market;
     }
-    
-    public static Market WithPopulation(this Market market, int population)
-    {
-        if(market.DemographicManager == null)
-        {
-            Debug.LogError("Market.DemographicManager not set, cannot set population.");
-            return market;
-        }
-        market.SetInitialPopulation(population);
-        return market;
-    }
-
     public static Market WithCash(this Market market, decimal cash)
     {
         market.SetCash(cash);

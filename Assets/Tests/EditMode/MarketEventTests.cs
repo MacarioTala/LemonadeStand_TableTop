@@ -39,15 +39,17 @@ public class MarketEventTests
 
         Strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         TestSupplyProvider= new BasicSupplyProvider();
+        TestMarketDataService = new MockMarketDataService();
+        TestDemographicManager = new BasicDemographicManager();
+        TestDemographicManager.SetPopulationHistoryHandler(new MockPopulationHistoryDataHandler());
 
         TestMarket = Market.Factory.CreateStarterMarket("Starter Market",
                                                         CompanyLevelEnum.Market,
-                                                        Strategy);
-        TestMarketDataService = new MockMarketDataService();
-        TestDemographicManager = new MockDemographicManager();
-        TestMarket.SetDemographicManager(TestDemographicManager);
-        TestMarket.SetMarketDataService(TestMarketDataService);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
+                                                        Strategy)
+                                    .WithDataService(TestMarketDataService)
+                                    .WithDemographicManager(TestDemographicManager)
+                                    .WithSupplyProvider(TestSupplyProvider)
+                                    ;
         TestSupplyProvider.Initialize(TestMarket);
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
@@ -95,7 +97,14 @@ public class MarketEventTests
         //Arrange
         const int initialPopulation = 100;
         var expectedPopulation = 90;
-        TestMarket.SetPopulation(initialPopulation);
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(initialPopulation)
+            .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .Build();
+
+        TestMarket.RegisterCompany(testPopulation);
 
         //Act
         MaraudersAttack.Invoke(TestMarket);
@@ -110,9 +119,16 @@ public class MarketEventTests
     {
         //Arrange
         const int initialPopulation = 100;
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(initialPopulation)
+            .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .Build();
+        TestMarket.RegisterCompany(testPopulation);
+        
         var expectedPopulation = 81;
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
-        TestMarket.SetPopulation(initialPopulation);
 
         //Act
         TestMarket.StartTradingPeriod();
@@ -127,13 +143,21 @@ public class MarketEventTests
     public void MarketEventCanBeAddedToActiveEventWithoutMarketEffect()
     {
         //Arrange
+        var initialPopulation = 100;
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(initialPopulation)
+            .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .Build();
+        TestMarket.RegisterCompany(testPopulation);
+
         var AppleTreesGrow = ScriptableObject.CreateInstance<MarketEventSO>();
         AppleTreesGrow.Initialize( eventName: "Apple Trees Grow",
                                     eventDescription: "Apple trees grow in the neighbourhood, increasing population.",
                                     eventChance: 100f,
                                     eventDuration: 1);
-        var initialPopulation = 100;
-        TestMarket.SetPopulation(initialPopulation);
+        
         var expectedPopulation = initialPopulation;
         TestMarket.AddPotentialMarketEvent(AppleTreesGrow);
 
@@ -149,9 +173,15 @@ public class MarketEventTests
     {
         //Arrange
         const int initialPopulation = 100;
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(initialPopulation)
+            .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .Build();
+        TestMarket.RegisterCompany(testPopulation);
         var expectedPopulation = 81;
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
-        TestMarket.SetPopulation(initialPopulation);
 
         //Act
         TestMarket.StartTradingPeriod();
@@ -203,9 +233,15 @@ public class MarketEventTests
     {
         //Arrange
         const int initialPopulation = 100;
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(initialPopulation)
+            .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .Build();
+        TestMarket.RegisterCompany(testPopulation);
         var expectedPopulation = 90;
 
-        TestMarket.SetPopulation(initialPopulation);
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
         
         //Act

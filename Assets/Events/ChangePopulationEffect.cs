@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 [Tooltip("Population change as a percentage. Use negative values to decrease population.")]
@@ -11,9 +12,16 @@ public class ChangePopulationEffect : iMarketEffect
     
     public void Apply(Market market)
     {
-        var population = market.GetPopulation();
-        var delta = (int)Math.Round(population * _conversion,0);
-        market.SetPopulation(population + delta);
+        var marketPopulations = market.GetEconomicActorsInThisMarket()
+            .Where(x => x is PopulationCompany)
+            .ToList();
+
+        foreach (PopulationCompany populationCompany in marketPopulations)
+        {
+            var population = populationCompany.Population;
+            var delta = (int)Math.Round(population * _conversion,0);
+            populationCompany.Population += delta;
+        }
     }
 
     public ChangePopulationEffect(float populationChangePercentage)

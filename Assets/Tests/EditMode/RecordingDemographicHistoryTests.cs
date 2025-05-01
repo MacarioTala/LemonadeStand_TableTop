@@ -30,13 +30,14 @@ public class RecordingDemographicHistoryTests
 
         TestPopulationHistoryDataHandler= new MockPopulationHistoryDataHandler();
         TestDemographicManager = new BasicDemographicManager();
-
-        TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy);
-        TestMarket.SetMarketDataService(TestMarketDataService);
-        TestMarket.SetDemographicManager(TestDemographicManager);
-        TestMarket.SetSupplyProvider(TestSupplyProvider);
-        TestSupplyProvider.Initialize(TestMarket);
         TestDemographicManager.SetPopulationHistoryHandler(TestPopulationHistoryDataHandler);
+
+        TestMarket= Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy)
+            .WithDataService(TestMarketDataService)
+            .WithDemographicManager(TestDemographicManager)
+            .WithSupplyProvider(TestSupplyProvider);
+        
+        TestSupplyProvider.Initialize(TestMarket);
         
         testEconomy.RegisterCompany(TestMarket);
 
@@ -87,11 +88,17 @@ public class RecordingDemographicHistoryTests
     public void StartTradingPeriodAddsRowToPopulationHistory()
     {
         //Arrange
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(1000)
+            .WithFixedCostStrategy(TestFixedCostStrategy)
+            .Named("Test Population")
+            .Build();
+        TestMarket.RegisterCompany(testPopulation);
         var expectedPopulationHistory = new List<PopulationHistory>(){
             new() {MarketId=TestMarket.MarketId,Period=0, Population=1000},
         };
         //Act
-        TestMarket.SetInitialPopulation(1000);
+        TestMarket.SetPopulation(1000, testPopulation);
         TestMarket.StartTradingPeriod();
         var actualPopulationHistory = TestMarket.GetPopulationHistory();
         //Assert
@@ -107,6 +114,13 @@ public class RecordingDemographicHistoryTests
     public void UnleashMarketForcesCapturesChangeInPopulation()
     {
         //Arrange
+        var populationFixedCostStrategy = new BasicFixedCostStrategy();
+        var peopleInTheMarket = CompanyBuilder.For<PopulationCompany>()
+            .WithPopulation(1000)
+            .WithFixedCostStrategy(populationFixedCostStrategy)
+            .Named("People in the Market")
+            .Build();
+        TestMarket.RegisterCompany(peopleInTheMarket);
         var MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();
         MaraudersAttack.Initialize( "Marauders Attack", 
                                     "Marauders attack the market",
@@ -117,7 +131,6 @@ public class RecordingDemographicHistoryTests
 
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
 
-        TestMarket.SetInitialPopulation(1000);
         const int expectedPopulation = 900;
         var expectedPopulationHistory = new List<PopulationHistory>(){
             new() {MarketId=TestMarket.MarketId,Period=0, Population=1000, Phase=TurnPhase.Beginning},
@@ -145,7 +158,12 @@ public class RecordingDemographicHistoryTests
 public void MultiplePeriodsRecordDistinctSnapshots()
 {
     // Arrange
-    TestMarket.SetInitialPopulation(1000);
+    var testPopulation = CompanyBuilder.For<PopulationCompany>()
+        .WithPopulation(1000)
+        .WithFixedCostStrategy(TestFixedCostStrategy)
+        .Named("Test Population")
+        .Build();
+    TestMarket.RegisterCompany(testPopulation);
 
     // Act
     for (int i = 0; i < 3; i++)

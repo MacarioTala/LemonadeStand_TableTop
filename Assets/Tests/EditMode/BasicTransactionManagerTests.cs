@@ -32,7 +32,6 @@ public class BasicTransactionManagerTests
             .WithTradeProcessor(new BasicTradeProcessor())
             .WithTransactionManager(new BasicTransactionManager())
             .WithDemographicManager(new BasicDemographicManager())
-            .WithPopulation(1000)
             .WithCash(10000);
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
