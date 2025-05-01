@@ -17,7 +17,7 @@ public class Company : ScriptableObject, iCompany
 
     public bool IsPlayer {get;set;} = false;
 
-    private Company(){}
+    protected Company(){}
     internal void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
         Name = companyName;
@@ -48,9 +48,9 @@ public class Company : ScriptableObject, iCompany
             return company;
         }
 
-        public static Company Create()
+        public static T Create<T>() where T : Company
         {
-            var company = CreateInstance<Company>();
+            var company = CreateInstance<T>();
             return company;
         }
     }

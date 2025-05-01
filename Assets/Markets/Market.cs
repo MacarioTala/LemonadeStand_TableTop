@@ -236,8 +236,14 @@ public class Market : ScriptableObject, iCompany
     private Market ()
     {
         // Intentionally blank. Do not add a constructor.
-        // We want folks to use the factory
+        // We will use ScriptableObject.CreateInstance<Market>() to create instances of this class.
+        // Market.Create() will be used as syntactic sugar for tests.
     }
+    public static Market Create()
+    {
+        return CreateInstance<Market>();
+    }
+
     public static class Factory
     { 
         public static readonly StarterMarketInitializer starterMarketInitializer = new();

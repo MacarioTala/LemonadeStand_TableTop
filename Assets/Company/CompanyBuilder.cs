@@ -1,34 +1,48 @@
-public static class CompanyBuilder
+using UnityEngine;
+
+public class CompanyBuilder<T> where T : Company
 {
-    public static Company WithFixedCostStrategy(this Company company, iFixedCostStrategy fixedCostStrategy)
+    private readonly T companyToReturn;
+
+    public CompanyBuilder(T company) => companyToReturn = company;
+    public static CompanyBuilder<T> Create() => new(ScriptableObject.CreateInstance<T>());
+    public T Build() => companyToReturn;
+    
+    public CompanyBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
     {
-        company.FixedCostStrategy = fixedCostStrategy;
-        return company;
+        companyToReturn.FixedCostStrategy = fixedCostStrategy;
+        return this;
     }
-    public static Company WithBehaviourStrategy(this Company company, iStrategy behaviourStrategy)
+    public CompanyBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)
     {
-        company.SetStrategy(behaviourStrategy);
-        return company;
+        companyToReturn.SetStrategy(behaviourStrategy);
+        return this;
     }
-    public static Company WithInitialCash(this Company company, int initialCash)
+    public CompanyBuilder<T> WithInitialCash( int initialCash)
     {
-        company.SetCash(initialCash);
-        return company;
+        companyToReturn.SetCash(initialCash);
+        return this;
     }
-    public static Company WithActionsPerTurn(this Company company, int actionsPerTurn)
+    public CompanyBuilder<T> WithActionsPerTurn(int actionsPerTurn)
     {
-        company.SetActionsPerCycle(actionsPerTurn);
-        return company;
+        companyToReturn.SetActionsPerCycle(actionsPerTurn);
+        return this;
     }
-    public static Company Named(this Company company, string name)
+    public CompanyBuilder<T> Named( string name)
     {
-        company.Name = name;
-        return company;
+        companyToReturn.Name = name;
+        return this;
     }
 
-    public static Company AtLevel(this Company company, CompanyLevelEnum companyLevel)
+    public CompanyBuilder<T> AtLevel(CompanyLevelEnum companyLevel)
     {
-        company.companyLevel = companyLevel;
-        return company;
+        companyToReturn.companyLevel = companyLevel;
+        return this;
     }
+}
+
+public static class CompanyBuilder
+{
+    public static CompanyBuilder<T> For<T>() where T : Company 
+            =>CompanyBuilder<T>.Create();
 }

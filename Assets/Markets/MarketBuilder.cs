@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class MarketBuilder
@@ -92,15 +92,24 @@ public static class MarketBuilder
         return market;
     }
 
+    public static Market WithLevel(this Market market, CompanyLevelEnum level)
+    {
+        market.company_level = level;
+        return market;
+    }
     public static Market Named(this Market market, string name)
     {
         market.Name = name;
         return market;
     }
 
-    public static Market WithLevel(this Market market, CompanyLevelEnum level)
+    public static Market PopulatedWith(this Market market, List<PopulationCompany> marketParticipants)
     {
-        market.company_level = level;
+
+        foreach  (var particpant in marketParticipants)
+        {
+            market.RegisterCompany(particpant);
+        }
         return market;
     }
 
