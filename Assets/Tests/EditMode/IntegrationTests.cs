@@ -44,8 +44,8 @@ public class IntegrationTests
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
 
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
 
         Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Common);
     }
@@ -84,8 +84,8 @@ public class IntegrationTests
         var market = TestMarket;
         var buyer = Company.Factory.Create("Buyer", CompanyLevelEnum.Beginner);
         var seller = Company.Factory.Create("Seller", CompanyLevelEnum.Beginner);
-        market.RegisterCompany(buyer);
-        market.RegisterCompany(seller);
+        market.RegisterMarketParticipant(buyer);
+        market.RegisterMarketParticipant(seller);
         var good =Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var sellersInventory = seller.GetInventory();
         sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
@@ -177,7 +177,7 @@ public class IntegrationTests
         marketToTest.InitializeDemandForSpecificGood(Lemonade, 2000);
         var company1 = Company.Factory.Create("TestCompany", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
-        marketToTest.RegisterCompany(company1);
+        marketToTest.RegisterMarketParticipant(company1);
 
         var company1Order = new Order(null, company1, Lemonade, 1000, 3.5m);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
@@ -272,7 +272,7 @@ public class IntegrationTests
         var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
         var market = TestMarket;
-        market.RegisterCompany(company);
+        market.RegisterMarketParticipant(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
 
         var goodOrder = new Order(company, company, good, 10, 1);
@@ -295,7 +295,7 @@ public class IntegrationTests
         var period = 0;
         var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
         var company = Company.Factory.Create("Company", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(company);
+        TestMarket.RegisterMarketParticipant(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));
         var MarketBuysGoodFromCompany1 = new Order(TestMarket, company, good, 10, 1);
         var actionContext = new ActionContext

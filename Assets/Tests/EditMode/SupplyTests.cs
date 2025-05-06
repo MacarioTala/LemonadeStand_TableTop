@@ -35,8 +35,8 @@ public class SupplyTests
 
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
 
         Period=0;
 

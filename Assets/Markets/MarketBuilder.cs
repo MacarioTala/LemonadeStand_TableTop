@@ -97,7 +97,7 @@ public static class MarketBuilder
 
         foreach  (var particpant in marketParticipants)
         {
-            market.RegisterCompany(particpant);
+            market.RegisterMarketParticipant(particpant);
         }
         return market;
     }

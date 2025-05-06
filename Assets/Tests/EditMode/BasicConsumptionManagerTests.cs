@@ -60,8 +60,8 @@ public class BasicConsumptionManagerTests
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
     }
 
     private void SetupGoodsAndRecipes()

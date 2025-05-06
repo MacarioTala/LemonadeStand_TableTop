@@ -20,7 +20,7 @@ public class DemographicsTests
         var testMarket = Market.Factory.CreateStarterMarket("Test Market",CompanyLevelEnum.Market,testDemandStrategy)
         .WithDemographicManager(demographicManager);
         
-        testMarket.RegisterCompany(testPopulationCompany);
+        testMarket.RegisterMarketParticipant(testPopulationCompany);
 
         // Act
         var actualPopulation = testMarket.GetPopulation();

@@ -12,7 +12,7 @@ public class ChangePopulationEffect : iMarketEffect
     
     public void Apply(Market market)
     {
-        var marketPopulations = market.GetEconomicActorsInThisMarket()
+        var marketPopulations = market.GetMarketParticipants()
             .Where(x => x is PopulationCompany)
             .ToList();
 

@@ -30,7 +30,7 @@ public class BasicDemographicManager : iDemographicManager
 
     public int GetPopulation()
     {
-        var economicActors = _market.GetEconomicActorsInThisMarket();
+        var economicActors = _market.GetMarketParticipants();
         // Sum the population of all population companies
         _population = economicActors
             .OfType<PopulationCompany>()

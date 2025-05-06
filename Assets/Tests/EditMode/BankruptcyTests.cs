@@ -45,7 +45,7 @@ public class BankruptcyTests
         ((MockMarketDataService)TestMarketDataService).SetPopulationHistory(populationHistory);
 
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner, null, TestFixedCostStrategy);
-        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterMarketParticipant(Company1);
     }
 
     [Test]

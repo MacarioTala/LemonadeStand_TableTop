@@ -35,8 +35,8 @@ public class FillsAndPartialFillsTests
         TestCompany1 = Company.Factory.Create("TestCompany1", CompanyLevelEnum.Beginner);
         TestCompany2 = Company.Factory.Create("TestCompany2", CompanyLevelEnum.Beginner);
 
-        TestMarket.RegisterCompany(TestCompany1);
-        TestMarket.RegisterCompany(TestCompany2);
+        TestMarket.RegisterMarketParticipant(TestCompany1);
+        TestMarket.RegisterMarketParticipant(TestCompany2);
         
         Lemon = Good.CreateInstance("Lemon", new PriceBand(.5m, 2m), RarityEnum.Common);
         Water = Good.CreateInstance("Water", new PriceBand(.5m, 1m), RarityEnum.Common);

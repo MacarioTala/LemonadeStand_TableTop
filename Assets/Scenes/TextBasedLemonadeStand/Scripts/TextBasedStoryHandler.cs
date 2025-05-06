@@ -107,7 +107,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         PlayerCompany= Company.Factory.Create("Player1",CompanyLevelEnum.Beginner);
         PlayerCompany.IsPlayer= true;
         playerActionsRemaining = PlayerCompany.GetActionsRemaining();
-        initialMarket.RegisterCompany(PlayerCompany);
+        initialMarket.RegisterMarketParticipant(PlayerCompany);
     }
 
     private IEnumerator StartGameLoop()

@@ -22,8 +22,8 @@ public partial class MarketTests
         var lemonSaleA = new Order(TestMarket, Company1, lemon, lemonsCompanyWillSellToMarket, 3.0m);
         var lemonSaleB = new Order(TestMarket, Company2, lemon, lemonsCompanyWillSellToMarket, 3.0m);
 
-        convenienceMarket.RegisterCompany(companyA);
-        convenienceMarket.RegisterCompany(companyB);
+        convenienceMarket.RegisterMarketParticipant(companyA);
+        convenienceMarket.RegisterMarketParticipant(companyB);
 
         var expected = lemonSaleA;
         

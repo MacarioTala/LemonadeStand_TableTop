@@ -54,8 +54,8 @@ public class MarketEventTests
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
 
         MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();
         GodzillaAttack = ScriptableObject.CreateInstance<MarketEventSO>();
@@ -104,7 +104,7 @@ public class MarketEventTests
             .AtLevel(CompanyLevelEnum.Beginner)
             .Build();
 
-        TestMarket.RegisterCompany(testPopulation);
+        TestMarket.RegisterMarketParticipant(testPopulation);
 
         //Act
         MaraudersAttack.Invoke(TestMarket);
@@ -125,7 +125,7 @@ public class MarketEventTests
             .Named("Test Population")
             .AtLevel(CompanyLevelEnum.Beginner)
             .Build();
-        TestMarket.RegisterCompany(testPopulation);
+        TestMarket.RegisterMarketParticipant(testPopulation);
         
         var expectedPopulation = 81;
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
@@ -150,7 +150,7 @@ public class MarketEventTests
             .Named("Test Population")
             .AtLevel(CompanyLevelEnum.Beginner)
             .Build();
-        TestMarket.RegisterCompany(testPopulation);
+        TestMarket.RegisterMarketParticipant(testPopulation);
 
         var AppleTreesGrow = ScriptableObject.CreateInstance<MarketEventSO>();
         AppleTreesGrow.Initialize( eventName: "Apple Trees Grow",
@@ -179,7 +179,7 @@ public class MarketEventTests
             .Named("Test Population")
             .AtLevel(CompanyLevelEnum.Beginner)
             .Build();
-        TestMarket.RegisterCompany(testPopulation);
+        TestMarket.RegisterMarketParticipant(testPopulation);
         var expectedPopulation = 81;
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
 
@@ -239,7 +239,7 @@ public class MarketEventTests
             .Named("Test Population")
             .AtLevel(CompanyLevelEnum.Beginner)
             .Build();
-        TestMarket.RegisterCompany(testPopulation);
+        TestMarket.RegisterMarketParticipant(testPopulation);
         var expectedPopulation = 90;
 
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);

@@ -42,8 +42,8 @@ public class MarketObserverTests
     
         TestSupplyProvider.Initialize(TestMarket);
 
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
     }
 
     [TearDown]

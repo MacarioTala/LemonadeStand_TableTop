@@ -24,7 +24,7 @@ public class CompanyTests
         Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1, 3), RarityEnum.Common);
         
         TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, new LinearDemandStrategy());
-        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterMarketParticipant(Company1);
     }
 
     [Test]

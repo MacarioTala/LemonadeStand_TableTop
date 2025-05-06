@@ -67,7 +67,7 @@ public class SupplyAndDemandTests
         var testPeriod = 0;
         var company1 = Company.Factory.Create("Test Company 1", CompanyLevelEnum.Beginner);
         company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3.0m, 0));
-        testMarket.RegisterCompany(company1);
+        testMarket.RegisterMarketParticipant(company1);
 
         var buyLemonadeOrder = new Order(null, company1, lemonade, 500, 3.0m);
         var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = testMarket, Period = testPeriod };
@@ -101,7 +101,7 @@ public class SupplyAndDemandTests
         var price_increment_rate = lemonade.Get_price_increment_rate();
         var expectedLemonadePrice = Math.Round(currentLemonadePrice * (1 + price_increment_rate), 2);
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company);
+        marketToTest.RegisterMarketParticipant(company);
         company.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3.0m, 0));
 
         var buyLemonadeOrder = new Order(null, company, lemonade, 1500, 3.0m); 
@@ -164,7 +164,7 @@ public class SupplyAndDemandTests
     
         //give the selling company some lemons
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemon, 1000, 3.0m, 0));
-        MarketThatDemandsLemons.RegisterCompany(sellingCompany);
+        MarketThatDemandsLemons.RegisterMarketParticipant(sellingCompany);
 
         //create the ActionContext
         var testContext = new ActionContext
@@ -196,7 +196,7 @@ public class SupplyAndDemandTests
 
         //Make a company to sell the lemons
         var sellingCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        MarketThatDemandsLemons.RegisterCompany(sellingCompany);
+        MarketThatDemandsLemons.RegisterMarketParticipant(sellingCompany);
         //give the selling company some lemons
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemon, 1000, 3.0m, 0));
         var period = 0;
@@ -226,7 +226,7 @@ public class SupplyAndDemandTests
 
         var expectedLemonDemand = 1000;
         var sellingCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(sellingCompany);
+        TestMarket.RegisterMarketParticipant(sellingCompany);
         var period = 0;
 
         //give the selling company some lemons
@@ -255,7 +255,7 @@ public class SupplyAndDemandTests
         TestMarket.InitializeDemandForSpecificGood(lemonade, initialLemonadeDemand);
         var expectedLemonadeDemand = initialLemonadeDemand;
         var sellingCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(sellingCompany);
+        TestMarket.RegisterMarketParticipant(sellingCompany);
 
         //give the selling company some lemonade
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3.0m,0));
@@ -289,7 +289,7 @@ public class SupplyAndDemandTests
         var initialLemonadeDemand = 900;
         TestMarket.InitializeDemandForSpecificGood(lemonade, initialLemonadeDemand);
         var sellingCompany = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(sellingCompany);
+        TestMarket.RegisterMarketParticipant(sellingCompany);
 
         //give the selling company some lemonade
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3.0m,0));

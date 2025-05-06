@@ -42,7 +42,7 @@ public class RecordingDemographicHistoryTests
         testEconomy.RegisterCompany(TestMarket);
 
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner, null, TestFixedCostStrategy);
-        TestMarket.RegisterCompany(Company1);
+        TestMarket.RegisterMarketParticipant(Company1);
     }
     [TearDown]
     public void TearDown()
@@ -93,7 +93,7 @@ public class RecordingDemographicHistoryTests
             .WithFixedCostStrategy(TestFixedCostStrategy)
             .Named("Test Population")
             .Build();
-        TestMarket.RegisterCompany(testPopulation);
+        TestMarket.RegisterMarketParticipant(testPopulation);
         var expectedPopulationHistory = new List<PopulationHistory>(){
             new() {MarketId=TestMarket.MarketId,Period=0, Population=1000},
         };
@@ -120,7 +120,7 @@ public class RecordingDemographicHistoryTests
             .WithFixedCostStrategy(populationFixedCostStrategy)
             .Named("People in the Market")
             .Build();
-        TestMarket.RegisterCompany(peopleInTheMarket);
+        TestMarket.RegisterMarketParticipant(peopleInTheMarket);
         var MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();
         MaraudersAttack.Initialize( "Marauders Attack", 
                                     "Marauders attack the market",
@@ -163,7 +163,7 @@ public void MultiplePeriodsRecordDistinctSnapshots()
         .WithFixedCostStrategy(TestFixedCostStrategy)
         .Named("Test Population")
         .Build();
-    TestMarket.RegisterCompany(testPopulation);
+    TestMarket.RegisterMarketParticipant(testPopulation);
 
     // Act
     for (int i = 0; i < 3; i++)

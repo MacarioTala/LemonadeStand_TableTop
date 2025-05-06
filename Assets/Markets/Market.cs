@@ -48,25 +48,25 @@ public class Market : ScriptableObject, iCompany
     private readonly List<Recipe> _recipes = new();
 
     //Companies
-    private readonly List<Company> _economicActorsInThisMarket = new();
-    public List<Company> GetEconomicActorsInThisMarket() => _economicActorsInThisMarket;
-    public void RegisterCompany(Company company)
+    private readonly List<Company> _marketParticipants = new();
+    public List<Company> GetMarketParticipants() => _marketParticipants;
+    public void RegisterMarketParticipant(Company marketParticipant)
     {
-        if(!_economicActorsInThisMarket.Contains(company))
+        if(!_marketParticipants.Contains(marketParticipant))
         {
-            _economicActorsInThisMarket.Add(company);
+            _marketParticipants.Add(marketParticipant);
         }
         else
         {
-            throw new TheEconomy_CompanyException("Company {company.company_name} already in Market{company_name}");
+            throw new TheEconomy_CompanyException($"Company {marketParticipant.Name} of type {marketParticipant.GetType()} already in Market {MarketId}");
         }
-        TheEconomy.Instance.RegisterCompany(company);
+        TheEconomy.Instance.RegisterCompany(marketParticipant);
     }
     public LemonadeStandResultObject RemoveCompany(Company company)
     {
-        if(_economicActorsInThisMarket.Contains(company))
+        if(_marketParticipants.Contains(company))
         {
-            _economicActorsInThisMarket.Remove(company);
+            _marketParticipants.Remove(company);
             return LemonadeStandResultObject.Success();
         }
         return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
@@ -85,7 +85,7 @@ public class Market : ScriptableObject, iCompany
    
     public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationCompany marketParticipant) 
     {
-        var actor = _economicActorsInThisMarket
+        var actor = _marketParticipants
             .OfType<PopulationCompany>()
             .Where(x=>x.Equals(marketParticipant))
             .FirstOrDefault();
@@ -366,7 +366,7 @@ public class Market : ScriptableObject, iCompany
    
     internal void UpdateCompanyStatuses(int period)
     {
-        foreach (var company in _economicActorsInThisMarket)
+        foreach (var company in _marketParticipants)
         {
             //Update Company Statuses
             company.ExpireGoods(period);
@@ -401,7 +401,7 @@ public class Market : ScriptableObject, iCompany
         }
     public void ExpireGoods(int period)
         {
-            foreach(var company in _economicActorsInThisMarket)
+            foreach(var company in _marketParticipants)
                 company.GetInventory().ExpireGoods(period); 
         }
 #endregion

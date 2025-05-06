@@ -40,8 +40,8 @@ public partial class BasicTradeProcessorTests
             .WithTransactionManager(new BasicTransactionManager())
             .WithCash(1000000);
 
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
         
         Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);
         Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1, 3), RarityEnum.Uncommon);
@@ -232,7 +232,7 @@ public partial class BasicTradeProcessorTests
     {
         // Arrange
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company3);
+        TestMarket.RegisterMarketParticipant(Company3);
 
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
         Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1m, Period));

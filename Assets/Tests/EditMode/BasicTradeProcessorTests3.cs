@@ -243,7 +243,7 @@ public partial class BasicTradeProcessorTests
         Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, Seller1InventoryQuantity, Seller1AcquirePrice, Period));
         Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, Seller2InventoryQuantity, Seller2AcquirePrice, Period));
         
-        TestMarket.RegisterCompany(Company3);
+        TestMarket.RegisterMarketParticipant(Company3);
         var company1BuysRLFromAnyoneByCompany1 = new Order(Company1, null, RadioactiveLemonade, BuyerOrderQuantity, BuyerBid);
         var company2SellsRLToAnyone1ByCompany2 = new Order(null, Company2, RadioactiveLemonade, Seller1OrderQuantity, Seller1Ask);
         var company3SellsRLToAnyone2ByCompany3 = new Order(null, Company3, RadioactiveLemonade, Seller2OrderQuantity, Seller2Ask);
@@ -313,7 +313,7 @@ public partial class BasicTradeProcessorTests
     {
         //Arrange
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company3);
+        TestMarket.RegisterMarketParticipant(Company3);
         Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, SellerInventoryQuantity, SellerAcquirePrice, Period));
 
         var Company1BuysRLFromAnyone = new Order(Company1, null, RadioactiveLemonade, Buyer1OrderQuantity, Buyer1Bid);

@@ -51,7 +51,7 @@ public partial class BasicTradeProcessorTests
     {
         //Arrange
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company3);
+        TestMarket.RegisterMarketParticipant(Company3);
         Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 3,9m,Period));
         Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,9m,Period));
 
@@ -102,7 +102,7 @@ public partial class BasicTradeProcessorTests
     {
         //Arrange
         var Company3 = Company.Factory.Create("Company 3", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company3);
+        TestMarket.RegisterMarketParticipant(Company3);
         Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9m,Period));
         Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,10m,Period));
         var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10m);

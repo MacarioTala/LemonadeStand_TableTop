@@ -56,8 +56,8 @@ public partial class MarketTests
         //Setup Companies
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(Company1);
-        TestMarket.RegisterCompany(Company2);
+        TestMarket.RegisterMarketParticipant(Company1);
+        TestMarket.RegisterMarketParticipant(Company2);
 
         SetupGoodsAndRecipes();
 
@@ -174,7 +174,7 @@ public partial class MarketTests
         var tradingPeriod = 1;
         var testMarket = TestMarket;
         var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(company);
+        testMarket.RegisterMarketParticipant(company);
         var francium = Good.CreateInstance("Francium", band2, RarityEnum.Very_Rare);
         francium.ExpiresAfterPeriods = 1;
         company.GetInventory().AddGood(new InventoryEntry(francium, 1,10000m,0));
@@ -196,7 +196,7 @@ public partial class MarketTests
         var period = 1;
         var testMarket = TestMarket;
         var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        testMarket.RegisterCompany(company);
+        testMarket.RegisterMarketParticipant(company);
         var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
         ripeLemon.ExpiresAfterPeriods = 1;
         var ripeLemonInventoryEntry = new InventoryEntry(ripeLemon, 10, 3.0m,0);
@@ -226,7 +226,7 @@ public partial class MarketTests
         var tradingPeriod = 1;
         var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         var testMarket = TestMarket;
-        testMarket.RegisterCompany(company);
+        testMarket.RegisterMarketParticipant(company);
         company.GetInventory().AddGood(new InventoryEntry(lemon, 10, 3.0m,0));
         lemon.ExpiresAfterPeriods=2;
         var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
@@ -255,7 +255,7 @@ public partial class MarketTests
         var tradingPeriod = 1;
         var company = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         var testMarket = TestMarket;
-        testMarket.RegisterCompany(company);
+        testMarket.RegisterMarketParticipant(company);
         
         var apple = Good.CreateInstance("Apple", band2, RarityEnum.Common);
         apple.ExpiresAfterPeriods=1;
@@ -324,7 +324,7 @@ public partial class MarketTests
     {
         // Arrange
         var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(company1);
+        TestMarket.RegisterMarketParticipant(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon, MarketToSubmitTo = TestMarket};
         var expected = new List<MarketData>{new() { Good = lemon, Company = company1, Bid = 2.0m, Ask = 3.0m}};
         //Act
@@ -341,7 +341,7 @@ public partial class MarketTests
     {
         // Arrange
         var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        TestMarket.RegisterCompany(company1);
+        TestMarket.RegisterMarketParticipant(company1);
         var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
         
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.MarketNotSet, "Market not set");
@@ -415,9 +415,9 @@ public partial class MarketTests
         var marketToTest = TestMarket;
         const int expected_number_of_entries = 1;
         var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company1);
+        marketToTest.RegisterMarketParticipant(company1);
         var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterCompany(company2);
+        marketToTest.RegisterMarketParticipant(company2);
         company1.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
         company2.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
         marketToTest.InitializeDemandForSpecificGood(lemon, 50);
