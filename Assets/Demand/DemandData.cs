@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class DemandData
 {
     public decimal Ask {get; set;}
@@ -5,11 +7,28 @@ public class DemandData
     public float FulfilmentRate{get; set;}
     public int MinDemand{get; set;}
     public int MaxDemand{get; set;}
+    public List<ElasticDemandComponent> ElasticDemandComponents {get; set;} = new ();
+}
 
-    //Demand Curve
-    public float Curvature{get; set;}
-    public float Steepness{get; set;}
-    public float Shift{get; set;}
+public class ElasticDemandComponent
+{
+    public ElasticDemandComponentEnum Type {get; set;}
+    public float Sensitivity {get; set;}
+    public int MinDemand {get; set;}
+ 
+    public float GetMultiplier(float factor)
+    {
+        return factor*Sensitivity;
+    }
+}
+
+public enum ElasticDemandComponentEnum
+{
+    Price,
+    Income,
+    Population,
+    Substitutes,
+    Complements
 }
 
 

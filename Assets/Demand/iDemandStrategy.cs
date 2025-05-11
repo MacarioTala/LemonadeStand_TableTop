@@ -9,14 +9,6 @@ public interface iDemandStrategy
     void InitializeDemandForSpecificGood(Market market, Good good, int initialDemand, int minDemand = MinDemand, int maxDemand = MaxDemand, float curvature = 1f);
     void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent);
 #region Default Implementations
-
-    public void AddParabolicDemanForGood(Market market, Good good, float curvature, float steepness, float shift)
-    {
-        var demandData = market.GetMarketDemand()[good];
-        demandData.Curvature = curvature;
-        demandData.Steepness = steepness;
-        demandData.Shift = shift;
-    }
     
     public Dictionary<Good, DemandData> GetDemandInPeriod(Market market, int tradingPeriod)
     {

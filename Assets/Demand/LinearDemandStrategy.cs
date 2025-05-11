@@ -76,8 +76,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
                             FulfilmentRate = 0f,
                             MinDemand = minDemand,
                             MaxDemand = maxDemand,
-                            Ask = ask,
-                            Curvature = curvature
+                            Ask = ask
                         };
         marketDemand.Add(good, demandData);
     }
@@ -113,8 +112,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
         }
         var saturation = demandForGood.CurrentDemand==0?0 
                             : (float)supplyForGood/demandForGood.CurrentDemand ;
-
-        var curvature = demandForGood.Curvature;        
+    
         
         var elasticity = GetElasticity(market, good, ElasticityTypeEnum.SaturationElasticity);
 

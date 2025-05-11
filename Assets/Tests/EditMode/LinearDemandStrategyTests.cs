@@ -196,7 +196,6 @@ public partial class LinearDemandStrategyTests
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
             var marketDemand = TestMarket.GetMarketDemand();
             var lemonadeDemand = marketDemand[Lemonade];
-            lemonadeDemand.Curvature = 1;
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,100,1)
@@ -219,7 +218,6 @@ public partial class LinearDemandStrategyTests
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
             var marketDemand = TestMarket.GetMarketDemand();
             var lemonadeDemand = marketDemand[Lemonade];
-            lemonadeDemand.Curvature = 1;
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var expectedDemand = 200;
@@ -240,7 +238,6 @@ public partial class LinearDemandStrategyTests
         TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
             var marketDemand = TestMarket.GetMarketDemand();
             var lemonadeDemand = marketDemand[Lemonade];
-            lemonadeDemand.Curvature = 1;
         
         var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,200,1)
                     {
@@ -260,9 +257,7 @@ public partial class LinearDemandStrategyTests
     {
         //Arrange
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-            var marketDemand = TestMarket.GetMarketDemand();
-            var lemonadeDemand = marketDemand[Lemonade];
-            lemonadeDemand.Curvature = 1;
+
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, .5f);
         var doubleDemand = 200;
 

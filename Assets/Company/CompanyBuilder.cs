@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CompanyBuilder<T> where T : Company
@@ -45,6 +47,22 @@ public class CompanyBuilder<T> where T : Company
         if (companyToReturn is PopulationCompany populationCompany)
         {
             populationCompany.Population = population;
+        }
+        else
+        {
+            Debug.LogError("Company is not a PopulationCompany.");
+        }
+        return this;
+    }
+
+    public CompanyBuilder<T> Demanding(List<(Good good, DemandData demandData)> demands)
+    {
+        if (companyToReturn is PopulationCompany populationCompany)
+        {
+            foreach (var (good, demandData) in demands)
+            {
+                populationCompany.SetDemand(good, demandData);
+            }
         }
         else
         {
