@@ -70,6 +70,11 @@ public class CompanyBuilder<T> where T : Company
         }
         return this;
     }
+    public CompanyBuilder<T> WithGoal(Goal goal)
+    {
+        companyToReturn.AddGoal(goal);
+        return this;
+    }
 }
 
 public static class CompanyBuilder

@@ -55,4 +55,9 @@ public class BasicGrowthStrategy : iStrategy
                 throw new ContextException("Action not supported");
         }
     }
+
+    public void PerformStrategy(iCompany company)
+    {
+        throw new System.NotImplementedException();
+    }
 }

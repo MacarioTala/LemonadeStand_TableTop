@@ -6,4 +6,6 @@ public interface iStrategy
     void GenerateGoals(iCompany company);
 
     public void PerformStrategy(ActionContext context);
+
+    public void PerformStrategy(iCompany company);
 }

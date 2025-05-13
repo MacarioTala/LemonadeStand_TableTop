@@ -10,6 +10,9 @@ public class LemonadeStandResultObject
     public static LemonadeStandResultObject Failure(ResultTypeEnum resultType, string message) =>
         new() { Result=resultType, Message=message};
 
+    public static LemonadeStandResultObject Failure(string message) =>
+        new() { Result=ResultTypeEnum.InvalidTransaction, Message=message};
+
     public override string ToString() => Result.ToString();
     public override bool Equals(object other)
     {

@@ -5,6 +5,18 @@ public class PopulationCompany : Company
 {
 #region Demographics
     private int _population;
+
+    private float _ennui;
+    public float Ennui
+    {
+        get => _ennui;
+        set
+        {
+            if (value < 0 || value > 1)
+                throw new ArgumentOutOfRangeException(nameof(value), "Ennui must be between 0 and 1.");
+            _ennui = value;
+        }
+    }
     public int Population
     {
         get => _population;
@@ -41,6 +53,12 @@ private readonly Dictionary<Good, DemandData> _demand = new();
     {
         _demand[good] = demandData;
     }
+
+    private bool IsDemanded(Good good)
+    {
+        return _demand.ContainsKey(good);
+    }
+
 #endregion
     private PopulationCompany() {}
 
@@ -49,4 +67,16 @@ private readonly Dictionary<Good, DemandData> _demand = new();
         public static CompanyBuilder<PopulationCompany> Create()
                              => CompanyBuilder.For<PopulationCompany>();
     }
+#region Interactions With Market
+    public LemonadeStandResultObject CreateOrders(Market market)
+    {
+        var goodsAvailable = market.GetInventory().GetInventoryEntries();
+
+        foreach (var inventoryEntry in goodsAvailable)
+        {
+            
+        }
+        return LemonadeStandResultObject.Failure("Not implemented");
+    }
+#endregion
 }

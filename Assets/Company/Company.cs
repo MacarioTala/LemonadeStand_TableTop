@@ -160,6 +160,14 @@ public class Company : ScriptableObject, iCompany
     public void SetStrategy(iStrategy strategy) => companyStrategy = strategy;
     
     public List<Goal> Goals {get;set;} = new();
+
+    public void AddGoal(Goal goal)
+    {
+        if(!Goals.Contains(goal))
+        {
+            Goals.Add(goal);
+        }
+    }
     public void CompleteGoal(Goal goal)
     {
         Debug.Log("Goal Completed: "+goal);

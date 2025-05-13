@@ -1,9 +1,11 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Linq;
+using System;
 [TestFixture]
 public class GoalTests
 {
+#region GenerateGoals
     [Test]
     public void GenerateGoals_creates_double_cash_goal_for_company_with_BasicGrowthStrategy()
     {
@@ -25,7 +27,13 @@ public class GoalTests
     public void GenerateGoals_creates_ten_lemonade_goal_for_company_with_BasicGrowthStrategy()
     {
         //arrange
-        var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner, new BasicGrowthStrategy());
+        var company = 
+                      CompanyBuilder.For<Company>()
+                    .WithBehaviourStrategy(new BasicGrowthStrategy())
+                    .AtLevel(CompanyLevelEnum.Beginner)
+                    .Named("Test Company")
+                    .Build();
+
         company.companyStrategy.GenerateGoals(company);
         var expected_goal = new Goal("Have 10 Lemonade",
                                       "Have 10 Lemonade in stock",
@@ -40,5 +48,62 @@ public class GoalTests
         //Assert
         Assert.AreEqual(expected_goal, actual_goal);
     }
+
+    [Test]
+    public void GenerateGoalsCreatesReduceEnnuiGoalForReduceEnnuiStrategy()
+    {
+        // Arrange
+        var company = PopulationCompany.PopulationCompanyBuilder.Create()
+            .Named("Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .WithInitialCash(1000)
+            .WithBehaviourStrategy(new ReduceEnnuiStrategy())
+            .Build();
+
+        // Act
+        company.companyStrategy.GenerateGoals(company);
+        var goal = company.Goals.FirstOrDefault(g => g.Name == "Reduce Ennui");
+
+        // Assert
+        Assert.IsNotNull(goal, "Goal not found");
+        Assert.AreEqual("Reduce Ennui", goal.Name, "Goal name does not match");
+    }
+#endregion
+    [Test]
+    public void IfPopulationCompanyAchievesNoEnnuiGoal_IsMetReturnsTrue()
+    {
+        // Arrange
+        const float initialEnnui = .99f;
+        var ReduceEnnuiGoal = new Goal()
+            .Named("Reduce Ennui")
+            .DescribedAs("Reduce the ennui of the population to 0")
+            .WithGoalEvaluator(c => c is PopulationCompany populationCompany && populationCompany.Ennui == 0)
+            .WithGoalInitializer((c, g) => g.SetOriginalValue("Ennui", initialEnnui));
+
+        var company = PopulationCompany.PopulationCompanyBuilder.Create()
+            .Named("Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .WithInitialCash(1000)
+            .WithGoal(ReduceEnnuiGoal)
+            .Build();
+        
+        company.Ennui=initialEnnui;
+        
+        const bool expected = true;
+        const bool IsMetInitially = false;
+        
+        // Act
+        var goal= company.Goals.FirstOrDefault(g => g.Name == "Reduce Ennui");
+        var actualMetInitially = goal.IsGoalMet(company);
+        company.Ennui = 0;
+        var actualMetAfter = goal.IsGoalMet(company);
+        
+        // Assert
+        Assert.IsNotNull(goal,"Goal not found");
+        Assert.AreEqual(IsMetInitially, actualMetInitially, "Goal should not be met initially");
+        Assert.AreEqual(expected, actualMetAfter, "Goal should be met after ennui is reduced to 0");
+    }
+    
+    
         
 }

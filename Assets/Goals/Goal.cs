@@ -6,7 +6,7 @@ public class Goal
     public string Name { get; set; }
     public string Description { get; set; }
     public Func<iCompany, bool> IsGoalMet { get; set; }
-    public Action<Company,Goal> InitializeGoal { get; private set; }
+    public Action<Company,Goal> InitializeGoal { get; set; }
     public bool IsAchieved=false;
 
     public Dictionary<string,object> OriginalValues {get;private set;} = new ();
@@ -17,6 +17,10 @@ public class Goal
         Description = description;
         IsGoalMet = isGoalMet;
         InitializeGoal = initializeGoal;
+    }
+    public Goal()
+    {
+        
     }
 
     public T GetOriginalValue<T>(string key)
@@ -55,5 +59,33 @@ public class Goal
     public override int GetHashCode()
     {
         return Name.GetHashCode();
+    }
+}
+
+public static class GoalBuilder
+{
+    
+    public static Goal Named(this Goal goal,string name)
+    {
+        goal.Name = name;
+        return goal;
+    }
+
+    public static Goal DescribedAs(this Goal goal, string description)
+    {
+        goal.Description = description;
+        return goal;
+    }
+
+    public static Goal WithGoalEvaluator(this Goal goal, Func<iCompany, bool> goalEvaluator)
+    {
+        goal.IsGoalMet = goalEvaluator;
+        return goal;
+    }
+
+    public static Goal WithGoalInitializer(this Goal goal, Action<Company,Goal> goalInitializer)
+    {
+        goal.InitializeGoal = goalInitializer;
+        return goal;
     }
 }
