@@ -120,8 +120,9 @@ public class Company : ScriptableObject, iCompany
     }
 #endregion    
 #region Inventory Management
-    private readonly Inventory inventory = new();
+    private Inventory inventory = new();
     public Inventory GetInventory() => inventory;
+    public void SetInventory(Inventory newInventory) => inventory=newInventory;
     public List<Recipe> Recipes{get; private set;} = new();
 
     public void AddRecipe(Recipe recipe)

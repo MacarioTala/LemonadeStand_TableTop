@@ -79,4 +79,14 @@ private readonly Dictionary<Good, DemandData> _demand = new();
         return LemonadeStandResultObject.Failure("Not implemented");
     }
 #endregion
+#region Consumption
+    public void Consume()
+    {
+        var inventory = GetInventory().GetInventoryEntries();
+        foreach (var inventoryEntry in inventory)
+        {
+            inventoryEntry.good.ApplyEffects(this); //you are here. Make good effects scale with amount consumed.
+        }
+    }
+#endregion
 }

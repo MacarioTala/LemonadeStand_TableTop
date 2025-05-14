@@ -88,6 +88,12 @@ public class CompanyBuilder<T> where T : Company
         companyToReturn.AddGoal(goal);
         return this;
     }
+
+    public CompanyBuilder<T> WithInventory(Inventory inventory)
+    {
+        companyToReturn.SetInventory(inventory);
+        return this;
+    }
 }
 
 public static class CompanyBuilder
