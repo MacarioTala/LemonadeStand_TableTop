@@ -28,7 +28,24 @@ public class Good : ScriptableObject
     public int price_decrease_threshold; //ibid
 
     [SerializeField] private readonly List<Good> _substitute_goods = new();
-
+#region Effects
+    List<GoodEffect> _effects = new();
+    public void AddEffect(GoodEffect effect)
+    {
+        _effects.Add(effect);
+    }
+    public void RemoveEffect(GoodEffect effect)
+    {
+        _effects.Remove(effect);
+    }
+    public void ApplyEffects(PopulationCompany company)
+    {
+        foreach (var effect in _effects)
+        {
+            effect.Apply(company);
+        }
+    }
+#endregion
 
     public static Good CreateInstance(  string good_name, 
                                         PriceBand price_band=null,

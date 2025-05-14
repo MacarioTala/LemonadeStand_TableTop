@@ -1,5 +1,6 @@
 
 using NUnit.Framework;
+using UnityEngine;
 
 [TestFixture]
 public class GoodTests
@@ -65,4 +66,33 @@ public class GoodTests
         Assert.AreEqual(expected_price_increment_rate, lemon.Get_price_increment_rate());
         Assert.AreEqual(expected_rarity, lemon.GetRarity());
     }
+#region Good Effects
+    [Test]
+    public void ApplyingEnnuiReducingGoodEffectReducesEnnui()
+    {
+        // Arrange
+        var company = CompanyBuilder.For<PopulationCompany>()
+            .Named("Test Company")
+            .WithEnnui(.99f)
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .Build();
+        var goodEffect = GoodEffectBuilder.Create()
+            .Named("Ennui Reducer")
+            .DescribedAs("Reduces ennui by 0.1")
+            .WithEffect(new MetricModifier<PopulationCompany>(
+                c => c.Ennui,
+                (c, newValue) => c.Ennui = newValue))
+            .WithEffectMagnitude(-0.1f);
+        var whoopeeCushion = ScriptableObject.CreateInstance<Good>();
+        whoopeeCushion.AddEffect(goodEffect);
+        var expectedEnnui = company.Ennui - 0.1f;
+
+        // Act
+        whoopeeCushion.ApplyEffects(company);
+        var actualEnnui = company.Ennui;
+
+        // Assert
+        Assert.AreEqual(expectedEnnui, actualEnnui);
+    }
+#endregion
 }

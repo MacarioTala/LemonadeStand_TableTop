@@ -55,6 +55,19 @@ public class CompanyBuilder<T> where T : Company
         return this;
     }
 
+    public CompanyBuilder<T> WithEnnui(float ennui)
+    {
+        if (companyToReturn is PopulationCompany populationCompany)
+        {
+            populationCompany.Ennui = ennui;
+        }
+        else
+        {
+            Debug.LogError("Company is not a PopulationCompany.");
+        }
+        return this;
+    }
+
     public CompanyBuilder<T> Demanding(List<(Good good, DemandData demandData)> demands)
     {
         if (companyToReturn is PopulationCompany populationCompany)
