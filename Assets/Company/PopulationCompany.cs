@@ -35,7 +35,6 @@ private readonly Dictionary<Good, DemandData> _demand = new();
     {
         return _demand;
     }
-
     public int GetDemandForGood(Good good,float factor)
     {
         if (_demand.TryGetValue(good, out var demandData))
@@ -67,18 +66,7 @@ private readonly Dictionary<Good, DemandData> _demand = new();
         public static CompanyBuilder<PopulationCompany> Create()
                              => CompanyBuilder.For<PopulationCompany>();
     }
-#region Interactions With Market
-    public LemonadeStandResultObject CreateOrders(Market market)
-    {
-        var goodsAvailable = market.GetInventory().GetInventoryEntries();
 
-        foreach (var inventoryEntry in goodsAvailable)
-        {
-            
-        }
-        return LemonadeStandResultObject.Failure("Not implemented");
-    }
-#endregion
 #region Consumption
     public void Consume()
     {

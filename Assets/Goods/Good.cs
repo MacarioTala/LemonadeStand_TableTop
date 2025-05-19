@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Good", menuName = "LemonadeStandAssets/Good", order = 1)]
@@ -30,6 +31,28 @@ public class Good : ScriptableObject
     [SerializeField] private readonly List<Good> _substitute_goods = new();
 #region Effects
     List<GoodEffect> _effects = new();
+
+    public List<MetricEnum> AffectsMetrics()
+    {
+        return (from metric in _effects
+                      select metric.AffectsMetric).ToList();
+    }
+
+    public ReductionResult ReducesMetric(MetricEnum metric)
+    {
+        var isReducing = _effects.Any(effect => effect.AffectsMetric == metric && effect.IsReduce);
+        var reductionAmount = _effects
+            .Where(effect => effect.AffectsMetric == metric && effect.IsReduce)
+            .FirstOrDefault()
+            ?.Magnitude ?? 0f;
+        return new ReductionResult(isReducing, reductionAmount);
+    }
+
+    public bool HasEffectOn(MetricEnum metric)
+    {
+        return _effects.Any(effect => effect.AffectsMetric == metric);
+    }
+
     public void AddEffect(GoodEffect effect)
     {
         _effects.Add(effect);
@@ -172,5 +195,18 @@ public class PriceBand{
         min = lower_bound;
         max = upper_bound;
     }
+}
+
+public class ReductionResult
+{
+    public readonly bool IsReducing;
+    public readonly float ReductionAmount;
+    public ReductionResult(bool isReducing, float reductionAmount)
+    {
+        IsReducing = isReducing;
+        ReductionAmount = reductionAmount;
+    }
+
+    public float By()=> IsReducing ? ReductionAmount : 0f;
 }
 

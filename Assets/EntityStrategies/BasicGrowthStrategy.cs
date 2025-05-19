@@ -3,6 +3,9 @@ using System.Linq;
 
 public class BasicGrowthStrategy : iStrategy
 {
+    //Manifestation of preferences
+    float _aggressionLevel = 0.2f;
+    public float GetAggressionLevel() => _aggressionLevel;
     public List<ActionContext> GenerateActionContexts(iCompany company)
     {
         throw new System.NotImplementedException();
@@ -59,5 +62,11 @@ public class BasicGrowthStrategy : iStrategy
     public void PerformStrategy(iCompany company)
     {
         throw new System.NotImplementedException();
+    }
+
+    public LemonadeStandResultObject SetAggressionLevel(float aggressionLevel)
+    {
+        _aggressionLevel = aggressionLevel;
+        return LemonadeStandResultObject.Success();
     }
 }

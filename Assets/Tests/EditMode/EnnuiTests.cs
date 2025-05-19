@@ -1,11 +1,82 @@
+using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEngine;
 
 [TestFixture]
 public class EnnuiTests
 {
+   Good Lemonade;
+   Goal ReduceEnnuiGoal;
+   [SetUp]
+   public void Setup()
+   {
+      Lemonade = ScriptableObject.CreateInstance<Good>();
+      var reduceEnnuiEffect = new GoodEffect()
+      .Named("Reduce Ennui")
+      .DescribedAs("Reduces ennui")
+      .Affecting(MetricEnum.Ennui)
+      .WithEffectMagnitude(-.40f)
+      .WithEffect(new MetricModifier<PopulationCompany>(
+                c => c.Ennui,
+                (c, newValue) => c.Ennui = newValue));
+      Lemonade.AddEffect(reduceEnnuiEffect);
+
+      ReduceEnnuiGoal = new Goal()
+                .Named("Reduce Ennui")
+                .DescribedAs("Reduce the ennui of the population to 0")
+                .WithGoalEvaluator(c => c is PopulationCompany populationCompany && populationCompany.Ennui == 0)
+                .WithGoalInitializer((c, g) => g.SetOriginalValue("Ennui", ((PopulationCompany)c).Ennui))
+                .Affecting(MetricEnum.Ennui)
+                .WithGoalValue(.5f);
+   }
+   
    [Test]
    public void PopulationsThatMaxOutOnEnnuiCollapse()
    {
     throw new System.NotImplementedException("Test not implemented yet");
    }
-}
+#region ReduceEnnuiStrategy
+   [Test]
+   public void RE_CalculateBidPerCapitaGeneratesBid()
+   {
+      // Arrange
+      const int initialPopulation = 100;
+      const float initialEnnui = .99f;
+      var demandForLemonade = new DemandData()
+      {
+         MinDemand = 0,
+         MaxDemand = 100
+      };
+      var listOfDemands = new Dictionary<Good,DemandData>()
+      {
+         {Lemonade, demandForLemonade}
+      };
+
+      var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                     .WithAggressionLevel(.5f)
+                     .Build();
+                  
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Test Population")
+         .WithInitialCash(1000)
+         .WithEnnui(initialEnnui)
+         .WithPopulation(initialPopulation)
+         .WithBehaviourStrategy(strategy)
+         .Demanding(listOfDemands)
+         .Build();
+      var ennuiReducingEffect = Lemonade.ReducesMetric(MetricEnum.Ennui).By();
+
+      // Act
+      strategy.GenerateGoals(population);
+      strategy.RemoveGoals(ReduceEnnuiGoal.Name, population);
+      population.AddGoal(ReduceEnnuiGoal);
+      var ennuiToZeroGoal = population.Goals[0];
+      var actualBid = strategy.CalculateBidPerCapita(Lemonade, population, ennuiToZeroGoal);
+      
+      // Assert
+      Assert.That(actualBid, Is.GreaterThan(0));
+      Debug.Log($"Bid per capita for {Lemonade.GoodName} is {actualBid}");
+      Debug.Log($"Ennui: {initialEnnui} → {ennuiToZeroGoal.MetricTarget} | Impact: {ennuiReducingEffect:F5}");
+   }
+#endregion
+} 

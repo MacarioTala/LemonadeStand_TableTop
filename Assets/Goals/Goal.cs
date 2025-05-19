@@ -7,6 +7,10 @@ public class Goal
     public string Description { get; set; }
     public Func<iCompany, bool> IsGoalMet { get; set; }
     public Action<Company,Goal> InitializeGoal { get; set; }
+    public MetricEnum AffectsMetric { get; set; }
+    public float MetricTarget { get; set; }
+    public bool IsReduce=true;
+
     public bool IsAchieved=false;
 
     public Dictionary<string,object> OriginalValues {get;private set;} = new ();
@@ -86,6 +90,17 @@ public static class GoalBuilder
     public static Goal WithGoalInitializer(this Goal goal, Action<Company,Goal> goalInitializer)
     {
         goal.InitializeGoal = goalInitializer;
+        return goal;
+    }
+    public static Goal Affecting(this Goal goal, MetricEnum metric)
+    {
+        goal.AffectsMetric = metric;
+        return goal;
+    }
+
+    public static Goal WithGoalValue(this Goal goal, float value)
+    {
+        goal.MetricTarget = value;
         return goal;
     }
 }

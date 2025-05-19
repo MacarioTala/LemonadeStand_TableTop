@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
+    #pragma warning disable 0649//Field only used in inspector
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button loadGameButton;
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button settingsButton;
-    Animator mainMenuAnimator;
     [SerializeField] GameObject mainMenu;
-
+    #pragma warning restore 0649
+    Animator mainMenuAnimator;
     private void Start()
     {
         newGameButton.onClick.AddListener(StartNewGame);

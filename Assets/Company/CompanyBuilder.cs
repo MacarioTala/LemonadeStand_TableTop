@@ -68,14 +68,14 @@ public class CompanyBuilder<T> where T : Company
         return this;
     }
 
-    public CompanyBuilder<T> Demanding(List<(Good good, DemandData demandData)> demands)
+    public CompanyBuilder<T> Demanding(Dictionary<Good, DemandData> demands)
     {
         if (companyToReturn is PopulationCompany populationCompany)
         {
-            foreach (var (good, demandData) in demands)
-            {
-                populationCompany.SetDemand(good, demandData);
-            }
+            foreach (var demand in demands)
+                {
+                    populationCompany.SetDemand(demand.Key, demand.Value);
+                }
         }
         else
         {

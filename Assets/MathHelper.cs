@@ -4,6 +4,12 @@ using System.Linq;
 
 public static class MathHelper
 {
+    public static float EstimatePeriodsToFinal(float initialValue, float targetValue, float rate)
+    {
+        if (rate <=0 || rate >= 1) return float.PositiveInfinity;
+        if (targetValue <= 0) targetValue = 0.01f;
+        return (float)(Math.Log(targetValue/initialValue) / Math.Log(1 - rate));
+    }
     public static float GetSingleCoeffientCubicOutput(float ratio, float coefficient)
     {
         /// <summary>
