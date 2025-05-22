@@ -30,4 +30,5 @@ public enum ResultTypeEnum
     ElasticityNotFound = 24,
     CompanyNotFound = 25,
     NumericRangeExceeded = 26,
+    MarketAlreadySet = 27,
 }

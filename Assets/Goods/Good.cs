@@ -22,7 +22,7 @@ public class Good : ScriptableObject
     private PriceBand PriceBand;
 
     public int ExpiresAfterPeriods { get; set; } = int.MaxValue;
-    private RarityEnum Rarity;
+    private RarityEnum _rarity;
     
     public bool IsProducedGood { get; set; } = false;
     public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
@@ -85,7 +85,7 @@ public class Good : ScriptableObject
     {
         this.GoodName = good_name;
         PriceBand = price_band;
-        Rarity = rarity;
+        _rarity = rarity;
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
         Set_initial_price_thresholds();
@@ -95,9 +95,10 @@ public class Good : ScriptableObject
     public PriceBand Get_price_band() => PriceBand;
     public decimal GetPrice() => Price;
     
-    internal void Set_price(decimal new_price) => Price = new_price;
+    internal void SetPrice(decimal new_price) => Price = new_price;
 
-    public RarityEnum GetRarity() => Rarity;
+    public RarityEnum GetRarity() => _rarity;
+    public void SetRarity(RarityEnum rarity) => _rarity = rarity;
     public decimal Get_price_increment_rate() => price_increment_rate;
 
     private decimal Generate_initial_price() 
@@ -123,16 +124,16 @@ public class Good : ScriptableObject
         const int rare_decrease_threshold = 10;
         const int very_rare_increase_threshold = 5;
         const int very_rare_decrease_threshold = 1;
-        if(Rarity==RarityEnum.Common){
+        if(_rarity==RarityEnum.Common){
             Set_price_thresholds(common_increase_threshold, common_decrease_threshold);
         }
-        if(Rarity==RarityEnum.Uncommon){
+        if(_rarity==RarityEnum.Uncommon){
             Set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
         }
-        if(Rarity==RarityEnum.Rare){
+        if(_rarity==RarityEnum.Rare){
             Set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
         }
-        if(Rarity==RarityEnum.Very_Rare){
+        if(_rarity==RarityEnum.Very_Rare){
             Set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
         }
     }
@@ -143,16 +144,16 @@ public class Good : ScriptableObject
         const decimal uncommon_price_increment_rate = 0.15m;
         const decimal rare_price_increment_rate = 0.3m;
         const decimal very_rare_price_increment_rate = 0.4m;
-        if(Rarity==RarityEnum.Common){
+        if(_rarity==RarityEnum.Common){
             price_increment_rate = common_price_increment_rate;
         }
-        if(Rarity==RarityEnum.Uncommon){
+        if(_rarity==RarityEnum.Uncommon){
             price_increment_rate = uncommon_price_increment_rate;
         }
-        if(Rarity==RarityEnum.Rare){
+        if(_rarity==RarityEnum.Rare){
             price_increment_rate = rare_price_increment_rate;
         }
-        if(Rarity==RarityEnum.Very_Rare){
+        if(_rarity==RarityEnum.Very_Rare){
             price_increment_rate = very_rare_price_increment_rate;
         }
     }
@@ -209,4 +210,3 @@ public class ReductionResult
 
     public float By()=> IsReducing ? ReductionAmount : 0f;
 }
-

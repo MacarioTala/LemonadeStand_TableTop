@@ -11,7 +11,7 @@ public class GoalTests
     {
         //arrange
         var company = Company.Factory.Create("Test Company", CompanyLevelEnum.Beginner, new BasicGrowthStrategy());
-        company.companyStrategy.GenerateGoals(company);
+        company.GetStrategy().GenerateGoals(company);
         var expected_goal = new Goal("Double Initial Cash",
                                       "Double the initial cash of the company",
                                       null,
@@ -34,7 +34,7 @@ public class GoalTests
                     .Named("Test Company")
                     .Build();
 
-        company.companyStrategy.GenerateGoals(company);
+        company.GetStrategy().GenerateGoals(company);
         var expected_goal = new Goal("Have 10 Lemonade",
                                       "Have 10 Lemonade in stock",
                                       null,
@@ -61,7 +61,7 @@ public class GoalTests
             .Build();
 
         // Act
-        company.companyStrategy.GenerateGoals(company);
+        company.GetStrategy().GenerateGoals(company);
         var goal = company.Goals.FirstOrDefault(g => g.Name == "Reduce Ennui");
 
         // Assert

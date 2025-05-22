@@ -79,4 +79,14 @@ public class DummyCompany : iCompany
     {
         Debug.Log("Null cash transaction for dummy company");
     }
+
+    public void SetStrategy(iStrategy strategy)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public iStrategy GetStrategy()
+    {
+        throw new System.NotImplementedException();
+    }
 }

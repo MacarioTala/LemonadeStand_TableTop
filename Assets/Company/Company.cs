@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-public class Company : ScriptableObject, iCompany
+public class Company : ScriptableObject, iCompany, iMarketParticipant
 {
 #region Identity and Initialization
     //Fields to get around Unity's limitation of not having automatic backing properties.
@@ -16,13 +16,23 @@ public class Company : ScriptableObject, iCompany
     public bool IsBankrupt() => cash <= 0;
 
     public bool IsPlayer {get;set;} = false;
-
+    private Market marketCompanyIsIn;
+    public Market GetMarket() => marketCompanyIsIn;
+    public LemonadeStandResultObject SetMarket(Market market) {
+         if(marketCompanyIsIn != null)
+         {
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.MarketAlreadySet, "Market already set");
+         }
+         marketCompanyIsIn = market;
+         
+         return LemonadeStandResultObject.Success();
+         }
     protected Company(){}
     internal void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
         Name = companyName;
         companyLevel = company_level;
-        companyStrategy = strategy;
+        _companyStrategy = strategy;
 
         //setup
         SetInitialCash();
@@ -157,8 +167,9 @@ public class Company : ScriptableObject, iCompany
     public void ExpireGoods(int period) => inventory.ExpireGoods(period);
 #endregion    
 #region Goals and strategies
-    public iStrategy companyStrategy {get; private set;}= null;
-    public void SetStrategy(iStrategy strategy) => companyStrategy = strategy;
+    private iStrategy _companyStrategy = null;
+    public iStrategy GetStrategy() => _companyStrategy;
+    public void SetStrategy(iStrategy strategy) => _companyStrategy = strategy;
     
     public List<Goal> Goals {get;set;} = new();
 
@@ -248,13 +259,13 @@ public class Company : ScriptableObject, iCompany
    
     private LemonadeStandResultObject IsValidOrder(ActionContext context)
     {
-        var contextValidationResult = context.IsContextValid();
+        var contextValidationResult = context.HasSubmittingCompany();
         if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
             return contextValidationResult;
             
-        var contextOrderValidationResult = context.DoesContextContainValidTrade();
+        var contextOrderValidationResult = context.ContainsValidTrade();
         if ( !contextOrderValidationResult.Equals(LemonadeStandResultObject.Success()) )
-            return context.DoesContextContainValidTrade();
+            return context.ContainsValidTrade();
         
         var orderValidationResult = context.TradeToSubmit.IsOrderValid();
         if (!orderValidationResult.Equals(LemonadeStandResultObject.Success()) ) 

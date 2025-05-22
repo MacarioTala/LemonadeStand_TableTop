@@ -77,7 +77,7 @@ public static class MarketBuilder
 
     public static Market WithMarketStrategy(this Market market, iStrategy strategy)
     {
-        market.SetMarketStrategy(strategy);
+        market.SetStrategy(strategy);
         return market;
     }
 

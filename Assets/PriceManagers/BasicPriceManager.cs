@@ -48,6 +48,6 @@ public class BasicPriceManager : iPriceManager, iPriceSetter
 
      public void SetPrice (Good good, decimal new_price)
         {
-            good.Set_price(new_price);
+            good.SetPrice(new_price);
         }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -10,7 +11,12 @@ public class EnnuiTests
    [SetUp]
    public void Setup()
    {
-      Lemonade = ScriptableObject.CreateInstance<Good>();
+      Lemonade = new GoodBuilder()
+                  .Named("Lemonade")
+                  .WithRarity(RarityEnum.Uncommon)
+                  .Costing(5m)
+                  .WhichIsProducedGood()
+                  .Build();
       var reduceEnnuiEffect = new GoodEffect()
       .Named("Reduce Ennui")
       .DescribedAs("Reduces ennui")
@@ -71,12 +77,168 @@ public class EnnuiTests
       strategy.RemoveGoals(ReduceEnnuiGoal.Name, population);
       population.AddGoal(ReduceEnnuiGoal);
       var ennuiToZeroGoal = population.Goals[0];
-      var actualBid = strategy.CalculateBidPerCapita(Lemonade, population, ennuiToZeroGoal);
+      var actualBid = strategy.CalculateBidPerCapita(Lemonade, population, ennuiToZeroGoal).Bid;
       
       // Assert
-      Assert.That(actualBid, Is.GreaterThan(0));
+      Assert.That(actualBid, Is.GreaterThan(0m));
       Debug.Log($"Bid per capita for {Lemonade.GoodName} is {actualBid}");
       Debug.Log($"Ennui: {initialEnnui} → {ennuiToZeroGoal.MetricTarget} | Impact: {ennuiReducingEffect:F5}");
    }
+
+   [Test]
+   public void SuperiorGoodGetsHigherAllocation()
+   {
+      //Arrange
+      const int initialPopulation = 100;
+      const float initialEnnui = .99f;
+      Good FruitPunch = new GoodBuilder()
+         .Named("Fruit Punch")
+         .WithRarity(RarityEnum.Uncommon)
+         .Costing(5m)
+         .WhichIsProducedGood()
+         .Build();
+      
+      var FruitPunchEffect = new GoodEffect()
+      .Named("Fruit Punch Effect")
+      .Affecting(MetricEnum.Ennui)
+      .WithEffectMagnitude(-.10f)
+      .WithEffect(new MetricModifier<PopulationCompany>(
+                c => c.Ennui,
+                (c, newValue) => c.Ennui = newValue));
+      FruitPunch.AddEffect(FruitPunchEffect);
+
+      var demandForLemonade = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+
+      var demandForFruitPunch = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+
+      var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade},
+              {FruitPunch,demandForFruitPunch}
+            };
+      var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                     .WithAggressionLevel(.5f)
+                     .Build();
+                  
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Test Population")
+         .WithInitialCash(1000)
+         .WithEnnui(initialEnnui)
+         .WithPopulation(initialPopulation)
+         .WithBehaviourStrategy(strategy)
+         .Demanding(listOfDemands)
+         .Build();
+
+      strategy.GenerateGoals(population);
+
+      //Act
+      var ActualDemand = strategy.GenerateBidAskSpreads(population);
+      var LemonAllocation = ActualDemand.Where(d => d.Key == Lemonade).FirstOrDefault().Value.Allocation;
+      var FruitPunchAllocation = ActualDemand.Where(d => d.Key == FruitPunch).FirstOrDefault().Value.Allocation;
+
+      //Assert
+      Assert.IsTrue(LemonAllocation > FruitPunchAllocation);
+   }
+   [Test]
+   public void GenerateBidAskSpreadsAllocationSumsToOneIfThereIsOnlyOneGood()
+   {
+      //Arrange
+      const int initialPopulation = 100;
+      const float initialEnnui = .99f;
+
+      var demandForLemonade = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+
+      var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade}
+            };
+      
+      var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                     .WithAggressionLevel(.5f)
+                     .Build();
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Test Population")
+         .WithInitialCash(1000)
+         .WithEnnui(initialEnnui)
+         .WithPopulation(initialPopulation)
+         .WithBehaviourStrategy(strategy)
+         .Demanding(listOfDemands)
+         .Build();
+      strategy.GenerateGoals(population);
+      const decimal expectedAllocation = 1.0m;
+      //Act
+      var ActualDemand = strategy.GenerateBidAskSpreads(population);
+      var ActualAllocation = ActualDemand.Sum(d => d.Value.Allocation);
+      //Assert
+      Assert.That(ActualAllocation, Is.EqualTo(expectedAllocation).Within(0.01m));
+   }
+
+   [Test]
+   public void GenerateBidAskSpreadsAllocationSumsToOneIfThereAreMultipleGoods()
+   {
+      //Arrange
+      const int initialPopulation = 100;
+      const float initialEnnui = .99f;
+
+      Good FruitPunch = new GoodBuilder()
+         .Named("Fruit Punch")
+         .WithRarity(RarityEnum.Uncommon)
+         .Costing(5m)
+         .WhichIsProducedGood()
+         .Build();
+
+      var demandForLemonade = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+
+      var demandForFruitPunch = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+      var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade},
+              {FruitPunch,demandForFruitPunch}
+            };
+      var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                     .WithAggressionLevel(.5f)
+                     .Build();
+
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Test Population")
+         .WithInitialCash(1000)
+         .WithEnnui(initialEnnui)
+         .WithPopulation(initialPopulation)
+         .WithBehaviourStrategy(strategy)
+         .Demanding(listOfDemands)
+         .Build();
+      strategy.GenerateGoals(population);
+      const decimal expectedAllocation = 1.0m;
+
+      //Act
+      var ActualDemand = strategy.GenerateBidAskSpreads(population);
+      var ActualAllocation = ActualDemand.Sum(d => d.Value.Allocation);
+      
+      //Assert
+      Assert.That(ActualAllocation, Is.EqualTo(expectedAllocation).Within(0.01m));
+   }
+
+      
+   
 #endregion
 } 

@@ -18,6 +18,8 @@ public interface iCompany
         List<Goal> Goals{get;set;}
         void CheckCompanyGoals();
         void CompleteGoal(Goal goal);
+        void SetStrategy(iStrategy strategy);
+        iStrategy GetStrategy();
     #endregion
     
     #region Inventory Management

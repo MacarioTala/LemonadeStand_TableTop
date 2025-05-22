@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+
 [assembly: InternalsVisibleTo("Tests")]
 public class ReduceEnnuiStrategy : iStrategy
 {
     //Manifestation of preferences
-    readonly Dictionary<Good,(decimal bid, decimal ask)> _bidAskSpreads = new();
+    readonly Dictionary<Good,BidAskSpread> _bidAskSpreads = new();
     float _aggressionLevel = 0.2f;
     public float GetAggressionLevel() => _aggressionLevel;
     public LemonadeStandResultObject SetAggressionLevel(float aggressionLevel)
@@ -21,28 +23,55 @@ public class ReduceEnnuiStrategy : iStrategy
         throw new NotImplementedException();
     }
 
-    public Dictionary<Good, (decimal bid, decimal ask)> GetBidAskSpreads()
+    public Dictionary<Good, BidAskSpread> GetBidAskSpreads()
                         =>_bidAskSpreads;
+    
 
-    public void GenerateBidAskSpreads(iCompany company)
+    public Dictionary<Good,BidAskSpread> GenerateBidAskSpreads(iCompany company)
     {
         if (company is PopulationCompany populationCompany)
         {
-            var demand = populationCompany.GetDemand();
+            var demand = populationCompany.GetDemand()
+                .Where(x=> x.Key.AffectsMetrics().Contains(MetricEnum.Ennui));
             var goal = populationCompany.Goals.Find(g => g.Name == "Reduce Ennui");
 
-            foreach (var good in demand.Keys)
+            foreach (var row in demand)
             {
-                if(good.AffectsMetrics().Contains(MetricEnum.Ennui))
-                {
-                    var bid = CalculateBidPerCapita(good, populationCompany,goal);
-                    // var ask = CalculateAsk(demandData, populationCompany);
-                    // AddOrReplaceBidAskSpread(good, bid, ask);
-                }
+                var spread = CalculateBidPerCapita(row.Key, populationCompany,goal);
+                spread.Ask = 0m;//for now, the population is not selling anything
+                AddOrReplaceBidAskSpread(row.Key,spread);
             }
+            AllocateBudget(company);
         };
+        return _bidAskSpreads;
     }
-    internal decimal CalculateBidPerCapita(Good good, PopulationCompany populationCompany,Goal goal)
+
+    private void AllocateBudget(iCompany company)
+    {
+        var totalCash = company.GetCash();
+        var goodsToAllocateBudgetTo = _bidAskSpreads.ToList();
+
+        var totalScore = goodsToAllocateBudgetTo.Sum(x => x.Value.GoodQuality);
+        var allocations = goodsToAllocateBudgetTo
+            .Select(x => {
+                            var good = x.Key;
+                            var proportion = x.Value.GoodQuality/totalScore;
+                            var updatedSpread = 
+                                    new BidAskSpread(
+                                        bid: x.Value.Bid,
+                                        goodQuality: x.Value.GoodQuality,
+                                        ask: x.Value.Ask,
+                                        allocation: (float)proportion);
+                            return (Good: good, Spread: updatedSpread);
+                         }
+                ).ToList(); 
+
+        foreach (var allocation in allocations)
+        {
+            _bidAskSpreads[allocation.Good] = allocation.Spread;
+        }
+    }
+    internal BidAskSpread CalculateBidPerCapita(Good good, PopulationCompany populationCompany,Goal goal)
     {
         //Ability
         var availableCashPerCapita = populationCompany.GetCash()/100;
@@ -57,9 +86,9 @@ public class ReduceEnnuiStrategy : iStrategy
         var turnsToFinal = MathHelper.EstimatePeriodsToFinal(ennui, targetEnnui, ennuiReductionRate);
         var goodQuality = 1f/(1f + turnsToFinal);
 
-        var bid = willingnessToSpend * (decimal)goodQuality;
+        var bid = Math.Clamp(willingnessToSpend * (decimal)goodQuality, 0.01m, availableCashPerCapita);
 
-        return Math.Clamp(bid, 0.01m, availableCashPerCapita);
+        return new BidAskSpread(bid: bid,goodQuality: goodQuality,ask: 0m,allocation: 0f);
     }
 
     public void GenerateGoals(iCompany company)
@@ -109,13 +138,37 @@ public class ReduceEnnuiStrategy : iStrategy
         throw new NotImplementedException("Waiting for goods to have effects on ennui");
     }
 
+    private void CreateBuys(Company company,int period)
+    {
+        foreach(var spread in _bidAskSpreads)
+        {
+            var good = spread.Key;
+            var bid = spread.Value.Bid;
+            var cash = company.GetCash();
+
+            #region prioritize goods to bid for
+            var quantity = (int)Math.Floor(cash * (decimal)spread.Value.Allocation);
+            #endregion
+
+            var order = new Order(company,null,good,quantity,bid);
+        
+            var context = new ActionContextBuilder()
+                .WithAction(ActionEnum.QueueTradeBuy)
+                .ForMarket(company.GetMarket())
+                .ForPeriod(period)
+                .WithTrade(order)
+                .Build();
+            company.QueueOrder(context);
+        }
+    }
+
     #region Interactions With Market
 
-    public void AddOrReplaceBidAskSpread(Good good, decimal bid, decimal ask)
+    public void AddOrReplaceBidAskSpread(Good good, BidAskSpread bidAskSpread)
     {
-        _bidAskSpreads[good] = (bid, ask);
+        _bidAskSpreads[good] = bidAskSpread;
     }
-    public (decimal bid, decimal ask)? GetBidAskSpreadForGood(Good good)
+    public BidAskSpread? GetBidAskSpreadForGood(Good good)
     {
         if (_bidAskSpreads.TryGetValue(good, out var spread))
         {
@@ -139,32 +192,5 @@ public class ReduceEnnuiStrategy : iStrategy
     public void PerformStrategy(ActionContext context)
     {
         throw new NotImplementedException();
-    }
-}
-
-public class StrategyBuilder<T> where T : iStrategy, new()
-{
-    private T _strategyToReturn;
-
-    public StrategyBuilder(T strategy) =>
-        _strategyToReturn = strategy;
-    
-    public StrategyBuilder()
-    {
-        _strategyToReturn = new T();
-    }
-    public T Build()=> _strategyToReturn;
-    
-    public StrategyBuilder<T> WithAggressionLevel(float aggressionLevel)
-    {
-        _strategyToReturn.SetAggressionLevel(aggressionLevel);
-        return this;
-    }
-}
-public static class StrategyBuilder
-{
-    public static StrategyBuilder<T> For <T>() where T : iStrategy, new()
-    {
-        return new StrategyBuilder<T>();
     }
 }

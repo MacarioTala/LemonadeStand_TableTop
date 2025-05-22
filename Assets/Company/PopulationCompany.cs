@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class PopulationCompany : Company
 {
+
 #region Demographics
     private int _population;
 
@@ -35,6 +36,14 @@ private readonly Dictionary<Good, DemandData> _demand = new();
     {
         return _demand;
     }
+    public DemandData GetDemandFor(Good good)
+    {
+        if (_demand.TryGetValue(good, out var demandData))
+        {
+            return demandData;
+        }
+        return null;
+    }
     public int GetDemandForGood(Good good,float factor)
     {
         if (_demand.TryGetValue(good, out var demandData))
@@ -51,11 +60,6 @@ private readonly Dictionary<Good, DemandData> _demand = new();
     public void SetDemand(Good good, DemandData demandData)
     {
         _demand[good] = demandData;
-    }
-
-    private bool IsDemanded(Good good)
-    {
-        return _demand.ContainsKey(good);
     }
 
 #endregion

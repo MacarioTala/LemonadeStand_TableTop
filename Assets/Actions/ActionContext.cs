@@ -35,12 +35,12 @@ public class ActionContext
     public decimal BidToSubmit;
     public decimal AskToSubmit;
 
-    public LemonadeStandResultObject IsContextValid()
+    public LemonadeStandResultObject HasSubmittingCompany()
     {
         if (SubmittingCompany == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasNoSubmittingCompany, "Order has no submitting company");
         return LemonadeStandResultObject.Success();
     }
-    public LemonadeStandResultObject DoesContextContainValidTrade()
+    public LemonadeStandResultObject ContainsValidTrade()
     {
         if (TradeToSubmit == null) return LemonadeStandResultObject.Failure(ResultTypeEnum.ContextHasNoTrade, "Context has no trade");
         return LemonadeStandResultObject.Success();
@@ -67,9 +67,56 @@ public class ActionContext
     }
 }
 
-public class ContextException : System.Exception
+public class ContextException : Exception
 {
     public ContextException(string message) : base(message)
     {
+    }
+}
+
+public class ActionContextBuilder
+{
+    private ActionContext _contextToReturn;
+
+    public ActionContextBuilder()
+    {
+        _contextToReturn = new ActionContext();
+    }
+
+    public ActionContextBuilder WithAction(ActionEnum action)
+    {
+        _contextToReturn.Action = action;
+        return this;
+    }
+
+    public ActionContextBuilder ForMarket(Market market)
+    {
+        _contextToReturn.MarketToSubmitTo = market;
+        return this;
+    }
+    public ActionContextBuilder ForPeriod(int period)
+    {
+        _contextToReturn.Period = period;
+        return this;
+    }
+
+    public ActionContextBuilder WithTrade(Order trade)
+    {
+        _contextToReturn.TradeToSubmit = trade;
+        return this;
+    }
+
+    public ActionContext Build()
+    {
+        if (_contextToReturn.HasSubmittingCompany() != LemonadeStandResultObject.Success())
+        {
+            throw new ContextException("Submitting company is not set");
+        }
+        if (_contextToReturn.ContainsValidTrade() != LemonadeStandResultObject.Success())
+        {
+            throw new ContextException("Trade is not valid");
+        }
+
+        return _contextToReturn;
     }
 }

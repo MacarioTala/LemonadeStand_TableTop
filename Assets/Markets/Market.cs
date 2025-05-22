@@ -55,6 +55,7 @@ public class Market : ScriptableObject, iCompany
         if(!_marketParticipants.Contains(marketParticipant))
         {
             _marketParticipants.Add(marketParticipant);
+            marketParticipant.SetMarket(this);
         }
         else
         {
@@ -122,8 +123,8 @@ public class Market : ScriptableObject, iCompany
     //Goals
     public List<Goal> Goals {get;set;}
     private iStrategy _marketStrategy;
-    public iStrategy GetMarketStrategy() => _marketStrategy;
-    public void SetMarketStrategy(iStrategy strategy) => _marketStrategy = strategy;
+    public iStrategy GetStrategy() => _marketStrategy;
+    public void SetStrategy(iStrategy strategy) => _marketStrategy = strategy;
     
 #region Market Events
     public List<iMarketEvent> PotentialMarketEvents { get; } = new();
@@ -351,9 +352,9 @@ public class Market : ScriptableObject, iCompany
     }
      public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
-        var contextValidationResult = context.DoesContextContainValidTrade();
+        var contextValidationResult = context.ContainsValidTrade();
         if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
-            return context.DoesContextContainValidTrade();
+            return context.ContainsValidTrade();
         
         var queueResult = _tradeProcessor.QueueOrder(context);
         if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
