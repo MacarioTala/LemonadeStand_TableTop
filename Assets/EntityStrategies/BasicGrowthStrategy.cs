@@ -6,10 +6,6 @@ public class BasicGrowthStrategy : iStrategy
     //Manifestation of preferences
     float _aggressionLevel = 0.2f;
     public float GetAggressionLevel() => _aggressionLevel;
-    public List<ActionContext> GenerateActionContexts(iCompany company)
-    {
-        throw new System.NotImplementedException();
-    }
 
     public void GenerateGoals(iCompany company)
     {
@@ -59,7 +55,7 @@ public class BasicGrowthStrategy : iStrategy
         }
     }
 
-    public void PerformStrategy(iCompany company)
+    public void PerformStrategy(iCompany company, int period)
     {
         throw new System.NotImplementedException();
     }

@@ -8,6 +8,11 @@ public class EnnuiTests
 {
    Good Lemonade;
    Goal ReduceEnnuiGoal;
+   int Period = 0;
+
+   Market TestMarket;
+   iDemandStrategy TestDemandStrategy;
+
    [SetUp]
    public void Setup()
    {
@@ -34,6 +39,10 @@ public class EnnuiTests
                 .WithGoalInitializer((c, g) => g.SetOriginalValue("Ennui", ((PopulationCompany)c).Ennui))
                 .Affecting(MetricEnum.Ennui)
                 .WithGoalValue(.5f);
+      
+      TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+      TestMarket = Market.Factory.CreateStarterMarket("Test Market",CompanyLevelEnum.Market,TestDemandStrategy);
+         
    }
    
    [Test]
@@ -233,11 +242,91 @@ public class EnnuiTests
       //Act
       var ActualDemand = strategy.GenerateBidAskSpreads(population);
       var ActualAllocation = ActualDemand.Sum(d => d.Value.Allocation);
-      
+
       //Assert
       Assert.That(ActualAllocation, Is.EqualTo(expectedAllocation).Within(0.01m));
    }
 
+   [Test]
+   public void CreateBuysReturnsBuysThatDoNotExceedCash()
+   {
+      //Arrange
+      const int initialPopulation = 100;
+      const float initialEnnui = .99f;
+
+      var demandForLemonade = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+      var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade}
+            };
+      var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                     .WithAggressionLevel(.5f)
+                     .Build();
+                  
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Test Population")
+         .WithInitialCash(1000)
+         .WithEnnui(initialEnnui)
+         .WithPopulation(initialPopulation)
+         .WithBehaviourStrategy(strategy)
+         .Demanding(listOfDemands)
+         .Build();
+      strategy.GenerateGoals(population);
+      
+      //Act
+      var ActualDemand = strategy.GenerateBidAskSpreads(population);
+      var buys = strategy.CreateBuys(population, Period);
+      var totalCostOfBuys = buys.Sum(b => b.TradeToSubmit.Price)* buys.Sum(c => c.TradeToSubmit.Quantity);
+
+      //Assert
+      Assert.That(totalCostOfBuys, Is.LessThanOrEqualTo(population.GetCash()),
+         $"Total cost of buys {totalCostOfBuys} exceeds available cash {population.GetCash()}");
+      Debug.Log($"Total cost of buys: {totalCostOfBuys}, Available cash: {population.GetCash()}");
+   }
+   [Test]
+   public void PerformStrategySubmitsOrdersToMarket()
+   {
+      //Arrange
+      const int initialPopulation = 100;
+      const float initialEnnui = .99f;
+
+      var demandForLemonade = new DemandData()
+      {
+         MinDemand=0,
+         MaxDemand=100
+      };
+      var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade}
+            };
+      var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                     .WithAggressionLevel(.5f)
+                     .Build();
+                  
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Test Population")
+         .WithInitialCash(1000)
+         .WithEnnui(initialEnnui)
+         .WithPopulation(initialPopulation)
+         .WithBehaviourStrategy(strategy)
+         .Demanding(listOfDemands)
+         .Build();
+      strategy.GenerateGoals(population);
+
+      //Act
+      TestMarket.RegisterMarketParticipant(population);
+      strategy.PerformStrategy(population, Period);
+      var actualOrders = TestMarket.GetOrdersSentToMarket();
+
+      //Assert
+      Assert.That(actualOrders, Is.Not.Empty, "No orders were submitted to the market.");
+      Debug.Log($"First order submitted: {actualOrders.FirstOrDefault()} total order value: {actualOrders.FirstOrDefault()?.Price * actualOrders.FirstOrDefault()?.Quantity}");
+   }
+      
       
    
 #endregion

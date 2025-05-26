@@ -108,10 +108,6 @@ public class ActionContextBuilder
 
     public ActionContext Build()
     {
-        if (_contextToReturn.HasSubmittingCompany() != LemonadeStandResultObject.Success())
-        {
-            throw new ContextException("Submitting company is not set");
-        }
         if (_contextToReturn.ContainsValidTrade() != LemonadeStandResultObject.Success())
         {
             throw new ContextException("Trade is not valid");

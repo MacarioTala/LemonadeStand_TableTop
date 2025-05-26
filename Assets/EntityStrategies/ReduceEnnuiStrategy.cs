@@ -18,16 +18,10 @@ public class ReduceEnnuiStrategy : iStrategy
         return LemonadeStandResultObject.Success();
     }
 
-    public List<ActionContext> GenerateActionContexts(iCompany company)
-    {
-        throw new NotImplementedException();
-    }
-
     public Dictionary<Good, BidAskSpread> GetBidAskSpreads()
-                        =>_bidAskSpreads;
+                        =>new(_bidAskSpreads);
     
-
-    public Dictionary<Good,BidAskSpread> GenerateBidAskSpreads(iCompany company)
+    internal Dictionary<Good,BidAskSpread> GenerateBidAskSpreads(iCompany company)
     {
         if (company is PopulationCompany populationCompany)
         {
@@ -101,7 +95,7 @@ public class ReduceEnnuiStrategy : iStrategy
                 .Affecting(MetricEnum.Ennui)
                 .WithGoalValue(0f);
         
-        company.Goals.Add(ennuiGoal);
+        AddGoal(ennuiGoal, company);
     }
 
     public void AddGoal(Goal goal, iCompany company)
@@ -124,27 +118,33 @@ public class ReduceEnnuiStrategy : iStrategy
     private static bool GoalNotMet(Goal goal, iCompany company) =>
     !(goal?.IsGoalMet(company) ?? false);
 
-    public void PerformStrategy(iCompany company)
+    public void PerformStrategy(iCompany company, int period)
     {
         var ennuiGoal = company.Goals.Find(g => g.Name == "Reduce Ennui");
-        if(GoalNotMet(ennuiGoal, company))
+        if(GoalNotMet(ennuiGoal, company)&& company is PopulationCompany populationCompany)
         {
-          PerformStrategicActions(company);   
+          PerformStrategicActions(populationCompany,period);   
         }
     }
 
-    private void PerformStrategicActions(iCompany company)
+    private void PerformStrategicActions(PopulationCompany company,int period)
     {
-        throw new NotImplementedException("Waiting for goods to have effects on ennui");
+        GenerateBidAskSpreads(company);
+        foreach(var action in CreateBuys(company, period))
+        {
+            company.QueueOrder(action);
+        }
     }
 
-    private void CreateBuys(Company company,int period)
+    internal IEnumerable<ActionContext> CreateBuys(Company company,int period)
     {
+        var actions = new List<ActionContext>();
         foreach(var spread in _bidAskSpreads)
         {
             var good = spread.Key;
             var bid = spread.Value.Bid;
             var cash = company.GetCash();
+        
 
             #region prioritize goods to bid for
             var quantity = (int)Math.Floor(cash * (decimal)spread.Value.Allocation);
@@ -158,8 +158,9 @@ public class ReduceEnnuiStrategy : iStrategy
                 .ForPeriod(period)
                 .WithTrade(order)
                 .Build();
-            company.QueueOrder(context);
+            actions.Add(context);
         }
+        return actions;
     }
 
     #region Interactions With Market
