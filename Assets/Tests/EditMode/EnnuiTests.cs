@@ -23,13 +23,13 @@ public class EnnuiTests
                   .WhichIsProducedGood()
                   .Build();
       var reduceEnnuiEffect = new GoodEffect()
-      .Named("Reduce Ennui")
-      .DescribedAs("Reduces ennui")
-      .Affecting(MetricEnum.Ennui)
-      .WithEffectMagnitude(-.40f)
-      .WithEffect(new MetricModifier<PopulationCompany>(
-                c => c.Ennui,
-                (c, newValue) => c.Ennui = newValue));
+                  .Named("Reduce Ennui")
+                  .DescribedAs("Reduces ennui")
+                  .Affecting(MetricEnum.Ennui)
+                  .WithEffectMagnitude(-.40f)
+                  .WithEffect(new MetricModifier<PopulationCompany>(
+                           c => c.Ennui,
+                           (c, newValue) => c.Ennui = newValue));
       Lemonade.AddEffect(reduceEnnuiEffect);
 
       ReduceEnnuiGoal = new Goal()

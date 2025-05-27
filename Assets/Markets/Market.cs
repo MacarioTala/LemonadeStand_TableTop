@@ -63,7 +63,7 @@ public class Market : ScriptableObject, iCompany
         }
         TheEconomy.Instance.RegisterCompany(marketParticipant);
     }
-    public LemonadeStandResultObject RemoveCompany(Company company)
+    public LemonadeStandResultObject RemoveMarketParticipant(Company company)
     {
         if(_marketParticipants.Contains(company))
         {
@@ -557,13 +557,15 @@ public class Market : ScriptableObject, iCompany
 
     public void StartTradingPeriod()
     {
-        _demographicManager.RecordDemographicSnapshot(MarketId,0,TurnPhase.Beginning);
+        _demographicManager.RecordDemographicSnapshot(MarketId,CurrentPeriod,TurnPhase.Beginning);
         RollForEvents();
         ResolveMarketEvents();
+        //Local Agents
+        LocalAgentsAct(CurrentPeriod);
     }
+
     public void UnleashMarketForces(int period)
     {
-        FulfillDemand();
         UpdateFulfillmentRates(period);
         UpdatePrices();
         DemandStrategy.AdjustDemandInPeriod(this);
@@ -572,8 +574,24 @@ public class Market : ScriptableObject, iCompany
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
     }
-#endregion
-#region Overrides
+
+    private void LocalAgentsAct(int period)
+    {
+        var marketParticipants = _marketParticipants
+                                .OfType<PopulationCompany>()
+                                .ToList();
+
+        if (marketParticipants.Count() == 0)
+        {
+            Debug.LogWarning($"No local agents found in Market {Name}");
+        }
+        foreach (var participant in marketParticipants)
+        {
+            participant.PerformStrategy(period);
+        }
+    }
+    #endregion
+    #region Overrides
     public override string ToString()
     {
         return Name;

@@ -24,13 +24,13 @@ public class BasicTradeProcessor : iTradeProcessor
     public List<Order> ProcessCompanyOrders(Market market)
     {
         List<Order> executedTrades = new();
-        List<Good> goodsToTradeThisPeriod = market.GetOrdersSentToMarket()
-                                                  .Where(x => x.Buyer is not Market)
-                                                  .Select(x => x.Good).Distinct().ToList();
+        var ordersInPeriod = market.GetOrdersSentToMarket();
+        List<Good> goodsToTradeThisPeriod = ordersInPeriod
+                                            .Select(x => x.Good).Distinct().ToList();
 
         foreach (var good in goodsToTradeThisPeriod)
         {
-           executedTrades.AddRange(ExecuteBestTradesForGood(good,market,market.GetOrdersSentToMarket().Where(x => x.Buyer is not Market).ToList()));
+           executedTrades.AddRange(ExecuteBestTradesForGood(good,market,ordersInPeriod));
         }
         _tradesSentToTheMarket.RemoveAll(x=>x.IsFullyFilled);
         return executedTrades;

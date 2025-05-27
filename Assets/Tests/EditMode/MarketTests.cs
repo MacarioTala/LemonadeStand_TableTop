@@ -186,7 +186,7 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expected, actual);
         //Cleanup
-        testMarket.RemoveCompany(company);
+        testMarket.RemoveMarketParticipant(company);
     }
 
     [Test]
@@ -216,7 +216,7 @@ public partial class MarketTests
         Assert.IsTrue(expectedWaterQuantity==actualWaterQuantity && expectedRipeLemonQuantity==actualRipeLemonQuantity);
         
         //Cleanup
-        testMarket.RemoveCompany(company);
+        testMarket.RemoveMarketParticipant(company);
     }
 
     [Test]
@@ -245,7 +245,7 @@ public partial class MarketTests
         Assert.AreEqual(expectedRipeLemonQuantity, actualRipeLemonQuantity);
 
         //Cleanup
-        testMarket.RemoveCompany(company);
+        testMarket.RemoveMarketParticipant(company);
     }   
 
     [Test]
@@ -269,7 +269,7 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expectedAppleQuantity, actualAppleQuantity);
         //Cleanup
-        testMarket.RemoveCompany(company);
+        testMarket.RemoveMarketParticipant(company);
         }
 
 #endregion   
@@ -334,7 +334,7 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expected, actual);
         // Cleanup
-        TestMarket.RemoveCompany(company1);
+        TestMarket.RemoveMarketParticipant(company1);
     }
     [Test]
     public void PublishSpreadToMarketReturnsErrorIfActionContextIsIncomplete()
@@ -352,7 +352,7 @@ public partial class MarketTests
         Assert.AreEqual(expected, actual);
 
         // Cleanup
-        TestMarket.RemoveCompany(company1);
+        TestMarket.RemoveMarketParticipant(company1);
     }
                                
    #endregion
@@ -436,8 +436,8 @@ public partial class MarketTests
         Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
 
         //remove companies from Market
-        marketToTest.RemoveCompany(company1);
-        marketToTest.RemoveCompany(company2);
+        marketToTest.RemoveMarketParticipant(company1);
+        marketToTest.RemoveMarketParticipant(company2);
     }
      [Test]
     public void CompaniesCanBuyGoodsFromEachOtherViaMatchingQueuedOrders()

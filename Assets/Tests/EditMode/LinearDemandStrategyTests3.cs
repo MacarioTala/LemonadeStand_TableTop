@@ -35,7 +35,7 @@ public partial class LinearDemandStrategyTests
         Assert.AreEqual(expectedDemand, actualDemand);
     }
 
-    [TestCase(TestName="From Market. Demand changes only by the market instability if it's 100% filled")]
+    [TestCase(TestName="From Market. Demand changes only by the market instability if it's 100% filled")][Ignore("Obsolete. Demand is now agent-driven instead of centrally controlled")]
     public void UMF_DemandStableWhenDemandIsFulfilled()
     {
         //Arrange

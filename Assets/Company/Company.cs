@@ -196,6 +196,17 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
         }
 
     }
+    public void PerformStrategy(int period)
+    {
+        if(_companyStrategy != null)
+        {
+            _companyStrategy.PerformStrategy(this, period);
+        }
+        else
+        {
+            Debug.LogWarning("Company strategy not set for " + Name);
+        }
+    }
 #endregion 
 #region Buy/Sell and helper methods
     public void BuyGood(Good good, int quantity,decimal price,int period=0)

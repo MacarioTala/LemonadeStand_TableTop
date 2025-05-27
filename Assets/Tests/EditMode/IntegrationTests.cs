@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using UnityEngine;
 using static TestHelpers;
 
@@ -10,6 +12,14 @@ public class IntegrationTests
     Market TestMarket;
     Company Company1;
     Company Company2;
+
+    float initialEnnui = 0.5f;
+    int initialPopulation = 1000;
+    iStrategy testStrategy;
+
+    iFixedCostStrategy testFixedCostStrategy;
+
+    PopulationCompany TestPopulation;
 
     Good Lemonade;
     const int Period = 0;
@@ -41,13 +51,32 @@ public class IntegrationTests
         
         TheEconomy.Instance.RegisterCompany(TestMarket);
 
+        testFixedCostStrategy = new BasicFixedCostStrategy();
+        testStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+            .WithAggressionLevel(0.5f)
+            .Build();
+
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
 
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
 
-        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Common);
+        Lemonade = new GoodBuilder()
+                  .Named("Lemonade")
+                  .WithRarity(RarityEnum.Uncommon)
+                  .Costing(5m)
+                  .WhichIsProducedGood()
+                  .Build();
+      var reduceEnnuiEffect = new GoodEffect()
+                .Named("Reduce Ennui")
+                .DescribedAs("Reduces ennui")
+                .Affecting(MetricEnum.Ennui)
+                .WithEffectMagnitude(-.40f)
+                .WithEffect(new MetricModifier<PopulationCompany>(
+                            c => c.Ennui,
+                            (c, newValue) => c.Ennui = newValue));
+      Lemonade.AddEffect(reduceEnnuiEffect);
     }
 #region Recording Trades
     [Test]
@@ -149,7 +178,113 @@ public class IntegrationTests
         
 #endregion
 #region UnleashMarketForces
+  #region LocalAgentsAct 
     [Test]
+    public void UnleashMarketForcesCausesLocalAgentsToAct_CalledFromMarket()
+    {
+        // Arrange
+        var company1 = Company1;
+        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+
+        var demandForLemonade = new DemandData()
+        {
+            MinDemand=1000,
+            MaxDemand=10000
+            };
+            
+        var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade}
+            };
+
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+             .Named("Test Population")
+             .WithInitialCash(1000)
+             .WithEnnui(initialEnnui)
+             .WithPopulation(initialPopulation)
+             .WithBehaviourStrategy(testStrategy)
+             .WithFixedCostStrategy(testFixedCostStrategy)
+             .Demanding(listOfDemands)
+             .Build();
+        
+        testStrategy.GenerateGoals(TestPopulation);// Add to initialization?
+        TestMarket.RegisterMarketParticipant(TestPopulation);
+
+        var company1Order = new Order(null, company1, Lemonade, 1000, .25m);
+        var company1Context = new ActionContext{TradeToSubmit = company1Order,
+                                                MarketToSubmitTo = TestMarket};
+        const int period = 1;
+        const int expectedOrderFillQuantity = 1000;
+
+        // Act
+        company1.QueueOrder(company1Context);
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();//Integrate with UnleashMarketForces?
+        TestMarket.UnleashMarketForces(period);
+        var actualOrderFillQuantity = company1Order.FilledQuantity;
+
+        // Assert
+        Assert.AreEqual(expectedOrderFillQuantity, actualOrderFillQuantity, 
+            $"Expected order fill quantity {expectedOrderFillQuantity}, but got {actualOrderFillQuantity}");
+        
+        //cleanup
+        TestMarket.RemoveMarketParticipant(TestPopulation);
+    }
+
+     [Test]
+    public void UnleashMarketForcesCausesLocalAgentsToAct_CalledFromEconomy()
+    {
+        // Arrange
+        var company1 = Company1;
+        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+
+        var demandForLemonade = new DemandData()
+        {
+            MinDemand=1000,
+            MaxDemand=10000
+            };
+            
+        var listOfDemands = new Dictionary<Good,DemandData>()
+            {
+              {Lemonade,demandForLemonade}
+            };
+
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+             .Named("Test Population")
+             .WithInitialCash(1000)
+             .WithEnnui(initialEnnui)
+             .WithPopulation(initialPopulation)
+             .WithBehaviourStrategy(testStrategy)
+             .WithFixedCostStrategy(testFixedCostStrategy)
+             .Demanding(listOfDemands)
+             .Build();
+        
+        testStrategy.GenerateGoals(TestPopulation);// Add to initialization?
+        TestMarket.RegisterMarketParticipant(TestPopulation);
+
+        var company1Order = new Order(null, company1, Lemonade, 1000, .25m);
+        var company1Context = new ActionContext{TradeToSubmit = company1Order,
+                                                MarketToSubmitTo = TestMarket};
+        const int expectedOrderFillQuantity = 1000;
+
+        // Act
+        company1.QueueOrder(company1Context);
+        TestEconomy.StartTradingPeriod();
+        TestEconomy.EndTradingPeriod(); // This will call UnleashMarketForces internally.
+
+        var actualOrderFillQuantity = company1Order.FilledQuantity;
+
+        // Assert
+        Assert.AreEqual(expectedOrderFillQuantity, actualOrderFillQuantity, 
+            $"Expected order fill quantity {expectedOrderFillQuantity}, but got {actualOrderFillQuantity}");
+        
+        //cleanup
+        TestMarket.RemoveMarketParticipant(TestPopulation);
+    }
+    
+  #endregion
+
+    [Test][Ignore("Obsolete: FulfillDemand no longer used.")]
     public void UnleashMarketForcesFulfilsMarketDemandWhenCalledFromMarket()
     {
         //Arrange
@@ -169,8 +304,8 @@ public class IntegrationTests
         //Assert
         Assert.AreEqual(expected, actual);    
     }
-    [Test]
-    public void UnleashMarketForcesFulfillsMarketDemandWhenCalledFromTheEconomy()
+    [Test][Ignore("Obsolete: FulfillDemand no longer used.")]
+     public void UnleashMarketForcesFulfillsMarketDemandWhenCalledFromTheEconomy()
     {
         //Arrange
         var marketToTest = TestMarket;

@@ -276,7 +276,7 @@ public class SupplyAndDemandTests
         Assert.AreEqual(expectedLemonadeDemand, actualLemonadeDemand);
 
         //cleanup
-        TestMarket.RemoveCompany(sellingCompany);
+        TestMarket.RemoveMarketParticipant(sellingCompany);
     }
 
 [Test]
@@ -310,7 +310,7 @@ public class SupplyAndDemandTests
         Assert.IsTrue(actualLemonadeDemand < initialLemonadeDemand);
 
         //cleanup
-        TestMarket.RemoveCompany(sellingCompany);
+        TestMarket.RemoveMarketParticipant(sellingCompany);
     }
 
     [TearDown]

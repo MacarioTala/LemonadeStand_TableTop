@@ -106,7 +106,7 @@ public class BankruptcyTests
         //Cleanup
         if (Company1 != null)
         {
-            TestMarket.RemoveCompany(Company1);
+            TestMarket.RemoveMarketParticipant(Company1);
             Company1 = null;
         }
         if (TestMarket != null)
