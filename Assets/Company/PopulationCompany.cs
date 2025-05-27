@@ -78,6 +78,8 @@ private readonly Dictionary<Good, DemandData> _demand = new();
         foreach (var inventoryEntry in inventory)
         {
             inventoryEntry.good.ApplyEffects(this); //you are here. Make good effects scale with amount consumed.
+            var amountToConsume = (int)Math.Floor(_demand[inventoryEntry.good].ConsumptionRate * Population); 
+            inventoryEntry.quantity -= amountToConsume;
         }
     }
 #endregion

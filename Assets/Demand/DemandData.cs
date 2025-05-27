@@ -7,6 +7,9 @@ public class DemandData
     public float FulfilmentRate{get; set;}
     public int MinDemand{get; set;}
     public int MaxDemand{get; set;}
+    public float ConsumptionRate {get; set;} = 1f; // Default consumption rate is 1. 
+                                                   // Meaning that each population unit consumes one unit
+                                                   // of the good per period.
     public List<ElasticDemandComponent> ElasticDemandComponents {get; set;} = new ();
 }
 
