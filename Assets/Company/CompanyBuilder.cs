@@ -20,7 +20,7 @@ public class CompanyBuilder<T> where T : Company
         companyToReturn.SetStrategy(behaviourStrategy);
         return this;
     }
-    public CompanyBuilder<T> WithInitialCash( int initialCash)
+    public CompanyBuilder<T> WithInitialCash(decimal initialCash)
     {
         companyToReturn.SetCash(initialCash);
         return this;
