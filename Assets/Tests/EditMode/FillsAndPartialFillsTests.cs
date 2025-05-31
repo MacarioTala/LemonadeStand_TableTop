@@ -29,7 +29,6 @@ public class FillsAndPartialFillsTests
             .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
             .WithSupplyProvider(new BasicSupplyProvider())
             .WithTradeProcessor(new BasicTradeProcessor())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithTransactionManager(new BasicTransactionManager());
 
         TestCompany1 = Company.Factory.Create("TestCompany1", CompanyLevelEnum.Beginner);

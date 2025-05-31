@@ -39,8 +39,7 @@ public class BasicTradeProcessor : iTradeProcessor
     internal List<Order> ExecuteBestTradesForGood(Good good, Market market, List<Order> OrdersSentToMarket)
     {
         List<Order> executedOrders = new();
-        var relevantOrders = OrdersSentToMarket.Where(x => x.Good == good
-                                               && x.Buyer is not Market
+        var relevantOrders = OrdersSentToMarket.Where(x => x.Good.Equals(good)
                                                )
                                                .ToList();
         foreach (var prioritizer in _orderPrioritizers)
@@ -147,7 +146,7 @@ public class BasicTradeProcessor : iTradeProcessor
     internal bool IsValidCounterParty(Order order, Order primaryOrder)
     {
         //Goods must match
-        if(order.Good != primaryOrder.Good) return false;
+        if(!order.Good.Equals(primaryOrder.Good)) return false;
 
         //Order cannot be fully filled
         if(order.IsFullyFilled) return false;

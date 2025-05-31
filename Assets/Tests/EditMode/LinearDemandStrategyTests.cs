@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using UnityEngine;
 using static TestHelpers;
 
@@ -12,33 +13,63 @@ public partial class LinearDemandStrategyTests
     Market TestMarket;
     Company Company1;
     Company Company2;
+    PopulationCompany TestPopulation;
+    iStrategy TestReduceEnnuiStrategy;
 
     MockMarketDataService TestMarketDataService;
 
-    LinearDemandStrategy Strategy;
+    LinearDemandStrategy TestDemandStrategy;
 
     iDemographicManager TestDemographicManager;
 
     iSupplyProvider TestSupplyProvider= new BasicSupplyProvider();
 
     int Period = 0;
-    
+
     [SetUp]
     public void SetUp()
     {
-        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Uncommon);
-        Lemonade.IsProducedGood = true;
-
+        // Set up the economy
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        Strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+        //Set up goods
+        Lemonade = new GoodBuilder()
+            .Named("Lemonade")
+            .Costing(1m)
+            .WithRarity(RarityEnum.Uncommon)
+            .Build();
+        var reduceEnnuiEffect = new GoodEffect()
+            .Named("Reduce Ennui")
+            .DescribedAs("Reduces ennui")
+            .Affecting(MetricEnum.Ennui)
+            .WithEffectMagnitude(-.40f)
+            .WithEffect(new MetricModifier<PopulationCompany>(
+                c => c.Ennui,
+                (c, newValue) => c.Ennui = newValue));
+
+        Lemonade.AddEffect(reduceEnnuiEffect);
+        //Set up market and population dependencies
+        TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new MockDemographicManager();
+        TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                                        .WithAggressionLevel(.55f)
+                                        .Build();
+        //Set up population
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+                                        .Named("TestPopulation")
+                                        .AtLevel(CompanyLevelEnum.Market)
+                                        .WithInitialCash(10000)
+                                        .WithBehaviourStrategy(TestReduceEnnuiStrategy)
+                                        .WithEnnui(.99f)
+                                        .WithPopulation(1000)
+                                        .Build();
+        TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 
         TestMarket = Market.Factory.CreateStarterMarket("Starter Market",
                                                         CompanyLevelEnum.Market,
-                                                        Strategy);
+                                                        TestDemandStrategy);
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new MockDemographicManager();
         TestMarket.SetDemographicManager(TestDemographicManager);
@@ -50,34 +81,24 @@ public partial class LinearDemandStrategyTests
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
-
-    }
-    [Test]
-    public void InitializeDemandForSpecificGoodReplacesDemandForExistingGood()
-    {
-        //Arrange
-        var expected = 500;
-        var expectedDemandLinesForLemonade = 1;
-        //Act
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, expected);
-        var actual = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
-        var demandLinesForLemonade = TestMarket.GetMarketDemand().Where(x=>x.Key.Equals(Lemonade)).Count();
-        //Assert
-        Assert.AreEqual(expected, actual);
-        Assert.AreEqual(expectedDemandLinesForLemonade, demandLinesForLemonade);
+        TestMarket.RegisterMarketParticipant(TestPopulation);
     }
 #region Adjust Demand Based On Elasticity
     [TestCase(TestName="If the good does not have the passed elasticity, demand should not change")]
     public void ADBE_IfElasticityDNEDoNotAdjustDemand()
     {
         //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 500);
-
         var expectedDemand = 500;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = expectedDemand };
+        TestPopulation.SetDemand(Lemonade, demandForLemonade);
+        
         var dummyMetric = 1;
         //Act
-        var actualResult = Strategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.PopulationElasticity,dummyMetric);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.UpdateFulfillmentRates(Period);
+        TestDemandStrategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.PopulationElasticity,dummyMetric);
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
@@ -86,15 +107,21 @@ public partial class LinearDemandStrategyTests
     public void ADBE_IfSaturationElasticityIsOneDemandShouldIncrease()
     {
         //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 500);
+        var maxDemand = 1000;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
+        TestPopulation.SetDemand(Lemonade, demandForLemonade);
+
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var dummyMetric = 1;
 
         var expectedDemand = 1000;
         var expectedResult = LemonadeStandResultObject.Success();
         //Act
-        var actualResult = Strategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.SaturationElasticity, dummyMetric);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.UpdateFulfillmentRates(Period);
+        var actualResult = TestDemandStrategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.SaturationElasticity, dummyMetric);
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
         Assert.AreEqual(expectedResult.Result, actualResult.Result);
@@ -103,15 +130,22 @@ public partial class LinearDemandStrategyTests
     public void ADBE_IfSaturationElasticityIsPointFiveDemandShouldIncrease()
     {
         //Arrange
+        var maxDemand = 750;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
+        TestPopulation.SetDemand(Lemonade, demandForLemonade);
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 500);
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, .5f);
         var dummyMetric = 1;
 
         var expectedDemand = 750;
         var expectedResult = LemonadeStandResultObject.Success();
+
         //Act
-        var actualResult = Strategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.SaturationElasticity,dummyMetric);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.UpdateFulfillmentRates(Period);
+        var actualResult = TestDemandStrategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.SaturationElasticity,dummyMetric);
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
         Assert.AreEqual(expectedResult.Result, actualResult.Result);
@@ -120,15 +154,21 @@ public partial class LinearDemandStrategyTests
     public void ADBE_IfSaturationElasticityIsOneDemandShouldDisappear()
     {
         //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 500);
+        var maxDemand = 500;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
+        TestPopulation.SetDemand(Lemonade, demandForLemonade);
+
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var dummyMetric = -1;
 
         var expectedDemand = 0;
         var expectedResult = LemonadeStandResultObject.Success();
         //Act
-        var actualResult = Strategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.SaturationElasticity,dummyMetric);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.UpdateFulfillmentRates(Period);
+        var actualResult = TestDemandStrategy.AdjustDemandBasedOnElasticityAndHistory(TestMarket, Lemonade, ElasticityTypeEnum.SaturationElasticity,dummyMetric);
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
         Assert.AreEqual(expectedResult.Result, actualResult.Result);
@@ -140,8 +180,10 @@ public partial class LinearDemandStrategyTests
     public void ADFP_DemandIncreasesBySeventyPercentWhenPopulationDoubles()
     {
         //Arrange
+        var maxDemand = 170;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
+        TestPopulation.SetDemand(Lemonade, demandForLemonade);
         Lemonade.Elasticities.Add(ElasticityTypeEnum.PopulationElasticity, .7f);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
         
         TestMarket.CurrentPeriod = 1;
 
@@ -154,10 +196,13 @@ public partial class LinearDemandStrategyTests
         });
 
         var expectedDemand = 170;
-        
+
         //Act
-        Strategy.AdjustDemandForPopulation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.UpdateFulfillmentRates(TestMarket.CurrentPeriod);
+        TestDemandStrategy.AdjustDemandForPopulation(TestMarket, Lemonade);
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
@@ -165,7 +210,9 @@ public partial class LinearDemandStrategyTests
     public void ADFP_DemandDecreasesByThirtyPercentWhenPopulationHalves()
     {
         //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
+        var maxDemand = 100;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
+        TestPopulation.SetDemand(Lemonade, demandForLemonade);
         Lemonade.Elasticities.Add(ElasticityTypeEnum.PopulationElasticity, .7f);
         
         TestMarket.CurrentPeriod = 1;
@@ -179,10 +226,13 @@ public partial class LinearDemandStrategyTests
         });
 
         var expectedDemand = 65;
-        
+
         //Act
-        Strategy.AdjustDemandForPopulation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
+        TestMarket.UpdateFulfillmentRates(TestMarket.CurrentPeriod);
+        TestDemandStrategy.AdjustDemandForPopulation(TestMarket, Lemonade);
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
@@ -194,7 +244,7 @@ public partial class LinearDemandStrategyTests
         //Arrange
         Company1.GetInventory().AddGood(new(Lemonade, 100,10m,0));
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-            var marketDemand = TestMarket.GetMarketDemand();
+            var marketDemand = TestMarket.GetPopulationDemand();
             var lemonadeDemand = marketDemand[Lemonade];
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
@@ -207,7 +257,7 @@ public partial class LinearDemandStrategyTests
         var expectedDemand = 100;
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
@@ -216,14 +266,14 @@ public partial class LinearDemandStrategyTests
     {
         //Arrange
         TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-            var marketDemand = TestMarket.GetMarketDemand();
+            var marketDemand = TestMarket.GetPopulationDemand();
             var lemonadeDemand = marketDemand[Lemonade];
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var expectedDemand = 200;
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
@@ -236,7 +286,7 @@ public partial class LinearDemandStrategyTests
         Company1.GetInventory().AddGood(new(Lemonade, 200,10m,0));
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
-            var marketDemand = TestMarket.GetMarketDemand();
+            var marketDemand = TestMarket.GetPopulationDemand();
             var lemonadeDemand = marketDemand[Lemonade];
         
         var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,200,1)
@@ -248,7 +298,7 @@ public partial class LinearDemandStrategyTests
         var result = Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.IsTrue(actualDemand < initialDemand,$"Demand was expected to decrease from {initialDemand} but was {actualDemand}");
     }
@@ -263,7 +313,7 @@ public partial class LinearDemandStrategyTests
 
         //Act
         LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.IsTrue(0< actualDemand && actualDemand < doubleDemand,$"Demand was expected to increase less than double from 100, but was {actualDemand}");
     }

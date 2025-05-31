@@ -8,32 +8,68 @@ public class BasicDemandStrategyTests
 {
     TheEconomy TestEconomy;
     Market TestMarket;
+    PopulationCompany TestPopulation;
     Company Company1;
     Company Company2;
     const int Period = 0;
 
     iDemandStrategy TestDemandStrategy;
+    iStrategy TestReduceEnnuiStrategy;
 
     Good lemon;
     Good water;
     Good sugar;
+    Good lemonade;
     [SetUp]
     public void Setup ()
     {
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
+        TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+            .WithAggressionLevel(.55f)
+            .Build();
+
+        lemonade = new GoodBuilder()
+            .Named("Lemonade")
+            .WithRarity(RarityEnum.Uncommon)
+            .Costing(.5m)
+            .WhichIsProducedGood()
+            .Build();
+
+        var reduceEnnuiEffect = new GoodEffect()
+            .Named("Reduce Ennui")
+            .DescribedAs("Lemonade reduces ennui")
+            .Affecting(MetricEnum.Ennui)
+            .WithEffectMagnitude(-.1f)
+            .WithEffect(new MetricModifier<PopulationCompany>(
+                           c => c.Ennui,
+                           (c, newValue) => c.Ennui = newValue));
+        lemonade.AddEffect(reduceEnnuiEffect);
 
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
             .WithDemandStrategy(TestDemandStrategy)
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithTradeProcessor(new BasicTradeProcessor())
-            .WithTransactionManager(new BasicTransactionManager());
+            .WithTransactionManager(new BasicTransactionManager())
+            .WithDemographicManager(new MockDemographicManager());
         
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
+
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Market)
+            .WithPopulation(1000)
+            .WithBehaviourStrategy(TestReduceEnnuiStrategy)
+            .WithInitialCash(10000)
+            .WithEnnui(0.5f)
+            .Build();
+
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
+        TestMarket.RegisterMarketParticipant(TestPopulation);
+
+        TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 
         lemon = Good.CreateInstance("Lemon", new PriceBand(.5m, 1.0m), RarityEnum.Common);
         water = Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common);
@@ -50,46 +86,26 @@ public class BasicDemandStrategyTests
     }
 
     [Test]
-    public void GetTotalBoughtReturnsZeroInAPeriodWithNoMarketOrders()
+    public void GetTotalBoughtByPopulationReturnsOnlyMarketBuys()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
-
-        var Company1SellsLemonsToCompany2 = new Order(Company2, Company1, lemon, 500, 3.0m);
-        var lemonOrder2 = new Order(Company2, Company1, lemon, 500, 3.0m);
+        var lemonadeDemand = new DemandData { MinDemand = 1000, MaxDemand = 1000 };
+        TestPopulation.SetDemand(lemonade, lemonadeDemand);
         
-        Company1.QueueOrder(CreateActionContext(Company1SellsLemonsToCompany2, TestMarket, Period));
-        Company2.QueueOrder(CreateActionContext(lemonOrder2, TestMarket, Period));
-        
-        const int expected = 0;
-        const int tradingPeriod = 0;
-        
-        // Act
-        TestMarket.ProcessCompanyOrders();
-        TestMarket.FulfillDemand();
-        var actual = ((iDemandStrategy)TestDemandStrategy).GetTotalBoughtByMarket(TestMarket, lemon, tradingPeriod);
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000,3m,Period));
 
-    [Test]
-    public void GetTotalBoughtByMarketReturnsOnlyMarketBuys()//You are here
-    {
-        // Arrange
-        TestMarket.InitializeDemandForSpecificGood(lemon, 1000);
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
-
-        var Company1SellsLemonsToAnyone = new Order(null, Company1, lemon, 1000, 3.0m);
-        var Company2BuysLemonsFromAnyone = new Order(Company2,null, lemon, 500, 3.0m);
+        var Company1SellsLemonsToAnyone = new Order(null, Company1, lemonade, 1000, 3.0m);
+        var Company2BuysLemonsFromAnyone = new Order(Company2,null, lemonade, 500, 3.0m);
 
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonsToAnyone, TestMarket, Period));
         Company2.QueueOrder(CreateActionContext(Company2BuysLemonsFromAnyone, TestMarket, Period));
 
-        const int expected = 500;
+        const int expected = 1000;
         // Act
+        TestMarket.StartTradingPeriod();
         TestMarket.ProcessCompanyOrders();
-        TestMarket.FulfillDemand();
-        var actual = ((iDemandStrategy)TestDemandStrategy).GetTotalBoughtByMarket(TestMarket, lemon, Period);
+
+        var actual = TestDemandStrategy.GetTotalBoughtByPopulation(TestMarket, lemonade, Period);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -99,13 +115,16 @@ public class BasicDemandStrategyTests
     public void CalculateDemandForPeriodReturnsBaseMarketDemandWhenNoOrdersExist()
     {
         // Arrange
+        var lemonadeDemand = new DemandData { MinDemand = 1000, MaxDemand = 1000 };
+        TestPopulation.SetDemand(lemonade, lemonadeDemand);
         var period = 0;
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        var marketToTest = TestMarket;
-        marketToTest.InitializeDemandForSpecificGood(lemon, 1000);
+
         var expected = 1000;
         // Act
-        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(marketToTest, period)[lemon].CurrentDemand;
+        TestMarket.StartTradingPeriod();//this queues up population demand
+        TestMarket.ProcessCompanyOrders();
+        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, period)[lemonade].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -113,18 +132,22 @@ public class BasicDemandStrategyTests
     public void CalculateDemandForPeriodReturnsBaseMarketDemandPlusOrdersWhenOrdersExist()
     {
         // Arrange
+        var maxDemand = 1000;
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
+        TestPopulation.SetDemand(lemonade, demandForLemonade);
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         
-        TestMarket.InitializeDemandForSpecificGood(lemon, 1000);
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000,3m,Period));
 
-        var Company1BuysLemonsFromAnyone = new Order(Company1, null, lemon, 500, 3.0m);
-        var lemonContext = new ActionContext { TradeToSubmit = Company1BuysLemonsFromAnyone, MarketToSubmitTo = TestMarket , Period = Period};
-        TestMarket.QueueOrder(lemonContext);
-
+        var Company1BuysLemonadeFromAnyone = new Order(Company1, null, lemonade, 500, 3.0m);
+        var lemonadeContext = new ActionContext { TradeToSubmit = Company1BuysLemonadeFromAnyone, MarketToSubmitTo = TestMarket , Period = Period};
+        Company1.QueueOrder(lemonadeContext);
         var expected = 1500;
+
         // Act
-        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, Period)[lemon].CurrentDemand;
+        TestMarket.StartTradingPeriod();//this queues up population demand
+        TestMarket.ProcessCompanyOrders();
+        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, Period)[lemonade].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -132,16 +155,19 @@ public class BasicDemandStrategyTests
     public void CalculateDemandForPeriodCountsOnlyOrdersIfNoMarketDemandExists()
     {
         // Arrange
+        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 0 };
+        TestPopulation.SetDemand(lemonade, demandForLemonade);
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000,3m,Period));
 
-        var lemonOrder = new Order(Company2, Company1, lemon, 500, 3.0m);
+        var lemonOrder = new Order(Company1, null, lemonade, 500, 3.0m);
         var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = TestMarket , Period = Period};
-        TestMarket.QueueOrder(lemonContext);
+        Company1.QueueOrder(lemonContext);
 
         var expected = 500;
         // Act
-        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, Period)[lemon].CurrentDemand;
+        TestMarket.StartTradingPeriod();//this queues up population demand
+        var actual = ((iDemandStrategy)strategy).GetDemandInPeriod(TestMarket, Period)[lemonade].CurrentDemand;
         // Assert
         Assert.AreEqual(expected, actual);
     }

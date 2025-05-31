@@ -28,7 +28,6 @@ public class BasicTransactionManagerTests
 
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
             .WithDemandStrategy(TestDemandStrategy)
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithTradeProcessor(new BasicTradeProcessor())
             .WithTransactionManager(new BasicTransactionManager())
             .WithDemographicManager(new BasicDemographicManager())

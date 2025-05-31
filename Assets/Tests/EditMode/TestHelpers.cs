@@ -68,6 +68,7 @@ public class TestComparer<T> : IEqualityComparer<T>
             var yValue = field.GetValue(y);
 
             if (!NullSafeEquals(xValue,yValue)) return false;
+            
         }
         return true;
     }
@@ -123,9 +124,71 @@ public class TestComparer<T> : IEqualityComparer<T>
 
         if (expectedList.Count != actualList.Count) return false;
 
-        return expectedList.All(expected=> actualList.Any(actual => comparer.Equals(expected, actual)))
-            && actualList.All(actual => expectedList.Any(expected => comparer.Equals(actual, expected)));
+        // return expectedList.All(expected=> actualList.Any(actual => comparer.Equals(expected, actual)))
+        //     && actualList.All(actual => expectedList.Any(expected => comparer.Equals(actual, expected)));
+        for (int i = 0; i < expectedList.Count; i++)
+    {
+        var expectedItem = expectedList[i];
+        var matched = actualList.Any(actualItem => comparer.Equals(expectedItem, actualItem));
+        if (!matched)
+        {
+            Debug.LogWarning($"No match found in actual list for expected item at index {i}:");
+            DumpObject(expectedItem);
+        }
     }
+
+    for (int i = 0; i < actualList.Count; i++)
+    {
+        var actualItem = actualList[i];
+        var matched = expectedList.Any(expectedItem => comparer.Equals(actualItem, expectedItem));
+        if (!matched)
+        {
+            Debug.LogWarning($"No match found in expected list for actual item at index {i}:");
+            DumpObject(actualItem);
+        }
+    }
+
+    return expectedList.All(e => actualList.Any(a => comparer.Equals(e, a)))
+        && actualList.All(a => expectedList.Any(e => comparer.Equals(a, e)));
+    }
+
+    private void DumpObject(object obj)
+{
+    if (obj == null)
+    {
+        Debug.Log("Object is null.");
+        return;
+    }
+
+    var type = obj.GetType();
+    Debug.Log($"Dumping object of type {type.Name}");
+
+    foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+    {
+        try
+        {
+            var value = property.GetValue(obj);
+            Debug.Log($"Property: {property.Name} = {value}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"Property: {property.Name} threw exception: {e.Message}");
+        }
+    }
+
+    foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+    {
+        try
+        {
+            var value = field.GetValue(obj);
+            Debug.Log($"Field: {field.Name} = {value}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"Field: {field.Name} threw exception: {e.Message}");
+        }
+    }
+}
     
 }
 #endregion

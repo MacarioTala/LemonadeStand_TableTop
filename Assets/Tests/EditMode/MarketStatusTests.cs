@@ -32,7 +32,6 @@ public class MarketStatusTests
             .WithPriceManager(new BasicPriceManager())
             .WithSupplyProvider(new BasicSupplyProvider())
             .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithDemographicManager(new BasicDemographicManager());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);

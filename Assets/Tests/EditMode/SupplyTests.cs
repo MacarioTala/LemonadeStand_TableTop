@@ -29,7 +29,6 @@ public class SupplyTests
         .WithDemandStrategy(TestDemandStrategy)
             .WithSupplyProvider(TestSupplyProvider)
             .WithTradeProcessor(new BasicTradeProcessor())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithPriceManager(new BasicPriceManager());
         TestSupplyProvider.Initialize(TestMarket);
 

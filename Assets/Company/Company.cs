@@ -96,6 +96,9 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
 #endregion
 #region Financials
     private decimal cash = 0;
+    private decimal minimumBid;
+    public void SetMinimumBid(decimal minBid) => minimumBid = minBid;
+    public decimal GetMinimumBid() => minimumBid;
     public decimal GetCash() => cash;
     public void SetCash(decimal newCash) => cash = newCash;
     private readonly float share_price;

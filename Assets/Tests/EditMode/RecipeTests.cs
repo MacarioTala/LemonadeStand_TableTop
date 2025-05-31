@@ -51,7 +51,7 @@ public class RecipeTests
         // Arrange
         var expected = new List<String> { "lemon", "sugar", "water" };
         // Act
-        var actual = basicLemonadeRecipe.Get_Ingredients();
+        var actual = basicLemonadeRecipe.GetIngredientNames();
         // Assert
         Assert.AreEqual(expected, actual);
     }

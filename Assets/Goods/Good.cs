@@ -7,12 +7,27 @@ using UnityEngine;
 public class Good : ScriptableObject
 {
     public string GoodName;
-    
+
     private decimal _price;
-    private decimal Price{
-                        get => _price;
-                        set => _price = Math.Round(value,2);}
-    
+    private decimal _minAskPrice;
+
+    public decimal GetMinimumAsk(Recipe recipe)
+    {
+        if (_minAskPrice == 0)
+        {
+            // If no minimum ask price is set, calculate it based on the recipe's ingredients
+            _minAskPrice = recipe.GetIngredients()
+                .Sum(ingredient => ingredient.Good.GetPrice() * ingredient.Quantity_needed);
+            return _minAskPrice;
+        }
+        return _minAskPrice;
+    }
+    private decimal Price
+    {
+        get => _price;
+        set => _price = Math.Round(value, 2);
+    }
+
     //Demand
     public Dictionary<ElasticityTypeEnum, float> Elasticities = new();
     public void AddElasticity(ElasticityTypeEnum key, float value) => Elasticities.Add(key, value);
@@ -23,19 +38,19 @@ public class Good : ScriptableObject
 
     public int ExpiresAfterPeriods { get; set; } = int.MaxValue;
     private RarityEnum _rarity;
-    
+
     public bool IsProducedGood { get; set; } = false;
     public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
     public int price_decrease_threshold; //ibid
 
     [SerializeField] private readonly List<Good> _substitute_goods = new();
-#region Effects
+    #region Effects
     List<GoodEffect> _effects = new();
 
     public List<MetricEnum> AffectsMetrics()
     {
         return (from metric in _effects
-                      select metric.AffectsMetric).ToList();
+                select metric.AffectsMetric).ToList();
     }
 
     public ReductionResult ReducesMetric(MetricEnum metric)
@@ -68,20 +83,20 @@ public class Good : ScriptableObject
             effect.Apply(company);
         }
     }
-#endregion
+    #endregion
 
-    public static Good CreateInstance(  string good_name, 
-                                        PriceBand price_band=null,
-                                        RarityEnum rarity=RarityEnum.Common)
+    public static Good CreateInstance(string good_name,
+                                        PriceBand price_band = null,
+                                        RarityEnum rarity = RarityEnum.Common)
     {
         var good = CreateInstance<Good>();
-        good.Initialize(good_name, price_band,rarity);
+        good.Initialize(good_name, price_band, rarity);
         return good;
     }
 
-    private void Initialize(string good_name, 
+    private void Initialize(string good_name,
                             PriceBand price_band,
-                            RarityEnum rarity=RarityEnum.Common) 
+                            RarityEnum rarity = RarityEnum.Common)
     {
         this.GoodName = good_name;
         PriceBand = price_band;
@@ -94,14 +109,14 @@ public class Good : ScriptableObject
 
     public PriceBand Get_price_band() => PriceBand;
     public decimal GetPrice() => Price;
-    
+
     internal void SetPrice(decimal new_price) => Price = new_price;
 
     public RarityEnum GetRarity() => _rarity;
     public void SetRarity(RarityEnum rarity) => _rarity = rarity;
     public decimal Get_price_increment_rate() => price_increment_rate;
 
-    private decimal Generate_initial_price() 
+    private decimal Generate_initial_price()
     {
         var randomFloat = UnityEngine.Random.value;
         var price_range = PriceBand.max - PriceBand.min;
@@ -110,7 +125,7 @@ public class Good : ScriptableObject
 
     public void Add_substitute_good(Good good) => _substitute_goods.Add(good);
 
-    private void Set_price_thresholds(int increase_threshold, int decrease_threshold){
+    private void Set_price_thresholds(int increase_threshold, int decrease_threshold) {
         price_increase_threshold = increase_threshold;
         price_decrease_threshold = decrease_threshold;
     }
@@ -124,16 +139,16 @@ public class Good : ScriptableObject
         const int rare_decrease_threshold = 10;
         const int very_rare_increase_threshold = 5;
         const int very_rare_decrease_threshold = 1;
-        if(_rarity==RarityEnum.Common){
+        if (_rarity == RarityEnum.Common) {
             Set_price_thresholds(common_increase_threshold, common_decrease_threshold);
         }
-        if(_rarity==RarityEnum.Uncommon){
+        if (_rarity == RarityEnum.Uncommon) {
             Set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
         }
-        if(_rarity==RarityEnum.Rare){
+        if (_rarity == RarityEnum.Rare) {
             Set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
         }
-        if(_rarity==RarityEnum.Very_Rare){
+        if (_rarity == RarityEnum.Very_Rare) {
             Set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
         }
     }
@@ -144,23 +159,23 @@ public class Good : ScriptableObject
         const decimal uncommon_price_increment_rate = 0.15m;
         const decimal rare_price_increment_rate = 0.3m;
         const decimal very_rare_price_increment_rate = 0.4m;
-        if(_rarity==RarityEnum.Common){
+        if (_rarity == RarityEnum.Common) {
             price_increment_rate = common_price_increment_rate;
         }
-        if(_rarity==RarityEnum.Uncommon){
+        if (_rarity == RarityEnum.Uncommon) {
             price_increment_rate = uncommon_price_increment_rate;
         }
-        if(_rarity==RarityEnum.Rare){
+        if (_rarity == RarityEnum.Rare) {
             price_increment_rate = rare_price_increment_rate;
         }
-        if(_rarity==RarityEnum.Very_Rare){
+        if (_rarity == RarityEnum.Very_Rare) {
             price_increment_rate = very_rare_price_increment_rate;
         }
     }
-
+    #region Overrides
     public override bool Equals(object obj)
     {
-        if(obj is Good other)
+        if (obj is Good other)
         {
             return GoodName == other.GoodName;
         }
@@ -176,6 +191,7 @@ public class Good : ScriptableObject
     {
         return GoodName;
     }
+    #endregion
 }
 
 public enum RarityEnum

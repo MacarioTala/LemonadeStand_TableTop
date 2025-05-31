@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using UnityEngine;
 using static TestHelpers;
 
@@ -15,10 +17,13 @@ public class RecordingExecutions
 
     Company Company1;
     Company Company2;
+
+    iStrategy TestBehaviourStrategy;
+    PopulationCompany TestPopulation;
     readonly PriceBand PriceBand1 = new(.5m, 1.0m);
     readonly PriceBand PriceBand2 = new(5.0m, 10m);
 
-    readonly TestComparer<Execution> ExecutionComparer=new(new string[] { "CounterPartyTrades" });
+    readonly TestComparer<Execution> ExecutionComparer=new(new string[] { "CounterPartyTrades","RecordedTrade" });
 
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     [SetUp]
@@ -27,16 +32,61 @@ public class RecordingExecutions
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
+        TestBehaviourStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+                .WithAggressionLevel(.5f)
+                .Build();
+        
+        Lemonade = new GoodBuilder()
+                .Named("Lemonade")
+                .WithRarity(RarityEnum.Uncommon)
+                .Costing(.5m)
+                .WhichIsProducedGood()
+                .Build();
+        var reduceEnnuiEffect = new GoodEffect()
+                .Named("Reduce Ennui")
+                .DescribedAs("Reduces ennui")
+                .Affecting(MetricEnum.Ennui)
+                .WithEffectMagnitude(-.4f)
+                .WithEffect(new MetricModifier<PopulationCompany>(
+                           c => c.Ennui,
+                           (c, newValue) => c.Ennui = newValue)
+                           );
+        Lemonade.AddEffect(reduceEnnuiEffect);
+        
+        var LemonadeDemand = new DemandData
+        {
+            MinDemand = 0,
+            MaxDemand = 10000
+        };
+
+        var ListOfDemands = new Dictionary<Good, DemandData>
+        {
+            {Lemonade, LemonadeDemand},
+        };
+
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Beginner)
+            .WithPopulation(100)
+            .WithInitialCash(10000)
+            .WithBehaviourStrategy(TestBehaviourStrategy)
+            .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .Demanding(ListOfDemands)
+            .WithEnnui(.9f)
+            .Build();
+        TestBehaviourStrategy.GenerateGoals(TestPopulation);
+
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
-        .WithDemandStrategy(TestDemandStrategy)
+            .WithDemandStrategy(TestDemandStrategy)
             .WithTradeProcessor(new BasicTradeProcessor())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithPriceManager(new BasicPriceManager())
+            .WithDemographicManager(new MockDemographicManager())
             .WithTransactionManager(new BasicTransactionManager());
         Company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
+        TestMarket.RegisterMarketParticipant(TestPopulation);
 
         Period=0;
 
@@ -119,20 +169,24 @@ public class RecordingExecutions
         Assert.IsTrue(ExecutionComparer.Equals(expectedCompany2Execution1,actualCompany2Executions?.FirstOrDefault()));
         Assert.IsTrue(ExecutionComparer.Equals(expectedCompany3Execution1,actualCompany3Executions?.FirstOrDefault()));
      }
-     [TestCase(TestName = "Company 1 sells 5 lemonade to the Market, expect 1 execution for Company1")]
+     [TestCase(TestName = "Company 1 sells 5 lemonade to anyone, expect 1 execution for Company1")]
      public void FulfillDemandRecordsExecutionsInOrders_1P1CP()
      {
         //Arrange
-        var Company1SellsLemonadeToAnyone = new Order(null,Company1 , Lemonade, 5, 10m);
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10m, 5));
+        var company1Ask = 1m;
+        var companyQuantity = 5;
+        var company1CostOfLemonade = .5m;
+        var acquiredInPeriod = 0;
+        var Company1SellsLemonadeToAnyone = new Order(null,Company1 , Lemonade,companyQuantity, company1Ask);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, companyQuantity, company1CostOfLemonade, acquiredInPeriod));
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 5);
 
         const int expectedCompany1OrderExecutionCount = 1;
-        var expectedCompany1Execution = new Execution(Company1SellsLemonadeToAnyone,TestMarket,Company1,5,10m,Period);
+        var expectedCompany1Execution = new Execution(Company1SellsLemonadeToAnyone,TestPopulation,Company1,companyQuantity,company1Ask,Period);
 
         //Act
-        TestMarket.FulfillDemand();
+        TestMarket.StartTradingPeriod();
+        TestMarket.ProcessCompanyOrders();
         var actualCompany1Executions = Company1SellsLemonadeToAnyone.GetExecutions();
         //Note: no market executions can be querried at this time -- the order is created during fulfill demand
 
@@ -205,66 +259,73 @@ public class RecordingExecutions
         var comparer = new TestComparer<Execution>(new string[] { "CounterPartyTrades" });
         Assert.IsTrue(comparer.ListsAreEquivalent(expectedExecutions, actualExecutions,comparer));
     }
-    [TestCase(TestName = "Single trade, market is buyer counterparty. Expected executions: 2")]
+    [TestCase(TestName = "Single trade, Population is buyer counterparty. Expected executions: 2")]
     public void OneTradeMarketBuyerCounterparty()
     {
         //Arrange
-        var Company1SellsToAnyone = new Order( null,Company1, Lemon, 5, 10m);
-        var TestMarketBuysFromCompany1 = new Order(TestMarket,Company1, Lemon, 5, 10m){
-            SubmittingCompany = TestMarket,
+        var company1Quantity = 5;
+        var company1Ask = 3m;
+        var Company1SellsToAnyone = new Order( null,Company1, Lemonade, company1Quantity, company1Ask);
+        var TestPopulationBuysFromCompany1 = new Order(TestPopulation,Company1, Lemon, company1Quantity, company1Ask){
+            SubmittingCompany = TestPopulation,
             FilledQuantity = 5
         };
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 5, 10m, 5));
-        TestMarket.InitializeDemandForSpecificGood(Lemon, 5);
+
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, company1Quantity, company1Ask,Period));
+        
         const int expectedExecutionCount = 2;
         var expectedExecutions = new List<Execution>
         {
-            new(Company1SellsToAnyone,TestMarket,Company1,5,10m,Period),
-            new(TestMarketBuysFromCompany1,TestMarket,Company1,5,10m,Period)
+            new(Company1SellsToAnyone,TestPopulation,Company1,company1Quantity,company1Ask,Period),
+            new(TestPopulationBuysFromCompany1,TestPopulation,Company1,company1Quantity,company1Ask,Period)
         };
         Company1.QueueOrder(CreateActionContext(Company1SellsToAnyone,TestMarket,Period));
         
         //Act
+        TestMarket.StartTradingPeriod();
         TestMarket.ProcessCompanyOrders();
-        TestMarket.FulfillDemand();
         var actualExecutions = TestMarket.GetExecutionsInPeriod(Period);
         //Assert
         Assert.AreEqual(expectedExecutionCount,actualExecutions.Count);
         Assert.IsTrue(ExecutionComparer.ListsAreEquivalent(expectedExecutions, actualExecutions,ExecutionComparer));
     }
-    [TestCase(TestName = "Company1 sells 50 Lemonade, Company2 buys 10, Company 3 buys 10, market buys 30. Expected executions: 6")]
+    [TestCase(TestName = "Company1 sells 4000 Lemonade, Company2 buys 10, Company 3 buys 10, population buys 2216. Expected executions: 6")]
     public void BigSell2CompanyCounterParty1MarketCounterparty()
     {
+        var company1Quantity = 4000;
+        var company2Quantity = 10;
+        var company3Quantity = 10;
+        var company1Ask = 3m;
+        const int expectedPopulationBuys = 2216;//Note: This will change if you change population parameters.
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 50, 10m, 5));
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 30);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, company1Quantity, company1Ask, Period));
 
         var Company3 = Company.Factory.Create("Company 3",CompanyLevelEnum.Beginner);
         Company3.SetCash(1000);
-        var Company1SellsToAnyone = new Order(null,Company1, Lemonade, 50, 10m);
-        var Company2BuysFromAnyone = new Order(Company2, null, Lemonade, 10, 10m);
-        var Company3BuysFromAnyone = new Order(Company3, null, Lemonade, 10, 10m);
+        var Company1SellsToAnyone = new Order(null,Company1, Lemonade, company1Quantity, company1Ask);
+        var Company2BuysFromAnyone = new Order(Company2, null, Lemonade, company2Quantity, company1Ask);
+        var Company3BuysFromAnyone = new Order(Company3, null, Lemonade, company3Quantity, company1Ask);
         const int expectedExecutionCount = 6;
-        var TestMarketBuysFromCompany1 = new Order(TestMarket,Company1, Lemonade, 30, 10m)
+        var PopulationBuysFromCompany1 = new Order(TestPopulation,Company1, Lemonade, 30, company1Ask)
         {
-            SubmittingCompany = TestMarket,
+            SubmittingCompany = TestPopulation,
             FilledQuantity = 30
         };
         var expectedExecutions = new List<Execution>
         {
-            new(Company1SellsToAnyone,Company2,Company1,10,10m,Period),
-            new(Company1SellsToAnyone,Company3,Company1,10,10m,Period),
-            new(Company1SellsToAnyone,TestMarket,Company1,30,10m,Period),
-            new(Company2BuysFromAnyone,Company2,Company1,10,10m,Period),
-            new(Company3BuysFromAnyone,Company3,Company1,10,10m,Period),
-            new(TestMarketBuysFromCompany1,TestMarket,Company1,30,10m,Period)
+            new(Company1SellsToAnyone,Company2,Company1,10,company1Ask,Period),
+            new(Company1SellsToAnyone,Company3,Company1,10,company1Ask,Period),
+            new(Company1SellsToAnyone,TestPopulation,Company1,expectedPopulationBuys,company1Ask,Period),
+            new(Company2BuysFromAnyone,Company2,Company1,10,company1Ask,Period),
+            new(Company3BuysFromAnyone,Company3,Company1,10,company1Ask,Period),
+            new(PopulationBuysFromCompany1,TestPopulation,Company1,expectedPopulationBuys,company1Ask,Period)
         };
         Company1.QueueOrder(CreateActionContext(Company1SellsToAnyone,TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2BuysFromAnyone,TestMarket,Period));
         Company3.QueueOrder(CreateActionContext(Company3BuysFromAnyone,TestMarket,Period));
         //Act
+        TestMarket.StartTradingPeriod();
         TestMarket.ProcessCompanyOrders();
-        TestMarket.FulfillDemand();
         var actualExecutions = TestMarket.GetExecutionsInPeriod(Period);
         //Assert
         Assert.AreEqual(expectedExecutionCount,actualExecutions.Count);

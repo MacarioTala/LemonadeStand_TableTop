@@ -203,7 +203,15 @@ public class Market : ScriptableObject, iCompany
 
     //Reporting 
     readonly List<(Order Order, int Period)> OrdersSubmittedInPeriod = new(); // Read only used to get Order History. 
-    public List<Order> GetOrdersSubmittedInPeriod(int period) => OrdersSubmittedInPeriod.Where(x=>x.Period==period).Select(x=>x.Order).ToList();
+    public List<Order> GetOrdersSubmittedInPeriod(int period)
+    {
+        var ordersToReturn = OrdersSubmittedInPeriod
+                            .Where(x => x.Period == period)
+                            .Select(x => x.Order)
+                            .ToList();    
+        return ordersToReturn;
+    }
+    
     public void LogOrder(Order order, int period)
     {
         if(!OrdersSubmittedInPeriod.Contains((order,period)))
@@ -233,7 +241,20 @@ public class Market : ScriptableObject, iCompany
     public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
     public List<Order>GetOrdersSentToMarketByCompany(Company company)=>_tradeProcessor.GetOrders().Where(x=>x.SubmittingCompany.Equals(company)).ToList();
     public List<Recipe> GetRecipes()=>_recipes;
-    public Dictionary<Good,DemandData> GetMarketDemand() => _marketDemand;
+    public Dictionary<Good, DemandData> GetPopulationDemand()
+    {
+        // Currently assumes that only one PopulationCompany
+        // will exist in the market.
+        // In the future, we'll need to know how to merge the different demands
+        // for the same good across multiple market segments/populationCompanies.
+        var participantDemand = _marketParticipants
+               .OfType<PopulationCompany>()
+               .SelectMany(x => x.GetDemand())
+               .ToDictionary(x => x.Key, x => x.Value);
+
+        return participantDemand;  
+    }
+    
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
      
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
@@ -287,7 +308,6 @@ public class Market : ScriptableObject, iCompany
         {
             var market = CreateInstance<Market>()
                     .WithDemandStrategy(demandStrategy)
-                    .WithConsumptionManager(new BasicConsumptionManager())
                     .WithMarketDataManager(new BasicMarketDataManager())
                     .WithPriceManager(new BasicPriceManager())
                     .WithTradeProcessor(new BasicTradeProcessor())
@@ -309,8 +329,6 @@ public class Market : ScriptableObject, iCompany
     public void SetDemographicManager(iDemographicManager demographicManager) => _demographicManager = demographicManager;
     private iFeatureManager _featureManager;
     public void SetFeatureManager(iFeatureManager featureManager) => _featureManager = featureManager;
-    private iConsumptionManager _consumptionManager;
-    public void SetConsumptionManager(iConsumptionManager consumptionManager) => _consumptionManager = consumptionManager;
     private iMarketDataManager _marketDataManager;
     public void SetMarketDataManager(iMarketDataManager marketDataManager) => _marketDataManager = marketDataManager;
     private iPriceManager _priceManager;
@@ -383,12 +401,7 @@ public class Market : ScriptableObject, iCompany
     {
         return DemandStrategy.GetDemandInPeriod(this,CurrentPeriod);
     }
-
-    public LemonadeStandResultObject FulfillDemand()
-    {
-        return _consumptionManager.FulfillDemand(this);
-        
-    }
+    [Obsolete("remove this in a future refactor. PopulationCompanies should handle their own consumption")]
     internal void ConsumeGoods()
         {
             //attempt to consume goods at current demand levels
@@ -455,7 +468,7 @@ public class Market : ScriptableObject, iCompany
 #region Buy and sell 
     public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
     {
-       return DemandStrategy.GetTotalBoughtByMarket(this,good,tradingPeriod);
+       return DemandStrategy.GetTotalBoughtByPopulation(this,good,tradingPeriod);
     }
     public int GetTotalSoldByMarket(int tradingPeriod, Good good) //currently public for testing purposes
     {
@@ -465,22 +478,31 @@ public class Market : ScriptableObject, iCompany
 #region Demand
      internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod=-1)
     {
+        // You are here: update this to update the supply of the good too
+        // since CalculateFulfillmentRates already calculates total supply
+        // Maybe there's no need for a supply provider?
+
         //Get the demand and supply for the period
         var ordersSubmittedInPeriod = GetOrdersSubmittedInPeriod(tradingPeriod);
         var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(ordersSubmittedInPeriod);
-        /// Change the fulfillmentRates definition to drop _marketDemand when
-        ///     we refactor out iConsumptionManager.FulfillDemand()
-        /// We'll just have a company that represents the population
-        /// var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(ordersSubmittedInPeriod); 
-        //              -- just in case the refactor isn't clear
-       
-        foreach(var fulfillmentRate in fulfillmentRates)
-        {
-            if(_marketDemand.TryGetValue(fulfillmentRate.Good, out var demandEntry))
+
+        // Note: Currently only supports one PopulationCompany per market.
+        // In the future, we may need to merge fulfillment rates 
+        // from multiple PopulationCompanies/market segments.
+        var populationCompany = _marketParticipants
+            .OfType<PopulationCompany>()
+            .FirstOrDefault();
+        if (populationCompany!=null)
             {
-                demandEntry.FulfilmentRate = fulfillmentRate.FulfillmentRate;
+                foreach (var fulfillmentRate in fulfillmentRates)
+                {
+                    if (populationCompany.GetDemand().TryGetValue(fulfillmentRate.Good, out var demandEntry))
+                    {
+                        demandEntry.CurrentDemand = fulfillmentRate.TotalDemand;
+                        demandEntry.FulfilmentRate = fulfillmentRate.FulfillmentRate;
+                    }
+                }
             }
-        }
         return LemonadeStandResultObject.Success();
     }
 

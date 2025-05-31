@@ -9,7 +9,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
     public LemonadeStandResultObject AdjustDemandInPeriod(Market market)
     {
-        foreach (var good in market.GetMarketDemand().Keys)
+        foreach (var good in market.GetPopulationDemand().Keys)
         {
             AdjustDemandForSaturation(market, good);
             AdjustDemandForPopulation(market, good);
@@ -29,7 +29,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
         elasticityValue=GetElasticity(market, good, elasticity);
 
-        var demandData = market.GetMarketDemand()[good];
+        var demandData = market.GetPopulationDemand()[good];
         var currentDemand = demandData.CurrentDemand;
         var MinDemand = demandData.MinDemand;
         var MaxDemand = demandData.MaxDemand;
@@ -58,7 +58,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
     {
         decimal ask;
         bool hasCostForGood = CalculateAskForProducedGood(market,good) > 0;
-        var marketDemand = market.GetMarketDemand();
+        var marketDemand = market.GetPopulationDemand();
         if(good.IsProducedGood && hasCostForGood)
         {
             ask=CalculateAskForProducedGood(market,good);
@@ -101,7 +101,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
     internal static void AdjustDemandForSaturation(Market market,Good good)
     {
-        var demandForGood = market.GetMarketDemand()[good];
+        var demandForGood = market.GetPopulationDemand()[good];
         var totalSupply = market.GetSupplyInPeriod(market.CurrentPeriod);
         int supplyForGood = 0;
         if (!(totalSupply == null || totalSupply.Count == 0))
@@ -124,7 +124,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
      private static float GetElasticity (Market market, Good good, ElasticityTypeEnum elasticity)
     {
-        var marketDemand = market.GetMarketDemand();
+        var marketDemand = market.GetPopulationDemand();
 
         if (!marketDemand.ContainsKey(good))
         {
@@ -149,7 +149,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
         var market = orderFulfilledEvent.OrderMarket;
         var instability = market.GetMarketInstability();
         var order = orderFulfilledEvent.PrimaryOrder;
-        var demandData = orderFulfilledEvent.OrderMarket.GetMarketDemand()[order.Good];
+        var demandData = orderFulfilledEvent.OrderMarket.GetPopulationDemand()[order.Good];
         var currentDemand = demandData.CurrentDemand;
         var minDemand = demandData.MinDemand;
         var maxDemand = demandData.MaxDemand;

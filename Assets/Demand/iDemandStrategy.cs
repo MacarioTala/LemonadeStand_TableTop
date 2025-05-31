@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,20 +7,34 @@ public interface iDemandStrategy
     public const int MinDemand = 0;
     public const int MaxDemand = 10000;
     LemonadeStandResultObject AdjustDemandInPeriod(Market market);
+    [Obsolete("refactor this out. Demand is now driven by population and not the market.")]
     void InitializeDemandForSpecificGood(Market market, Good good, int initialDemand, int minDemand = MinDemand, int maxDemand = MaxDemand, float curvature = 1f);
     void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent);
 #region Default Implementations
     
     public Dictionary<Good, DemandData> GetDemandInPeriod(Market market, int tradingPeriod)
     {
-        Dictionary<Good, DemandData> calculatedDemand = market.GetMarketDemand();
-        var marketOrders = market.GetOrdersSentToMarket().Where(x=>x.Buyer is not Market).ToList();
-        foreach (var order in marketOrders)
-        {   
+        Dictionary<Good, DemandData> calculatedDemand = new();
+        var orders = market.GetOrdersSubmittedInPeriod(tradingPeriod);
+        var allOrdersInPeriod = market.GetOrdersSubmittedInPeriod(tradingPeriod)
+            .Where(x => x.Buyer.Equals(x.SubmittingCompany))
+            .ToList();
+        foreach (var order in allOrdersInPeriod)
+        {
             var good = order.Good;
-            var demandData = calculatedDemand.TryGetValue(good, out var value) ? value : new DemandData{CurrentDemand = 0};
-            demandData.CurrentDemand += order.Quantity;
-            calculatedDemand[good] = demandData;
+            var quantity = order.Quantity;
+
+            if (calculatedDemand.ContainsKey(good))
+            {
+                calculatedDemand[good].CurrentDemand += quantity;
+            }
+            else
+            {
+                calculatedDemand[good] = new DemandData
+                {
+                    CurrentDemand = quantity
+                };
+            }
         }
         return calculatedDemand;
     }
@@ -43,13 +58,16 @@ public interface iDemandStrategy
         return calculatedSupply;
     }
 
-    public int GetTotalBoughtByMarket(Market market,Good good,int tradingPeriod)
+    public int GetTotalBoughtByPopulation(Market market,Good good,int tradingPeriod)
     {
-        return market.GetOrdersSubmittedInPeriod(tradingPeriod)
-            .Where(x=> x.Good.Equals(good)
-                    && x.Buyer is Market
-                    && x.SubmittingCompany is Market)
+        var populationOrders = market.GetOrdersSubmittedInPeriod(tradingPeriod)
+            .Where(x => x.Good.Equals(good))
+            .Where(x => x.Buyer is PopulationCompany)
+            .ToList();
+        var TotalBought = populationOrders
             .Sum(x => x.FilledQuantity);
+        return TotalBought;
+            
     }
 
     public int GetTotalSoldByMarket(Market market,int tradingPeriod, Good good) //currently public for testing purposes

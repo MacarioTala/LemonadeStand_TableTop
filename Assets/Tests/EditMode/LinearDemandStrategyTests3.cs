@@ -30,7 +30,7 @@ public partial class LinearDemandStrategyTests
         
         //Act
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
@@ -56,7 +56,7 @@ public partial class LinearDemandStrategyTests
         //Act
         TestMarket.ProcessCompanyOrders();
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
-        var actualDemand = TestMarket.GetMarketDemand()[Lemonade].CurrentDemand;
+        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.GreaterOrEqual(actualDemand, expectedLowerBound);
         Assert.LessOrEqual(actualDemand, expectedUpperBound);

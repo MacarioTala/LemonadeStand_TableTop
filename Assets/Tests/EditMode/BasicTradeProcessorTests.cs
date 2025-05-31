@@ -35,7 +35,6 @@ public partial class BasicTradeProcessorTests
 
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
             .WithDemandStrategy(TestDemandStrategy)
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithTradeProcessor(TestTradeProcessor)
             .WithTransactionManager(new BasicTransactionManager())
             .WithCash(1000000);

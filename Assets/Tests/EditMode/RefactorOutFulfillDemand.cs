@@ -103,7 +103,8 @@ public class RefactorOutFulfillDemand
                 .WithPriceManager(new BasicPriceManager())
                 .WithTradeProcessor(new BasicTradeProcessor())
                 .WithTransactionManager(new BasicTransactionManager())
-                .WithPriceModifier(new SupplyDemandModifier());
+                .WithPriceModifier(new SupplyDemandModifier())
+                .WithSupplyProvider(new MockSupplyProvider());
     }
     [TearDown]
     public void TearDown()

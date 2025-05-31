@@ -36,7 +36,6 @@ public class MarketObserverTests
                 .WithDemandStrategy(TestDemandStrategy)
                 .WithSupplyProvider(TestSupplyProvider)
                 .WithTradeProcessor(new BasicTradeProcessor())
-                .WithConsumptionManager(new BasicConsumptionManager())
                 .WithPriceManager(new BasicPriceManager())
                 .WithTransactionManager(new BasicTransactionManager());
     

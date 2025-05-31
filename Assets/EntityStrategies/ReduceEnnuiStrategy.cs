@@ -26,7 +26,16 @@ public class ReduceEnnuiStrategy : iStrategy
         if (company is PopulationCompany populationCompany)
         {
             var demand = populationCompany.GetDemand()
-                .Where(x=> x.Key.AffectsMetrics().Contains(MetricEnum.Ennui));
+                .Where(
+                    x => x.Value.MaxDemand > 0 //Can't demand goods that can't be bought(embargo, etc.)
+                    &&
+                    (
+                        x.Key.AffectsMetrics().Contains(MetricEnum.Ennui)
+                        ||
+                        x.Value.MinDemand > 0
+                    )
+                );
+                
             var goal = populationCompany.Goals.Find(g => g.Name == "Reduce Ennui");
 
             foreach (var row in demand)
@@ -68,7 +77,7 @@ public class ReduceEnnuiStrategy : iStrategy
     internal BidAskSpread CalculateBidPerCapita(Good good, PopulationCompany populationCompany,Goal goal)
     {
         //Ability
-        var availableCashPerCapita = populationCompany.GetCash()/100;
+        var availableCashPerCapita = populationCompany.GetCash()/populationCompany.Population;
         var willingnessToSpend = availableCashPerCapita * (decimal)_aggressionLevel;
 
         //Desire
@@ -142,12 +151,17 @@ public class ReduceEnnuiStrategy : iStrategy
         foreach(var spread in _bidAskSpreads)
         {
             var good = spread.Key;
-            var bid = spread.Value.Bid;
+            var bid = Math.Max(spread.Value.Bid, company.GetMinimumBid());
             var cash = company.GetCash();
-        
+            var populationCompany = company as PopulationCompany;
+            var maxDemandForGood = populationCompany.GetDemandFor(good).MaxDemand;
 
             #region prioritize goods to bid for
-            var quantity = (int)Math.Floor(cash * (decimal)spread.Value.Allocation);
+            var cashAvailableForBuys = Math.Floor(cash * (decimal)spread.Value.Allocation);
+            var quantity = Math.Min(
+                            (int)Math.Floor(cashAvailableForBuys / bid),
+                            maxDemandForGood
+                                );
             #endregion
 
             var order = new Order(company,null,good,quantity,bid);

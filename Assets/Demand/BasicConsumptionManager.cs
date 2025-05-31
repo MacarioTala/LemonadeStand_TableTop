@@ -6,7 +6,7 @@ public class BasicConsumptionManager : iConsumptionManager
 {
     public LemonadeStandResultObject FulfillDemand(Market market)
     {
-        var demand = market.GetMarketDemand();
+        var demand = market.GetPopulationDemand();
         var ordersSentToMarket = market.GetOrdersSentToMarket()
                                        .Where(x=>x.IsSell() && x.Buyer is not Market)
                                        .ToList();

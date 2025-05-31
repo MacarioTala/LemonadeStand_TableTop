@@ -15,7 +15,6 @@ public class CompanyOrderValidationTests
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
             .WithTradeProcessor(new BasicTradeProcessor())
             .WithTransactionManager(new BasicTransactionManager())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithDemographicManager(new BasicDemographicManager())
             .WithDemandStrategy(TestDemandStrategy);
     }

@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -6,11 +7,28 @@ using UnityEngine;
 public class GoodTests
 {
     readonly PriceBand price_band1 = new(.5m, 1.0m);
+    Good Lemon;
+    Good Sugar;
+    Good Water;
 
     [SetUp]
     public void SetUp()
     {
-        
+        Lemon = new GoodBuilder()
+            .Named("Lemon")
+            .WithRarity(RarityEnum.Common)
+            .Costing(.1m)
+            .Build();
+        Sugar = new GoodBuilder()
+            .Named("Sugar")
+            .WithRarity(RarityEnum.Common)
+            .Costing(.05m)
+            .Build();
+        Water = new GoodBuilder()
+            .Named("Water")
+            .WithRarity(RarityEnum.Common)
+            .Costing(.8m)
+            .Build();
     }
 
     [Test]
@@ -94,5 +112,29 @@ public class GoodTests
         // Assert
         Assert.AreEqual(expectedEnnui, actualEnnui);
     }
-#endregion
+    #endregion
+#region Pricing Tests
+   [Test]
+   public void MinimumAskForAGoodShouldAtLeastEqualCost()
+   {
+         // Arrange
+        var enhancedlemonade = new GoodBuilder()
+            .Named("Enhanced Lemonade")
+            .WithRarity(RarityEnum.Very_Rare)
+            .Build();
+        enhancedlemonade.IsProducedGood = true;
+        var enhancedLemonadeRecipe = new Recipe(RecipeName: "Enhanced Lemonade",
+                                     product: enhancedlemonade, 
+                                     ingredients: new List<Ingredient> { new(Lemon, 9), 
+                                                                        new(Sugar, 2), 
+                                                                        new(Water, 7) });
+        var costPerUnit = 9 * Lemon.GetPrice() + 2 * Sugar.GetPrice() + 7 * 
+        Water.GetPrice();
+        // Act
+        var actual = enhancedlemonade.GetMinimumAsk(enhancedLemonadeRecipe);
+        // Assert
+        Assert.IsTrue(actual>= costPerUnit);
+        Debug.Log($"Cost per unit: {costPerUnit}" + " Ask: " + actual);
+   }
+   #endregion
 }

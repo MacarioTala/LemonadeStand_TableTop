@@ -15,15 +15,19 @@ public class Recipe
             this.product = product;
             this.ingredients = ingredients;
         }
-        public List<string> Get_Ingredients()
+        public List<string> GetIngredientNames()
         {
             return ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
         }
-
-        public List<Ingredient> Get_recipe()
+        public List<Ingredient> GetIngredients()
         {
             return ingredients;
         }
+
+        public List<Ingredient> Get_recipe()
+    {
+        return ingredients;
+    }
         
         public int Get_max_quantity(List<InventoryEntry> stock)
         {
@@ -37,7 +41,7 @@ public class Recipe
         public (Good,int) Make_recipe(int quantity, Inventory inventory)
         {
             var stock = inventory.GetInventoryEntries()
-                     .Where(entry => Get_Ingredients().Contains(entry.good.GoodName))
+                     .Where(entry => GetIngredientNames().Contains(entry.good.GoodName))
                      .ToList();
 
             if (quantity > Get_max_quantity(stock))

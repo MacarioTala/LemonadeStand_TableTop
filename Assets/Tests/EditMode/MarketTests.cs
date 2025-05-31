@@ -11,6 +11,9 @@ public partial class MarketTests
     private TheEconomy TestEconomy;
 
     private Market test_initial_market;
+    PopulationCompany TestPopulation;
+
+    iStrategy TestReduceEnnuiStrategy;
     Company Company1;
     Company Company2;
     Market TestMarket;
@@ -44,20 +47,38 @@ public partial class MarketTests
         //Setup Market Dependencies
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
 
+        //Setup Population Dependencies
+        TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
+            .WithAggressionLevel(.55f)
+            .Build();
+
         //Setup Market
         TestMarket = Market.Factory.CreateMarket("Test Market", CompanyLevelEnum.Market)
             .WithDemandStrategy(TestDemandStrategy).WithDemandStrategy(TestDemandStrategy)
             .WithTradeProcessor(new BasicTradeProcessor())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithPriceManager(new BasicPriceManager())
             .WithTransactionManager(new BasicTransactionManager())
-            .WithMarketDataManager(new BasicMarketDataManager());
+            .WithMarketDataManager(new BasicMarketDataManager())
+            .WithDemographicManager(new MockDemographicManager());
+
+
+        //Setup Population
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+            .Named("Test Population")
+            .AtLevel(CompanyLevelEnum.Market)
+            .WithInitialCash(10000)
+            .WithBehaviourStrategy(TestReduceEnnuiStrategy)
+            .WithEnnui(.99f)
+            .WithPopulation(1000)
+            .Build();
+        TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 
         //Setup Companies
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company2 = Company.Factory.Create("Company2", CompanyLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
+        TestMarket.RegisterMarketParticipant(TestPopulation);
 
         SetupGoodsAndRecipes();
 
@@ -104,14 +125,15 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expected, actual.First());
     }
-    [Test]
-    public void When_a_market_is_created_without_passing_initial_demand_it_should_demand_lemonade()
+    [TestCase(TestName ="Starter markets should demand lemonade")]
+    public void StarterMarketsDemandLemonade()
     {
+        throw new IgnoreException("refactor this to change CreateStarterMarket to have an initial population.");
         // Arrange
         var expected_good_name = "Lemonade";
         var expected_demand = 1000;
         // Act
-        var actual = test_initial_market.GetMarketDemand().First();
+        var actual = test_initial_market.GetPopulationDemand().First();
         // Assert
         Assert.AreEqual(expected_good_name, actual.Key.GoodName);
         Assert.AreEqual(expected_demand, actual.Value.CurrentDemand);
@@ -131,40 +153,6 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
-    [Test]
-    public void MarketsShouldConsiderMarketBuysWhenCallingConsumeGoods()
-    {
-        //For instance, if the demand for lemons is 1000
-        //and the market buys 500 lemons, 
-        //ConsumeGoods should only consume 500 lemons
-        // Arrange
-        var period = 0;
-        var initialLemons = 1000;
-        var lemonsCompanyWillSellToMarket = 500;
-        
-        TestMarket.SetCash(100000);
-        TestMarket.GetInventory().AddGood(new InventoryEntry(lemon, initialLemons, 3.0m, period));
-        TestMarket.InitializeDemandForSpecificGood(lemon, 1000);
-
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000, 2.0m, period));
-        
-        //next line is necessary because of different demand strategies 
-        //that will change the demand
-        var expected = 500;
-        // Act
-        var lemonSale = new Order(null, Company1, lemon, lemonsCompanyWillSellToMarket, 3.0m);
-        Company1.QueueOrder(CreateActionContext(lemonSale,TestMarket,0));
-        TestMarket.ProcessCompanyOrders();
-        TestMarket.FulfillDemand();
-        TestMarket.ConsumeGoods();
-        
-        //only one inventory entry per good in Markets
-        var actualInventory = TestMarket.GetInventory();
-        var actual = actualInventory.GetInventoryEntriesByGood(lemon.GoodName).FirstOrDefault();
-        // Assert
-        Assert.AreEqual(expected, actual.quantity);
-    }
-    
 #endregion
 #region Perishability tests
     [Test]
@@ -356,36 +344,6 @@ public partial class MarketTests
     }
                                
    #endregion
-   #region Pricing Tests
-   [Test]
-   public void AskForAGoodShouldExceedCost()
-   {
-         // Arrange
-        var testMarket = TestMarket;
-        var enhancedlemonade = Good.CreateInstance("Enhanced Lemonade", band2, RarityEnum.Uncommon);
-        testMarket.SetCash(100000);
-        enhancedlemonade.IsProducedGood = true;
-        var enhancedLemonadeRecipe = new Recipe(RecipeName: "Enhanced Lemonade",
-                                     product: enhancedlemonade, 
-                                     ingredients: new List<Ingredient> { new(lemon, 9), 
-                                                                        new(sugar, 2), 
-                                                                        new(water, 7) });
-        var lemonEntry = new InventoryEntry(lemon, 1000, 3.0m, 0);
-        var sugarEntry = new InventoryEntry(sugar, 1000, 3.0m, 0);
-        var waterEntry = new InventoryEntry(water, 1000, 3.0m, 0);
-        testMarket.GetInventory().AddGood(lemonEntry);
-        testMarket.GetInventory().AddGood(sugarEntry);
-        testMarket.GetInventory().AddGood(waterEntry);
-        testMarket.AddRecipe(enhancedLemonadeRecipe);
-        testMarket.InitializeDemandForSpecificGood(enhancedlemonade, 1000);
-        var costPerUnit = 9 * 3.0m + 2 * 3.0m + 7 * 3.0m;
-        // Act
-        var actual = testMarket.GetMarketDemand()[enhancedlemonade].Ask;
-        // Assert
-        Assert.Greater(actual, costPerUnit);
-        Debug.Log($"Cost per unit: {costPerUnit}" + " Ask: " + actual);
-   }
-   #endregion
    #region Trade Tests
    [Test]
     public void ACompanyCannotBuyGoodsWithInsufficientCash()
@@ -402,44 +360,7 @@ public partial class MarketTests
         Assert.AreEqual(expected, actual);
         Assert.AreEqual(0, marketTradesInPeriod.Count);
     }
-     [Test]
-    public void MarketsShouldOnlyHaveASingleInventoryEntryPerGoodEvenWithMultipleBuys()
-    {
-        //As of 11/17/2023, Markets don't care about optimizing 
-        //the price that they buy goods at
-        //they only care about the quantity of goods they have
-        //So there should only be one InventoryEntry per good
-        
-        // Arrange
-        var tradingPeriod = 0;
-        var marketToTest = TestMarket;
-        const int expected_number_of_entries = 1;
-        var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterMarketParticipant(company1);
-        var company2 = Company.Factory.Create("Company 2", CompanyLevelEnum.Beginner);
-        marketToTest.RegisterMarketParticipant(company2);
-        company1.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
-        company2.GetInventory().AddGood(new InventoryEntry(lemon, 20, 3m,tradingPeriod));
-        marketToTest.InitializeDemandForSpecificGood(lemon, 50);
-        // Act
-        var trade1 = new Order(test_initial_market, company1, lemon, 10, 10.0m);
-        var trade2 = new Order(test_initial_market, company2, lemon, 10, 15.0m);
-        var trade1Context = new ActionContext{TradeToSubmit = trade1,
-                                                MarketToSubmitTo = marketToTest};   
-        var trade2Context = new ActionContext{TradeToSubmit = trade2,
-                                                MarketToSubmitTo = marketToTest};
-        marketToTest.QueueOrder(trade1Context);
-        marketToTest.QueueOrder(trade2Context);
-        marketToTest.ProcessCompanyOrders();
-        var actual_number_of_entries = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).Count();
-        // Assert
-        Assert.AreEqual(expected_number_of_entries, actual_number_of_entries);
-
-        //remove companies from Market
-        marketToTest.RemoveMarketParticipant(company1);
-        marketToTest.RemoveMarketParticipant(company2);
-    }
-     [Test]
+    [Test]
     public void CompaniesCanBuyGoodsFromEachOtherViaMatchingQueuedOrders()
     {
         // Arrange

@@ -8,11 +8,6 @@ public static class MarketBuilder
         market.SetDemandStrategy(strategy);
         return market;
     }
-    public static Market WithConsumptionManager(this Market market, iConsumptionManager consumptionManager)
-    {
-        market.SetConsumptionManager(consumptionManager);
-        return market;
-    }
     public static Market WithDataService(this Market market, iMarketDataService dataService)
     {
         market.SetMarketDataService(dataService);

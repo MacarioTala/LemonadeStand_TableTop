@@ -27,7 +27,6 @@ public class BankruptcyTests
                             .WithDemographicManager(TestDemographicManager)
                             .WithSupplyProvider(TestSupplyProvider)
                             .WithDemandStrategy(TestDemandStrategy)
-                            .WithConsumptionManager(new BasicConsumptionManager())
                             .WithTradeProcessor(new BasicTradeProcessor())
                             .WithTransactionManager(new BasicTransactionManager())
                             .WithPriceManager(new BasicPriceManager());

@@ -41,7 +41,6 @@ public class IntegrationTests
 
         TestMarket = Market.Factory.CreateMarket("The First Market", CompanyLevelEnum.Market)
             .WithDemandStrategy(TestDemandStrategy)
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithDataService(TestMarketDataService)
             .WithSupplyProvider(TestSupplyProvider)
             .WithDemographicManager(TestDemographicManager)
@@ -283,50 +282,6 @@ public class IntegrationTests
     }
     
   #endregion
-
-    [Test][Ignore("Obsolete: FulfillDemand no longer used.")]
-    public void UnleashMarketForcesFulfilsMarketDemandWhenCalledFromMarket()
-    {
-        //Arrange
-        var marketToTest = TestMarket;
-        var company1 = Company1;
-        marketToTest.InitializeDemandForSpecificGood(Lemonade, 1000);
-        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
-        var company1Order = new Order(null, company1, Lemonade, 1000, 3.5m);
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
-        var period = 1;
-        var expected = 1000;
-        //Act
-        company1.QueueOrder(company1Context);
-        marketToTest.UnleashMarketForces(period);
-        var actual=company1Order.FilledQuantity;
-        //Assert
-        Assert.AreEqual(expected, actual);    
-    }
-    [Test][Ignore("Obsolete: FulfillDemand no longer used.")]
-     public void UnleashMarketForcesFulfillsMarketDemandWhenCalledFromTheEconomy()
-    {
-        //Arrange
-        var marketToTest = TestMarket;
-        marketToTest.InitializeDemandForSpecificGood(Lemonade, 2000);
-        var company1 = Company.Factory.Create("TestCompany", CompanyLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
-        marketToTest.RegisterMarketParticipant(company1);
-
-        var company1Order = new Order(null, company1, Lemonade, 1000, 3.5m);
-        var company1Context = new ActionContext{TradeToSubmit = company1Order,
-                                                MarketToSubmitTo = marketToTest};
-        var expected = 1000;
-
-        //Act
-        company1.QueueOrder(company1Context);
-        TestEconomy.EndTradingPeriod();
-        var actual=company1Order.FilledQuantity;
-        //Assert
-        Assert.AreEqual(expected, actual);
-    }
-    
 #endregion
 #region Trades
     [Test]
@@ -368,7 +323,6 @@ public class IntegrationTests
             .WithSupplyProvider(TestSupplyProvider)
             .WithDemographicManager(TestDemographicManager2)
             .WithTradeProcessor(new BasicTradeProcessor())
-            .WithConsumptionManager(new BasicConsumptionManager())
             .WithPriceManager(new BasicPriceManager());
 
         TheEconomy.Instance.RegisterCompany(SecondMarket);
