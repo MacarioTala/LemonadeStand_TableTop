@@ -1,17 +1,25 @@
-# Unity-generated folders
+# Unity generated folders
 /Library/
 /Logs/
 /Temp/
 /Obj/
+/Build/
+/Builds/
+/MemoryCaptures/
 
-# Local configuration files
+# User-specific settings
 /UserSettings/
-.DS_Store           # macOS system file
 
-# VS Code settings
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor folders
 .vscode/
+.idea/
 
-# Visual Studio files
+# Visual Studio generated files
 *.csproj
 *.unityproj
 *.sln
@@ -20,9 +28,14 @@
 *.user
 *.userprefs
 
-#Apple stuff
-.DS_Store
+# Unity auto-generated files
+/Packages/manifest.json
 
-# Unity dependencies
-/Packages/packages-lock.json
+# Build artifacts
+*.apk
+*.aab
 
+# Asset Bundles / Addressables
+/Assets/AssetBundles/
+/Assets/StreamingAssets/aa.meta
+/Assets/StreamingAssets/aa/
