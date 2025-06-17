@@ -279,7 +279,7 @@ public class EnnuiTests
       
       //Act
       var ActualDemand = strategy.GenerateBidAskSpreads(population);
-      var buys = strategy.CreateBuys(population, Period);
+      var buys = strategy.CreateBuys(population);
       var totalCostOfBuys = buys.Sum(b => b.TradeToSubmit.Price)* buys.Sum(c => c.TradeToSubmit.Quantity);
 
       //Assert
@@ -319,7 +319,7 @@ public class EnnuiTests
 
       //Act
       TestMarket.RegisterMarketParticipant(population);
-      strategy.PerformStrategy(population, Period);
+      strategy.PerformStrategy(population);
       var actualOrders = TestMarket.GetOrdersSentToMarket();
 
       //Assert

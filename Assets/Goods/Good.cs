@@ -11,7 +11,7 @@ public class Good : ScriptableObject
     private decimal _price;
     private decimal _minAskPrice;
 
-    public decimal GetMinimumAsk(Recipe recipe)
+    public decimal GetCostOfGood(Recipe recipe)
     {
         if (_minAskPrice == 0)
         {

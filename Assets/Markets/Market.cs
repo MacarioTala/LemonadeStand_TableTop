@@ -25,11 +25,6 @@ public class Market : ScriptableObject, iCompany
             return Guid.Parse(_marketId);
         }
     }
-    public List<MarketFeature> MarketFeatures = new();
-    public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
-    public (int x,int y) MarketSize = (200,200);
-    public int GetWidth() => MarketSize.x;
-    public int GetHeight() => MarketSize.y;
     //Fields to get around Unity's limitation of not having automatic backing properties.
     [SerializeField] private string _companyName;
     public string Name
@@ -38,14 +33,57 @@ public class Market : ScriptableObject, iCompany
         set => _companyName = value;
     }
     public CompanyLevelEnum company_level;
-    //Demand
-    public List<MarketData> MarketData = new();//bid/ask spread for companies
+#region Demand
+    public List<MarketData> MarketData { get; } = new();//bid/ask spread for companies
     private readonly Dictionary<Good, DemandData> _marketDemand = new();
 
+    public DemandData GetDemandFor(Good good)
+    {
+        throw new NotImplementedException("Might need to  implement this as a list of DemandData instead.");
+    }
+    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket()
+    {
+        var spreads = new List<(Good good, decimal Bid, decimal Ask)>();
+        if (MarketData == null)
+        {
+            return Enumerable.Empty<(Good, decimal, decimal)>();
+        }
+        else
+        {
+            spreads = MarketData
+                .Select(x => (x.Good, x.Bid, x.Ask)).ToList();
+        }
+        return spreads;
+    }
+
+    public decimal GetPerceivedCostOfGood(Good good)
+    {
+        var asks = MarketData
+                    .GroupBy(x => x.Good)
+                    .ToDictionary(g => g.Key, g => g.Average(x => x.Ask));
+
+        var perceivedCost = _marketParticipants
+                    .Where(x => x is not PopulationCompany)
+                    .SelectMany(x => x.Recipes
+                        .Where(r => r.GetProduct().Equals(good))
+                           )
+                    .Select(r => r.GetPerceivedCostPerUnit(asks))
+                    .DefaultIfEmpty(0m) // If no recipes found, default to 0
+                    .Average();
+        return perceivedCost;
+    }
+#endregion
     //Cash and Inventory
     private decimal cash = 0;
     private readonly Inventory _inventory = new();
     private readonly List<Recipe> _recipes = new();
+
+    //Graphics and Market Features
+    public List<MarketFeature> MarketFeatures = new();
+    public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
+    public (int x,int y) MarketSize = (200,200);
+    public int GetWidth() => MarketSize.x;
+    public int GetHeight() => MarketSize.y;
 
     //Companies
     private readonly List<Company> _marketParticipants = new();
@@ -72,9 +110,10 @@ public class Market : ScriptableObject, iCompany
         }
         return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
     }
+    
 #endregion
 
-#region Demographics
+    #region Demographics
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
         =>_demographicManager.SetMarketInstability(newInstability);
@@ -474,9 +513,9 @@ public class Market : ScriptableObject, iCompany
     {
         return DemandStrategy.GetTotalSoldByMarket(this,tradingPeriod,good);
     }
-#endregion
-#region Demand
-     internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod=-1)
+    #endregion
+    #region Demand
+    internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1)
     {
         // You are here: update this to update the supply of the good too
         // since CalculateFulfillmentRates already calculates total supply
@@ -492,17 +531,17 @@ public class Market : ScriptableObject, iCompany
         var populationCompany = _marketParticipants
             .OfType<PopulationCompany>()
             .FirstOrDefault();
-        if (populationCompany!=null)
+        if (populationCompany != null)
+        {
+            foreach (var fulfillmentRate in fulfillmentRates)
             {
-                foreach (var fulfillmentRate in fulfillmentRates)
+                if (populationCompany.GetDemand().TryGetValue(fulfillmentRate.Good, out var demandEntry))
                 {
-                    if (populationCompany.GetDemand().TryGetValue(fulfillmentRate.Good, out var demandEntry))
-                    {
-                        demandEntry.CurrentDemand = fulfillmentRate.TotalDemand;
-                        demandEntry.FulfilmentRate = fulfillmentRate.FulfillmentRate;
-                    }
+                    demandEntry.CurrentDemand = fulfillmentRate.TotalDemand;
+                    demandEntry.FulfilmentRate = fulfillmentRate.FulfillmentRate;
                 }
             }
+        }
         return LemonadeStandResultObject.Success();
     }
 
@@ -538,8 +577,8 @@ public class Market : ScriptableObject, iCompany
             return queueResult;
         return LemonadeStandResultObject.Success();
     }
-#endregion
-#region Pricing
+    #endregion
+    #region Pricing
     internal void UpdatePrices()
         {
             _priceManager.UpdatePricesForMarket(this);

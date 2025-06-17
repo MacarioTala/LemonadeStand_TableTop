@@ -115,7 +115,7 @@ public class GoodTests
     #endregion
 #region Pricing Tests
    [Test]
-   public void MinimumAskForAGoodShouldAtLeastEqualCost()
+   public void GetCostOfGoodReturnsCostOfRecipe()
    {
          // Arrange
         var enhancedlemonade = new GoodBuilder()
@@ -131,9 +131,9 @@ public class GoodTests
         var costPerUnit = 9 * Lemon.GetPrice() + 2 * Sugar.GetPrice() + 7 * 
         Water.GetPrice();
         // Act
-        var actual = enhancedlemonade.GetMinimumAsk(enhancedLemonadeRecipe);
+        var actual = enhancedlemonade.GetCostOfGood(enhancedLemonadeRecipe);
         // Assert
-        Assert.IsTrue(actual>= costPerUnit);
+        Assert.IsTrue(actual == costPerUnit);
         Debug.Log($"Cost per unit: {costPerUnit}" + " Ask: " + actual);
    }
    #endregion

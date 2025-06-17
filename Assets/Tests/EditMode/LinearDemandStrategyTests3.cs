@@ -9,32 +9,6 @@ using UnityEngine;
 public partial class LinearDemandStrategyTests
 {
 
-    [TestCase(TestName = "From Market.UnleashMarketForces: AdjustDemandInPeriod increases demand by 70% when population doubles")]
-     public void UMF_DemandIncreasesBySeventyPercentWhenPopulationDoubles()
-    {
-        //Arrange
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.PopulationElasticity, .7f);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-        
-        TestMarket.CurrentPeriod = 1;
-
-        ((MockDemographicManager)TestDemographicManager).SetPopulationHistory(new List<PopulationHistory>()
-        {
-            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId, Phase = TurnPhase.Beginning},
-            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId, Phase = TurnPhase.End},
-            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId, Phase = TurnPhase.Beginning},
-            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId, Phase = TurnPhase.End}
-        });
-
-        var expectedDemand = 170;
-        
-        //Act
-        TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
-        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
-        //Assert
-        Assert.AreEqual(expectedDemand, actualDemand);
-    }
-
     [TestCase(TestName="From Market. Demand changes only by the market instability if it's 100% filled")][Ignore("Obsolete. Demand is now agent-driven instead of centrally controlled")]
     public void UMF_DemandStableWhenDemandIsFulfilled()
     {

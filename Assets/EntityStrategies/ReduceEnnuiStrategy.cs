@@ -17,83 +17,7 @@ public class ReduceEnnuiStrategy : iStrategy
         _aggressionLevel = aggressionLevel;
         return LemonadeStandResultObject.Success();
     }
-
-    public Dictionary<Good, BidAskSpread> GetBidAskSpreads()
-                        =>new(_bidAskSpreads);
-    
-    internal Dictionary<Good,BidAskSpread> GenerateBidAskSpreads(iCompany company)
-    {
-        if (company is PopulationCompany populationCompany)
-        {
-            var demand = populationCompany.GetDemand()
-                .Where(
-                    x => x.Value.MaxDemand > 0 //Can't demand goods that can't be bought(embargo, etc.)
-                    &&
-                    (
-                        x.Key.AffectsMetrics().Contains(MetricEnum.Ennui)
-                        ||
-                        x.Value.MinDemand > 0
-                    )
-                );
-                
-            var goal = populationCompany.Goals.Find(g => g.Name == "Reduce Ennui");
-
-            foreach (var row in demand)
-            {
-                var spread = CalculateBidPerCapita(row.Key, populationCompany,goal);
-                spread.Ask = 0m;//for now, the population is not selling anything
-                AddOrReplaceBidAskSpread(row.Key,spread);
-            }
-            AllocateBudget(company);
-        };
-        return _bidAskSpreads;
-    }
-
-    private void AllocateBudget(iCompany company)
-    {
-        var totalCash = company.GetCash();
-        var goodsToAllocateBudgetTo = _bidAskSpreads.ToList();
-
-        var totalScore = goodsToAllocateBudgetTo.Sum(x => x.Value.GoodQuality);
-        var allocations = goodsToAllocateBudgetTo
-            .Select(x => {
-                            var good = x.Key;
-                            var proportion = x.Value.GoodQuality/totalScore;
-                            var updatedSpread = 
-                                    new BidAskSpread(
-                                        bid: x.Value.Bid,
-                                        goodQuality: x.Value.GoodQuality,
-                                        ask: x.Value.Ask,
-                                        allocation: (float)proportion);
-                            return (Good: good, Spread: updatedSpread);
-                         }
-                ).ToList(); 
-
-        foreach (var allocation in allocations)
-        {
-            _bidAskSpreads[allocation.Good] = allocation.Spread;
-        }
-    }
-    internal BidAskSpread CalculateBidPerCapita(Good good, PopulationCompany populationCompany,Goal goal)
-    {
-        //Ability
-        var availableCashPerCapita = populationCompany.GetCash()/populationCompany.Population;
-        var willingnessToSpend = availableCashPerCapita * (decimal)_aggressionLevel;
-
-        //Desire
-        var ennui = populationCompany.Ennui;
-        var targetEnnui = goal.MetricTarget;
-        
-        var impactOnEnnui = Math.Abs(good.ReducesMetric(MetricEnum.Ennui).By());
-        var ennuiReductionRate = ennui*impactOnEnnui;
-        var turnsToFinal = MathHelper.EstimatePeriodsToFinal(ennui, targetEnnui, ennuiReductionRate);
-        var goodQuality = 1f/(1f + turnsToFinal);
-
-        var bid = Math.Clamp(willingnessToSpend * (decimal)goodQuality, 0.01m, availableCashPerCapita);
-
-        return new BidAskSpread(bid: bid,goodQuality: goodQuality,ask: 0m,allocation: 0f);
-    }
-
+#region Goals
     public void GenerateGoals(iCompany company)
     {
         var ennuiGoal = new Goal()
@@ -127,29 +51,135 @@ public class ReduceEnnuiStrategy : iStrategy
     private static bool GoalNotMet(Goal goal, iCompany company) =>
     !(goal?.IsGoalMet(company) ?? false);
 
-    public void PerformStrategy(iCompany company, int period)
+    #endregion
+    public void PerformStrategy(iCompany company)
     {
         var ennuiGoal = company.Goals.Find(g => g.Name == "Reduce Ennui");
-        if(GoalNotMet(ennuiGoal, company)&& company is PopulationCompany populationCompany)
+        if (GoalNotMet(ennuiGoal, company) && company is PopulationCompany populationCompany)
         {
-          PerformStrategicActions(populationCompany,period);   
+            PerformStrategicActions(populationCompany);
         }
     }
-
-    private void PerformStrategicActions(PopulationCompany company,int period)
+    private void PerformStrategicActions(PopulationCompany company)
     {
+        var market = company.GetMarket();
+        var marketSpreads = market.GetBidAskSpreadsFromMarket();
         GenerateBidAskSpreads(company);
-        foreach(var action in CreateBuys(company, period))
+        foreach (var action in CreateBuys(company))
         {
             company.QueueOrder(action);
         }
     }
+    public Dictionary<Good, BidAskSpread> GetBidAskSpreads()
+                        => new(_bidAskSpreads);
+    
+    internal Dictionary<Good,BidAskSpread> GenerateBidAskSpreads(iCompany company)
+    {
+        if (company is PopulationCompany populationCompany)
+        {
+            var demand = populationCompany.GetDemand()
+                .Where(
+                    x => x.Value.MaxDemand > 0 //Can't demand goods that can't be bought(embargo, etc.)
+                    &&
+                    (
+                        x.Key.AffectsMetrics().Contains(MetricEnum.Ennui)
+                        ||
+                        x.Value.MinDemand > 0
+                    )
+                );
+                
+            var goal = populationCompany.Goals.Find(g => g.Name == "Reduce Ennui");
 
-    internal IEnumerable<ActionContext> CreateBuys(Company company,int period)
+            foreach (var row in demand)
+            {
+                var spread = CalculateBidPerCapita(row.Key, populationCompany,goal);
+                spread.Ask = 0m;//for now, the population is not selling anything
+                AddOrReplaceBidAskSpread(row.Key,spread);
+            }
+            AllocateBudget(company);
+        };
+        return _bidAskSpreads;
+    }
+
+    internal BidAskSpread CalculateBidPerCapita(Good good,
+                                                PopulationCompany populationCompany,
+                                                Goal goal)
+    {
+        //Ability
+        var availableCashPerCapita = populationCompany.GetCash()/populationCompany.Population;
+        var willingnessToSpend = availableCashPerCapita * (decimal)_aggressionLevel;
+
+        //Desire
+        var ennui = populationCompany.Ennui;
+        var targetEnnui = goal.MetricTarget;
+
+        //Calculate Good Quality
+        var impactOnEnnui = Math.Abs(good.ReducesMetric(MetricEnum.Ennui).By());
+        var ennuiReductionRate = ennui*impactOnEnnui;
+        var turnsToFinal = MathHelper.EstimatePeriodsToFinal(ennui, targetEnnui, ennuiReductionRate);
+        var goodQuality = 1f/(1f + turnsToFinal);
+
+        //Calculate Minimum Bid
+        var minBid = Math.Clamp(willingnessToSpend * (decimal)goodQuality, 0.01m, availableCashPerCapita);
+
+        //Calculate Bid Premium or discount
+        var market = populationCompany.GetMarket();
+        IEnumerable<(Good Good, decimal Bid, decimal Ask)> marketSpreads;
+        decimal minMarketAsk = 0m;
+        if (market != null)
+        {
+            marketSpreads = market.GetBidAskSpreadsFromMarket()
+            .Where(x => x.good.Equals(good));
+
+            if (marketSpreads.Any())
+            {
+                minMarketAsk = marketSpreads
+                .Where(x => x.Ask > 0)
+                .Select(x => x.Ask)
+                .Min();
+            }
+        }
+        var bid = minMarketAsk > minBid && minMarketAsk > 0
+            ? minMarketAsk
+            : minBid;
+
+        return new BidAskSpread(bid: bid, goodQuality: goodQuality, ask: 0m, allocation: 0f);
+    }
+
+    private void AllocateBudget(iCompany company)
+    {
+        var totalCash = company.GetCash();
+        var goodsToAllocateBudgetTo = _bidAskSpreads.ToList();
+
+        var totalScore = goodsToAllocateBudgetTo.Sum(x => x.Value.GoodQuality);
+        var allocations = goodsToAllocateBudgetTo
+            .Select(x =>
+            {
+                var good = x.Key;
+                var proportion = x.Value.GoodQuality / totalScore;
+                var updatedSpread =
+                        new BidAskSpread(
+                            bid: x.Value.Bid,
+                            goodQuality: x.Value.GoodQuality,
+                            ask: x.Value.Ask,
+                            allocation: (float)proportion);
+                return (Good: good, Spread: updatedSpread);
+            }
+                ).ToList();
+
+        foreach (var allocation in allocations)
+        {
+            _bidAskSpreads[allocation.Good] = allocation.Spread;
+        }
+    }
+    
+    internal IEnumerable<ActionContext> CreateBuys(Company company)
     {
         var actions = new List<ActionContext>();
         foreach(var spread in _bidAskSpreads)
         {
+            var market = company.GetMarket();
+            var period = market != null ? market.CurrentPeriod : 0;
             var good = spread.Key;
             var bid = Math.Max(spread.Value.Bid, company.GetMinimumBid());
             var cash = company.GetCash();
@@ -192,16 +222,7 @@ public class ReduceEnnuiStrategy : iStrategy
         return null;
     }
 
-    public LemonadeStandResultObject CreateOrders(Market market)
-    {
-        var goodsAvailable = market.GetInventory().GetInventoryEntries();
-
-        foreach (var inventoryEntry in goodsAvailable)
-        {
-            
-        }
-        return LemonadeStandResultObject.Failure("Not implemented");
-    }
+    
 #endregion
 
     public void PerformStrategy(ActionContext context)

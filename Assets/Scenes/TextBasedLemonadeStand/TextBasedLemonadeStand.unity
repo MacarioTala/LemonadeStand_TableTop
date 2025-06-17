@@ -2406,8 +2406,11 @@ MonoBehaviour:
   TurnLabel: {fileID: 249445159}
   ValueLabel: {fileID: 1009682634}
   TotalLabel: {fileID: 930057876}
+  actionCounter: {fileID: 0}
   OrderSummaryPanel: {fileID: 1306997206}
   OrderQueuedLabel: {fileID: 1982312723}
+  DetailedOrderPanel: {fileID: 0}
+  ShowDetailedOrderButton: {fileID: 0}
 --- !u!1 &806240002
 GameObject:
   m_ObjectHideFlags: 0

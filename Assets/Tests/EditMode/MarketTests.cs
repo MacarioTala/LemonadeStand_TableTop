@@ -153,8 +153,68 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
+    #endregion
+    #region Demand tests
+    [Test]
+    public void GetPerceivedCostOfGoodReturnsZeroIfNoRecipesPresent()
+    { 
+        // Arrange
+        var expected = 0m;
+        // Act
+        var actual = TestMarket.GetPerceivedCostOfGood(lemon);
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void PerceivedCostShouldBeAverageOfCosts()
+    {
+        // Arrange
+        lemon.SetPrice(.5m);
+        water.SetPrice(.75m);
+        sugar.SetPrice(1.0m);
+        TestMarket.MarketData.Add(new()
+        {
+            Company = TestMarket,
+            Good = lemon,
+            Bid = lemon.GetPrice(),
+            Ask = lemon.GetPrice()
+        });
+        TestMarket.MarketData.Add(new()
+        {
+            Company = TestMarket,
+            Good = water,
+            Bid = water.GetPrice(),
+            Ask = water.GetPrice()
+        });
+        TestMarket.MarketData.Add(new()
+        {
+            Company = TestMarket,
+            Good = sugar,
+            Bid = sugar.GetPrice(),
+            Ask = sugar.GetPrice()
+        });
+        var asks = new Dictionary<Good, decimal>
+        {
+            { lemon, lemon.GetPrice() },
+            { water, water.GetPrice() },
+            { sugar, sugar.GetPrice() }
+        };
+        var recipe1 = new Recipe("Recipe 1", lemonade, new List<Ingredient> { new(lemon, 1), new(water, 1), new(sugar, 1) });
+        var recipe2 = new Recipe("Recipe 2", lemonade, new List<Ingredient> { new(lemon, 2), new(water, 2), new(sugar, 3) });
+        var recipe1Cost = recipe1.GetPerceivedCostPerUnit(asks);
+        var recipe2Cost = recipe2.GetPerceivedCostPerUnit(asks);
+        var expected = (recipe1Cost + recipe2Cost) / 2;
+        Company1.AddRecipe(recipe1);
+        Company2.AddRecipe(recipe2);
+
+        // Act
+        var actual = TestMarket.GetPerceivedCostOfGood(lemonade);
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
 #endregion
-#region Perishability tests
+    #region Perishability tests
     [Test]
     public void PerishableGoodsShouldExpire()
     {
@@ -447,11 +507,11 @@ public partial class MarketTests
     [TearDown]
     public void TearDown()
     {
-        UnityEngine.Object.DestroyImmediate(lemon);
-        UnityEngine.Object.DestroyImmediate(water);
-        UnityEngine.Object.DestroyImmediate(sugar);
-        UnityEngine.Object.DestroyImmediate(TestEconomy);
-        UnityEngine.Object.DestroyImmediate(test_initial_market);
+        Object.DestroyImmediate(lemon);
+        Object.DestroyImmediate(water);
+        Object.DestroyImmediate(sugar);
+        Object.DestroyImmediate(TestEconomy);
+        Object.DestroyImmediate(test_initial_market);
         Company1 = null;
         Company2 = null;
         TestMarket = null;

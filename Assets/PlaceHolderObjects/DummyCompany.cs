@@ -89,4 +89,9 @@ public class DummyCompany : iCompany
     {
         throw new System.NotImplementedException();
     }
+
+    public DemandData GetDemandFor(Good good)
+    {
+        throw new System.NotImplementedException();
+    }
 }

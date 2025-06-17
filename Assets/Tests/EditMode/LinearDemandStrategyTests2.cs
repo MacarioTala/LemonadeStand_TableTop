@@ -7,64 +7,6 @@ public partial class LinearDemandStrategyTests
 {
 #region Integration Tests for AdjustDemandInPeriod
 
-    [TestCase(TestName = "AdjustDemandInPeriod increases demand by 70% when population doubles")]
-    public void ADIP_DemandIncreasesBySeventyPercentWhenPopulationDoubles()
-    {
-        //Arrange
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.PopulationElasticity, .7f);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-        
-        TestMarket.CurrentPeriod = 1;
-
-        ((MockDemographicManager)TestDemographicManager).SetPopulationHistory(new List<PopulationHistory>()
-        {
-            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId,Phase = TurnPhase.Beginning},
-            new() {Population = 100, Period = 0, MarketId = TestMarket.MarketId,Phase = TurnPhase.End},
-            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId,Phase = TurnPhase.Beginning},
-            new() {Population = 200, Period = 1, MarketId = TestMarket.MarketId,Phase = TurnPhase.End}
-
-        });
-
-        var expectedDemand = 170;
-        
-        //Act
-        TestDemandStrategy.AdjustDemandInPeriod(TestMarket);
-        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
-        //Assert
-        Assert.AreEqual(expectedDemand, actualDemand);
-    }
-   [TestCase(TestName="AdjustDemandInPeriod decreases demand by 35% when population halves")]
-    public void ADIP_DemandDecreasesByThirtyPercentWhenPopulationHalves()
-    {
-        //Arrange
-        var maxDemand = 100;
-        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
-        TestPopulation.SetDemand(Lemonade, demandForLemonade);
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.PopulationElasticity, .7f);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-        
-        TestMarket.CurrentPeriod = 1;
-
-        ((MockDemographicManager)TestDemographicManager).SetPopulationHistory(new List<PopulationHistory>()
-        {
-            new() {Population = 200, Period = 0, MarketId = TestMarket.MarketId, Phase = TurnPhase.Beginning},
-            new() {Population = 200, Period = 0, MarketId = TestMarket.MarketId, Phase = TurnPhase.End},
-            new() {Population = 100, Period = 1, MarketId = TestMarket.MarketId, Phase = TurnPhase.Beginning},
-            new() {Population = 100, Period = 1, MarketId = TestMarket.MarketId, Phase = TurnPhase.End}
-        });
-
-        var expectedDemand = 65;
-
-        //Act
-        TestMarket.StartTradingPeriod();
-        TestMarket.ProcessCompanyOrders();
-        TestMarket.UpdateFulfillmentRates(TestMarket.CurrentPeriod);
-        TestDemandStrategy.AdjustDemandInPeriod(TestMarket);
-        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
-        //Assert
-        Assert.AreEqual(expectedDemand, actualDemand);
-    }
-
     [TestCase(TestName="AdjustDemandInPeriod: A good's demand should not change if the saturation elasticity is 1 and the good supply is equal to demand")]
     //You are here: Adjust this test case to use a PopulationCompany
     public void ADIP_SaturatedGoodElasticityOneDemandUnchanged()

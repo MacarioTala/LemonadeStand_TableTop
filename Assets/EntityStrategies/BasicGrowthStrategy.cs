@@ -55,7 +55,7 @@ public class BasicGrowthStrategy : iStrategy
         }
     }
 
-    public void PerformStrategy(iCompany company, int period)
+    public void PerformStrategy(iCompany company)
     {
         throw new System.NotImplementedException();
     }
@@ -64,5 +64,10 @@ public class BasicGrowthStrategy : iStrategy
     {
         _aggressionLevel = aggressionLevel;
         return LemonadeStandResultObject.Success();
+    }
+
+    public LemonadeStandResultObject PublishBidAskSpreadsToMarket(iCompany company)
+    {
+        throw new System.NotImplementedException();
     }
 }

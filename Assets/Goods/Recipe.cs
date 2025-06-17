@@ -4,57 +4,57 @@ using System.Linq;
 
 public class Recipe
 {
-        public string RecipeName;
-        private readonly List<Ingredient> ingredients;
-        private readonly Good product;
-        public Good GetProduct() => product;
+    public string RecipeName;
+    private readonly List<Ingredient> ingredients;
+    private readonly Good product;
+    public Good GetProduct() => product;
 
-    public Recipe(string RecipeName,Good product, List<Ingredient> ingredients)
-        {
-            this.RecipeName = RecipeName;
-            this.product = product;
-            this.ingredients = ingredients;
-        }
-        public List<string> GetIngredientNames()
-        {
-            return ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
-        }
-        public List<Ingredient> GetIngredients()
-        {
-            return ingredients;
-        }
-
-        public List<Ingredient> Get_recipe()
+    public Recipe(string RecipeName, Good product, List<Ingredient> ingredients)
+    {
+        this.RecipeName = RecipeName;
+        this.product = product;
+        this.ingredients = ingredients;
+    }
+    public List<string> GetIngredientNames()
+    {
+        return ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
+    }
+    public List<Ingredient> GetIngredients()
     {
         return ingredients;
     }
-        
-        public int Get_max_quantity(List<InventoryEntry> stock)
-        {
-           var max_units_per_ingredient = ingredients.Select(ingredient => stock
-                                                     .Where(entry => entry.good == ingredient.Good)
-                                                     .Sum(entry => entry.quantity) / ingredient.Quantity_needed)
-                                                     .ToList();      
-            return max_units_per_ingredient.Min();
-        }
-        
-        public (Good,int) Make_recipe(int quantity, Inventory inventory)
-        {
-            var stock = inventory.GetInventoryEntries()
-                     .Where(entry => GetIngredientNames().Contains(entry.good.GoodName))
-                     .ToList();
 
-            if (quantity > Get_max_quantity(stock))
-            {
-                throw new RecipeException("Not enough ingredients to make "+quantity+" "+product.GoodName);
-            }
-            else
-            {
-                inventory.Consume_for_recipe(this, quantity);   
-                product.IsProducedGood = true; 
-                return (product, quantity);
-            }
+    public List<Ingredient> Get_recipe()
+    {
+        return ingredients;
+    }
+
+    public int Get_max_quantity(List<InventoryEntry> stock)
+    {
+        var max_units_per_ingredient = ingredients.Select(ingredient => stock
+                                                  .Where(entry => entry.good == ingredient.Good)
+                                                  .Sum(entry => entry.quantity) / ingredient.Quantity_needed)
+                                                  .ToList();
+        return max_units_per_ingredient.Min();
+    }
+
+    public (Good, int) Make_recipe(int quantity, Inventory inventory)
+    {
+        var stock = inventory.GetInventoryEntries()
+                 .Where(entry => GetIngredientNames().Contains(entry.good.GoodName))
+                 .ToList();
+
+        if (quantity > Get_max_quantity(stock))
+        {
+            throw new RecipeException("Not enough ingredients to make " + quantity + " " + product.GoodName);
         }
+        else
+        {
+            inventory.Consume_for_recipe(this, quantity);
+            product.IsProducedGood = true;
+            return (product, quantity);
+        }
+    }
     public override string ToString() => RecipeName;
 
     public override bool Equals(object other)
@@ -74,14 +74,28 @@ public class Recipe
         foreach (var ingredient in ingredients)
         {
             var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.GoodName);
-            var costForThisIngredient = inventoryEntries.Sum(entry => entry.Cost*entry.quantity);
+            var costForThisIngredient = inventoryEntries.Sum(entry => entry.Cost * entry.quantity);
             var quantityForThisIngredient = inventoryEntries.Sum(entry => entry.quantity);
             var requiredUnits = ingredient.Quantity_needed;
 
-            var costPerUnit = Math.Round(requiredUnits*(costForThisIngredient / quantityForThisIngredient),2);
+            var costPerUnit = Math.Round(requiredUnits * (costForThisIngredient / quantityForThisIngredient), 2);
             cost_per_good.Add(ingredient.Good.GoodName, costPerUnit);
         }
-        return Math.Round(cost_per_good.Sum(entry => entry.Value),2);
+        return Math.Round(cost_per_good.Sum(entry => entry.Value), 2);
+    }
+
+    public decimal GetPerceivedCostPerUnit(Dictionary<Good, decimal> asks)
+    {
+        decimal totalCost = 0;
+        foreach (var ingredient in ingredients)
+        {
+            if (asks.TryGetValue(ingredient.Good, out var askPrice))
+            {
+                totalCost += askPrice * ingredient.Quantity_needed;
+            }
+            //what about if no price exists for the ingredient?
+        }
+        return Math.Round(totalCost, 2);
     }
 }
 

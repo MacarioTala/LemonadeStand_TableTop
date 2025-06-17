@@ -14,8 +14,12 @@ public interface iCompany
         decimal CalculateFixedCostsForPeriod(int period);
     #endregion
 
+    #region Demand
+        DemandData GetDemandFor(Good good);
+    #endregion
+
     #region Goals and strategies
-        List<Goal> Goals{get;set;}
+    List<Goal> Goals{get;set;}
         void CheckCompanyGoals();
         void CompleteGoal(Goal goal);
         void SetStrategy(iStrategy strategy);
@@ -28,7 +32,7 @@ public interface iCompany
     #endregion
 
     #region Time
-        int CurrentPeriod{get;set;} 
+    int CurrentPeriod{get;set;} 
         int StartingPeriod{get;set;}
         void UpdateCurrentPeriod(int period);
     #endregion

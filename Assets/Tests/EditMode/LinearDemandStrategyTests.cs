@@ -64,6 +64,7 @@ public partial class LinearDemandStrategyTests
                                         .WithBehaviourStrategy(TestReduceEnnuiStrategy)
                                         .WithEnnui(.99f)
                                         .WithPopulation(1000)
+                                        .WithFixedCostStrategy(new BasicFixedCostStrategy())
                                         .Build();
         TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 

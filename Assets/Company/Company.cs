@@ -93,8 +93,29 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
         }
         ResetActions();
     }
-#endregion
-#region Financials
+    #endregion
+    #region Demand
+    private readonly Dictionary<Good, DemandData> _demand = new();
+    public Dictionary<Good, DemandData> GetDemand()
+    {
+        return _demand;
+    }
+    public DemandData GetDemandFor(Good good)
+    {
+        if (_demand.TryGetValue(good, out var demandData))
+        {
+            return demandData;
+        }
+        return null;
+    }
+    
+    public void SetDemand(Good good, DemandData demandData)
+    {
+        _demand[good] = demandData;
+    }
+    #endregion
+
+    #region Financials
     private decimal cash = 0;
     private decimal minimumBid;
     public void SetMinimumBid(decimal minBid) => minimumBid = minBid;
@@ -203,7 +224,7 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
     {
         if(_companyStrategy != null)
         {
-            _companyStrategy.PerformStrategy(this, period);
+            _companyStrategy.PerformStrategy(this);
         }
         else
         {
