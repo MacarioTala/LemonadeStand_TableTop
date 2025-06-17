@@ -630,7 +630,10 @@ public class Market : ScriptableObject, iCompany
         UpdateFulfillmentRates(period);
         UpdatePrices();
         DemandStrategy.AdjustDemandInPeriod(this);
+        #pragma warning disable CS0618 // Type or member is obsolete
+        //Todo: Remove this in a future refactor.
         ConsumeGoods();
+        #pragma warning restore CS0618 // Type or member is obsolete
         UpdateCompanyStatuses(period);
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
