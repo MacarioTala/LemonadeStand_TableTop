@@ -504,10 +504,10 @@ public class DemandAndElasticityTests
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
-    [TestCase(1000, 1f, 1f, .1f, 100, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange:0.1, Expectedchange:100")]
-    [TestCase(1000, 1f, 1f,  1f, 1000, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange: double, Expectedchange:1000")]
-    [TestCase(1000, 1f, 1f,-.5f, -500, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange:halved, Expectedchange:-500")]
-    [TestCase(1000, 1f,.7f, .1f, 70, TestName = "From DemandData. Pop Elasticity:0.7, Population:1000, PercentChange:0.1, Expectedchange:70")]
+    [TestCase(1000, 1f, 1f, .1f, 1100, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange:0.1, Expected Demand:1100")]
+    [TestCase(1000, 1f, 1f,  1f, 2000, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange: double, Expected Demand:2000")]
+    [TestCase(1000, 1f, 1f,-.5f, 500, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange:halved, Expected Demand:500")]
+    [TestCase(1000, 1f,.7f, .1f, 1070, TestName = "From DemandData. Pop Elasticity:0.7, Population:1000, PercentChange:0.1, Expected Demand:1070")]
     public void DemandAdjustmentTests_Population_FromDemandData(
         int initialPopulation,
         float percentOfPopulationWantingThisGood,
@@ -537,17 +537,17 @@ public class DemandAndElasticityTests
 
         //Act
         var actualDemand = TestPopulation.GetDemandFor(Lemonade)
-                        .GetTotalDemandAdjustment(stateChanges);
+                        .GetAdjustedDemand(stateChanges);
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
     #endregion
 
     #region Income Elasticity tests
-    [TestCase(1000, 1f, 1f,.1f, 100, TestName = "From DemandData. Income Elasticity:1, Population:1000, PercentChange:0.1, Expectedchange:100")]
-    [TestCase(1000, 1f, 1f, 1f, 1000, TestName = "From DemandData. Income Elasticity:1, Population:1000, PercentChange: double, Expectedchange:1000")]
-    [TestCase(1000, 1f, 1f,-.5f, -500, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange:halved, Expectedchange:-500")]
-    [TestCase(1000, 1f,.7f, .1f, 70, TestName = "From DemandData. Pop Elasticity:0.7, Population:1000, PercentChange:0.1, Expectedchange:70")]
+    [TestCase(1000, 1f, 1f,.1f, 1100, TestName = "From DemandData. Income Elasticity:1, Population:1000, PercentChange:0.1, Expectedchange:100")]
+    [TestCase(1000, 1f, 1f, 1f, 2000, TestName = "From DemandData. Income Elasticity:1, Population:1000, PercentChange: double, Expectedchange:1000")]
+    [TestCase(1000, 1f, 1f,-.5f, 500, TestName = "From DemandData. Pop Elasticity:1, Population:1000, PercentChange:halved, Expectedchange:-500")]
+    [TestCase(1000, 1f,.7f, .1f, 1070, TestName = "From DemandData. Pop Elasticity:0.7, Population:1000, PercentChange:0.1, Expectedchange:70")]
 
     public void DemandAdjustmentTests_income_FromDemandData(
         int initialPopulation,
@@ -583,32 +583,61 @@ public class DemandAndElasticityTests
 
         //Act
         var actualDemand = TestPopulation.GetDemandFor(Lemonade)
-                        .GetTotalDemandAdjustment(stateChanges);
+                        .GetAdjustedDemand(stateChanges);
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
     #endregion
 
     #region Multiple Elastic Demand Components tests
-    [TestCase(1f, 1f, -1f
-                , 1000,1f
-                , .1f, 0, 0
+    [TestCase(1000, 1f,
+                1f, .1f,
+                1f, 0,
+               -1f, 0
                 , float.MinValue, float.MinValue, float.MinValue
                 , float.MaxValue, float.MaxValue, float.MaxValue
                 , float.MinValue, float.MinValue, float.MinValue
                 , float.MinValue, float.MinValue, float.MinValue
-                , 100
-                , TestName = "Demand adjustment only comes from factors that changed.")]
-
-
+                , 1100
+                , TestName = "Demand adjustment only comes from factors that changed. One component changed.")]
+    [TestCase(1000, 1f,
+                1f, .1f,
+                1f, .1f,
+               -1f, 0
+                , float.MinValue, float.MinValue, float.MinValue
+                , float.MaxValue, float.MaxValue, float.MaxValue
+                , float.MinValue, float.MinValue, float.MinValue
+                , float.MinValue, float.MinValue, float.MinValue
+                , 1200
+                , TestName = "Demand adjustment only comes from factors that changed. Two components changed.")]
+    [TestCase(1000, 1f,
+                1f, 1f,
+                1f, .1f,
+               -1f, 0
+                , float.MinValue, float.MinValue, float.MinValue
+                , .5f, float.MaxValue, float.MaxValue
+                , float.MinValue, float.MinValue, float.MinValue
+                , float.MinValue, float.MinValue, float.MinValue
+                , 1600
+                , TestName = "Demand adjustment only comes from factors that changed. Two components changed. One Capped")]
+    [TestCase(1000,1f, 
+                1f,1f,
+                1f,1f, 
+               -1f,0 
+                , float.MinValue, float.MinValue, float.MinValue
+                , float.MaxValue, float.MaxValue, float.MaxValue
+                , float.MinValue, float.MinValue, float.MinValue
+                , float.MinValue, float.MinValue, float.MinValue
+                , 3000
+                , TestName = "Demand adjustment only comes from factors that changed. Two components changed. No Caps")]
     public void MultipleElasticDemandComponentsTests_FromDemandData(
-        float populationElasticity,
-        float incomeElasticity,
-        float priceElasticity,
         int initialPopulation,
         float percentoOfPopulationWantingThisGood,
+        float populationElasticity,
         float percentChangeInPopulation,
+        float incomeElasticity,
         float percentChangeInIncome,
+        float priceElasticity,
         float percentChangeInPrice,
         float minPercentageChangePopulation,
         float minPercentageChangeIncome,
@@ -663,7 +692,7 @@ public class DemandAndElasticityTests
             populationElasticityComponent,
             priceElasticityComponent
         };
-        
+
         var result = TestPopulation.InitializeDemandBasedOnPopulation(
                                                 good: Lemonade,
                                                 percentOfPopulation: percentoOfPopulationWantingThisGood,
@@ -678,7 +707,7 @@ public class DemandAndElasticityTests
 
         //Act
         var actualDemandChange = TestPopulation.GetDemandFor(Lemonade)
-                        .GetTotalDemandAdjustment(stateChanges);
+                        .GetAdjustedDemand(stateChanges);
         //Assert
         Assert.AreEqual(expectedDemandChange, actualDemandChange);
     }
@@ -688,11 +717,11 @@ public class DemandAndElasticityTests
     [TestCase(  1f, 1000,1f,
                 1f,
                .5f, float.MinValue,
-               500, TestName = "Demand adjustment does not exceed max cap.")]
+               1500, TestName = "Single Component: Demand adjustment does not exceed max cap.")]
     [TestCase(  1f, 1000,1f,
                 0f,
                 float.MaxValue,.1f,
-                100, TestName = "Demand adjustment does not fall below min cap.")]
+                1100, TestName = "Single Component: Demand adjustment does not fall below min cap.")]
     public void CappedDemandAdjustmentTests_FromDemandData(
         float incomeElasticity,
         int initialPopulation,
@@ -731,14 +760,115 @@ public class DemandAndElasticityTests
 
         //Act
         var actualDemand = TestPopulation.GetDemandFor(Lemonade)
-                        .GetTotalDemandAdjustment(stateChanges);
+                        .GetAdjustedDemand(stateChanges);
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
     #endregion
 
+    #region DemandData Max and Min tests
+    [TestCase(1000, 1f,
+                1f, 1f,
+                1f, 1f,
+                -1f, 0f,
+                -1f, 0f,
+                1500, int.MinValue,
+                1500,
+        TestName = "Demand is capped at max when two factors increase it beyond max.")]
+    [TestCase(1000, 1f,
+                1f, 0f,
+                1f, 0f,
+                -1f, 1f,
+                -1f, 0f,
+                int.MaxValue, 100,
+                100,
+    TestName = "Demand is goes to min when a factor decreases it below min.")]
+    [TestCase(1000, 1f,
+                1f, 0f,
+                1f, 0f,
+                -1f, 1f,
+                -1f, 1f,
+                int.MaxValue,100 ,
+                100,
+    TestName = "Demand is goes to min when two factors decrease it below min.")]
+    public void DemandDataMaxAndMinTests(
+        int initialPopulation,
+        float percentOfPopulationWantingThisGood,
+        float populationElasticity,
+        float percentChangeInPopulation,
+        float incomeElasticity,
+        float percentChangeInIncome,
+        float priceElasticity,
+        float percentChangeInPrice,
+        float monsterAttractionElasticity,
+        float percentChangeInMonsterAttraction,
+        int maxDemand,
+        int minDemand,
+        int expectedDemand
+    )
+    {
+        //Arrange
+        TestPopulation.Population = initialPopulation;
+        var populationElasticityComponent = new ElasticDemandComponent
+        {
+            Type = ElasticDemandComponentEnum.Population,
+            Elasticity = populationElasticity
+        };
+        var incomeElasticityComponent = new ElasticDemandComponent
+        {
+            Type = ElasticDemandComponentEnum.Income,
+            Elasticity = incomeElasticity
+        };
+        var priceElasticityComponent = new ElasticDemandComponent
+        {
+            Type = ElasticDemandComponentEnum.Price,
+            Elasticity = priceElasticity
+        };
+        var monsterAttractionElasticityComponent = new ElasticDemandComponent
+        {
+            Type = ElasticDemandComponentEnum.MonsterAttraction,
+            Elasticity = monsterAttractionElasticity
+        };
+
+        var elasticDemandComponents = new List<ElasticDemandComponent>
+        {
+            populationElasticityComponent,
+            incomeElasticityComponent,
+            priceElasticityComponent,
+            monsterAttractionElasticityComponent
+        };
+        var result = TestPopulation.InitializeDemandBasedOnPopulation(
+                                                good: Lemonade,
+                                                percentOfPopulation: percentOfPopulationWantingThisGood,
+                                                minDemand: minDemand,
+                                                maxDemand: maxDemand,
+                                                elasticDemandComponents: elasticDemandComponents);
+        Assert.AreEqual(result, LemonadeStandResultObject.Success(), result.Message);
+        var stateChanges = new Dictionary<ElasticDemandComponentEnum, float>
+        {
+            { ElasticDemandComponentEnum.Population, percentChangeInPopulation },
+            { ElasticDemandComponentEnum.Income, percentChangeInIncome },
+            { ElasticDemandComponentEnum.Price, percentChangeInPrice },
+            { ElasticDemandComponentEnum.MonsterAttraction, percentChangeInMonsterAttraction }
+        };
+
+        //Act
+        var actualDemand = TestPopulation.GetDemandFor(Lemonade)
+                        .GetAdjustedDemand(stateChanges);
+
+        //Assert
+        Assert.AreEqual(expectedDemand, actualDemand,
+            $"Expected demand: {expectedDemand}, but got: {actualDemand}. " +
+            $"Initial Population: {initialPopulation}, Percent of Population Wanting Good: {percentOfPopulationWantingThisGood}, " +
+            $"Population Elasticity: {populationElasticity}, Income Elasticity: {incomeElasticity}, Price Elasticity: {priceElasticity}," +
+            $"Percent Change in Population: {percentChangeInPopulation}, Percent Change in Income: {percentChangeInIncome}, " +
+            $"Percent Change in Price: {percentChangeInPrice}," +
+            $"Max Demand: {maxDemand}, Min Demand: {minDemand}.");
+    }
+    #endregion
+
     #region Black Swan tests
-    [TestCase(-1f, 1000, 1f, -.5f, -.5f, 2f, -1000
+    [TestCase(-1f, 1000, 1f, -.5f, -.5f, 2f, 0
     , TestName = "Black Swan to Zero: Demand collapses to zero at extreme negative income change.")] 
     public void BlackSwanDemandAdjustmentTests_FromDemandData(
         float incomeElasticity,
@@ -747,7 +877,7 @@ public class DemandAndElasticityTests
         float percentChangeInIncome,
         float blackSwanToZeroLevel,
         float blackSwanToVerticalLevel,
-        int expectedDemandChange)
+        int expectedDemand)
     {
         //Arrange
         TestPopulation.Population = initialPopulation;
@@ -776,10 +906,10 @@ public class DemandAndElasticityTests
         };
 
         //Act
-        var actualDemandChange = TestPopulation.GetDemandFor(Lemonade)
-                        .GetTotalDemandAdjustment(stateChanges);
+        var actualDemand = TestPopulation.GetDemandFor(Lemonade)
+                        .GetAdjustedDemand(stateChanges);
         //Assert
-        Assert.AreEqual(expectedDemandChange, actualDemandChange);
+        Assert.AreEqual(expectedDemand, actualDemand);
     }
     #endregion
     

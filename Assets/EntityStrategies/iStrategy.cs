@@ -34,20 +34,21 @@ public interface iStrategy
         // to other than 0, then we return the minimum demand
         var demandToReturn = demand.CurrentDemand>0?demand.CurrentDemand:demand.MinDemand;
 
-        // Cost anchoring logic
-        var market = company.GetMarket();
-        var perceivedCost = market.GetPerceivedCostOfGood(good);
+        // var currentStateChanges = company.GetStateChanges();
+        // if (currentStateChanges == null || !currentStateChanges.Any())
+        // {
+        //     return demandToReturn; // No state changes, return current demand
+        // }
+        // else
+        // { 
+        //     // Calculate total demand adjustment based on state changes
+        //     var totalAdjustment = demand.GetTotalDemandAdjustment(stateChanges);
 
-        //Calculate effect of elastic demand components
-        foreach (var component in demand.ElasticDemandComponents)
-        {
-            foreach (var stateChange in stateChanges)
-            {
-                var adjustDemandByThisQuantity = component
-                            .GetDemandAdjustment(stateChange.Value,demandToReturn);
-                demandToReturn += adjustDemandByThisQuantity;
-            }
-        }
+        //     // Apply the adjustment to the current demand
+        //     demandToReturn += totalAdjustment;
+
+            
+        // }
 
         return demandToReturn;
     }

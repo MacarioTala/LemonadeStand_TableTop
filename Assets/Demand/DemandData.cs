@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class DemandData
 {
@@ -15,17 +16,32 @@ public class DemandData
                                                      // of the good per period.
     public List<ElasticDemandComponent> ElasticDemandComponents { get; set; } = new();
 
-    public int GetTotalDemandAdjustment(Dictionary<ElasticDemandComponentEnum, float > stateChanges)
+    public int GetAdjustedDemand(Dictionary<ElasticDemandComponentEnum, float > stateChanges)
     {
-        int totalAdjustment = 0;
+        int newDemand = 0;
         foreach (var component in ElasticDemandComponents)
         {
-            foreach (var stateChange in stateChanges)
+            if (stateChanges.TryGetValue(component.Type, out var stateChange))
             {
-                totalAdjustment += component.GetDemandAdjustment(stateChange.Value, CurrentDemand);
+                var adjustment = component.GetDemandAdjustment(stateChange, CurrentDemand);
+                newDemand += adjustment;
             }
         }
-        return totalAdjustment;
+        // Ensure that the total demand is clamped within the min and max demand limits
+        if (CurrentDemand + newDemand < MinDemand)
+        {
+            CurrentDemand = MinDemand;
+        }
+        else if (CurrentDemand + newDemand > MaxDemand)
+        {
+            CurrentDemand = MaxDemand;
+        }
+        else
+        { 
+            CurrentDemand += newDemand;
+        }
+
+        return CurrentDemand;
     }
 }
 
@@ -127,6 +143,8 @@ public enum ElasticDemandComponentEnum
     Population,
     Substitutes,
     Complements,
+    Veblen,
+    MonsterAttraction,
 }
 
 
