@@ -54,7 +54,7 @@ public partial class LinearDemandStrategyTests
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new MockDemographicManager();
         TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                                        .WithAggressionLevel(.55f)
+                                        .WithAggressionLevel(.55m)
                                         .Build();
         //Set up population
         TestPopulation = CompanyBuilder.For<PopulationCompany>()

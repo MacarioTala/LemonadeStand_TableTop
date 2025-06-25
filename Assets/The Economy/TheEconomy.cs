@@ -80,7 +80,14 @@ public class TheEconomy : MonoBehaviour
                             ScriptableObject.CreateInstance<LinearDemandStrategy>());
         RegisterCompany(InitialMarket);
     }
-
+    public void StartTradingPeriod()
+    {
+        var markets = companies.OfType<Market>().ToList();
+        foreach (var market in markets)
+        {
+            market.StartTradingPeriod();
+        }
+    }
     public void EndTradingPeriod()
     {
         var executedTrades = new List<Order>();
@@ -107,14 +114,6 @@ public class TheEconomy : MonoBehaviour
             throw new TheEconomy_CompanyException($"{company.Name} already registered");
         }
         
-    }
-    public void StartTradingPeriod()
-    {
-        var markets = companies.OfType<Market>().ToList();
-        foreach (var market in markets)
-        {
-            market.StartTradingPeriod();
-        }
     }
 
     public iCompany GetGlobalMarket() => InitialMarket;

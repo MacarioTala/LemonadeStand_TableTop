@@ -345,6 +345,7 @@ public class Market : ScriptableObject, iCompany
 
         public static Market CreateStarterMarket(string companyName, CompanyLevelEnum companyLevel, iDemandStrategy demandStrategy)
         {
+            demandStrategy ??= CreateInstance<LinearDemandStrategy>();
             var market = CreateInstance<Market>()
                     .WithDemandStrategy(demandStrategy)
                     .WithMarketDataManager(new BasicMarketDataManager())
@@ -597,8 +598,18 @@ public class Market : ScriptableObject, iCompany
     {
         return _priceManager.GetMarketCostForGood(market,good);
     }
+    public Dictionary<Good, decimal> GetAverageMarketPrices()
+    {
+        var averagePrices = MarketData
+                            .GroupBy(x => x.Good)
+                            .ToDictionary(
+                                group => group.Key,
+                                group => group.Average(x => x.Ask)
+                            );
+        return averagePrices;
+    }
 #endregion
-#region Publishing
+    #region Publishing
     public List<MarketData> PublishMarketData()
     {
         return _marketDataManager.PublishMarketData(this);

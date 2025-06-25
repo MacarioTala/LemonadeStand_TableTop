@@ -71,7 +71,7 @@ public class RefactorOutFulfillDemand
         
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                .WithAggressionLevel(.5f)
+                .WithAggressionLevel(.5m)
                 .Build();
         
         TestPopulation = CompanyBuilder.For<PopulationCompany>()

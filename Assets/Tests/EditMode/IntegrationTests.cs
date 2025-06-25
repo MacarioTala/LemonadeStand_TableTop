@@ -52,7 +52,7 @@ public class IntegrationTests
 
         testFixedCostStrategy = new BasicFixedCostStrategy();
         testStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-            .WithAggressionLevel(0.5f)
+            .WithAggressionLevel(0.5m)
             .Build();
 
         Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);

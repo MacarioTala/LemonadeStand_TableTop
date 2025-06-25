@@ -14,7 +14,7 @@ public partial class LinearDemandStrategyTests
         //Arrange
         const int initialPopulation = 100;
         var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                      .WithAggressionLevel(1f)
+                      .WithAggressionLevel(1m)
                       .Build();
         var lemonadeDemand = new DemandData
                 {

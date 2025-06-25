@@ -11,7 +11,7 @@ public class StrategyBuilder<T> where T : iStrategy, new()
     }
     public T Build()=> _strategyToReturn;
     
-    public StrategyBuilder<T> WithAggressionLevel(float aggressionLevel)
+    public StrategyBuilder<T> WithAggressionLevel(decimal aggressionLevel)
     {
         _strategyToReturn.SetAggressionLevel(aggressionLevel);
         return this;

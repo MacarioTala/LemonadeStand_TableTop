@@ -95,6 +95,9 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
     }
     #endregion
     #region Demand
+    private decimal marketIgnorantAssumedCOG;
+    public decimal GetMarketIgnorantAssumedCOG() => marketIgnorantAssumedCOG;
+    public void SetMarketIgnorantAssumedCOG(decimal value) => marketIgnorantAssumedCOG = value;
     private readonly Dictionary<Good, DemandData> _demand = new();
     public Dictionary<Good, DemandData> GetDemand()
     {
@@ -113,6 +116,16 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
     {
         _demand[good] = demandData;
     }
+
+    public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
+    {
+        var minimumBid = GetMarketIgnorantAssumedCOG();
+        var perceivedCost = Recipes.Where(x => x.GetProduct().Equals(good))
+                                .Select(r => r.GetPerceivedCostPerUnit(prices))
+                                .DefaultIfEmpty(minimumBid)
+                                .Average();
+        return perceivedCost;
+    }
     #endregion
 
     #region Financials
@@ -122,8 +135,7 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
     public decimal GetMinimumBid() => minimumBid;
     public decimal GetCash() => cash;
     public void SetCash(decimal newCash) => cash = newCash;
-    private readonly float share_price;
-    private readonly int shares_outstanding;
+
     public List<FixedCost> FixedCosts {get;set;} = new();
     private void SetInitialCash()
         {
@@ -166,7 +178,14 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
             Recipes.Add(recipe);
         }
     }
-    public void Add_recipe(Recipe recipe)=>Recipes.Add(recipe);
+    public void RemoveRecipe(Recipe recipe)
+    {
+        if (Recipes.Contains(recipe))
+        {
+            Recipes.Remove(recipe);
+        }
+    }
+    public void Add_recipe(Recipe recipe) => Recipes.Add(recipe);
      public void MakeRecipe(ActionContext context)
     {
         var recipe = context.Recipe;

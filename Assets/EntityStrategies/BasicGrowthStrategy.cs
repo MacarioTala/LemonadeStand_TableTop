@@ -4,8 +4,8 @@ using System.Linq;
 public class BasicGrowthStrategy : iStrategy
 {
     //Manifestation of preferences
-    float _aggressionLevel = 0.2f;
-    public float GetAggressionLevel() => _aggressionLevel;
+    decimal _aggressionLevel = 0.2m;
+    public decimal GetAggressionLevel() => _aggressionLevel;
 
     public void GenerateGoals(iCompany company)
     {
@@ -60,7 +60,7 @@ public class BasicGrowthStrategy : iStrategy
         throw new System.NotImplementedException();
     }
 
-    public LemonadeStandResultObject SetAggressionLevel(float aggressionLevel)
+    public LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel)
     {
         _aggressionLevel = aggressionLevel;
         return LemonadeStandResultObject.Success();

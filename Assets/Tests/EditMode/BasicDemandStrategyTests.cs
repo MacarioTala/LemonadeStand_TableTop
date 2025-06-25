@@ -27,7 +27,7 @@ public class BasicDemandStrategyTests
         TestEconomy = TheEconomy.Instance;
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-            .WithAggressionLevel(.55f)
+            .WithAggressionLevel(.55m)
             .Build();
 
         lemonade = new GoodBuilder()

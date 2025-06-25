@@ -7,11 +7,50 @@ using UnityEngine;
 public class PopulationTests
 {
     Good lemon;
+    Good apple;
+    Good water;
+    Good sugar;
+    PopulationCompany TestPopulation;
+
+    int initialPopulation = 1000;
+
     [SetUp]
     public void SetUp()
     {
-        lemon = ScriptableObject.CreateInstance<Good>();
-        lemon.GoodName = "Lemon";
+
+        lemon = new GoodBuilder()
+                .Named("Lemon")
+                .WithRarity(RarityEnum.Common)
+                .Build();
+        apple = new GoodBuilder()
+                .Named("Apple")
+                .WithRarity(RarityEnum.Common)
+                .Build();
+        water = new GoodBuilder()
+                .Named("Water")
+                .WithRarity(RarityEnum.Common)
+                .Build();
+        sugar = new GoodBuilder()
+                .Named("Sugar")
+                .WithRarity(RarityEnum.Common)
+                .Build();
+
+        TestPopulation = CompanyBuilder.For<PopulationCompany>()
+                    .Named("TestPopulation")
+                    .WithPopulation(initialPopulation)
+                    .AtLevel(CompanyLevelEnum.Market)
+                    .Build();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        lemon = null;
+        apple = null;
+        water = null;
+        sugar = null;
+        TheEconomy.Instance.ClearEconomy();
+        TestPopulation = null;
     }
 
     [Test]
@@ -20,7 +59,7 @@ public class PopulationTests
         // Arrange
         var inventory = new Inventory();
         const int initialLemonCount = 110;
-        inventory.AddGood(new InventoryEntry(lemon, initialLemonCount, 1m,0));
+        inventory.AddGood(new InventoryEntry(lemon, initialLemonCount, 1m, 0));
 
         var lemonDemandData = new DemandData
         {
@@ -45,8 +84,8 @@ public class PopulationTests
             .Demanding(demandDictionary)
             .WithEnnui(.99f)
             .Build();
-        
-        const int expectedLemonCount = 110-50; // 50 consumed by population of 100 with consumption rate of 0.5
+
+        const int expectedLemonCount = 110 - 50; // 50 consumed by population of 100 with consumption rate of 0.5
 
         // Act
         population.Consume();
@@ -64,7 +103,7 @@ public class PopulationTests
         // Arrange
         var inventory1 = new Inventory();
         const int initialLemonCount = 1000;
-        inventory1.AddGood(new InventoryEntry(lemon, initialLemonCount, 1m,0));
+        inventory1.AddGood(new InventoryEntry(lemon, initialLemonCount, 1m, 0));
 
         var lemonDemandData = new DemandData
         {
@@ -82,7 +121,7 @@ public class PopulationTests
         };
 
         var inventory2 = new Inventory();
-        inventory2.AddGood(new InventoryEntry(lemon, initialLemonCount, 1m,0));
+        inventory2.AddGood(new InventoryEntry(lemon, initialLemonCount, 1m, 0));
 
         var population1 = CompanyBuilder.For<PopulationCompany>()
             .Named("Test Company")
@@ -92,7 +131,7 @@ public class PopulationTests
             .WithEnnui(.99f)
             .Demanding(demandDictionary)
             .Build();
-        
+
         var population2 = CompanyBuilder.For<PopulationCompany>()
             .Named("Test Company")
             .AtLevel(CompanyLevelEnum.Beginner)
@@ -121,6 +160,28 @@ public class PopulationTests
         Assert.AreEqual(expectedPopulation1LemonCount, actualLemonCount1, $"Expected {expectedPopulation1LemonCount} but got {actualLemonCount1} for population 1.");
         Assert.AreEqual(expectedPopulation2LemonCount, actualLemonCount2, $"Expected {expectedPopulation2LemonCount} but got {actualLemonCount2} for population 2.");
     }
-
+    #region GetPerceivedCostOfGoods
+    [Test]
+    public void GetPerceivedCostOfGoodReturnsZeroIfNoRecipesPresentForProducedGood()
+    { 
+        // Arrange
+        var expected = 0m;
+        var fruitPunch = new GoodBuilder()
+                    .Named("Fruit Punch")
+                    .WhichIsProducedGood()
+                    .Build();
+        var prices = new Dictionary<Good, decimal>()
+                        {
+                            { apple,2m },
+                            { water,1m },
+                            { sugar,1m },
+                            { lemon,2m }
+                        };
+        // Act
+        var actual = TestPopulation.GetPerceivedCostOfGood(fruitPunch,prices);
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+#endregion
 
 }

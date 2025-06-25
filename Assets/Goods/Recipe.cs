@@ -71,6 +71,16 @@ public class Recipe
     public decimal GetCostPerUnit(Inventory inventory)
     {
         Dictionary<string, decimal> cost_per_good = new();
+        //If inventory is empty, naively use the base cost of the good
+        if (inventory is null)
+        {
+            inventory = new();
+            foreach (var ingredient in ingredients)
+            {
+                inventory.AddGood(new(ingredient.Good, 1, ingredient.Good.GetPrice(), 0));
+            }
+        }
+        
         foreach (var ingredient in ingredients)
         {
             var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.GoodName);
@@ -84,17 +94,25 @@ public class Recipe
         return Math.Round(cost_per_good.Sum(entry => entry.Value), 2);
     }
 
-    public decimal GetPerceivedCostPerUnit(Dictionary<Good, decimal> asks)
+    public decimal GetPerceivedCostPerUnit(Dictionary<Good, decimal> asks=null)
     {
         decimal totalCost = 0;
-        foreach (var ingredient in ingredients)
+        if (asks is null)
         {
-            if (asks.TryGetValue(ingredient.Good, out var askPrice))
+            asks = new();
+            foreach (var ingredient in ingredients)
             {
-                totalCost += askPrice * ingredient.Quantity_needed;
+                asks.Add(ingredient.Good, ingredient.Good.GetPrice());
             }
-            //what about if no price exists for the ingredient?
         }
+        foreach (var ingredient in ingredients)
+            {
+                if (asks.TryGetValue(ingredient.Good, out var askPrice))
+                {
+                    totalCost += askPrice * ingredient.Quantity_needed;
+                }
+                //what about if no price exists for the ingredient?
+            }
         return Math.Round(totalCost, 2);
     }
 }

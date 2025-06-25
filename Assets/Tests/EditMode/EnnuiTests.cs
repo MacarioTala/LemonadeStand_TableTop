@@ -68,7 +68,7 @@ public class EnnuiTests
       };
 
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                     .WithAggressionLevel(.5f)
+                     .WithAggressionLevel(.5m)
                      .Build();
                   
       var population = CompanyBuilder.For<PopulationCompany>()
@@ -134,7 +134,7 @@ public class EnnuiTests
               {FruitPunch,demandForFruitPunch}
             };
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                     .WithAggressionLevel(.5f)
+                     .WithAggressionLevel(.5m)
                      .Build();
                   
       var population = CompanyBuilder.For<PopulationCompany>()
@@ -175,7 +175,7 @@ public class EnnuiTests
             };
       
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                     .WithAggressionLevel(.5f)
+                     .WithAggressionLevel(.5m)
                      .Build();
       var population = CompanyBuilder.For<PopulationCompany>()
          .Named("Test Population")
@@ -225,7 +225,7 @@ public class EnnuiTests
               {FruitPunch,demandForFruitPunch}
             };
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                     .WithAggressionLevel(.5f)
+                     .WithAggressionLevel(.5m)
                      .Build();
 
       var population = CompanyBuilder.For<PopulationCompany>()
@@ -264,7 +264,7 @@ public class EnnuiTests
               {Lemonade,demandForLemonade}
             };
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                     .WithAggressionLevel(.5f)
+                     .WithAggressionLevel(.5m)
                      .Build();
                   
       var population = CompanyBuilder.For<PopulationCompany>()
@@ -274,6 +274,7 @@ public class EnnuiTests
          .WithPopulation(initialPopulation)
          .WithBehaviourStrategy(strategy)
          .Demanding(listOfDemands)
+         .AssumingNewGoodsCost(1)
          .Build();
       strategy.GenerateGoals(population);
       
@@ -304,7 +305,7 @@ public class EnnuiTests
               {Lemonade,demandForLemonade}
             };
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                     .WithAggressionLevel(.5f)
+                     .WithAggressionLevel(.5m)
                      .Build();
                   
       var population = CompanyBuilder.For<PopulationCompany>()

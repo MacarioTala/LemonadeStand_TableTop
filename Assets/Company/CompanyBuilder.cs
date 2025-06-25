@@ -9,7 +9,7 @@ public class CompanyBuilder<T> where T : Company
     public CompanyBuilder(T company) => companyToReturn = company;
     public static CompanyBuilder<T> Create() => new(ScriptableObject.CreateInstance<T>());
     public T Build() => companyToReturn;
-    
+
     public CompanyBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
     {
         companyToReturn.FixedCostStrategy = fixedCostStrategy;
@@ -30,7 +30,7 @@ public class CompanyBuilder<T> where T : Company
         companyToReturn.SetActionsPerCycle(actionsPerTurn);
         return this;
     }
-    public CompanyBuilder<T> Named( string name)
+    public CompanyBuilder<T> Named(string name)
     {
         companyToReturn.Name = name;
         return this;
@@ -73,9 +73,9 @@ public class CompanyBuilder<T> where T : Company
         if (companyToReturn is PopulationCompany populationCompany)
         {
             foreach (var demand in demands)
-                {
-                    populationCompany.SetDemand(demand.Key, demand.Value);
-                }
+            {
+                populationCompany.SetDemand(demand.Key, demand.Value);
+            }
         }
         else
         {
@@ -92,6 +92,12 @@ public class CompanyBuilder<T> where T : Company
     public CompanyBuilder<T> WithInventory(Inventory inventory)
     {
         companyToReturn.SetInventory(inventory);
+        return this;
+    }
+
+    public CompanyBuilder<T> AssumingNewGoodsCost(decimal value)
+    {
+        companyToReturn.SetMarketIgnorantAssumedCOG(value);
         return this;
     }
 }

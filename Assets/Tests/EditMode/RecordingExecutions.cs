@@ -33,7 +33,7 @@ public class RecordingExecutions
         TestEconomy = TheEconomy.Instance;
 
         TestBehaviourStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                .WithAggressionLevel(.5f)
+                .WithAggressionLevel(.5m)
                 .Build();
         
         Lemonade = new GoodBuilder()

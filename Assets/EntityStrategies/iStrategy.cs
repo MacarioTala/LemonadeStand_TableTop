@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public interface iStrategy
 {
     void GenerateGoals(iCompany company);
-    float GetAggressionLevel();
-    LemonadeStandResultObject SetAggressionLevel(float aggressionLevel);
+    decimal GetAggressionLevel();//Aggression level is a number from 0 to 1 determining how much 'extra' a population is willing to pay for the good
+    LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel);
     public void PerformStrategy(ActionContext context);
     public void PerformStrategy(iCompany company);
 
@@ -15,40 +15,45 @@ public interface iStrategy
     /// that can be used by any strategy.
     /// </summary>
 
-    public static decimal CalculateInitialBid(Good good, Company company, decimal multiplier = 1m)
+    public static decimal GetCostAnchoredBid(Good good, Company company, decimal multiplier = 1m)
     {
         var market = company.GetMarket();
-        var perceivedCost = market.GetPerceivedCostOfGood(good);
+        decimal perceivedCost;
+        if (market != null)
+        {
+            var averagePrices = market.GetAverageMarketPrices();
+            perceivedCost = company.GetPerceivedCostOfGood(good, averagePrices);
+        }
+        else
+        {
+            perceivedCost = company.GetMarketIgnorantAssumedCOG();
+        }
+        
         var initialBid = perceivedCost * multiplier;
         return initialBid;
     }
     public static int GetQuantityDemandedAtState(Good good, Company company, Dictionary<ElasticDemandComponentEnum, float> stateChanges)
     {
         var demand = company.GetDemandFor(good);
+        var market = company.GetMarket();
 
         if (demand == null || demand.MaxDemand <= 0)
         {
             return 0; // No demand for this good
         }
+
         // If no other demand component evaluates
         // to other than 0, then we return the minimum demand
         var demandToReturn = demand.CurrentDemand>0?demand.CurrentDemand:demand.MinDemand;
 
-        // var currentStateChanges = company.GetStateChanges();
-        // if (currentStateChanges == null || !currentStateChanges.Any())
-        // {
-        //     return demandToReturn; // No state changes, return current demand
-        // }
-        // else
-        // { 
-        //     // Calculate total demand adjustment based on state changes
-        //     var totalAdjustment = demand.GetTotalDemandAdjustment(stateChanges);
+        //Get Perceived cost of good
+        throw new NotImplementedException("this damn thing is still not implemented");
 
-        //     // Apply the adjustment to the current demand
-        //     demandToReturn += totalAdjustment;
-
-            
-        // }
+        //Apply state changes
+        //Note: We're going to apply a delay effect here in the future.
+        //      This was originally going to be a period to period adjuster for quantity demanded at price
+        //      but now it might be ok to use it to come up with the initial bid
+        //      where the only state change is price (from perceived cost of good to current cost )
 
         return demandToReturn;
     }

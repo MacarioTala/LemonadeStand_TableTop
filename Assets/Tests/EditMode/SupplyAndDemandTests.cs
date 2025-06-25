@@ -87,7 +87,7 @@ public class SupplyAndDemandTests
 
         //Create population dependencies
         TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                .WithAggressionLevel(.55f)
+                .WithAggressionLevel(.55m)
                 .Build();
 
         //Create a population company to use in tests

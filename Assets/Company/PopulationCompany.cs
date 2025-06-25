@@ -52,6 +52,7 @@ public class PopulationCompany : Company
     }
     #endregion
     #region Demand
+    
     public LemonadeStandResultObject InitializeDemandBasedOnPopulation
                                                 (
                                                     Good good,
@@ -68,7 +69,8 @@ public class PopulationCompany : Company
         if (market == null)
             return LemonadeStandResultObject.Failure("Market is not set for this company.");
 
-        var perceivedCost = market.GetPerceivedCostOfGood(good);
+        var marketPrices = market.GetAverageMarketPrices();
+        var perceivedCost = GetPerceivedCostOfGood(good,marketPrices);
 
         var initialDemand = (int)Math.Floor(Population * percentOfPopulation);
 

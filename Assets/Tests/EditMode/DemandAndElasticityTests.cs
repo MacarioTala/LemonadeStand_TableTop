@@ -72,7 +72,7 @@ public class DemandAndElasticityTests
         LemonadeRecipe = new Recipe("Lemonade", Lemonade, ingredients);
 
         testPopulationStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-                    .WithAggressionLevel(0.9f)
+                    .WithAggressionLevel(0.9m)
                     .Build();
         
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();

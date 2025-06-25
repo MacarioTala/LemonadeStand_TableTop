@@ -49,7 +49,7 @@ public partial class MarketTests
 
         //Setup Population Dependencies
         TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
-            .WithAggressionLevel(.55f)
+            .WithAggressionLevel(.55m)
             .Build();
 
         //Setup Market
@@ -155,16 +155,6 @@ public partial class MarketTests
     }
     #endregion
     #region Demand tests
-    [Test]
-    public void GetPerceivedCostOfGoodReturnsZeroIfNoRecipesPresent()
-    { 
-        // Arrange
-        var expected = 0m;
-        // Act
-        var actual = TestMarket.GetPerceivedCostOfGood(lemon);
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
 
     [Test]
     public void PerceivedCostShouldBeAverageOfCosts()
