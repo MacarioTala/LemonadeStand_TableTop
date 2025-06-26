@@ -18,6 +18,10 @@ public interface iCompany
         DemandData GetDemandFor(Good good);
     #endregion
 
+    #region Perception
+
+    #endregion
+
     #region Goals and strategies
     List<Goal> Goals{get;set;}
         void CheckCompanyGoals();

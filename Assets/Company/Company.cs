@@ -94,6 +94,17 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
         ResetActions();
     }
     #endregion
+    #region Perception
+    public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
+    {
+        var minimumBid = GetMarketIgnorantAssumedCOG();
+        var perceivedCost = Recipes.Where(x => x.GetProduct().Equals(good))
+                                .Select(r => r.GetPerceivedCostPerUnit(prices))
+                                .DefaultIfEmpty(minimumBid)
+                                .Average();
+        return perceivedCost;
+    }
+    #endregion
     #region Demand
     private decimal marketIgnorantAssumedCOG;
     public decimal GetMarketIgnorantAssumedCOG() => marketIgnorantAssumedCOG;
@@ -117,15 +128,7 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
         _demand[good] = demandData;
     }
 
-    public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
-    {
-        var minimumBid = GetMarketIgnorantAssumedCOG();
-        var perceivedCost = Recipes.Where(x => x.GetProduct().Equals(good))
-                                .Select(r => r.GetPerceivedCostPerUnit(prices))
-                                .DefaultIfEmpty(minimumBid)
-                                .Average();
-        return perceivedCost;
-    }
+   
     #endregion
 
     #region Financials
