@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class MetricModifier<T>
 {
@@ -13,7 +14,7 @@ public class MetricModifier<T>
     public void Modify(T target, float amount)
     {
         var currentValue = _metricToModify(target);
-        var newValue = currentValue + amount;
+        var newValue = (float)Math.Round(currentValue + amount,2);
         _modifier(target, newValue);
     }
 }

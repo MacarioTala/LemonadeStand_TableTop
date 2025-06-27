@@ -161,11 +161,15 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
     public iFixedCostStrategy FixedCostStrategy {get;set;} = null;
     public decimal CalculateFixedCostsForPeriod(int period)
     {
-        if(FixedCostStrategy == null)
+        if (FixedCostStrategy == null)
         {
-            throw new ArgumentException("FixedCostStrategy not set");
+            Debug.Log("FixedCostStrategy not set");
+            return 0;
         }
-        return FixedCostStrategy.CalculateFixedCosts(FixedCosts, period);
+        else
+        {
+            return FixedCostStrategy.CalculateFixedCosts(FixedCosts, period);
+        }
     }
 #endregion    
 #region Inventory Management

@@ -9,9 +9,9 @@ public class GoodEffect
     public float Magnitude {get; internal set;}
     public bool IsReduce {get => Magnitude < 0;}
 
-    public void Apply(PopulationCompany company)
+    public void Apply(PopulationCompany company,float percentageToApply=1f)
     {
-        Effect?.Modify(company, Magnitude);
+        Effect?.Modify(company, percentageToApply*Magnitude);
     }
 }
 

@@ -441,28 +441,31 @@ public class Market : ScriptableObject, iCompany
     {
         return DemandStrategy.GetDemandInPeriod(this,CurrentPeriod);
     }
-    [Obsolete("remove this in a future refactor. PopulationCompanies should handle their own consumption")]
     internal void ConsumeGoods()
+    {
+        foreach (var participant in _marketParticipants.OfType<PopulationCompany>())
         {
-            //attempt to consume goods at current demand levels
-            foreach(var good in _marketDemand.Keys)
-            {
-                var demanded_quantity = _marketDemand[good].CurrentDemand;
-                //consume good
-                var unfulfilledDemand = _inventory.TryConsumeGood(good.GoodName,demanded_quantity);
-                // Do something with unfulfilled demand later
-            }
+            participant.Consume();
         }
+    }
     public void ExpireGoods(int period)
         {
             foreach(var company in _marketParticipants)
                 company.GetInventory().ExpireGoods(period); 
         }
-#endregion
-#region Fixed costs
+    #endregion
+    #region Fixed costs
     public decimal CalculateFixedCostsForPeriod(int period)
     {
-        return FixedCostStrategy.CalculateFixedCosts(FixedCosts,period);
+        if (FixedCostStrategy is not null)
+        {
+            return FixedCostStrategy.CalculateFixedCosts(FixedCosts, period);
+        }
+        else
+        {
+            Debug.Log("Fixed Cost Strategy not set");
+            return 0;
+        }
     }
 #endregion
 #region Goals and strategies
@@ -644,10 +647,7 @@ public class Market : ScriptableObject, iCompany
         UpdateFulfillmentRates(period);
         UpdatePrices();
         DemandStrategy.AdjustDemandInPeriod(this);
-        #pragma warning disable CS0618 // Type or member is obsolete
-        //Todo: Remove this in a future refactor.
         ConsumeGoods();
-        #pragma warning restore CS0618 // Type or member is obsolete
         UpdateCompanyStatuses(period);
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;

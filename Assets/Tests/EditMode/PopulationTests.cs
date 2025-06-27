@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using UnityEngine;
 
 [TestFixture]
 public class PopulationTests
@@ -12,7 +12,7 @@ public class PopulationTests
     Good sugar;
     PopulationCompany TestPopulation;
 
-    int initialPopulation = 1000;
+    readonly int initialPopulation = 1000;
 
     [SetUp]
     public void SetUp()
@@ -39,6 +39,7 @@ public class PopulationTests
                     .Named("TestPopulation")
                     .WithPopulation(initialPopulation)
                     .AtLevel(CompanyLevelEnum.Market)
+                    .WithEnnui(.99f)
                     .Build();
     }
 
@@ -163,7 +164,7 @@ public class PopulationTests
     #region GetPerceivedCostOfGoods
     [Test]
     public void GetPerceivedCostOfGoodReturnsZeroIfNoRecipesPresentForProducedGood()
-    { 
+    {
         // Arrange
         var expected = 0m;
         var fruitPunch = new GoodBuilder()
@@ -178,9 +179,102 @@ public class PopulationTests
                             { lemon,2m }
                         };
         // Act
-        var actual = TestPopulation.GetPerceivedCostOfGood(fruitPunch,prices);
+        var actual = TestPopulation.GetPerceivedCostOfGood(fruitPunch, prices);
         // Assert
         Assert.AreEqual(expected, actual);
+    }
+    [Test]
+    public void TestThatGoodEffectsAreAppliedByMarkets()
+    {
+        //Arrange
+        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, null)
+                        .WithSupplyProvider(new MockSupplyProvider())
+                        .WithDemographicManager(new MockDemographicManager())
+                        ;
+        testMarket.RegisterMarketParticipant(TestPopulation);
+        var reduceEnnuiEffect = GoodEffectBuilder.Create()
+                                .Named("Ennui Reducer")
+                                .DescribedAs("Reduces Ennui by 10%")
+                                .WithEffect(
+                                    new MetricModifier<PopulationCompany>
+                                    (
+                                        x => x.Ennui,
+                                        (x, newValue) => x.Ennui = newValue
+                                    )
+                                )
+                                .WithEffectMagnitude(-.1f);
+        var expectedEnnui = (float)Math.Round(TestPopulation.Ennui * .9f, 2);
+        var Lemonade = new GoodBuilder()
+                        .Named("Lemonade")
+                        .WhichIsProducedGood()
+                        .WithRarity(RarityEnum.Uncommon)
+                        .Build();
+        Lemonade.AddEffect(reduceEnnuiEffect);
+
+        TestPopulation.GetInventory().AddGood(new InventoryEntry(Lemonade, 200, 2m, testMarket.CurrentPeriod));
+        TestPopulation.InitializeDemandBasedOnPopulation(
+            good: Lemonade,
+            percentOfPopulation: 1f,
+            consumptionRate: .2f
+        );
+
+        //Act
+        testMarket.UnleashMarketForces(testMarket.CurrentPeriod);
+        var actualEnnui = TestPopulation.Ennui;
+
+        //Assert
+        Assert.AreEqual(expectedEnnui, actualEnnui);
+
+        //Teardown
+        testMarket.RemoveMarketParticipant(TestPopulation);
+        testMarket = null;
+    }
+    [Test]
+    public void ConsumingFewerGoodsThanIdealHasReducedEffect()
+    {
+         //Arrange
+        var testMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, null)
+                        .WithSupplyProvider(new MockSupplyProvider())
+                        .WithDemographicManager(new MockDemographicManager())
+                        ;
+        testMarket.RegisterMarketParticipant(TestPopulation);
+        var reduceEnnuiEffect = GoodEffectBuilder.Create()
+                                .Named("Ennui Reducer")
+                                .DescribedAs("Reduces Ennui by 10%")
+                                .WithEffect(
+                                    new MetricModifier<PopulationCompany>
+                                    (
+                                        x => x.Ennui,
+                                        (x, newValue) => x.Ennui = newValue
+                                    )
+                                )
+                                .WithEffectMagnitude(-.1f);
+        var expectedEnnui = (float)Math.Round(TestPopulation.Ennui * .9f, 2);
+        var Lemonade = new GoodBuilder()
+                        .Named("Lemonade")
+                        .WhichIsProducedGood()
+                        .WithRarity(RarityEnum.Uncommon)
+                        .Build();
+        Lemonade.AddEffect(reduceEnnuiEffect);
+
+        TestPopulation.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 2m, testMarket.CurrentPeriod));
+        TestPopulation.InitializeDemandBasedOnPopulation(
+            good: Lemonade,
+            percentOfPopulation: 1f,
+            consumptionRate: .2f
+        );
+
+        //Act
+        testMarket.UnleashMarketForces(testMarket.CurrentPeriod);
+        var actualEnnui = TestPopulation.Ennui;
+
+        //Assert
+        Assert.IsTrue(expectedEnnui<actualEnnui);
+        TestContext.WriteLine($"Full Effect{expectedEnnui}, Actual Effect {actualEnnui}");
+
+        //Teardown
+        testMarket.RemoveMarketParticipant(TestPopulation);
+        testMarket = null;
     }
 #endregion
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PopulationCompany : Company
 {
@@ -44,10 +45,19 @@ public class PopulationCompany : Company
         var inventory = GetInventory().GetInventoryEntries();
         foreach (var inventoryEntry in inventory)
         {
-            var demand = GetDemandFor(inventoryEntry.good);
-            inventoryEntry.good.ApplyEffects(this); //you are here. Make good effects scale with amount consumed.
-            var amountToConsume = (int)Math.Floor(demand.ConsumptionRate * Population);
+            var good = inventoryEntry.good;
+            var demand = GetDemandFor(good);
+
+            var idealAmountConsumed = (int)Math.Floor(demand.ConsumptionRate * Population);
+            var amountToConsume = idealAmountConsumed;
+            if (amountToConsume > inventoryEntry.quantity)
+            {
+                amountToConsume = inventoryEntry.quantity;
+            }
             inventoryEntry.quantity -= amountToConsume;
+
+            var percentageOfIdealAmountConsumed = idealAmountConsumed==0?0f: (float)amountToConsume / idealAmountConsumed;
+            inventoryEntry.good.ApplyEffects(this,percentageOfIdealAmountConsumed); 
         }
     }
     #endregion
