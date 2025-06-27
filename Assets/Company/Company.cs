@@ -27,7 +27,12 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
          
          return LemonadeStandResultObject.Success();
          }
-    protected Company(){}
+    public LemonadeStandResultObject LeaveMarket()
+    {
+        marketCompanyIsIn = null;
+        return LemonadeStandResultObject.Success();
+    }
+    protected Company() { }
     internal void Initialize (string companyName, CompanyLevelEnum company_level,iStrategy strategy=null)
     {
         Name = companyName;

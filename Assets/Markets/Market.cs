@@ -106,6 +106,7 @@ public class Market : ScriptableObject, iCompany
         if(_marketParticipants.Contains(company))
         {
             _marketParticipants.Remove(company);
+            company.LeaveMarket();
             return LemonadeStandResultObject.Success();
         }
         return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
@@ -425,12 +426,13 @@ public class Market : ScriptableObject, iCompany
    
     internal void UpdateCompanyStatuses(int period)
     {
-        foreach (var company in _marketParticipants)
+        var participantCopyforIteration = _marketParticipants.ToList();
+        foreach (var company in participantCopyforIteration)
         {
             //Update Company Statuses
             company.ExpireGoods(period);
             company.SubtractFixedCostsForPeriod(period);
-            company.UpdateCurrentPeriod(period+1);
+            company.UpdateCurrentPeriod(period + 1);
             BankruptCompany(company);
         }
     }

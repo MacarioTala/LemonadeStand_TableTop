@@ -145,7 +145,8 @@ public class TheEconomy : MonoBehaviour
     {
         Debug.Log($"{bankruptCompany.Name} in {market.Name} has gone bankrupt");
         ShowBankruptcySummary(bankruptCompany);
-        if(bankruptCompany.IsPlayer)
+        market.RemoveMarketParticipant(bankruptCompany);
+        if (bankruptCompany.IsPlayer)
         {
             EndGame();
         }

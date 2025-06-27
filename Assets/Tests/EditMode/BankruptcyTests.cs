@@ -92,8 +92,21 @@ public class BankruptcyTests
     }
 
     [Test]
-    public void ACompanyGoingBankruptShouldTriggerAnEvent()
-    {throw new System.NotImplementedException();}
+    public void ACompanyGoingBankruptShouldBeRemovedFromItsMarket()
+    {
+        //Arrange
+        Company1.SetCash(0);
+        var originalMarket = Company1.GetMarket();
+
+        //Act
+        testEconomy.EndTradingPeriod();
+        var currentMarket = Company1.GetMarket();
+
+        //Assert
+        Assert.IsTrue(originalMarket != null,$"Original market should not be null");
+        Assert.IsTrue(originalMarket != currentMarket,"Original market should not be the same as the current market");
+        Assert.IsTrue(currentMarket == null,$"After company goes bankrupt, market should be null, but was {currentMarket}");
+    }
 
     [TearDown]
     public void TearDown()
