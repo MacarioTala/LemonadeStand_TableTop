@@ -1,3 +1,4 @@
+using System;
 using System.Data.Common;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -10,6 +11,8 @@ public class DemandElasticityTests
     Market TestMarket;
     Company Company1;
     Company Company2;
+    PopulationCompany TestPopulation;
+    iStrategy TestReduceEnnuiStrategy;
 
     int Period = 0;
     Good lemon;
@@ -50,19 +53,22 @@ public class DemandElasticityTests
     [Test]
     public void DemandInelasticGoodsDoNotChangeDemandInStableMarkets()
     {
-        throw new IgnoreException("update to use PopulationCompany");
+        throw new NotImplementedException("currently doesn't make sense till populations create bids");
         // Arrange
-        TestMarket.SetCash(1000000);
         var Company1 = Company.Factory.Create("Company1", CompanyLevelEnum.Beginner);
         Company1.SetCash(10000);
         Company1.GetInventory().AddGood(new InventoryEntry(water, 10000,1m,Period));
 
         var initialWaterDemand = 1000;
+        var testPopulation = CompanyBuilder.For<PopulationCompany>()
+                            .Named("Test Population")
+                            .WithInitialCash(5000)
+                            .AssumingNewGoodsCost(1)
+                            .AtLevel(CompanyLevelEnum.Beginner)
+                            .Build();
         
-        TestMarket.InitializeDemandForSpecificGood(water,initialWaterDemand);
 
         var Company1SellsWaterToAnyone = new Order(null,Company1,water,10000,1m);
-
         var waterContext = new ActionContext{TradeToSubmit = Company1SellsWaterToAnyone,MarketToSubmitTo = TestMarket,Period = Period};
 
         //Act
@@ -70,6 +76,7 @@ public class DemandElasticityTests
         TestMarket.ProcessCompanyOrders();
         var actualWaterDemand = TestMarket.GetPopulationDemand()[water].CurrentDemand;
         //Assert
+        Assert.IsTrue(water.isDemandInelastic);
         Assert.AreEqual(initialWaterDemand,actualWaterDemand);
     }
 

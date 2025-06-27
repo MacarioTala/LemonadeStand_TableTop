@@ -31,7 +31,15 @@ public class Good : ScriptableObject
     //Demand
     public Dictionary<ElasticityTypeEnum, float> Elasticities = new();
     public void AddElasticity(ElasticityTypeEnum key, float value) => Elasticities.Add(key, value);
-    public bool isDemandInelastic => Elasticities.Count == 0;
+    public bool isDemandInelastic
+    {
+        get {
+            return Elasticities.Count == 0
+            ||
+            Elasticities.Where(x=>x.Value!=0).Count()==0
+            ;
+        }
+    }
 
     private decimal price_increment_rate;
     private PriceBand PriceBand;

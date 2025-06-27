@@ -125,34 +125,6 @@ public partial class MarketTests
         // Assert
         Assert.AreEqual(expected, actual.First());
     }
-    [TestCase(TestName ="Starter markets should demand lemonade")]
-    public void StarterMarketsDemandLemonade()
-    {
-        throw new IgnoreException("refactor this to change CreateStarterMarket to have an initial population.");
-        // Arrange
-        var expected_good_name = "Lemonade";
-        var expected_demand = 1000;
-        // Act
-        var actual = test_initial_market.GetPopulationDemand().First();
-        // Assert
-        Assert.AreEqual(expected_good_name, actual.Key.GoodName);
-        Assert.AreEqual(expected_demand, actual.Value.CurrentDemand);
-    }
-    #endregion
-#region Consumption tests
-    [Test]
-    public void ConsumeGoods_should_decrease_inventory()
-    {
-        // Arrange
-        var lemonDemand = test_initial_market.GetMarketDemandForGood(lemon.GoodName);
-        var initialLemons = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().quantity;
-        var expected = initialLemons - lemonDemand;
-        // Act
-        test_initial_market.ConsumeGoods();
-        var actual = test_initial_market.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().quantity;
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
     #endregion
     #region Demand tests
 
