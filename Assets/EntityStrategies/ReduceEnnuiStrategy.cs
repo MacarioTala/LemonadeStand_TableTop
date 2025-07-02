@@ -74,10 +74,12 @@ public class ReduceEnnuiStrategy : iStrategy
     }
      private void AllocateBudget(iCompany company)
     {
-        var totalCash = company.GetCash();
+        var aggressionLevel = company.GetAggressionLevel();
+        var totalCash = company.GetCash()*aggressionLevel;
         var goodsToAllocateBudgetTo = _bidAskSpreads.ToList();
 
         var totalScore = goodsToAllocateBudgetTo.Sum(x => x.Value.GoodQuality);
+
         var allocations = goodsToAllocateBudgetTo
             .Select(x =>
             {
@@ -108,7 +110,8 @@ public class ReduceEnnuiStrategy : iStrategy
             var period = market != null ? market.CurrentPeriod : 0;
             var good = spread.Key;
             var bid = Math.Max(spread.Value.Bid, company.GetMinimumBid());
-            var cash = company.GetCash();
+            var aggressionLevel = company.GetAggressionLevel();
+            var cash = company.GetCash()*aggressionLevel;
             var populationCompany = company as PopulationCompany;
             var maxDemandForGood = populationCompany.GetDemandFor(good).MaxDemand;
 
@@ -159,7 +162,8 @@ public class ReduceEnnuiStrategy : iStrategy
                 spread.Ask = 0m;//for now, the population is not selling anything
                 AddOrReplaceBidAskSpread(row.Key,spread);
             }
-            AllocateBudget(company);
+            if(demand.Count()>0)
+                AllocateBudget(company);
         };
         return _bidAskSpreads;
     }
@@ -175,7 +179,7 @@ public class ReduceEnnuiStrategy : iStrategy
         //Desire
         var ennui = populationCompany.Ennui;
         var targetEnnui = goal.MetricTarget;
-        var costAnchoredBid = iStrategy.GetCostAnchoredBid(good, populationCompany, _aggressionLevel);
+        var costAnchoredBid = iStrategy.GetCostAnchoredBid(good, populationCompany);
 
         //Calculate Good Quality
         var impactOnEnnui = Math.Abs(good.ReducesMetric(MetricEnum.Ennui).By());

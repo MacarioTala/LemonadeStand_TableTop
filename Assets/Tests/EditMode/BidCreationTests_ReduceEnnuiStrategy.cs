@@ -12,11 +12,15 @@ public class BidCreationTests_ReduceEnnuiStrategy
     Good Sugar;
     Good Lemonade;
 
+    GoodEffect ReduceEnnuiEffect;
+
     Recipe LemonadeRecipe;
 
     iStrategy TestReduceEnnuiStrategy;
 
     PopulationCompany TestPopulation;
+
+    const decimal InitialCash=2000;
 
     Market TestMarket;
 
@@ -56,13 +60,26 @@ public class BidCreationTests_ReduceEnnuiStrategy
                                         }
                                     );
 
+        ReduceEnnuiEffect = new GoodEffect()
+                            .Named("Reduce Ennui effect")
+                            .Affecting(MetricEnum.Ennui)
+                            .WithEffectMagnitude(-.05f)
+                            .WithEffect(new MetricModifier<PopulationCompany>
+                                            (
+                                            x => x.Ennui,
+                                            (x, newValue) => x.Ennui = newValue
+                                            )
+                                        );
+
+        Lemonade.AddEffect(ReduceEnnuiEffect);
+
         TestReduceEnnuiStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                                 .WithAggressionLevel(.20m)
                                 .Build();
 
         TestPopulation = CompanyBuilder.For<PopulationCompany>()
                         .Named("Test Population")
-                        .WithInitialCash(2000)
+                        .WithInitialCash(InitialCash)
                         .WithEnnui(initialEnnui)
                         .WithPopulation(initialPopulation)
                         .WithBehaviourStrategy(TestReduceEnnuiStrategy)
@@ -88,16 +105,15 @@ public class BidCreationTests_ReduceEnnuiStrategy
         //Assert
         Assert.AreEqual(expected, actual);
     }
-    [TestCase(TestName = "From iStrategy: When no market prices are available, the bid is equal to the Naive COG times the multiplier.")]
+    [TestCase(TestName = "From iStrategy: When no market prices are available, the bid is equal to the Naive COG.")]
     public void NoMarketPricesDefaultBidMultiplierPassed()
     {
         //Arrange
         var naiveCog = TestPopulation.GetMarketIgnorantAssumedCOG();
-        var multiplier = .8m;
-        var expected = naiveCog*multiplier;
+        var expected = naiveCog;
 
         //Act
-        var actual = iStrategy.GetCostAnchoredBid(Lemonade, TestPopulation,multiplier);
+        var actual = iStrategy.GetCostAnchoredBid(Lemonade, TestPopulation);
 
         //Assert
         Assert.AreEqual(expected, actual);
@@ -209,12 +225,11 @@ public class BidCreationTests_ReduceEnnuiStrategy
     /// </summary>
 
     [Test]
-    public void CalculateBidPerCapitaReturnsAdjustedNaiveBidWhenNoPricesExist()
+    public void CalculateBidPerCapitaReturnsNaiveBidWhenNoPricesExist()
     {
         //Arrange
-        var aggressionLevel = TestReduceEnnuiStrategy.GetAggressionLevel();
         var naiveCog = TestPopulation.GetMarketIgnorantAssumedCOG();
-        var expected = aggressionLevel * naiveCog;
+        var expected = naiveCog;
         var reduceEnnuiGoal = TestPopulation.Goals
                             .Where(x => x.Name.Equals("Reduce Ennui"))
                             .FirstOrDefault();
@@ -229,7 +244,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
     }
 
     [Test]
-    public void CalculateBidPerCapitaReturnsPriceAdjustedNaiveBidWhenPricesExist()
+    public void CalculateBidPerCapitaReturnsPerceivedCostOfGoodsWhenPricesExist()
     {
         //Arrange
         var company1 = Company.Factory.Create("Company 1", CompanyLevelEnum.Beginner);
@@ -238,9 +253,8 @@ public class BidCreationTests_ReduceEnnuiStrategy
         TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Water, Ask = .1m });
         TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Sugar, Ask = .2m });
 
-        var aggressionLevel = TestReduceEnnuiStrategy.GetAggressionLevel();
         var pricedCog = LemonadeRecipe.GetCostPerUnit(null);
-        var expected = aggressionLevel * pricedCog;
+        var expected = pricedCog;
         var reduceEnnuiGoal = TestPopulation.Goals
                             .Where(x => x.Name.Equals("Reduce Ennui"))
                             .FirstOrDefault();
@@ -257,6 +271,60 @@ public class BidCreationTests_ReduceEnnuiStrategy
         //TearDown
         TestMarket.MarketData.Clear();
     }
+    #endregion
+    #region Initial Bid Creation
+    [TestCase(TestName = "If demand for a good exists, a bid is created, even when no recipes exist")]
+    public void DemandExistsNoRecipesBuysStillCreated()
+    {
+        //Arrange
+        var populationMarket = TestPopulation.GetMarket();
+        var companiesInMarket = populationMarket.GetMarketParticipants()
+                                .Where(x => !x.Equals(TestPopulation));
+        TestPopulation.Recipes.Clear();
+        TestPopulation.InitializeDemandBasedOnPopulation(Lemonade, 1f);
+        var initialOrderCount = TestMarket.GetOrdersSentToMarket().Count();
+
+        var affectsEnnui = Lemonade.HasEffectOn(MetricEnum.Ennui);
+
+        //Act
+        TestPopulation.PerformStrategy(populationMarket.CurrentPeriod);
+        var ordersPostStrategy = TestMarket.GetOrdersSentToMarketByCompany(TestPopulation);
+
+        //Assert
+        Assert.IsTrue(affectsEnnui,"Lemonade has no effect on ennui");
+        Assert.IsTrue(populationMarket.Equals(TestMarket), "Population not in market");
+        Assert.IsTrue(companiesInMarket?.Count() == 0, "There are other companies in the market");
+        Assert.IsTrue(initialOrderCount == 0, "Should be no initial orders");
+        Assert.IsTrue(ordersPostStrategy.Count() > 0, "Orders should exist after strategy is performed");
+    }
+    [TestCase(1, .5, .5, 4000, TestName = "Naive bid of .5, total aggression, company orders 4000 units")]
+    [TestCase(.2, .5, .5, 800, TestName = "Naive bid of .5, 20% aggression, company orders 800 units")]
+    [TestCase(0,.5, .5, 0, TestName = "Naive bid of .5, no aggression, company orders nothing")]
+    public void InitialBidTestsDifferentBids(decimal aggressionLevel,
+                                             decimal naiveBid,
+                                             decimal expectedBid,
+                                             int expectedQty)
+    {
+        //Arrange
+        TestPopulation.SetMarketIgnorantAssumedCOG(naiveBid);
+        TestPopulation.SetAggressionLevel(aggressionLevel);
+        var populationMarket = TestPopulation.GetMarket();
+        var companiesInMarket = populationMarket.GetMarketParticipants()
+                                .Where(x => !x.Equals(TestPopulation));
+        TestPopulation.Recipes.Clear();
+        TestPopulation.InitializeDemandBasedOnPopulation(Lemonade, 1f);
+
+        //Act
+        TestPopulation.PerformStrategy(populationMarket.CurrentPeriod);
+        var ordersPostStrategy = TestMarket.GetOrdersSentToMarketByCompany(TestPopulation);
+        var actualBid = ordersPostStrategy.FirstOrDefault().Price;
+        var actualQty = ordersPostStrategy.FirstOrDefault().Quantity;
+
+        //Assert
+        Assert.AreEqual(expectedBid, actualBid);
+        Assert.AreEqual(expectedQty, actualQty);
+    }
+
     #endregion
     [TearDown]
     public void TearDown()

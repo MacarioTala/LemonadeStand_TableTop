@@ -94,4 +94,14 @@ public class DummyCompany : iCompany
     {
         throw new System.NotImplementedException();
     }
+
+    public void SetAggressionLevel(decimal aggressionLevel)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public decimal GetAggressionLevel()
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -119,6 +119,7 @@ public class RecordingDemographicHistoryTests
             .WithPopulation(1000)
             .WithFixedCostStrategy(populationFixedCostStrategy)
             .Named("People in the Market")
+            .WithInitialCash(100)
             .Build();
         TestMarket.RegisterMarketParticipant(peopleInTheMarket);
         var MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();

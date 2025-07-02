@@ -912,13 +912,9 @@ public class DemandAndElasticityTests
         Assert.AreEqual(expectedDemand, actualDemand);
     }
     #endregion
-    
+
 
     #region ElasticDemandComponents == T_0
-    [Test]
-    public void InitialBidCanBeCreatedEvenIfNoRecipesExist()
-    { 
-        throw new System.NotImplementedException("This test is not implemented yet.");
-    }
+    
     #endregion
 }

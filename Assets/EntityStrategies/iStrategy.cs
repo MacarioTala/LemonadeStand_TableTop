@@ -15,7 +15,7 @@ public interface iStrategy
     /// that can be used by any strategy.
     /// </summary>
 
-    public static decimal GetCostAnchoredBid(Good good, Company company, decimal multiplier = 1m)
+    public static decimal GetCostAnchoredBid(Good good, Company company)
     {
         var market = company.GetMarket();
         decimal perceivedCost;
@@ -29,7 +29,7 @@ public interface iStrategy
             perceivedCost = company.GetMarketIgnorantAssumedCOG();
         }
         
-        var initialBid = perceivedCost * multiplier;
+        var initialBid = perceivedCost;
         return initialBid;
     }
     public static int GetQuantityDemandedAtState(Good good, Company company, Dictionary<ElasticDemandComponentEnum, float> stateChanges)

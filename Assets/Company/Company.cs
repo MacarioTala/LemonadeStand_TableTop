@@ -251,9 +251,14 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
         }
 
     }
+    public decimal GetAggressionLevel() => _companyStrategy.GetAggressionLevel();
+    public void SetAggressionLevel(decimal aggressionLevel)
+    {
+        _companyStrategy.SetAggressionLevel(aggressionLevel);
+    }
     public void PerformStrategy(int period)
     {
-        if(_companyStrategy != null)
+        if (_companyStrategy != null)
         {
             _companyStrategy.PerformStrategy(this);
         }

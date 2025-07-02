@@ -26,6 +26,8 @@ public interface iCompany
     List<Goal> Goals{get;set;}
         void CheckCompanyGoals();
         void CompleteGoal(Goal goal);
+    decimal GetAggressionLevel();
+    void SetAggressionLevel(decimal aggressionLevel);
         void SetStrategy(iStrategy strategy);
         iStrategy GetStrategy();
     #endregion

@@ -7,20 +7,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
 public class Market : ScriptableObject, iCompany
 {
-#region Fields, Properties
+    #region Fields, Properties
 
     [SerializeField] private string _marketId;
-    public Guid MarketId 
+    public Guid MarketId
     {
         get
         {
             if (_marketId == null)
             {
                 _marketId = Guid.NewGuid().ToString();
-         
-                #if UNITY_EDITOR
+
+#if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(this);
-                #endif
+#endif
             }
             return Guid.Parse(_marketId);
         }
@@ -33,7 +33,7 @@ public class Market : ScriptableObject, iCompany
         set => _companyName = value;
     }
     public CompanyLevelEnum company_level;
-#region Demand
+    #region Demand
     public List<MarketData> MarketData { get; } = new();//bid/ask spread for companies
     private readonly Dictionary<Good, DemandData> _marketDemand = new();
 
@@ -72,7 +72,7 @@ public class Market : ScriptableObject, iCompany
                     .Average();
         return perceivedCost;
     }
-#endregion
+    #endregion
     //Cash and Inventory
     private decimal cash = 0;
     private readonly Inventory _inventory = new();
@@ -81,7 +81,7 @@ public class Market : ScriptableObject, iCompany
     //Graphics and Market Features
     public List<MarketFeature> MarketFeatures = new();
     public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
-    public (int x,int y) MarketSize = (200,200);
+    public (int x, int y) MarketSize = (200, 200);
     public int GetWidth() => MarketSize.x;
     public int GetHeight() => MarketSize.y;
 
@@ -90,7 +90,7 @@ public class Market : ScriptableObject, iCompany
     public List<Company> GetMarketParticipants() => _marketParticipants;
     public void RegisterMarketParticipant(Company marketParticipant)
     {
-        if(!_marketParticipants.Contains(marketParticipant))
+        if (!_marketParticipants.Contains(marketParticipant))
         {
             _marketParticipants.Add(marketParticipant);
             marketParticipant.SetMarket(this);
@@ -103,7 +103,7 @@ public class Market : ScriptableObject, iCompany
     }
     public LemonadeStandResultObject RemoveMarketParticipant(Company company)
     {
-        if(_marketParticipants.Contains(company))
+        if (_marketParticipants.Contains(company))
         {
             _marketParticipants.Remove(company);
             company.LeaveMarket();
@@ -111,46 +111,46 @@ public class Market : ScriptableObject, iCompany
         }
         return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
     }
-    
-#endregion
+
+    #endregion
 
     #region Demographics
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
-        =>_demographicManager.SetMarketInstability(newInstability);
+        => _demographicManager.SetMarketInstability(newInstability);
     public float GetPopulationEnnui() => _demographicManager.GetPopulationEnnui();
     public string GetEnnuiLevel() => _demographicManager.GetEnnuiLevel();
     //Population
     public int GetPopulation() => _demographicManager.GetPopulation();
     public List<PopulationHistory> GetPopulationHistory() => _demographicManager.GetPopulationHistory(MarketId);
-   
-    public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationCompany marketParticipant) 
+
+    public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationCompany marketParticipant)
     {
         var actor = _marketParticipants
             .OfType<PopulationCompany>()
-            .Where(x=>x.Equals(marketParticipant))
+            .Where(x => x.Equals(marketParticipant))
             .FirstOrDefault();
-        if(actor == null)
+        if (actor == null)
         {
             return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {marketParticipant.Name} not found in Market {Name}");
         }
-        _demographicManager.SetPopulation(newPopulation,actor);
+        _demographicManager.SetPopulation(newPopulation, actor);
         return LemonadeStandResultObject.Success();
     }
 
-    public float GetPopulationGrowthRate()=>_demographicManager.GetPopulationGrowthRate(0,CurrentPeriod);
+    public float GetPopulationGrowthRate() => _demographicManager.GetPopulationGrowthRate(0, CurrentPeriod);
 
     //Population Happiness
-    public float GetPopulationHappiness()=>_demographicManager.GetPopulationHappiness();
-    public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)=>
+    public float GetPopulationHappiness() => _demographicManager.GetPopulationHappiness();
+    public LemonadeStandResultObject SetPopulationHappiness(float newHappiness) =>
         _demographicManager.SetPopulationHappiness(newHappiness);
-    
+
     public LemonadeStandResultObject RecordDemographicSnapshot(TurnPhase phase)
     {
-        _demographicManager.RecordDemographicSnapshot(MarketId,CurrentPeriod,phase);
+        _demographicManager.RecordDemographicSnapshot(MarketId, CurrentPeriod, phase);
         return LemonadeStandResultObject.Success();
     }
-#endregion
+    #endregion
 
     //Event Handlers
     public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent);
@@ -161,27 +161,27 @@ public class Market : ScriptableObject, iCompany
     }
 
     //Goals
-    public List<Goal> Goals {get;set;}
+    public List<Goal> Goals { get; set; }
     private iStrategy _marketStrategy;
     public iStrategy GetStrategy() => _marketStrategy;
     public void SetStrategy(iStrategy strategy) => _marketStrategy = strategy;
-    
-#region Market Events
+
+    #region Market Events
     public List<iMarketEvent> PotentialMarketEvents { get; } = new();
-    readonly List<(iMarketEvent Event, int PeriodStart,int duration)> _activeEvents = new();
-    readonly List<(iMarketEvent Event, int PeriodStart,int periodEnd)> marketEventHistory = new();
-    public List<(iMarketEvent Event, int PeriodStart,int periodEnd)> GetMarketEventHistory() => marketEventHistory;
+    readonly List<(iMarketEvent Event, int PeriodStart, int duration)> _activeEvents = new();
+    readonly List<(iMarketEvent Event, int PeriodStart, int periodEnd)> marketEventHistory = new();
+    public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory() => marketEventHistory;
     public void AddPotentialMarketEvent(iMarketEvent marketEvent)
     {
-        if(!PotentialMarketEvents.Contains(marketEvent))
+        if (!PotentialMarketEvents.Contains(marketEvent))
         {
             PotentialMarketEvents.Add(marketEvent);
         }
     }
-    public List<(iMarketEvent Event, int PeriodStart,int duration)> GetActiveMarketEvents() => _activeEvents;
+    public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents() => _activeEvents;
     public void RemovePotentialMarketEvent(iMarketEvent marketEvent)
     {
-        if(PotentialMarketEvents.Contains(marketEvent))
+        if (PotentialMarketEvents.Contains(marketEvent))
         {
             PotentialMarketEvents.Remove(marketEvent);
         }
@@ -190,15 +190,15 @@ public class Market : ScriptableObject, iCompany
     {
         //Check if any active events have expired
         var expiredEvents = _activeEvents
-                            .Where(x=>x.Event.IsExpiredAt(x.PeriodStart,CurrentPeriod))
+                            .Where(x => x.Event.IsExpiredAt(x.PeriodStart, CurrentPeriod))
                             .ToList();
         foreach (var marketEvent in expiredEvents)
         {
             _activeEvents.Remove(marketEvent);
-            marketEventHistory.Add((marketEvent.Event,marketEvent.PeriodStart,CurrentPeriod));
+            marketEventHistory.Add((marketEvent.Event, marketEvent.PeriodStart, CurrentPeriod));
             marketEvent.Event.Reset();
         }
-        
+
         //Invoke any active events
         foreach (var marketEvent in _activeEvents)
         {
@@ -209,13 +209,13 @@ public class Market : ScriptableObject, iCompany
     {
         foreach (var marketEvent in PotentialMarketEvents)
         {
-            if(_activeEvents.Any(x=>!x.Event.IsCompatibleWith(marketEvent))) continue;
-            
-            if(_activeEvents.Any(x=>x.Event.Equals(marketEvent))) continue;
+            if (_activeEvents.Any(x => !x.Event.IsCompatibleWith(marketEvent))) continue;
 
-            if(EventRollSucceeds(marketEvent))
+            if (_activeEvents.Any(x => x.Event.Equals(marketEvent))) continue;
+
+            if (EventRollSucceeds(marketEvent))
             {
-                _activeEvents.Add((marketEvent,CurrentPeriod,marketEvent.GetDuration()));
+                _activeEvents.Add((marketEvent, CurrentPeriod, marketEvent.GetDuration()));
             }
         }
     }
@@ -225,17 +225,17 @@ public class Market : ScriptableObject, iCompany
         var currentRoll = UnityEngine.Random.Range(0, 100);
         var chanceOfEvent = marketEvent.GetProbabilityOf();
 
-        return chanceOfEvent>=currentRoll;;
+        return chanceOfEvent >= currentRoll; ;
     }
 
-#endregion
+    #endregion
     //Pricing  
     public List<FixedCost> FixedCosts { get; set; }
-    public iFixedCostStrategy FixedCostStrategy {get;set;}
+    public iFixedCostStrategy FixedCostStrategy { get; set; }
     private readonly List<iPriceModifier> _priceModifiers = new();
     public void AddPriceModifier(iPriceModifier priceModifier)
     {
-        if(!_priceModifiers.Contains(priceModifier))
+        if (!_priceModifiers.Contains(priceModifier))
         {
             _priceModifiers.Add(priceModifier);
         }
@@ -248,39 +248,39 @@ public class Market : ScriptableObject, iCompany
         var ordersToReturn = OrdersSubmittedInPeriod
                             .Where(x => x.Period == period)
                             .Select(x => x.Order)
-                            .ToList();    
+                            .ToList();
         return ordersToReturn;
     }
-    
+
     public void LogOrder(Order order, int period)
     {
-        if(!OrdersSubmittedInPeriod.Contains((order,period)))
+        if (!OrdersSubmittedInPeriod.Contains((order, period)))
         {
-            OrdersSubmittedInPeriod.Add((order,period));
+            OrdersSubmittedInPeriod.Add((order, period));
         }
     }
 
     //Time
-    public int CurrentPeriod{get;set;}=0;
-    public int StartingPeriod{get;set;}
+    public int CurrentPeriod { get; set; } = 0;
+    public int StartingPeriod { get; set; }
     //Trading
     private readonly List<Execution> _executedTradesInPeriod = new();
-    private readonly List<(Order Order,int Period)> _ordersExecutedInPeriod = new();
-    public List<(Order Order,int Period)> GetOrdersExecutedInPeriod(params int[] periods) => _ordersExecutedInPeriod.Where(x=>periods.Contains(x.Period)).ToList();
+    private readonly List<(Order Order, int Period)> _ordersExecutedInPeriod = new();
+    public List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods) => _ordersExecutedInPeriod.Where(x => periods.Contains(x.Period)).ToList();
     public List<Execution> GetExecutionsInPeriod(int period)
     {
-      var executions =  _ordersExecutedInPeriod
-                        .Where(x=>x.Period==period)
-                        .SelectMany(x=>x.Order.GetExecutions()).ToList();
-      return executions;
+        var executions = _ordersExecutedInPeriod
+                          .Where(x => x.Period == period)
+                          .SelectMany(x => x.Order.GetExecutions()).ToList();
+        return executions;
     }
 
-#region Convenience Methods
+    #region Convenience Methods
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
-    public List<Order>GetOrdersSentToMarket()=>_tradeProcessor.GetOrders();
-    public List<Order>GetOrdersSentToMarketByCompany(Company company)=>_tradeProcessor.GetOrders().Where(x=>x.SubmittingCompany.Equals(company)).ToList();
-    public List<Recipe> GetRecipes()=>_recipes;
+    public List<Order> GetOrdersSentToMarket() => _tradeProcessor.GetOrders();
+    public List<Order> GetOrdersSentToMarketByCompany(Company company) => _tradeProcessor.GetOrders().Where(x => x.SubmittingCompany.Equals(company)).ToList();
+    public List<Recipe> GetRecipes() => _recipes;
     public Dictionary<Good, DemandData> GetPopulationDemand()
     {
         // Currently assumes that only one PopulationCompany
@@ -292,32 +292,32 @@ public class Market : ScriptableObject, iCompany
                .SelectMany(x => x.GetDemand())
                .ToDictionary(x => x.Key, x => x.Value);
 
-        return participantDemand;  
+        return participantDemand;
     }
-    
+
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
-     
+
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
 
     public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
     {
-        if(!_ordersExecutedInPeriod.Contains((order,period)))
+        if (!_ordersExecutedInPeriod.Contains((order, period)))
         {
-            _ordersExecutedInPeriod.Add((order,period));
+            _ordersExecutedInPeriod.Add((order, period));
             return LemonadeStandResultObject.Success();
         }
-        return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder,"Order already recorded");
+        return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, "Order already recorded");
     }
-    public void RecordTrade(Execution trade) 
+    public void RecordTrade(Execution trade)
     {
-        if(!_executedTradesInPeriod.Contains(trade))_executedTradesInPeriod.Add(trade);
+        if (!_executedTradesInPeriod.Contains(trade)) _executedTradesInPeriod.Add(trade);
     }
     public void SetCash(decimal new_cash) => cash = new_cash;
-#endregion
+    #endregion
 
-#region Creation and Initialization
+    #region Creation and Initialization
     //Instantiate Markets using a factory
-    private Market ()
+    private Market()
     {
         // Intentionally blank. Do not add a constructor.
         // We will use ScriptableObject.CreateInstance<Market>() to create instances of this class.
@@ -329,7 +329,7 @@ public class Market : ScriptableObject, iCompany
     }
 
     public static class Factory
-    { 
+    {
         public static readonly StarterMarketInitializer starterMarketInitializer = new();
 
         public static Market CreateMarket(string companyName, CompanyLevelEnum companyLevel)
@@ -337,7 +337,7 @@ public class Market : ScriptableObject, iCompany
             var market = CreateInstance<Market>();
             market.Name = companyName;
             market.company_level = companyLevel;
-            if(market==null)
+            if (market == null)
             {
                 throw new Exception("Market could not be created");
             }
@@ -358,14 +358,14 @@ public class Market : ScriptableObject, iCompany
                     .Named(companyName)
                     .WithLevel(companyLevel)
                     .InitializedWith(starterMarketInitializer);
-            
+
             return market;
         }
     }
-    
-#endregion
-#region Managers
-    public iDemographicManager DemographicManager { get => _demographicManager;}
+
+    #endregion
+    #region Managers
+    public iDemographicManager DemographicManager { get => _demographicManager; }
     private iDemographicManager _demographicManager;
     public void SetDemographicManager(iDemographicManager demographicManager) => _demographicManager = demographicManager;
     private iFeatureManager _featureManager;
@@ -383,17 +383,17 @@ public class Market : ScriptableObject, iCompany
     private iMarketDataService _marketDataService;
     public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
     [SerializeField] private ScriptableObject _demandStrategy;
-    public iDemandStrategy DemandStrategy {get => _demandStrategy as iDemandStrategy;}
+    public iDemandStrategy DemandStrategy { get => _demandStrategy as iDemandStrategy; }
     public void SetDemandStrategy(iDemandStrategy demandStrategy)
-    { _demandStrategy = demandStrategy as ScriptableObject; } 
+    { _demandStrategy = demandStrategy as ScriptableObject; }
 
-#endregion
-#region Company Interactions
+    #endregion
+    #region Company Interactions
     public void BankruptCompany(Company company)
     {
-        if(company.IsBankrupt())
+        if (company.IsBankrupt())
         {
-            TheEconomy.Instance.HandleBankruptcy(this,company);
+            TheEconomy.Instance.HandleBankruptcy(this, company);
         }
     }
     public void ProcessOrder(ActionContext context)
@@ -409,21 +409,21 @@ public class Market : ScriptableObject, iCompany
         var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
         return CompanyOrdersExecuted;
     }
-     public LemonadeStandResultObject QueueOrder(ActionContext context)
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
     {
         var contextValidationResult = context.ContainsValidTrade();
-        if ( !contextValidationResult.Equals(LemonadeStandResultObject.Success()) )
+        if (!contextValidationResult.Equals(LemonadeStandResultObject.Success()))
             return context.ContainsValidTrade();
-        
+
         var queueResult = _tradeProcessor.QueueOrder(context);
-        if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
+        if (!queueResult.Equals(LemonadeStandResultObject.Success()))
             return queueResult;
         //Record the order
         LogOrder(context.TradeToSubmit, context.Period);
-        
+
         return LemonadeStandResultObject.Success();
     }
-   
+
     internal void UpdateCompanyStatuses(int period)
     {
         var participantCopyforIteration = _marketParticipants.ToList();
@@ -436,12 +436,12 @@ public class Market : ScriptableObject, iCompany
             BankruptCompany(company);
         }
     }
-#endregion
-#region Consumption and Demand
+    #endregion
+    #region Consumption and Demand
 
-    public Dictionary<Good,DemandData> GetDemandForPeriod()
+    public Dictionary<Good, DemandData> GetDemandForPeriod()
     {
-        return DemandStrategy.GetDemandInPeriod(this,CurrentPeriod);
+        return DemandStrategy.GetDemandInPeriod(this, CurrentPeriod);
     }
     internal void ConsumeGoods()
     {
@@ -451,10 +451,10 @@ public class Market : ScriptableObject, iCompany
         }
     }
     public void ExpireGoods(int period)
-        {
-            foreach(var company in _marketParticipants)
-                company.GetInventory().ExpireGoods(period); 
-        }
+    {
+        foreach (var company in _marketParticipants)
+            company.GetInventory().ExpireGoods(period);
+    }
     #endregion
     #region Fixed costs
     public decimal CalculateFixedCostsForPeriod(int period)
@@ -469,32 +469,32 @@ public class Market : ScriptableObject, iCompany
             return 0;
         }
     }
-#endregion
-#region Goals and strategies
+    #endregion
+    #region Goals and strategies
     public void CompleteGoal(Goal goal)
-        {
-            throw new NotImplementedException();
-        }
+    {
+        throw new NotImplementedException();
+    }
 
     public void CheckCompanyGoals()
-        {
-            throw new NotImplementedException();
-        }
-#endregion
-#region History
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
+    #region History
     public float GetPopulationPercentageChangeInPeriod()
     {
         return MathHelper.GetMetricPercentageChangeInPeriod(
             _demographicManager.GetPopulationHistory,
-            x=>x.Population,
+            x => x.Population,
             CurrentPeriod,
-            MarketId);       
+            MarketId);
     }
-#endregion
-#region Inventory Management
+    #endregion
+    #region Inventory Management
     public void AddRecipe(Recipe recipe)
     {
-        if(_recipes.Contains(recipe))
+        if (_recipes.Contains(recipe))
         {
             throw new Exception("Recipe already exists in company");
         }
@@ -503,21 +503,21 @@ public class Market : ScriptableObject, iCompany
             _recipes.Add(recipe);
         }
     }
-#endregion
-#region Time 
+    #endregion
+    #region Time 
     public void UpdateCurrentPeriod(int period)
     {
         CurrentPeriod = period;
     }
-#endregion
-#region Buy and sell 
+    #endregion
+    #region Buy and sell 
     public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
     {
-       return DemandStrategy.GetTotalBoughtByPopulation(this,good,tradingPeriod);
+        return DemandStrategy.GetTotalBoughtByPopulation(this, good, tradingPeriod);
     }
     public int GetTotalSoldByMarket(int tradingPeriod, Good good) //currently public for testing purposes
     {
-        return DemandStrategy.GetTotalSoldByMarket(this,tradingPeriod,good);
+        return DemandStrategy.GetTotalSoldByMarket(this, tradingPeriod, good);
     }
     #endregion
     #region Demand
@@ -558,11 +558,11 @@ public class Market : ScriptableObject, iCompany
             return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
         }
 
-        return LemonadeStandResultObject.Success(extraData:elasticityValue);
+        return LemonadeStandResultObject.Success(extraData: elasticityValue);
     }
     public int GetMarketDemandForGood(string good_name)
     {
-        var good = _marketDemand.Keys.FirstOrDefault(x=>x.GoodName == good_name);
+        var good = _marketDemand.Keys.FirstOrDefault(x => x.GoodName == good_name);
         return _marketDemand[good].CurrentDemand;
     }
     public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
@@ -580,18 +580,19 @@ public class Market : ScriptableObject, iCompany
     /// </summary>
     /// <param name="context"></param>
     public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
-    {   context.TradeToSubmit.SubmittingCompany = this;
+    {
+        context.TradeToSubmit.SubmittingCompany = this;
         var queueResult = QueueOrder(context);
-        if ( !queueResult.Equals(LemonadeStandResultObject.Success()) )
+        if (!queueResult.Equals(LemonadeStandResultObject.Success()))
             return queueResult;
         return LemonadeStandResultObject.Success();
     }
     #endregion
     #region Pricing
     internal void UpdatePrices()
-        {
-            _priceManager.UpdatePricesForMarket(this);
-        }
+    {
+        _priceManager.UpdatePricesForMarket(this);
+    }
     public void CalculateNewBidAskSpreadForMarket()
     {
         //remember to call CalculateNewBidAskSpreadForMarket 
@@ -601,7 +602,7 @@ public class Market : ScriptableObject, iCompany
     }
     public decimal GetMarketCostForGood(Market market, Good good)
     {
-        return _priceManager.GetMarketCostForGood(market,good);
+        return _priceManager.GetMarketCostForGood(market, good);
     }
     public Dictionary<Good, decimal> GetAverageMarketPrices()
     {
@@ -613,7 +614,7 @@ public class Market : ScriptableObject, iCompany
                             );
         return averagePrices;
     }
-#endregion
+    #endregion
     #region Publishing
     public List<MarketData> PublishMarketData()
     {
@@ -624,20 +625,20 @@ public class Market : ScriptableObject, iCompany
     {
         _marketDataManager.PublishSpreadToMarket(context);
     }
-#endregion
-#region Supply
+    #endregion
+    #region Supply
     public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
     {
         return _supplyProvider.GetSupplyInPeriod(period);
     }
-    
-#endregion
 
-#region Interacting with the Economy
+    #endregion
+
+    #region Interacting with the Economy
 
     public void StartTradingPeriod()
     {
-        _demographicManager.RecordDemographicSnapshot(MarketId,CurrentPeriod,TurnPhase.Beginning);
+        _demographicManager.RecordDemographicSnapshot(MarketId, CurrentPeriod, TurnPhase.Beginning);
         RollForEvents();
         ResolveMarketEvents();
         //Local Agents
@@ -678,7 +679,7 @@ public class Market : ScriptableObject, iCompany
     }
     public override bool Equals(object obj)
     {
-        if(obj is Market market)
+        if (obj is Market market)
         {
             return market.Name == Name;
         }
@@ -687,6 +688,19 @@ public class Market : ScriptableObject, iCompany
     public override int GetHashCode()
     {
         return Name.GetHashCode();
+    }
+    #endregion
+    #region NotImplementeds
+    /// Here lie notImplementeds that serve as arguments
+    /// For markets not to be iCompanies
+
+    public decimal GetAggressionLevel()
+    {
+        throw new NotImplementedException();
+    }
+    public void SetAggressionLevel(decimal aggressionLevel)
+    {
+        throw new NotImplementedException();
     }
     #endregion
 }
