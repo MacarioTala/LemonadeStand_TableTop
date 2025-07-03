@@ -15,7 +15,7 @@ public class Company : ScriptableObject, iCompany, iMarketParticipant
     public CompanyLevelEnum companyLevel;
     public bool IsBankrupt() => cash <= 0;
 
-    public bool IsPlayer {get;set;} = false;
+    public bool IsPlayer { get; set; } = false;
     private Market marketCompanyIsIn;
     public Market GetMarket() => marketCompanyIsIn;
     public LemonadeStandResultObject SetMarket(Market market) {

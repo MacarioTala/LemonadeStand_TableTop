@@ -141,12 +141,12 @@ public class TheEconomy : MonoBehaviour
         //in the future, have a concept of rarity driving the initial price
         }
     }
-    public void HandleBankruptcy(Market market,Company bankruptCompany)
+    public void HandleParticipantCollapse(Market market,Company collapsedEntity)
     {
-        Debug.Log($"{bankruptCompany.Name} in {market.Name} has gone bankrupt");
-        ShowBankruptcySummary(bankruptCompany);
-        market.RemoveMarketParticipant(bankruptCompany);
-        if (bankruptCompany.IsPlayer)
+        Debug.Log($"{collapsedEntity.Name} in {market.Name} has collapsed");
+        ShowCollapseSummary(collapsedEntity);
+        market.RemoveMarketParticipant(collapsedEntity);
+        if (collapsedEntity.IsPlayer)
         {
             EndGame();
         }
@@ -155,9 +155,9 @@ public class TheEconomy : MonoBehaviour
     {
         throw new NotImplementedException();
     }
-    public void ShowBankruptcySummary(Company bankruptCompany)
+    public void ShowCollapseSummary(Company bankruptCompany)
     {
-        Debug.Log($"{bankruptCompany.Name} has gone bankrupt after {tradingPeriod} trading periods");
+        Debug.Log($"{bankruptCompany.Name} has collapsed after {tradingPeriod} trading periods");
     }
 
     public static void SetupForTests(ITradeLogger logger)

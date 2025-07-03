@@ -1,5 +1,7 @@
+#if !UNITY_BURST
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -39,18 +41,38 @@ public class EnnuiTests
                 .WithGoalInitializer((c, g) => g.SetOriginalValue("Ennui", ((PopulationCompany)c).Ennui))
                 .Affecting(MetricEnum.Ennui)
                 .WithGoalValue(.5f);
-      
+
       TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-      TestMarket = Market.Factory.CreateStarterMarket("Test Market",CompanyLevelEnum.Market,TestDemandStrategy);
-         
+      var mockDemographicManager = new Mock<iDemographicManager>().Object;
+      TestMarket = Market.Factory.CreateStarterMarket("Test Market", CompanyLevelEnum.Market, TestDemandStrategy)
+               .WithDemographicManager(mockDemographicManager);
+
    }
-   
+
    [Test]
    public void PopulationsThatMaxOutOnEnnuiCollapse()
    {
-    throw new System.NotImplementedException("Test not implemented yet");
+      //Arrange
+      var population = CompanyBuilder.For<PopulationCompany>()
+         .Named("Really Lazy Population")
+         .WithEnnui(1)
+         .Build();
+      TestMarket.RegisterMarketParticipant(population);
+      var actualParticipantCountPreMarketForces = TestMarket.GetMarketParticipants().Count();
+      const int expectedParticipantcountPreMarketForces = 1;
+      const int expectedParticipantcountPostMarketForces = 0;
+
+      //Act
+      TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+      var actualParticipantcountPostMarketForces = TestMarket.GetMarketParticipants().Count();
+
+      //Assert
+      Assert.AreEqual(expectedParticipantcountPreMarketForces, actualParticipantCountPreMarketForces);
+      Assert.AreEqual(expectedParticipantcountPostMarketForces, actualParticipantcountPostMarketForces);
+      //Teardown
+      TestMarket.RemoveMarketParticipant(population);
    }
-#region ReduceEnnuiStrategy
+   #region ReduceEnnuiStrategy
    [Test]
    public void RE_CalculateBidPerCapitaGeneratesBid()
    {
@@ -62,7 +84,7 @@ public class EnnuiTests
          MinDemand = 0,
          MaxDemand = 100
       };
-      var listOfDemands = new Dictionary<Good,DemandData>()
+      var listOfDemands = new Dictionary<Good, DemandData>()
       {
          {Lemonade, demandForLemonade}
       };
@@ -70,7 +92,7 @@ public class EnnuiTests
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                      .WithAggressionLevel(.5m)
                      .Build();
-                  
+
       var population = CompanyBuilder.For<PopulationCompany>()
          .Named("Test Population")
          .WithInitialCash(1000)
@@ -87,7 +109,7 @@ public class EnnuiTests
       population.AddGoal(ReduceEnnuiGoal);
       var ennuiToZeroGoal = population.Goals[0];
       var actualBid = strategy.CalculateBidPerCapita(Lemonade, population, ennuiToZeroGoal).Bid;
-      
+
       // Assert
       Assert.That(actualBid, Is.GreaterThan(0m));
       Debug.Log($"Bid per capita for {Lemonade.GoodName} is {actualBid}");
@@ -106,7 +128,7 @@ public class EnnuiTests
          .Costing(5m)
          .WhichIsProducedGood()
          .Build();
-      
+
       var FruitPunchEffect = new GoodEffect()
       .Named("Fruit Punch Effect")
       .Affecting(MetricEnum.Ennui)
@@ -118,17 +140,17 @@ public class EnnuiTests
 
       var demandForLemonade = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
 
       var demandForFruitPunch = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
 
-      var listOfDemands = new Dictionary<Good,DemandData>()
+      var listOfDemands = new Dictionary<Good, DemandData>()
             {
               {Lemonade,demandForLemonade},
               {FruitPunch,demandForFruitPunch}
@@ -136,7 +158,7 @@ public class EnnuiTests
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                      .WithAggressionLevel(.5m)
                      .Build();
-                  
+
       var population = CompanyBuilder.For<PopulationCompany>()
          .Named("Test Population")
          .WithInitialCash(1000)
@@ -165,15 +187,15 @@ public class EnnuiTests
 
       var demandForLemonade = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
 
-      var listOfDemands = new Dictionary<Good,DemandData>()
+      var listOfDemands = new Dictionary<Good, DemandData>()
             {
               {Lemonade,demandForLemonade}
             };
-      
+
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                      .WithAggressionLevel(.5m)
                      .Build();
@@ -210,16 +232,16 @@ public class EnnuiTests
 
       var demandForLemonade = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
 
       var demandForFruitPunch = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
-      var listOfDemands = new Dictionary<Good,DemandData>()
+      var listOfDemands = new Dictionary<Good, DemandData>()
             {
               {Lemonade,demandForLemonade},
               {FruitPunch,demandForFruitPunch}
@@ -256,17 +278,17 @@ public class EnnuiTests
 
       var demandForLemonade = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
-      var listOfDemands = new Dictionary<Good,DemandData>()
+      var listOfDemands = new Dictionary<Good, DemandData>()
             {
               {Lemonade,demandForLemonade}
             };
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                      .WithAggressionLevel(.5m)
                      .Build();
-                  
+
       var population = CompanyBuilder.For<PopulationCompany>()
          .Named("Test Population")
          .WithInitialCash(1000)
@@ -277,11 +299,11 @@ public class EnnuiTests
          .AssumingNewGoodsCost(1)
          .Build();
       strategy.GenerateGoals(population);
-      
+
       //Act
       var ActualDemand = strategy.GenerateBidAskSpreads(population);
       var buys = strategy.CreateBuys(population);
-      var totalCostOfBuys = buys.Sum(b => b.TradeToSubmit.Price)* buys.Sum(c => c.TradeToSubmit.Quantity);
+      var totalCostOfBuys = buys.Sum(b => b.TradeToSubmit.Price) * buys.Sum(c => c.TradeToSubmit.Quantity);
 
       //Assert
       Assert.That(totalCostOfBuys, Is.LessThanOrEqualTo(population.GetCash()),
@@ -297,17 +319,17 @@ public class EnnuiTests
 
       var demandForLemonade = new DemandData()
       {
-         MinDemand=0,
-         MaxDemand=100
+         MinDemand = 0,
+         MaxDemand = 100
       };
-      var listOfDemands = new Dictionary<Good,DemandData>()
+      var listOfDemands = new Dictionary<Good, DemandData>()
             {
               {Lemonade,demandForLemonade}
             };
       var strategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                      .WithAggressionLevel(.5m)
                      .Build();
-                  
+
       var population = CompanyBuilder.For<PopulationCompany>()
          .Named("Test Population")
          .WithInitialCash(1000)
@@ -327,8 +349,9 @@ public class EnnuiTests
       Assert.That(actualOrders, Is.Not.Empty, "No orders were submitted to the market.");
       Debug.Log($"First order submitted: {actualOrders.FirstOrDefault()} total order value: {actualOrders.FirstOrDefault()?.Price * actualOrders.FirstOrDefault()?.Quantity}");
    }
-      
-      
-   
-#endregion
+
+
+
+   #endregion
 } 
+#endif

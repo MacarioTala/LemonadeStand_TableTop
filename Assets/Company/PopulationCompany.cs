@@ -9,6 +9,8 @@ public class PopulationCompany : Company
     private int _population;
 
     private float _ennui;
+
+    public bool IsMaxEnnui() => _ennui == 100;
     public float Ennui
     {
         get => _ennui;

@@ -279,7 +279,7 @@ public class Market : ScriptableObject, iCompany
     public decimal GetCash() => cash;
     public Inventory GetInventory() => _inventory;
     public List<Order> GetOrdersSentToMarket() => _tradeProcessor.GetOrders();
-    public List<Order> GetOrdersSentToMarketByCompany(Company company) => _tradeProcessor.GetOrders().Where(x => x.SubmittingCompany.Equals(company)).ToList();
+    public List<Order> GetOrdersSentToMarketByCompany(Company company) => _tradeProcessor?.GetOrders()?.Where(x => x.SubmittingCompany.Equals(company)).ToList()?? new List<Order>();
     public List<Recipe> GetRecipes() => _recipes;
     public Dictionary<Good, DemandData> GetPopulationDemand()
     {
@@ -389,11 +389,18 @@ public class Market : ScriptableObject, iCompany
 
     #endregion
     #region Company Interactions
-    public void BankruptCompany(Company company)
+    public void EvaluateParticipantCollapse(Company company)
     {
         if (company.IsBankrupt())
         {
-            TheEconomy.Instance.HandleBankruptcy(this, company);
+            TheEconomy.Instance.HandleParticipantCollapse(this, company);
+        }
+        if (company is PopulationCompany populationCompany)
+        {
+            if (populationCompany.IsMaxEnnui())
+            {
+                TheEconomy.Instance.HandleParticipantCollapse(this, company);
+            }
         }
     }
     public void ProcessOrder(ActionContext context)
@@ -433,7 +440,7 @@ public class Market : ScriptableObject, iCompany
             company.ExpireGoods(period);
             company.SubtractFixedCostsForPeriod(period);
             company.UpdateCurrentPeriod(period + 1);
-            BankruptCompany(company);
+            EvaluateParticipantCollapse(company);
         }
     }
     #endregion

@@ -297,13 +297,14 @@ public class BidCreationTests_ReduceEnnuiStrategy
         Assert.IsTrue(initialOrderCount == 0, "Should be no initial orders");
         Assert.IsTrue(ordersPostStrategy.Count() > 0, "Orders should exist after strategy is performed");
     }
-    [TestCase(1, .5, .5, 4000, TestName = "Naive bid of .5, total aggression, company orders 4000 units")]
-    [TestCase(.2, .5, .5, 800, TestName = "Naive bid of .5, 20% aggression, company orders 800 units")]
-    [TestCase(0,.5, .5, 0, TestName = "Naive bid of .5, no aggression, company orders nothing")]
+    [TestCase(1, .5, .5, 4000,1, TestName = "Naive bid of .5, total aggression, company orders 4000 units")]
+    [TestCase(.2, .5, .5, 800,1, TestName = "Naive bid of .5, 20% aggression, company orders 800 units")]
+    [TestCase(0,.5, null, null,0, TestName = "Naive bid of .5, no aggression, company orders nothing")]
     public void InitialBidTestsDifferentBids(decimal aggressionLevel,
                                              decimal naiveBid,
-                                             decimal expectedBid,
-                                             int expectedQty)
+                                             decimal? expectedBid,
+                                             int? expectedQty,
+                                             int expectedNumOrders)
     {
         //Arrange
         TestPopulation.SetMarketIgnorantAssumedCOG(naiveBid);
@@ -317,10 +318,12 @@ public class BidCreationTests_ReduceEnnuiStrategy
         //Act
         TestPopulation.PerformStrategy(populationMarket.CurrentPeriod);
         var ordersPostStrategy = TestMarket.GetOrdersSentToMarketByCompany(TestPopulation);
-        var actualBid = ordersPostStrategy.FirstOrDefault().Price;
-        var actualQty = ordersPostStrategy.FirstOrDefault().Quantity;
+        var actualBid = ordersPostStrategy.FirstOrDefault()?.Price;
+        var actualQty = ordersPostStrategy.FirstOrDefault()?.Quantity;
+        var actualNumOrders = ordersPostStrategy.Count();
 
         //Assert
+        Assert.AreEqual(expectedNumOrders, actualNumOrders, $"Expected {expectedNumOrders} orders but got {actualNumOrders}");
         Assert.AreEqual(expectedBid, actualBid);
         Assert.AreEqual(expectedQty, actualQty);
     }
