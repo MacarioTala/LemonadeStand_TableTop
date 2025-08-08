@@ -200,6 +200,20 @@ public class TheEconomy : MonoBehaviour
         var markets = Resources.LoadAll<Market>("Markets");
         foreach (var market in markets)
         {
+            var demographicManager = new BasicDemographicManager();
+            demographicManager.SetPopulationHistoryHandler(new BasicPopulationHistoryHandler());
+
+            market.SetDemographicManager(demographicManager);
+            demographicManager.SetMarket(market);
+            
+            // Initialize all required managers like in CreateStarterMarket
+            market.WithMarketDataManager(new BasicMarketDataManager())
+                .WithPriceManager(new BasicPriceManager())
+                .WithTradeProcessor(new BasicTradeProcessor())
+                .WithTransactionManager(new BasicTransactionManager())
+                .WithPriceModifier(new SupplyDemandModifier())
+                .WithOrderFulfilledEvents();
+
             RegisterCompany(market);
             Debug.Log($"Loaded Market: {market.Name} id:{market.MarketId}");
         }

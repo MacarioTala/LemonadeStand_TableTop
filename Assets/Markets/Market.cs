@@ -354,11 +354,14 @@ public class Market : ScriptableObject, iCompany
                     .WithTradeProcessor(new BasicTradeProcessor())
                     .WithTransactionManager(new BasicTransactionManager())
                     .WithPriceModifier(new SupplyDemandModifier())
+                    .WithDemographicManager(new BasicDemographicManager())
                     .WithOrderFulfilledEvents()
                     .Named(companyName)
                     .WithLevel(companyLevel)
                     .InitializedWith(starterMarketInitializer);
 
+            market.DemographicManager.SetMarket(market);
+            market.DemographicManager.SetPopulationHistoryHandler(new BasicPopulationHistoryHandler());
             return market;
         }
     }
