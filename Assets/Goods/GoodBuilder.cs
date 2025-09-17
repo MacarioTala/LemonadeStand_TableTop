@@ -27,6 +27,12 @@ public class GoodBuilder
         return this;
     }
 
+    public GoodBuilder WithElasticity(ElasticityTypeEnum key, float value)
+    {
+        goodToReturn.AddElasticity(key, value);
+        return this;
+    }
+
     public Good Build()
     {
         return goodToReturn;
