@@ -25,7 +25,7 @@ public class TypeWriter : MonoBehaviour
         " When it was time for the missiles ... ", 
         " .... we were just too confused to end it all. ",
         " The world didn't end in a ball of fire.",
-        " We just stopped .... DOING things. ",
+        " We just stopped caring. ",
         " And that's where you come in."
     };
 
