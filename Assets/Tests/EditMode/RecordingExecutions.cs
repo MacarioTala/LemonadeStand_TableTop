@@ -296,7 +296,8 @@ public class RecordingExecutions
         var company2Quantity = 10;
         var company3Quantity = 10;
         var company1Ask = 3m;
-        const int expectedPopulationBuys = 2216;//Note: This will change if you change population parameters.
+        const int expectedPopulationBuys = 1108;//Note: This will change if you change population parameters.
+        //Maybe change this test in the future to set up its own population
         //Arrange
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, company1Quantity, company1Ask, Period));
 
