@@ -3,47 +3,47 @@ using UnityEngine;
 
 public class EconAgentBuilder<T> where T : EconAgent
 {
-    private readonly T companyToReturn;
+    private readonly T agentToReturn;
 
-    public EconAgentBuilder(T company) => companyToReturn = company;
+    public EconAgentBuilder(T agent) => agentToReturn = agent;
     public static EconAgentBuilder<T> Create() => new(ScriptableObject.CreateInstance<T>());
-    public T Build() => companyToReturn;
+    public T Build() => agentToReturn;
 
     public EconAgentBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
     {
-        companyToReturn.FixedCostStrategy = fixedCostStrategy;
+        agentToReturn.FixedCostStrategy = fixedCostStrategy;
         return this;
     }
     public EconAgentBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)
     {
-        companyToReturn.SetStrategy(behaviourStrategy);
+        agentToReturn.SetStrategy(behaviourStrategy);
         return this;
     }
     public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
     {
-        companyToReturn.SetCash(initialCash);
+        agentToReturn.SetCash(initialCash);
         return this;
     }
     public EconAgentBuilder<T> WithActionsPerTurn(int actionsPerTurn)
     {
-        companyToReturn.SetActionsPerCycle(actionsPerTurn);
+        agentToReturn.SetActionsPerCycle(actionsPerTurn);
         return this;
     }
     public EconAgentBuilder<T> Named(string name)
     {
-        companyToReturn.Name = name;
+        agentToReturn.Name = name;
         return this;
     }
 
     public EconAgentBuilder<T> AtLevel(AgentLevelEnum companyLevel)
     {
-        companyToReturn.companyLevel = companyLevel;
+        agentToReturn.companyLevel = companyLevel;
         return this;
     }
 
     public EconAgentBuilder<T> WithPopulation(int population)
     {
-        if (companyToReturn is PopulationAgent populationCompany)
+        if (agentToReturn is PopulationAgent populationCompany)
         {
             populationCompany.Population = population;
         }
@@ -54,9 +54,14 @@ public class EconAgentBuilder<T> where T : EconAgent
         return this;
     }
 
+    public EconAgentBuilder<T> WithAnxiety(float anxiety)
+    {
+        agentToReturn.SetAnxiety(anxiety);
+        return this;
+    }
     public EconAgentBuilder<T> WithEnnui(float ennui)
     {
-        if (companyToReturn is PopulationAgent populationCompany)
+        if (agentToReturn is PopulationAgent populationCompany)
         {
             populationCompany.Ennui = ennui;
         }
@@ -69,7 +74,7 @@ public class EconAgentBuilder<T> where T : EconAgent
 
     public EconAgentBuilder<T> Demanding(Dictionary<Good, DemandData> demands)
     {
-        if (companyToReturn is PopulationAgent populationAgent)
+        if (agentToReturn is PopulationAgent populationAgent)
         {
             foreach (var demand in demands)
             {
@@ -84,25 +89,28 @@ public class EconAgentBuilder<T> where T : EconAgent
     }
     public EconAgentBuilder<T> WithGoal(Goal goal)
     {
-        companyToReturn.AddGoal(goal);
+        agentToReturn.AddGoal(goal);
         return this;
     }
 
     public EconAgentBuilder<T> WithInventory(Inventory inventory)
     {
-        companyToReturn.SetInventory(inventory);
+        agentToReturn.SetInventory(inventory);
         return this;
     }
 
     public EconAgentBuilder<T> AssumingNewGoodsCost(decimal value)
     {
-        companyToReturn.SetMarketIgnorantAssumedCOG(value);
+        agentToReturn.SetMarketIgnorantAssumedCOG(value);
         return this;
     }
 }
 
 public static class EconAgentBuilder
 {
-    public static EconAgentBuilder<T> For<T>() where T : EconAgent 
-            =>EconAgentBuilder<T>.Create();
+    public static EconAgentBuilder<T> For<T>() where T : EconAgent
+            => EconAgentBuilder<T>.Create();
+
+    public static EconAgentBuilder<EconAgent> ForBaseAgent()
+        => EconAgentBuilder<EconAgent>.Create();
 }

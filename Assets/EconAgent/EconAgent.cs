@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 {
@@ -12,6 +13,10 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         set => _company_name = value;
     }
     public AgentLevelEnum companyLevel;
+
+    private float _anxiety = 100;
+    public float GetAnxiety() => _anxiety;
+    public void SetAnxiety(float value) => _anxiety = value;
     public bool IsBankrupt() => cash <= 0;
 
     public bool IsPlayer { get; set; } = false;
