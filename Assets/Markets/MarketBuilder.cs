@@ -3,6 +3,12 @@ using UnityEngine;
 
 public static class MarketBuilder
 {
+    public static Market WithCash(this Market market, decimal cash)
+    {
+        market.SetCash(cash);
+        return market;
+    }
+
     public static Market WithDemandStrategy(this Market market, iDemandStrategy strategy)
     {
         market.SetDemandStrategy(strategy);
@@ -20,6 +26,29 @@ public static class MarketBuilder
         return market;
     }
 
+    public static Market EnsureDefaults(this Market market)
+    {
+        if (market.MarketEventManager is null)
+        {
+            var manager = new DefaultMarketEventManager();
+            manager.SetMarket(market);
+            market.SetMarketEventManager(manager);
+        }
+        return market;
+    }
+
+    public static Market WithMarketEventManager(this Market market, iMarketEventManager manager = null)
+    {
+        if (manager is null)
+        {
+            market.SetMarketEventManager(new DefaultMarketEventManager());
+        }
+        else
+        {
+            market.SetMarketEventManager(manager);
+        }
+        return market;
+    }
     public static Market WithPriceManager(this Market market, iPriceManager priceManager)
     {
         market.SetPriceManager(priceManager);
@@ -53,11 +82,7 @@ public static class MarketBuilder
         market.OrderFulfilled += market.DemandStrategy.OnOrderFulfilled;
         return market;
     }
-    public static Market WithCash(this Market market, decimal cash)
-    {
-        market.SetCash(cash);
-        return market;
-    }
+    
     public static Market WithMarketDataManager(this Market market, iMarketDataManager marketDataManager)
     {
         market.SetMarketDataManager(marketDataManager);

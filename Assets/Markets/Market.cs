@@ -167,67 +167,18 @@ public class Market : ScriptableObject, iEconAgent
     public void SetStrategy(iStrategy strategy) => _marketStrategy = strategy;
 
     #region Market Events
-    public List<iMarketEvent> PotentialMarketEvents { get; } = new();
-    readonly List<(iMarketEvent Event, int PeriodStart, int duration)> _activeEvents = new();
-    readonly List<(iMarketEvent Event, int PeriodStart, int periodEnd)> marketEventHistory = new();
-    public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory() => marketEventHistory;
-    public void AddPotentialMarketEvent(iMarketEvent marketEvent)
-    {
-        if (!PotentialMarketEvents.Contains(marketEvent))
-        {
-            PotentialMarketEvents.Add(marketEvent);
-        }
-    }
-    public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents() => _activeEvents;
-    public void RemovePotentialMarketEvent(iMarketEvent marketEvent)
-    {
-        if (PotentialMarketEvents.Contains(marketEvent))
-        {
-            PotentialMarketEvents.Remove(marketEvent);
-        }
-    }
-    public void ResolveMarketEvents()
-    {
-        //Check if any active events have expired
-        var expiredEvents = _activeEvents
-                            .Where(x => x.Event.IsExpiredAt(x.PeriodStart, CurrentPeriod))
-                            .ToList();
-        foreach (var marketEvent in expiredEvents)
-        {
-            _activeEvents.Remove(marketEvent);
-            marketEventHistory.Add((marketEvent.Event, marketEvent.PeriodStart, CurrentPeriod));
-            marketEvent.Event.Reset();
-        }
-
-        //Invoke any active events
-        foreach (var marketEvent in _activeEvents)
-        {
-            marketEvent.Event.Invoke(this);
-        }
-    }
-    public void RollForEvents()
-    {
-        foreach (var marketEvent in PotentialMarketEvents)
-        {
-            if (_activeEvents.Any(x => !x.Event.IsCompatibleWith(marketEvent))) continue;
-
-            if (_activeEvents.Any(x => x.Event.Equals(marketEvent))) continue;
-
-            if (EventRollSucceeds(marketEvent))
-            {
-                _activeEvents.Add((marketEvent, CurrentPeriod, marketEvent.GetDuration()));
-            }
-        }
-    }
-
-    private static bool EventRollSucceeds(iMarketEvent marketEvent)
-    {
-        var currentRoll = UnityEngine.Random.Range(0, 100);
-        var chanceOfEvent = marketEvent.GetProbabilityOf();
-
-        return chanceOfEvent >= currentRoll; ;
-    }
-
+    public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents() => _marketEventManager.GetActiveMarketEvents();
+    public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory()=> _marketEventManager.GetMarketEventHistory();
+    public void AddPotentialMarketEvent(iMarketEvent marketEvent) =>
+        _marketEventManager.AddPotentialMarketEvent(marketEvent);
+    
+    public void RemovePotentialMarketEvent(iMarketEvent marketEvent) =>
+        _marketEventManager.RemovePotentialMarketEvent(marketEvent);
+    
+    public void ResolveMarketEvents() => 
+        _marketEventManager.ResolveMarketEvents();
+    public void RollForEvents() =>
+        _marketEventManager.RollForEvents();
     #endregion
     //Pricing  
     public List<FixedCost> FixedCosts { get; set; }
@@ -341,7 +292,7 @@ public class Market : ScriptableObject, iEconAgent
             {
                 throw new Exception("Market could not be created");
             }
-            return market;
+            return market.EnsureDefaults();
         }
 
         public static Market CreateStarterMarket(string companyName, AgentLevelEnum companyLevel, iDemandStrategy demandStrategy)
@@ -358,6 +309,7 @@ public class Market : ScriptableObject, iEconAgent
                     .WithOrderFulfilledEvents()
                     .Named(companyName)
                     .WithLevel(companyLevel)
+                    .EnsureDefaults()
                     .InitializedWith(starterMarketInitializer);
 
             market.DemographicManager.SetMarket(market);
@@ -368,8 +320,12 @@ public class Market : ScriptableObject, iEconAgent
 
     #endregion
     #region Managers
-    public iDemographicManager DemographicManager { get => _demographicManager; }
     private iDemographicManager _demographicManager;
+    public iDemographicManager DemographicManager { get => _demographicManager; }
+
+    private iMarketEventManager _marketEventManager;
+    public iMarketEventManager MarketEventManager{ get => _marketEventManager; }
+    public void SetMarketEventManager(iMarketEventManager manager) => _marketEventManager = manager;
     public void SetDemographicManager(iDemographicManager demographicManager) => _demographicManager = demographicManager;
     private iFeatureManager _featureManager;
     public void SetFeatureManager(iFeatureManager featureManager) => _featureManager = featureManager;
