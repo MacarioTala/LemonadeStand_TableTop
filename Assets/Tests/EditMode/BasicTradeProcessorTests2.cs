@@ -29,7 +29,7 @@ public partial class BasicTradeProcessorTests
         
         var expected = company1BuysRLFromCompany2ByCompany1;
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -50,7 +50,7 @@ public partial class BasicTradeProcessorTests
    
         var expected = company1BuysRLFromCompany2ByCompany1;
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -91,7 +91,7 @@ public partial class BasicTradeProcessorTests
         var expected = company1BuysRLFromCompany2ByCompany1;
 
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -123,7 +123,7 @@ public partial class BasicTradeProcessorTests
         Company3.QueueOrder(company3SellsToCompany1Context);
         var expected = company3SellsRLToCompany1ByCompany3;
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -142,7 +142,7 @@ public partial class BasicTradeProcessorTests
         Company1.QueueOrder(Company1Context);
         var expected = company1BuysRLFromMarket;
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -161,7 +161,7 @@ public partial class BasicTradeProcessorTests
         Company1.QueueOrder(Company1Context);
         var expected = company1SellsRLToAnyone;
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -190,7 +190,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = company2SellsRLToCompany1ByCompany2;
         // Act
-        var actual=TestTradeProcessor.GeneratePrimaryOrder(TestMarket,RadioactiveLemonade);
+        var actual=TestTradeProcessor.GeneratePrimaryOrder(RadioactiveLemonade);
         // Assert
         Assert.AreEqual(expected, actual);
     }

@@ -69,7 +69,6 @@ public partial class LinearDemandStrategyTests
         TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 
         TestMarket = Market.Factory.CreateStarterMarket("Starter Market",
-                                                        AgentLevelEnum.Market,
                                                         TestDemandStrategy);
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new MockDemographicManager();

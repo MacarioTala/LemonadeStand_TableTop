@@ -30,14 +30,12 @@ public class MarketObserverTests
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
 
-        TestMarket = Market.Factory.CreateMarket("Test Market"
-                                                , AgentLevelEnum.Market
-                                                )
+        TestMarket = Market.Factory.CreateMarket("Test Market")
                 .WithDemandStrategy(TestDemandStrategy)
                 .WithSupplyProvider(TestSupplyProvider)
-                .WithTradeProcessor(new BasicTradeProcessor())
-                .WithPriceManager(new BasicPriceManager())
-                .WithTransactionManager(new BasicTransactionManager());
+                .WithTradeProcessor(new DefaultTradeProcessor())
+                .WithPriceManager(new DefaultPriceManager())
+                .WithTransactionManager(new DefaultTransactionManager());
     
         TestSupplyProvider.Initialize(TestMarket);
 

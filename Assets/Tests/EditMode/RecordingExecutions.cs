@@ -76,12 +76,12 @@ public class RecordingExecutions
             .Build();
         TestBehaviourStrategy.GenerateGoals(TestPopulation);
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithPriceManager(new BasicPriceManager())
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithPriceManager(new DefaultPriceManager())
             .WithDemographicManager(new MockDemographicManager())
-            .WithTransactionManager(new BasicTransactionManager());
+            .WithTransactionManager(new DefaultTransactionManager());
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company1);

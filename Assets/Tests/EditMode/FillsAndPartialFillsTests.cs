@@ -25,11 +25,11 @@ public class FillsAndPartialFillsTests
         TheEconomy.SetupForTests(new MockLogger());
         testEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("TestMarket", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("TestMarket")
             .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
             .WithSupplyProvider(new BasicSupplyProvider())
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithTransactionManager(new BasicTransactionManager());
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithTransactionManager(new DefaultTransactionManager());
 
         TestCompany1 = EconAgent.Factory.Create("TestCompany1", AgentLevelEnum.Beginner);
         TestCompany2 = EconAgent.Factory.Create("TestCompany2", AgentLevelEnum.Beginner);

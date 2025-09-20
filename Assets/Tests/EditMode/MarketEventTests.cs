@@ -40,11 +40,10 @@ public class MarketEventTests
         Strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         TestSupplyProvider = new BasicSupplyProvider();
         TestMarketDataService = new MockMarketDataService();
-        TestDemographicManager = new BasicDemographicManager();
+        TestDemographicManager = new DefaultDemographicManager();
         TestDemographicManager.SetPopulationHistoryHandler(new MockPopulationHistoryDataHandler());
 
         TestMarket = Market.Factory.CreateStarterMarket("Starter Market",
-                                                        AgentLevelEnum.Market,
                                                         Strategy)
                                     .WithDataService(TestMarketDataService)
                                     .WithDemographicManager(TestDemographicManager)

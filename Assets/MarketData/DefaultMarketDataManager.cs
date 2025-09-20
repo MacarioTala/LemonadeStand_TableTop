@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class BasicMarketDataManager : iMarketDataManager
+public class DefaultMarketDataManager : iMarketDataManager,iMarketAware
 {
-    public List<MarketData> PublishMarketData(Market market)
+    Market _market;
+    public List<MarketData> PublishMarketData()
     {
         //Modify here to reflect things like poor public information
-        return market.MarketData;
+        return _market.MarketData;
     }
 
     public void PublishSpreadToMarket(ActionContext context)
@@ -36,5 +37,10 @@ public class BasicMarketDataManager : iMarketDataManager
             };
             Spread.Add(data);
         }
+    }
+
+    public void SetMarket(Market market)
+    {
+        _market = market;
     }
 }

@@ -31,7 +31,6 @@ public static class MarketBuilder
     public static Market WithDemographicManager(this Market market, iDemographicManager demographicManager)
     {
         market.SetDemographicManager(demographicManager);
-        demographicManager?.SetMarket(market);
         return market;
     }
     public static Market WithMarketEventManager(this Market market, iMarketEventManager manager = null)
@@ -135,38 +134,73 @@ public static class MarketBuilder
         EnsureDefaultMarketEventManager(market);
         EnsureDefaultDemandManager(market);
         EnsureDefaultDemographicManager(market);
+        EnsureDefaulMarketDataManager(market);
+        EnsureDefaultPriceManager(market);
+        EnsureDefaultTradeProcessor(market);
+        EnsureDefaultTransactionManager(market);
+        EnsureDefaultDemandStrategy(market);
+        EnsureAtLeastOnePriceModifier(market);
+        EnsureDefaultMarketLevel(market);
 
         return market;
+    }
+
+    private static void EnsureDefaultMarketLevel(Market market)
+    {
+        market.company_level = AgentLevelEnum.Market;
+    }
+
+    private static void EnsureAtLeastOnePriceModifier(Market market)
+    {
+        market.AddPriceModifier(new SupplyDemandModifier());
+    }
+
+    private static void EnsureDefaultDemandStrategy(Market market)
+    {
+        if (market.DemandStrategy is null)
+            market.SetDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>());
+    }
+
+    private static void EnsureDefaultTransactionManager(Market market)
+    {
+        if (market.TransactionManager is null)
+            market.SetTransactionManager(new DefaultTransactionManager());
+    }
+
+    private static void EnsureDefaultTradeProcessor(Market market)
+    {
+        if (market.TradeProcessor is null)
+            market.SetTradeProcessor(new DefaultTradeProcessor());
+    }
+
+    private static void EnsureDefaultPriceManager(Market market)
+    {
+        if (market.PriceManager is null)
+            market.SetPriceManager(new DefaultPriceManager());
+    }
+
+    private static void EnsureDefaulMarketDataManager(Market market)
+    {
+        if (market.MarketDataManager is null)
+            market.SetMarketDataManager(new DefaultMarketDataManager());
     }
 
     private static void EnsureDefaultDemographicManager(Market market)
     {
         if (market.DemographicManager is null)
-        {
-            var manager = new BasicDemographicManager();
-            manager.SetMarket(market);
-            market.SetDemographicManager(manager);
-        }
+            market.SetDemographicManager(new DefaultDemographicManager());
     }
 
     private static void EnsureDefaultDemandManager(Market market)
     {
         if (market.DemandManager is null)
-        {
-            var manager = new DefaultDemandManager();
-            manager.SetMarket(market);
-            market.SetDemandManager(manager);
-        }
+            market.SetDemandManager(new DefaultDemandManager());
     }
 
     private static void EnsureDefaultMarketEventManager(Market market)
     {
         if (market.MarketEventManager is null)
-        {
-            var manager = new DefaultMarketEventManager();
-            manager.SetMarket(market);
-            market.SetMarketEventManager(manager);
-        }
+            market.SetMarketEventManager(new DefaultMarketEventManager());
     }
     #endregion
 }

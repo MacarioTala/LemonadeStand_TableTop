@@ -26,13 +26,13 @@ public class MarketStatusTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithTransactionManager(new BasicTransactionManager())
-            .WithPriceManager(new BasicPriceManager())
+        TestMarket = Market.Factory.CreateMarket("Test Market")
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithTransactionManager(new DefaultTransactionManager())
+            .WithPriceManager(new DefaultPriceManager())
             .WithSupplyProvider(new BasicSupplyProvider())
             .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
-            .WithDemographicManager(new BasicDemographicManager());
+            .WithDemographicManager(new DefaultDemographicManager());
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
         
@@ -82,7 +82,7 @@ public class MarketStatusTests
     {
         // Arrange
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", AgentLevelEnum.Market,strategy);
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test",strategy);
         
         Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
         Company1.SetCash(5000);

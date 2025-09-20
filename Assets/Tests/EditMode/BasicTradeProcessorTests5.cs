@@ -32,7 +32,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         //Act
-        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,OrdersSentToMarket);
         //Assert
         var transactionsRecorded = TestMarket.GetExecutionsInPeriod(Period);
         var recordedTransaction = transactionsRecorded?.FirstOrDefault();
@@ -90,7 +90,7 @@ public partial class BasicTradeProcessorTests
         };
 
         //Act
-        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,OrdersSentToMarket);
         //Assert
         var ActualExecutions = TestMarket.GetExecutionsInPeriod(Period);
         Assert.IsTrue(ActualExecutions.Count == 4);
@@ -136,7 +136,7 @@ public partial class BasicTradeProcessorTests
             new(Company1BuysLemonadeFromAny,Company1,Company2,5,10m,Period)
         };
         //Act
-        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,OrdersSentToMarket);
         //Assert
         var ActualExecutions = TestMarket.GetExecutionsInPeriod(Period);
         Assert.IsTrue(ActualExecutions.Count == 2); //Note: Company 3's order might be processed

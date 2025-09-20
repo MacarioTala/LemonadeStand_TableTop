@@ -44,7 +44,7 @@ public class EnnuiTests
 
       TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
       var mockDemographicManager = new Mock<iDemographicManager>().Object;
-      TestMarket = Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, TestDemandStrategy)
+      TestMarket = Market.Factory.CreateStarterMarket("Test Market", TestDemandStrategy)
                .WithDemographicManager(mockDemographicManager);
 
    }

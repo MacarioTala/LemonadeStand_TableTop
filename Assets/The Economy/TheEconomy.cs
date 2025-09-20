@@ -76,7 +76,6 @@ public class TheEconomy : MonoBehaviour
     {
         InitialMarket = Market.Factory.CreateStarterMarket(
                             "The First Market", 
-                            AgentLevelEnum.Market, 
                             ScriptableObject.CreateInstance<LinearDemandStrategy>());
         RegisterCompany(InitialMarket);
     }
@@ -200,17 +199,17 @@ public class TheEconomy : MonoBehaviour
         var markets = Resources.LoadAll<Market>("Markets");
         foreach (var market in markets)
         {
-            var demographicManager = new BasicDemographicManager();
+            var demographicManager = new DefaultDemographicManager();
             demographicManager.SetPopulationHistoryHandler(new BasicPopulationHistoryHandler());
 
             market.SetDemographicManager(demographicManager);
             demographicManager.SetMarket(market);
             
             // Initialize all required managers like in CreateStarterMarket
-            market.WithMarketDataManager(new BasicMarketDataManager())
-                .WithPriceManager(new BasicPriceManager())
-                .WithTradeProcessor(new BasicTradeProcessor())
-                .WithTransactionManager(new BasicTransactionManager())
+            market.WithMarketDataManager(new DefaultMarketDataManager())
+                .WithPriceManager(new DefaultPriceManager())
+                .WithTradeProcessor(new DefaultTradeProcessor())
+                .WithTransactionManager(new DefaultTransactionManager())
                 .WithPriceModifier(new SupplyDemandModifier())
                 .WithOrderFulfilledEvents();
 

@@ -72,15 +72,14 @@ public class SupplyAndDemandTests
         // set test_market to the Initial Market
         var existingMarket = TestEconomy.GetMarketByName("The First Market");
         TheEconomy.Instance.RemoveMarket(existingMarket);
-        TestMarket = Market.Factory.CreateMarket("Supply and Demand Test Market"
-                                                , AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Supply and Demand Test Market")
                                                 .WithDemandStrategy(TestDemandStrategy)
-                                                .WithTradeProcessor(new BasicTradeProcessor())
-                                                .WithTransactionManager(new BasicTransactionManager())
+                                                .WithTradeProcessor(new DefaultTradeProcessor())
+                                                .WithTransactionManager(new DefaultTransactionManager())
                                                 .WithDataService(TestMarketDataService)
                                                 .WithDemographicManager(TestDemographicManager)
                                                 .WithSupplyProvider(TestSupplyProvider)
-                                                .WithPriceManager(new BasicPriceManager())
+                                                .WithPriceManager(new DefaultPriceManager())
                                                 .WithPriceModifier(new SupplyDemandModifier());
         TestEconomy.RegisterCompany(TestMarket);
         TestSupplyProvider.Initialize(TestMarket);
@@ -305,7 +304,7 @@ public class SupplyAndDemandTests
     {
         throw new NotImplementedException("Update to use PopulationCompany.");
         // Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", AgentLevelEnum.Market, TestDemandStrategy);
+        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", TestDemandStrategy);
         marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
         var demographicManger = new MockDemographicManager();
         demographicManger.SetMarketInstability(1f);

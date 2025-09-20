@@ -16,7 +16,7 @@ public partial class BasicTradeProcessorTests
         object actual = null;
         // Act
         try 
-        {TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);}
+        {TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);}
         catch (Exception e)
         {
             actual = e;
@@ -52,7 +52,7 @@ public partial class BasicTradeProcessorTests
         var expectedCompany2Fills = 0;
         // Act
         try 
-        {TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);}
+        {TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);}
         catch (Exception e)
         {
             actual = e;
@@ -80,7 +80,7 @@ public partial class BasicTradeProcessorTests
         Company1.QueueOrder(Company1Context);
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         // Act
-        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);
         var actualCompany1Fills = noOneSellsAnythingToAnyone.FilledQuantity;
         // Assert
         Assert.AreEqual(0, actualCompany1Fills, "Company 1 did not fill the order correctly");
@@ -131,7 +131,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         // Act
-        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(Lemonade,OrdersSentToMarket);
         var actualCompany1Fills = company1BuysRLFromCompany2ByCompany1.FilledQuantity;
         var actualCompany2Fills = company2SellsRLToCompany1ByCompany2.FilledQuantity;
         // Assert
@@ -165,7 +165,7 @@ public partial class BasicTradeProcessorTests
         var expectedCompany2Fills = 0;
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         // Act
-        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);
         var actualCompany1Fills = company1SellsRLToAnyone.FilledQuantity;
         var actualCompany2Fills = company2SellsRLToAnyone.FilledQuantity;
         // Assert
@@ -196,7 +196,7 @@ public partial class BasicTradeProcessorTests
         var expectedCompany2Fills = 0;
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         // Act
-        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);
         var actualCompany1Fills = company1BuysRLFromAnyone.FilledQuantity;
         var actualCompany2Fills = company2BuysRLFromAnyone.FilledQuantity;
         // Assert
@@ -270,7 +270,7 @@ public partial class BasicTradeProcessorTests
         Company3.QueueOrder(Company3Context);
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         // Act
-        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);
         var actualCompany1Fills = company1BuysRLFromAnyoneByCompany1.FilledQuantity;
         var actualCompany2Fills = company2SellsRLToAnyone1ByCompany2.FilledQuantity;
         var actualCompany3Fills = company3SellsRLToAnyone2ByCompany3.FilledQuantity;
@@ -341,7 +341,7 @@ public partial class BasicTradeProcessorTests
         
         var OrdersSentToMarket = TestTradeProcessor.GetOrders();
         //Act
-        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,TestMarket,OrdersSentToMarket);
+        TestTradeProcessor.ExecuteBestTradesForGood(RadioactiveLemonade,OrdersSentToMarket);
         var actualCompany1Fills = Company1BuysRLFromAnyone.FilledQuantity;
         var actualCompany2Fills = Company2BuysRLFromAnyone.FilledQuantity;
         var actualCompany3Fills = Company3SellsRLToAnyone.FilledQuantity;

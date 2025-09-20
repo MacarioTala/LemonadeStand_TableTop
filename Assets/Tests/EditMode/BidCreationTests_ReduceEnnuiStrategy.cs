@@ -87,7 +87,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
                         .Build();
         TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, null);
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market",null);
 
         TestMarket.RegisterMarketParticipant(TestPopulation);
     }

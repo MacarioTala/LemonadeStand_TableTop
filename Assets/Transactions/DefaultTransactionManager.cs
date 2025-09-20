@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Jobs.LowLevel.Unsafe;
 
-public class BasicTransactionManager : iTransactionManager
+public class DefaultTransactionManager : iTransactionManager,iMarketAware
 {
+    Market _market;
     internal bool HasGood(Good good, Inventory inventory)
     {
         var goodInInventory = inventory.GetInventoryEntriesByGood(good.GoodName).FirstOrDefault();
@@ -230,4 +230,6 @@ public class BasicTransactionManager : iTransactionManager
             marketToRecordIn.RecordTrade(counterPartyExecution);
         }
     }
+
+    public void SetMarket(Market market)=> _market = market;
 }

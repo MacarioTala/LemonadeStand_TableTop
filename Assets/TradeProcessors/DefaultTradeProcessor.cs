@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class BasicTradeProcessor : iTradeProcessor
+public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
 {
+    private Market _market;
      private List<iOrderPrioritizer> _orderPrioritizers = new();
      private readonly List<Order> _tradesSentToTheMarket = new();
 
      private readonly iTransactionManager _transactionManager;
 
 
-    public BasicTradeProcessor()
+    public DefaultTradeProcessor()
     {   
         _orderPrioritizers.Add(new LessaizfairePrioritizer());
-        _transactionManager = new BasicTransactionManager();
+        _transactionManager = new DefaultTransactionManager();
     }
     public List<Order> GetOrders()=>_tradesSentToTheMarket;
     public List<Order> GetOrderResults(ActionContext context)
@@ -21,22 +22,22 @@ public class BasicTradeProcessor : iTradeProcessor
                 .Where(x => x.Buyer == context.TradeToSubmit.Buyer || x.Seller == context.TradeToSubmit.Seller)
                 .ToList();
     }
-    public List<Order> ProcessCompanyOrders(Market market)
+    public List<Order> ProcessCompanyOrders()
     {
         List<Order> executedTrades = new();
-        var ordersInPeriod = market.GetOrdersSentToMarket();
+        var ordersInPeriod = _market.GetOrdersSentToMarket();
         List<Good> goodsToTradeThisPeriod = ordersInPeriod
                                             .Select(x => x.Good).Distinct().ToList();
 
         foreach (var good in goodsToTradeThisPeriod)
         {
-           executedTrades.AddRange(ExecuteBestTradesForGood(good,market,ordersInPeriod));
+           executedTrades.AddRange(ExecuteBestTradesForGood(good,ordersInPeriod));
         }
         _tradesSentToTheMarket.RemoveAll(x=>x.IsFullyFilled);
         return executedTrades;
     }
 
-    internal List<Order> ExecuteBestTradesForGood(Good good, Market market, List<Order> OrdersSentToMarket)
+    internal List<Order> ExecuteBestTradesForGood(Good good, List<Order> OrdersSentToMarket)
     {
         List<Order> executedOrders = new();
         var relevantOrders = OrdersSentToMarket.Where(x => x.Good.Equals(good)
@@ -62,7 +63,7 @@ public class BasicTradeProcessor : iTradeProcessor
                     continue;
                 }
                 
-                if (FindCounterPartiesForOrder(market,good).ExtraData is not List<Order> counterPartyOrders)
+                if (FindCounterPartiesForOrder(_market,good).ExtraData is not List<Order> counterPartyOrders)
                 {
                     order.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
                 }
@@ -73,8 +74,8 @@ public class BasicTradeProcessor : iTradeProcessor
                         {
                             PrimaryOrder = order,
                             CounterPartyOrders = counterPartyOrders,
-                            MarketToSubmitTo = market,
-                            Period = market.CurrentPeriod
+                            MarketToSubmitTo = _market,
+                            Period = _market.CurrentPeriod
                         }
                     );
                     if(!transactionResult.Result.Equals(LemonadeStandResultObject.Success().Result))
@@ -89,9 +90,9 @@ public class BasicTradeProcessor : iTradeProcessor
         return executedOrders;
     }
 
-    internal Order GeneratePrimaryOrder(Market market, Good good)
+    internal Order GeneratePrimaryOrder(Good good)
     {
-        var buyOrders = market.GetOrdersSentToMarket()
+        var buyOrders = _market.GetOrdersSentToMarket()
                             .Where(x => (x.Buyer??default) == x.SubmittingCompany
                             &&
                             !x.IsFullyFilled
@@ -103,7 +104,7 @@ public class BasicTradeProcessor : iTradeProcessor
         
         if ( buyOrders.Any() ) return buyOrders.First();
 
-        var sellOrders = market.GetOrdersSentToMarket()
+        var sellOrders = _market.GetOrdersSentToMarket()
                             .Where(x => (x.Seller??default) == x.SubmittingCompany
                             &&
                             !x.IsFullyFilled
@@ -128,7 +129,7 @@ public class BasicTradeProcessor : iTradeProcessor
 
     internal LemonadeStandResultObject FindCounterPartiesForOrder(Market market,Good good)
     {
-        var primaryOrder = GeneratePrimaryOrder(market,good);
+        var primaryOrder = GeneratePrimaryOrder(good);
         var counterPartiesForOrder = market.GetOrdersSentToMarket()
                                     .Where (x=>IsValidCounterParty(x, primaryOrder)
                                     && x.Good.Equals(primaryOrder.Good))
@@ -192,5 +193,10 @@ public class BasicTradeProcessor : iTradeProcessor
             }
         _tradesSentToTheMarket.Add(context.TradeToSubmit);
         return LemonadeStandResultObject.Success();
+    }
+
+    public void SetMarket(Market market)
+    {
+        _market = market;
     }
 }

@@ -23,7 +23,7 @@ public class CompanyTests
         Company1 = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
         Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1, 3), RarityEnum.Common);
         
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, new LinearDemandStrategy());
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", new LinearDemandStrategy());
         TestMarket.RegisterMarketParticipant(Company1);
     }
 

@@ -29,10 +29,10 @@ public class RecordingDemographicHistoryTests
         testEconomy.RemoveMarket(existingMarket);
 
         TestPopulationHistoryDataHandler= new MockPopulationHistoryDataHandler();
-        TestDemographicManager = new BasicDemographicManager();
+        TestDemographicManager = new DefaultDemographicManager();
         TestDemographicManager.SetPopulationHistoryHandler(TestPopulationHistoryDataHandler);
 
-        TestMarket= Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, TestDemandStrategy)
+        TestMarket= Market.Factory.CreateStarterMarket("Test Market", TestDemandStrategy)
             .WithDataService(TestMarketDataService)
             .WithDemographicManager(TestDemographicManager)
             .WithSupplyProvider(TestSupplyProvider);

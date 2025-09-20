@@ -95,14 +95,14 @@ public class RefactorOutFulfillDemand
         TestReduceEnnuiStrategy.GenerateGoals(TestPopulation);
 
         TestMarket = Market.Factory
-                .CreateMarket("Test Market", AgentLevelEnum.Market)
-                .WithTradeProcessor(new BasicTradeProcessor())
+                .CreateMarket("Test Market")
+                .WithTradeProcessor(new DefaultTradeProcessor())
                 .WithDemandStrategy(TestDemandStrategy)
                 .WithDemographicManager(new MockDemographicManager())
-                .WithMarketDataManager(new BasicMarketDataManager())
-                .WithPriceManager(new BasicPriceManager())
-                .WithTradeProcessor(new BasicTradeProcessor())
-                .WithTransactionManager(new BasicTransactionManager())
+                .WithMarketDataManager(new DefaultMarketDataManager())
+                .WithPriceManager(new DefaultPriceManager())
+                .WithTradeProcessor(new DefaultTradeProcessor())
+                .WithTransactionManager(new DefaultTransactionManager())
                 .WithPriceModifier(new SupplyDemandModifier())
                 .WithSupplyProvider(new MockSupplyProvider());
     }
