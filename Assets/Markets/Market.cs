@@ -76,9 +76,6 @@ public class Market : ScriptableObject, iEconAgent
     public void InitializeDemandForSpecificGood(Good good, int initialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
         => _demandManager.InitializeDemandForSpecificGood(good, initialDemand, minDemand, maxDemand, curvature);
     #endregion
-
-   
-
     //Companies
     private readonly List<EconAgent> _marketParticipants = new();
     public List<EconAgent> GetMarketParticipants() => _marketParticipants;
@@ -171,39 +168,24 @@ public class Market : ScriptableObject, iEconAgent
         }
     }
 
-    //Reporting 
-    readonly List<(Order Order, int Period)> OrdersSubmittedInPeriod = new(); // Read only used to get Order History. 
+    #region Reporting
+    public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
+        => _marketDataManager.RecordOrderInPeriod(order, period);
+    public void RecordTrade(Execution trade)
+        => _marketDataManager.RecordTrade(trade);
+    
     public List<Order> GetOrdersSubmittedInPeriod(int period)
-    {
-        var ordersToReturn = OrdersSubmittedInPeriod
-                            .Where(x => x.Period == period)
-                            .Select(x => x.Order)
-                            .ToList();
-        return ordersToReturn;
-    }
-
-    public void LogOrder(Order order, int period)
-    {
-        if (!OrdersSubmittedInPeriod.Contains((order, period)))
-        {
-            OrdersSubmittedInPeriod.Add((order, period));
-        }
-    }
-   
-    //Trading
-    private readonly List<Execution> _executedTradesInPeriod = new();
-    private readonly List<(Order Order, int Period)> _ordersExecutedInPeriod = new();
-    public List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods) => _ordersExecutedInPeriod.Where(x => periods.Contains(x.Period)).ToList();
+        => _marketDataManager.GetOrdersSubmittedInPeriod(period);
+    public void LogOrder(Order order, int period) => _marketDataManager.LogOrder(order, period);
+    public List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods)
+        => _marketDataManager.GetOrdersExecutedInPeriod(periods);
     public List<Execution> GetExecutionsInPeriod(int period)
-    {
-        var executions = _ordersExecutedInPeriod
-                          .Where(x => x.Period == period)
-                          .SelectMany(x => x.Order.GetExecutions()).ToList();
-        return executions;
-    }
+        => _marketDataManager.GetExecutionsInPeriod(period);
+    #endregion
 
     #region Convenience Methods
     public decimal GetCash() => cash;
+    public void SetCash(decimal new_cash) => cash = new_cash;
     public Inventory GetInventory() => _inventory;
     public List<Order> GetOrdersSentToMarket() => _tradeProcessor.GetOrders();
     public List<Order> GetOrdersSentToMarketByCompany(EconAgent company) => _tradeProcessor?.GetOrders()?.Where(x => x.SubmittingCompany.Equals(company)).ToList()?? new List<Order>();
@@ -223,21 +205,6 @@ public class Market : ScriptableObject, iEconAgent
     }
 
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
-
-    public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
-    {
-        if (!_ordersExecutedInPeriod.Contains((order, period)))
-        {
-            _ordersExecutedInPeriod.Add((order, period));
-            return LemonadeStandResultObject.Success();
-        }
-        return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, "Order already recorded");
-    }
-    public void RecordTrade(Execution trade)
-    {
-        if (!_executedTradesInPeriod.Contains(trade)) _executedTradesInPeriod.Add(trade);
-    }
-    public void SetCash(decimal new_cash) => cash = new_cash;
     #endregion
 
     #region Creation and Initialization
@@ -337,10 +304,6 @@ public class Market : ScriptableObject, iEconAgent
                 TheEconomy.Instance.HandleParticipantCollapse(this, company);
             }
         }
-    }
-    public void ProcessOrder(ActionContext context)
-    {
-        _transactionManager.ProcessTransaction(context);
     }
     public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
     {
