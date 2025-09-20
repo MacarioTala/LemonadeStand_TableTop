@@ -14,6 +14,13 @@ public static class MarketBuilder
         market.SetDemandStrategy(strategy);
         return market;
     }
+
+    public static Market WithDemandManager(this Market market, iDemandManager manager)
+    {
+        market.SetDemandManager(manager);
+        return market;
+    }
+
     public static Market WithDataService(this Market market, iMarketDataService dataService)
     {
         market.SetMarketDataService(dataService);
@@ -25,18 +32,6 @@ public static class MarketBuilder
         demographicManager?.SetMarket(market);
         return market;
     }
-
-    public static Market EnsureDefaults(this Market market)
-    {
-        if (market.MarketEventManager is null)
-        {
-            var manager = new DefaultMarketEventManager();
-            manager.SetMarket(market);
-            market.SetMarketEventManager(manager);
-        }
-        return market;
-    }
-
     public static Market WithMarketEventManager(this Market market, iMarketEventManager manager = null)
     {
         if (manager is null)
@@ -59,7 +54,7 @@ public static class MarketBuilder
         market.SetSupplyProvider(supplyProvider);
         return market;
     }
-    
+
     public static Market WithTradeProcessor(this Market market, iTradeProcessor tradeProcessor)
     {
         market.SetTradeProcessor(tradeProcessor);
@@ -73,16 +68,16 @@ public static class MarketBuilder
 
     public static Market WithOrderFulfilledEvents(this Market market)
     {
-        if(market.DemandStrategy == null)
+        if (market.DemandStrategy == null)
         {
             Debug.LogError("Market.DemandStrategy not set, cannot wire orderFulfilled event handler.");
             return market;
         }
-        
+
         market.OrderFulfilled += market.DemandStrategy.OnOrderFulfilled;
         return market;
     }
-    
+
     public static Market WithMarketDataManager(this Market market, iMarketDataManager marketDataManager)
     {
         market.SetMarketDataManager(marketDataManager);
@@ -115,7 +110,7 @@ public static class MarketBuilder
     public static Market PopulatedWith(this Market market, List<PopulationAgent> marketParticipants)
     {
 
-        foreach  (var particpant in marketParticipants)
+        foreach (var particpant in marketParticipants)
         {
             market.RegisterMarketParticipant(particpant);
         }
@@ -124,7 +119,7 @@ public static class MarketBuilder
 
     public static Market InitializedWith(this Market market, iMarketInitializer initializer)
     {
-        if (initializer == null) 
+        if (initializer == null)
         {
             Debug.LogError("MarketBuilder: initializer is null, cannot initialize");
             return market;
@@ -132,4 +127,33 @@ public static class MarketBuilder
         initializer.InitializeMarket(market);
         return market;
     }
+    #region defaults
+    public static Market EnsureDefaults(this Market market)
+    {
+        EnsureDefaultMarketEventManager(market);
+        EnsureDefaultDemandManager(market);
+
+        return market;
+    }
+
+    private static void EnsureDefaultDemandManager(Market market)
+    {
+        if (market.DemandManager is null)
+        {
+            var manager = new DefaultDemandManager();
+            manager.SetMarket(market);
+            market.SetDemandManager(manager);
+        }
+    }
+
+    private static void EnsureDefaultMarketEventManager(Market market)
+    {
+        if (market.MarketEventManager is null)
+        {
+            var manager = new DefaultMarketEventManager();
+            manager.SetMarket(market);
+            market.SetMarketEventManager(manager);
+        }
+    }
+    #endregion
 }

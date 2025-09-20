@@ -35,44 +35,29 @@ public class Market : ScriptableObject, iEconAgent
     public AgentLevelEnum company_level;
     #region Demand
     public List<MarketData> MarketData { get; } = new();//bid/ask spread for companies
-    private readonly Dictionary<Good, DemandData> _marketDemand = new();
 
-    public DemandData GetDemandFor(Good good)
+    public DemandData GetDemandFor(Good good) => _demandManager.GetDemandFor(good);
+    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket() => _demandManager.GetBidAskSpreadsFromMarket();
+
+    public decimal GetPerceivedCostOfGood(Good good) => _demandManager.GetPerceivedCostOfGood(good);
+    internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1) => _demandManager.UpdateFulfillmentRates(tradingPeriod);
+
+    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
     {
-        throw new NotImplementedException("Might need to  implement this as a list of DemandData instead.");
-    }
-    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket()
-    {
-        var spreads = new List<(Good good, decimal Bid, decimal Ask)>();
-        if (MarketData == null)
+        if (!good.Elasticities.TryGetValue(elasticity, out float elasticityValue))
         {
-            return Enumerable.Empty<(Good, decimal, decimal)>();
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
         }
-        else
-        {
-            spreads = MarketData
-                .Select(x => (x.Good, x.Bid, x.Ask)).ToList();
-        }
-        return spreads;
-    }
 
-    public decimal GetPerceivedCostOfGood(Good good)
-    {
-        var asks = MarketData
-                    .GroupBy(x => x.Good)
-                    .ToDictionary(g => g.Key, g => g.Average(x => x.Ask));
-
-        var perceivedCost = _marketParticipants
-                    .Where(x => x is not PopulationAgent)
-                    .SelectMany(x => x.Recipes
-                        .Where(r => r.GetProduct().Equals(good))
-                           )
-                    .Select(r => r.GetPerceivedCostPerUnit(asks))
-                    .DefaultIfEmpty(0m) // If no recipes found, default to 0
-                    .Average();
-        return perceivedCost;
+        return LemonadeStandResultObject.Success(extraData: elasticityValue);
     }
+    public int GetMarketDemandForGood(string goodName) => _demandManager.GetMarketDemandForGood(goodName);
+    public void SetMarketDemandForGood(Good good, DemandData demandData) => _demandManager.SetMarketDemandForGood(good, demandData);
+
+    public void InitializeDemandForSpecificGood(Good good, int initialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
+        => _demandManager.InitializeDemandForSpecificGood(good, initialDemand, minDemand, maxDemand, curvature);
     #endregion
+    
     //Cash and Inventory
     private decimal cash = 0;
     private readonly Inventory _inventory = new();
@@ -246,8 +231,6 @@ public class Market : ScriptableObject, iEconAgent
         return participantDemand;
     }
 
-    public void SetMarketDemandForGood(Good good, DemandData demandData) => _marketDemand[good] = demandData;
-
     public List<iPriceModifier> GetPriceModifiers() => _priceModifiers;
 
     public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
@@ -345,6 +328,9 @@ public class Market : ScriptableObject, iEconAgent
     public iDemandStrategy DemandStrategy { get => _demandStrategy as iDemandStrategy; }
     public void SetDemandStrategy(iDemandStrategy demandStrategy)
     { _demandStrategy = demandStrategy as ScriptableObject; }
+    private iDemandManager _demandManager;
+    public iDemandManager DemandManager{ get => _demandManager; }
+    public void SetDemandManager(iDemandManager manager) => _demandManager = manager;
 
     #endregion
     #region Company Interactions
@@ -486,58 +472,6 @@ public class Market : ScriptableObject, iEconAgent
         return DemandStrategy.GetTotalSoldByMarket(this, tradingPeriod, good);
     }
     #endregion
-    #region Demand
-    internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1)
-    {
-        // You are here: update this to update the supply of the good too
-        // since CalculateFulfillmentRates already calculates total supply
-        // Maybe there's no need for a supply provider?
-
-        //Get the demand and supply for the period
-        var ordersSubmittedInPeriod = GetOrdersSubmittedInPeriod(tradingPeriod);
-        var fulfillmentRates = MarketObserver.CalculateFulfillmentRates(ordersSubmittedInPeriod);
-
-        // Note: Currently only supports one PopulationCompany per market.
-        // In the future, we may need to merge fulfillment rates 
-        // from multiple PopulationCompanies/market segments.
-        var populationCompany = _marketParticipants
-            .OfType<PopulationAgent>()
-            .FirstOrDefault();
-        if (populationCompany != null)
-        {
-            foreach (var fulfillmentRate in fulfillmentRates)
-            {
-                if (populationCompany.GetDemand().TryGetValue(fulfillmentRate.Good, out var demandEntry))
-                {
-                    demandEntry.CurrentDemand = fulfillmentRate.TotalDemand;
-                    demandEntry.FulfilmentRate = fulfillmentRate.FulfillmentRate;
-                }
-            }
-        }
-        return LemonadeStandResultObject.Success();
-    }
-
-    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
-    {
-        if (!good.Elasticities.TryGetValue(elasticity, out float elasticityValue))
-        {
-            return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
-        }
-
-        return LemonadeStandResultObject.Success(extraData: elasticityValue);
-    }
-    public int GetMarketDemandForGood(string good_name)
-    {
-        var good = _marketDemand.Keys.FirstOrDefault(x => x.GoodName == good_name);
-        return _marketDemand[good].CurrentDemand;
-    }
-    public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
-    {
-#pragma warning disable CS0618 // Type or member is obsolete
-        //TODO: Remove this in a future refactor.
-        DemandStrategy.InitializeDemandForSpecificGood(this, good, InitialDemand, minDemand, maxDemand, curvature);
-#pragma warning restore CS0618 // Type or member is obsolete
-    }
     /// <summary>
     /// A Market order is an order initiated by the Market
     /// Use this in order to buy produced goods,
@@ -553,7 +487,6 @@ public class Market : ScriptableObject, iEconAgent
             return queueResult;
         return LemonadeStandResultObject.Success();
     }
-    #endregion
     #region Pricing
     internal void UpdatePrices()
     {
