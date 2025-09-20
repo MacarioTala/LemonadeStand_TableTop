@@ -1,6 +1,5 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting.YamlDotNet.Core;
+using System.Linq;
 using UnityEngine;
 
 public static class MarketBuilder
@@ -42,6 +41,18 @@ public static class MarketBuilder
         else
         {
             market.SetMarketEventManager(manager);
+        }
+        return market;
+    }
+    public static Market WithMarketInteractionManager(this Market market, iMarketInteractionManager manager = null)
+    {
+        if (manager is null)
+        {
+            market.SetMarketInteractionManager(new DefaultMarketInteractionManager());
+        }
+        else
+        {
+            market.SetMarketInteractionManager(manager);
         }
         return market;
     }
@@ -141,8 +152,15 @@ public static class MarketBuilder
         EnsureDefaultDemandStrategy(market);
         EnsureAtLeastOnePriceModifier(market);
         EnsureDefaultMarketLevel(market);
+        EnsureDefaultMarketInteractionManager(market);
 
         return market;
+    }
+
+    private static void EnsureDefaultMarketInteractionManager(Market market)
+    {
+        if(market.MarketInteractionManager is null)
+            market.SetMarketInteractionManager(new DefaultMarketInteractionManager());
     }
 
     private static void EnsureDefaultMarketLevel(Market market)
@@ -152,7 +170,8 @@ public static class MarketBuilder
 
     private static void EnsureAtLeastOnePriceModifier(Market market)
     {
-        market.AddPriceModifier(new SupplyDemandModifier());
+        if(!market.PriceModifiers.Any(x=>x is SupplyDemandModifier))
+            market.AddPriceModifier(new SupplyDemandModifier());
     }
 
     private static void EnsureDefaultDemandStrategy(Market market)
