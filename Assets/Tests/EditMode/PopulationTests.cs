@@ -187,7 +187,7 @@ public class PopulationTests
     public void TestThatGoodEffectsAreAppliedByMarkets()
     {
         //Arrange
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, null)
+        var testMarket = Market.Factory.CreateStarterMarket("Test Market", null)
                         .WithSupplyProvider(new MockSupplyProvider())
                         .WithDemographicManager(new MockDemographicManager())
                         ;
@@ -233,7 +233,7 @@ public class PopulationTests
     public void ConsumingFewerGoodsThanIdealHasReducedEffect()
     {
          //Arrange
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, null)
+        var testMarket = Market.Factory.CreateStarterMarket("Test Market", null)
                         .WithSupplyProvider(new MockSupplyProvider())
                         .WithDemographicManager(new MockDemographicManager())
                         ;

@@ -26,11 +26,11 @@ public class BasicTransactionManagerTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithTransactionManager(new BasicTransactionManager())
-            .WithDemographicManager(new BasicDemographicManager())
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithTransactionManager(new DefaultTransactionManager())
+            .WithDemographicManager(new DefaultDemographicManager())
             .WithCash(10000);
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
@@ -59,7 +59,7 @@ public class BasicTransactionManagerTests
         var costOfThisLeg = 1m;
 
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade, "Company cannot trade with itself");
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -78,7 +78,7 @@ public class BasicTransactionManagerTests
         var costOfThisLeg = 1m;
 
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade, "Company cannot trade with itself");
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ValidateTransaction(order, order, costOfThisLeg);
         //Assert
@@ -101,7 +101,7 @@ public class BasicTransactionManagerTests
         };
         var costOfThisLeg = 1m;
         var expected = LemonadeStandResultObject.Success();
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -123,7 +123,7 @@ public class BasicTransactionManagerTests
         };
         var costOfThisLeg = 1m;
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientCash, "");
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -145,7 +145,7 @@ public class BasicTransactionManagerTests
         };
         var costOfThisLeg = 1m;
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientGoods, "Seller does not have enough goods to complete the transaction");
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -168,7 +168,7 @@ public class BasicTransactionManagerTests
             SubmittingCompany = Company2
         };
         var expected = LemonadeStandResultObject.Success();
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ProcessTransactionPair(order, counterPartyOrder, Period);
         //Assert
@@ -190,7 +190,7 @@ public class BasicTransactionManagerTests
         {
             SubmittingCompany = Company2
         };
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         var expectedBuyerCash = 999m;
         var expectedSellerCash = 1m;
         var expectedBuyerLemonQuantity = 1;
@@ -227,7 +227,7 @@ public class BasicTransactionManagerTests
         {
             SubmittingCompany = Company2
         };
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         var expectedBuyerCash = 999m;
         var expectedSellerCash = 1m;
         var expectedBuyerLemonQuantity = 1;
@@ -258,7 +258,7 @@ public class BasicTransactionManagerTests
     public void ProcessTransactionRecordsTwoCounterPartiesWhenTwoCounterPartiesArePresent()
     {
         //Arrange
-        var basicTransactionManager = new BasicTransactionManager();
+        var basicTransactionManager = new DefaultTransactionManager();
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
         
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
@@ -322,7 +322,7 @@ public class BasicTransactionManagerTests
             Period = Period
         };
         var expected = LemonadeStandResultObject.Success();
-        var transactionManager = new BasicTransactionManager();
+        var transactionManager = new DefaultTransactionManager();
         //Act
         var actual = transactionManager.ProcessMarketTransaction(context);
         //Assert

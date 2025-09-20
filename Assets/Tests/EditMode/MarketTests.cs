@@ -53,12 +53,12 @@ public partial class MarketTests
             .Build();
 
         //Setup Market
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy).WithDemandStrategy(TestDemandStrategy)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithPriceManager(new BasicPriceManager())
-            .WithTransactionManager(new BasicTransactionManager())
-            .WithMarketDataManager(new BasicMarketDataManager())
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithPriceManager(new DefaultPriceManager())
+            .WithTransactionManager(new DefaultTransactionManager())
+            .WithMarketDataManager(new DefaultMarketDataManager())
             .WithDemographicManager(new MockDemographicManager());
 
 
@@ -89,7 +89,6 @@ public partial class MarketTests
     private void SetupInitialMarket()
     {
         test_initial_market = Market.Factory.CreateStarterMarket(companyName: "The First Market", 
-                                                    companyLevel: AgentLevelEnum.Market,
                                                     demandStrategy: TestDemandStrategy);
         test_initial_market.InitializeDemandForSpecificGood(lemon, 1000);
     }

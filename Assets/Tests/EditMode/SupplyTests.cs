@@ -25,11 +25,11 @@ public class SupplyTests
         TheEconomy.SetupForTests(new MockLogger());
         TestEconomy = TheEconomy.Instance;
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
         .WithDemandStrategy(TestDemandStrategy)
             .WithSupplyProvider(TestSupplyProvider)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithPriceManager(new BasicPriceManager());
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithPriceManager(new DefaultPriceManager());
         TestSupplyProvider.Initialize(TestMarket);
 
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);

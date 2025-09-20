@@ -9,7 +9,7 @@ public class DemographicsTests
     {
         // Arrange
         var testDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        var demographicManager = new BasicDemographicManager();
+        var demographicManager = new DefaultDemographicManager();
 
         const int expectedPopulation = 1000;
         var testPopulationCompany = EconAgentBuilder.For<PopulationAgent>()
@@ -17,7 +17,7 @@ public class DemographicsTests
             .Named("Test Company")
             .Build();
         
-        var testMarket = Market.Factory.CreateStarterMarket("Test Market",AgentLevelEnum.Market,testDemandStrategy)
+        var testMarket = Market.Factory.CreateStarterMarket("Test Market",testDemandStrategy)
         .WithDemographicManager(demographicManager);
         
         testMarket.RegisterMarketParticipant(testPopulationCompany);

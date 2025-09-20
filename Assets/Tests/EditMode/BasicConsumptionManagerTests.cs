@@ -45,11 +45,11 @@ public class BasicConsumptionManagerTests
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new MockDemographicManager();
         TestSupplyProvider= new MockSupplyProvider();
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
                             .WithDemandStrategy(TestDemandStrategy)
-                            .WithTradeProcessor(new BasicTradeProcessor())
-                            .WithTransactionManager(new BasicTransactionManager())
-                            .WithPriceManager(new BasicPriceManager())
+                            .WithTradeProcessor(new DefaultTradeProcessor())
+                            .WithTransactionManager(new DefaultTransactionManager())
+                            .WithPriceManager(new DefaultPriceManager())
                             .WithDataService(TestMarketDataService)
                             .WithSupplyProvider(TestSupplyProvider)
                             .WithDemographicManager(TestDemographicManager);

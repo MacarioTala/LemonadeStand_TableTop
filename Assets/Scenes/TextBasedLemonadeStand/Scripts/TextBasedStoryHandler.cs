@@ -89,7 +89,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         var testMarket = TheEconomy.Instance.GetMarketByName("The First Market");
         TheEconomy.Instance.RemoveMarket(testMarket);
         var inventory = initialMarket.GetInventory();
-        initialMarket.SetTradeProcessor(new BasicTradeProcessor());
+        initialMarket.SetTradeProcessor(new DefaultTradeProcessor());
 
         var period = TheEconomy.Instance.tradingPeriod;
         var Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);

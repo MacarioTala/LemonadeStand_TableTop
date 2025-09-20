@@ -47,10 +47,10 @@ public class BasicDemandStrategyTests
                            (c, newValue) => c.Ennui = newValue));
         lemonade.AddEffect(reduceEnnuiEffect);
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithTransactionManager(new BasicTransactionManager())
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithTransactionManager(new DefaultTransactionManager())
             .WithDemographicManager(new MockDemographicManager());
         
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);

@@ -39,14 +39,14 @@ public class IntegrationTests
         var existingMarket = TheEconomy.Instance.GetMarketByName("The First Market");
         TheEconomy.Instance.RemoveMarket(existingMarket);
 
-        TestMarket = Market.Factory.CreateMarket("The First Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("The First Market")
             .WithDemandStrategy(TestDemandStrategy)
             .WithDataService(TestMarketDataService)
             .WithSupplyProvider(TestSupplyProvider)
             .WithDemographicManager(TestDemographicManager)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithPriceManager(new BasicPriceManager())
-            .WithTransactionManager(new BasicTransactionManager());
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithPriceManager(new DefaultPriceManager())
+            .WithTransactionManager(new DefaultTransactionManager());
         
         TheEconomy.Instance.RegisterCompany(TestMarket);
 
@@ -317,13 +317,13 @@ public class IntegrationTests
         var TestDataHandler2 = new MockPopulationHistoryDataHandler();
         TestDemographicManager2.SetPopulationHistoryHandler(TestDataHandler2);
 
-        var SecondMarket = Market.Factory.CreateMarket("Second Market", AgentLevelEnum.Market)
+        var SecondMarket = Market.Factory.CreateMarket("Second Market")
             .WithDemandStrategy(TestDemandStrategy)
             .WithDataService(TestMarketDataService)
             .WithSupplyProvider(TestSupplyProvider)
             .WithDemographicManager(TestDemographicManager2)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithPriceManager(new BasicPriceManager());
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithPriceManager(new DefaultPriceManager());
 
         TheEconomy.Instance.RegisterCompany(SecondMarket);
         TestMarket.SetCash(1000000);

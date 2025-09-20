@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public interface iMarketDataManager
 {
-    List<MarketData> PublishMarketData(Market market);
+    List<MarketData> PublishMarketData();
     void PublishSpreadToMarket(ActionContext context);
     
 }

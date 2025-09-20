@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Transactions;
 using UnityEngine;
 [assembly: InternalsVisibleTo("Tests")]
 [CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
@@ -38,6 +39,17 @@ public class Market : ScriptableObject, iEconAgent
     private readonly Inventory _inventory = new();
     private readonly List<Recipe> _recipes = new();
 
+    //Graphics and Market Features
+    public List<MarketFeature> MarketFeatures = new();
+    public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
+    public (int x, int y) MarketSize = (200, 200);
+    public int GetWidth() => MarketSize.x;
+    public int GetHeight() => MarketSize.y;
+
+    //Time
+    public int CurrentPeriod { get; set; } = 0;
+    public int StartingPeriod { get; set; }
+
     #endregion
 
     #region Demand
@@ -65,12 +77,7 @@ public class Market : ScriptableObject, iEconAgent
         => _demandManager.InitializeDemandForSpecificGood(good, initialDemand, minDemand, maxDemand, curvature);
     #endregion
 
-    //Graphics and Market Features
-    public List<MarketFeature> MarketFeatures = new();
-    public List<MarketFeature> GetMarketFeatures() => MarketFeatures;
-    public (int x, int y) MarketSize = (200, 200);
-    public int GetWidth() => MarketSize.x;
-    public int GetHeight() => MarketSize.y;
+   
 
     //Companies
     private readonly List<EconAgent> _marketParticipants = new();
@@ -182,10 +189,7 @@ public class Market : ScriptableObject, iEconAgent
             OrdersSubmittedInPeriod.Add((order, period));
         }
     }
-
-    //Time
-    public int CurrentPeriod { get; set; } = 0;
-    public int StartingPeriod { get; set; }
+   
     //Trading
     private readonly List<Execution> _executedTradesInPeriod = new();
     private readonly List<(Order Order, int Period)> _ordersExecutedInPeriod = new();
@@ -253,11 +257,11 @@ public class Market : ScriptableObject, iEconAgent
     {
         public static readonly StarterMarketInitializer starterMarketInitializer = new();
 
-        public static Market CreateMarket(string companyName, AgentLevelEnum companyLevel)
+        public static Market CreateMarket(string companyName)
         {
             var market = CreateInstance<Market>();
             market.Name = companyName;
-            market.company_level = companyLevel;
+            market.company_level = AgentLevelEnum.Market;
             if (market == null)
             {
                 throw new Exception("Market could not be created");
@@ -265,24 +269,15 @@ public class Market : ScriptableObject, iEconAgent
             return market.EnsureDefaults();
         }
 
-        public static Market CreateStarterMarket(string companyName, AgentLevelEnum companyLevel, iDemandStrategy demandStrategy)
+        public static Market CreateStarterMarket(string companyName, iDemandStrategy demandStrategy)
         {
             demandStrategy ??= CreateInstance<LinearDemandStrategy>();
             var market = CreateInstance<Market>()
                     .WithDemandStrategy(demandStrategy)
-                    .WithMarketDataManager(new BasicMarketDataManager())
-                    .WithPriceManager(new BasicPriceManager())
-                    .WithTradeProcessor(new BasicTradeProcessor())
-                    .WithTransactionManager(new BasicTransactionManager())
-                    .WithPriceModifier(new SupplyDemandModifier())
-                    .WithDemographicManager(new BasicDemographicManager())
                     .WithOrderFulfilledEvents()
                     .Named(companyName)
-                    .WithLevel(companyLevel)
                     .EnsureDefaults()
                     .InitializedWith(starterMarketInitializer);
-
-            market.DemographicManager.SetMarket(market);
             market.DemographicManager.SetPopulationHistoryHandler(new BasicPopulationHistoryHandler());
             return market;
         }
@@ -290,34 +285,42 @@ public class Market : ScriptableObject, iEconAgent
 
     #endregion
     #region Managers
+    private void SetAndWire<T>(ref T managerFieldToSet, T newValue) where T : class
+    {
+        managerFieldToSet = newValue;
+        if (newValue is iMarketAware aware) aware.SetMarket(this);
+    }
     private iDemographicManager _demographicManager;
     public iDemographicManager DemographicManager { get => _demographicManager; }
-
+    public void SetDemographicManager(iDemographicManager demographicManager) => SetAndWire(ref _demographicManager, demographicManager);
     private iMarketEventManager _marketEventManager;
     public iMarketEventManager MarketEventManager{ get => _marketEventManager; }
-    public void SetMarketEventManager(iMarketEventManager manager) => _marketEventManager = manager;
-    public void SetDemographicManager(iDemographicManager demographicManager) => _demographicManager = demographicManager;
+    public void SetMarketEventManager(iMarketEventManager manager) => SetAndWire(ref _marketEventManager, manager);
     private iFeatureManager _featureManager;
-    public void SetFeatureManager(iFeatureManager featureManager) => _featureManager = featureManager;
+    public void SetFeatureManager(iFeatureManager featureManager) => SetAndWire(ref _featureManager ,featureManager);
+    public iMarketDataManager MarketDataManager{ get=>_marketDataManager; }
     private iMarketDataManager _marketDataManager;
-    public void SetMarketDataManager(iMarketDataManager marketDataManager) => _marketDataManager = marketDataManager;
+    public void SetMarketDataManager(iMarketDataManager marketDataManager) => SetAndWire(ref _marketDataManager,marketDataManager);
     private iPriceManager _priceManager;
-    public void SetPriceManager(iPriceManager priceManager) => _priceManager = priceManager;
+    public iPriceManager PriceManager{ get=>_priceManager; }
+    public void SetPriceManager(iPriceManager priceManager) => SetAndWire(ref _priceManager ,priceManager);
     private iSupplyProvider _supplyProvider;
-    public void SetSupplyProvider(iSupplyProvider supplyProvider) => _supplyProvider = supplyProvider;
+    public void SetSupplyProvider(iSupplyProvider supplyProvider) => SetAndWire(ref _supplyProvider, supplyProvider);
     private iTradeProcessor _tradeProcessor;
-    public void SetTradeProcessor(iTradeProcessor tradeProcessor) => _tradeProcessor = tradeProcessor;
+    public iTradeProcessor TradeProcessor{ get => _tradeProcessor; }
+    public void SetTradeProcessor(iTradeProcessor tradeProcessor) => SetAndWire(ref _tradeProcessor, tradeProcessor);
     private iTransactionManager _transactionManager;
+    public iTransactionManager TransactionManager { get => _transactionManager; }
     public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
     private iMarketDataService _marketDataService;
     public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
     [SerializeField] private ScriptableObject _demandStrategy;
     public iDemandStrategy DemandStrategy { get => _demandStrategy as iDemandStrategy; }
-    public void SetDemandStrategy(iDemandStrategy demandStrategy)
-    { _demandStrategy = demandStrategy as ScriptableObject; }
+    public void SetDemandStrategy(iDemandStrategy demandStrategy) 
+        => SetAndWire(ref _demandStrategy , demandStrategy as ScriptableObject); 
     private iDemandManager _demandManager;
     public iDemandManager DemandManager{ get => _demandManager; }
-    public void SetDemandManager(iDemandManager manager) => _demandManager = manager;
+    public void SetDemandManager(iDemandManager manager) => SetAndWire(ref _demandManager ,manager);
 
     #endregion
     #region Company Interactions
@@ -345,7 +348,7 @@ public class Market : ScriptableObject, iEconAgent
     }
     public List<Order> ProcessCompanyOrders()
     {
-        var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders(this);
+        var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders();
         return CompanyOrdersExecuted;
     }
     public LemonadeStandResultObject QueueOrder(ActionContext context)
@@ -477,18 +480,18 @@ public class Market : ScriptableObject, iEconAgent
     #region Pricing
     internal void UpdatePrices()
     {
-        _priceManager.UpdatePricesForMarket(this);
+        _priceManager.UpdatePricesForMarket();
     }
     public void CalculateNewBidAskSpreadForMarket()
     {
         //remember to call CalculateNewBidAskSpreadForMarket 
         //as part of TheEconomy.Instance.ExecuteDailyTrades.
         //eventually
-        _priceManager.CalculateNewBidAskSpreadForMarket(this);
+        _priceManager.CalculateNewBidAskSpreadForMarket();
     }
     public decimal GetMarketCostForGood(Market market, Good good)
     {
-        return _priceManager.GetMarketCostForGood(market, good);
+        return _priceManager.GetMarketCostForGood(good);
     }
     public Dictionary<Good, decimal> GetAverageMarketPrices()
     {
@@ -504,7 +507,7 @@ public class Market : ScriptableObject, iEconAgent
     #region Publishing
     public List<MarketData> PublishMarketData()
     {
-        return _marketDataManager.PublishMarketData(this);
+        return _marketDataManager.PublishMarketData();
     }
 
     public void PublishSpreadToMarket(ActionContext context)

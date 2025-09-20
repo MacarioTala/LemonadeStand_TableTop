@@ -7,7 +7,7 @@ public class MarketEventManagerTests
     public void MarketEventManagerDefaultCreated()
     {
         //Arrange
-        var market = Market.Factory.CreateMarket("Default Tester Market", AgentLevelEnum.Market);
+        var market = Market.Factory.CreateMarket("Default Tester Market");
         var expected = typeof(DefaultMarketEventManager);
 
         //Act
@@ -21,7 +21,7 @@ public class MarketEventManagerTests
     public void CreateStarterMarketHasDefaultEventManager()
     {
         //Arrange
-        var market = Market.Factory.CreateStarterMarket("Dependency testing Market", AgentLevelEnum.Market, null);
+        var market = Market.Factory.CreateStarterMarket("Dependency testing Market", null);
         var expected = typeof(DefaultMarketEventManager);
 
         //Act

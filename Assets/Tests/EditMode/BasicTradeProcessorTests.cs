@@ -9,7 +9,7 @@ public partial class BasicTradeProcessorTests
     TheEconomy TestEconomy;
     int Period = 0;
     Market TestMarket;
-    BasicTradeProcessor TestTradeProcessor;
+    DefaultTradeProcessor TestTradeProcessor;
     iDemandStrategy TestDemandStrategy;
 
     Good Lemonade;
@@ -31,12 +31,12 @@ public partial class BasicTradeProcessorTests
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
 
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        TestTradeProcessor = new BasicTradeProcessor();
+        TestTradeProcessor = new DefaultTradeProcessor();
 
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
+        TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy)
             .WithTradeProcessor(TestTradeProcessor)
-            .WithTransactionManager(new BasicTransactionManager())
+            .WithTransactionManager(new DefaultTransactionManager())
             .WithCash(1000000);
 
         TestMarket.RegisterMarketParticipant(Company1);
@@ -90,7 +90,7 @@ public partial class BasicTradeProcessorTests
         Company1.QueueOrder(testContext);
         Company2.QueueOrder(testContext2);
         // Act
-        TestTradeProcessor.ProcessCompanyOrders(TestMarket);
+        TestTradeProcessor.ProcessCompanyOrders();
         var actualLemonadeFill = testOrder.FilledQuantity;
         // Assert
         Assert.AreEqual(expectedLemonadeFill, actualLemonadeFill);
@@ -117,7 +117,7 @@ public partial class BasicTradeProcessorTests
         Company1.QueueOrder(testContext);
         Company2.QueueOrder(testContext2);
         // Act
-        TestTradeProcessor.ProcessCompanyOrders(TestMarket);
+        TestTradeProcessor.ProcessCompanyOrders();
         var actualCompany1Fill = testOrder.FilledQuantity;
         var actualCompany2Fill = testOrder2.FilledQuantity;
         // Assert
@@ -151,7 +151,7 @@ public partial class BasicTradeProcessorTests
         Company1.QueueOrder(TestHelpers.CreateActionContext(testOrder3, TestMarket, Period));
         Company2.QueueOrder(TestHelpers.CreateActionContext(testOrder4, TestMarket, Period));
         // Act
-        var PCOResult =TestTradeProcessor.ProcessCompanyOrders(TestMarket);
+        var PCOResult =TestTradeProcessor.ProcessCompanyOrders();
         
         // Assert
         foreach (var (ExpectedFill, Order) in expectedResults)
@@ -206,7 +206,7 @@ public partial class BasicTradeProcessorTests
         var expectedCompany1LemonadeSellFill=100;
         var expectedCompany2RadioactiveLemonadeSellFill=10;
         // Act
-        TestTradeProcessor.ProcessCompanyOrders(TestMarket);
+        TestTradeProcessor.ProcessCompanyOrders();
         var actualCompany1RadioactiveBuyLemonadeFill = company1RadioactiveLemonadeBuyOrder.FilledQuantity;
         var actualCompany2LemonadeBuyFill = company2LemonadeBuyOrder.FilledQuantity;
         var actualCompany1LemonadeSellFill = company1LemonadeSellOrder.FilledQuantity;
@@ -280,7 +280,7 @@ public partial class BasicTradeProcessorTests
         var expectedCompany1LemonadeSellFill=100;
         var expectedCompany2RadioactiveLemonadeSellFill=5;
         // Act
-        TestTradeProcessor.ProcessCompanyOrders(TestMarket);
+        TestTradeProcessor.ProcessCompanyOrders();
         var actualCompany1RadioactiveBuyLemonadeFill = company1RadioactiveLemonadeBuyOrder.FilledQuantity;
         var actualCompany2LemonadeBuyFill = company2LemonadeBuyOrder.FilledQuantity;
         var actualCompany3LemonadeBuyFill = company3LemonadeBuyOrder.FilledQuantity;
@@ -349,7 +349,7 @@ public partial class BasicTradeProcessorTests
         var expectedCompany1LemonadeSellFill=50;
         var expectedCompany2RadioactiveLemonadeSellFill=5;
         // Act
-        TestTradeProcessor.ProcessCompanyOrders(TestMarket);
+        TestTradeProcessor.ProcessCompanyOrders();
         var actualCompany1RadioactiveBuyLemonadeFill = company1RadioactiveLemonadeBuyOrder.FilledQuantity;
         var actualCompany1LemonadeSellFill = company1LemonadeSellOrder.FilledQuantity;
         var actualCompany2LemonadeBuyFill = company2LemonadeBuyOrder.FilledQuantity;

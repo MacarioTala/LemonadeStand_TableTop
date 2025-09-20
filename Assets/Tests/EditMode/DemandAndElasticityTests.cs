@@ -84,7 +84,7 @@ public class DemandAndElasticityTests
                     .WithBehaviourStrategy(testPopulationStrategy)
                     .Build();
 
-        TestMarket = Market.Factory.CreateStarterMarket("Test Market", AgentLevelEnum.Market, TestDemandStrategy);
+        TestMarket = Market.Factory.CreateStarterMarket("Test Market", TestDemandStrategy);
         TestMarket.RegisterMarketParticipant(TestPopulation);
     }
     [TearDown]

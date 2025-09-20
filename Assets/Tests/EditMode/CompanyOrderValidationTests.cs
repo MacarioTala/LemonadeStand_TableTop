@@ -12,10 +12,10 @@ public class CompanyOrderValidationTests
     {
         TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         Lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
-        TestMarket = Market.Factory.CreateMarket("Test Market", AgentLevelEnum.Market)
-            .WithTradeProcessor(new BasicTradeProcessor())
-            .WithTransactionManager(new BasicTransactionManager())
-            .WithDemographicManager(new BasicDemographicManager())
+        TestMarket = Market.Factory.CreateMarket("Test Market")
+            .WithTradeProcessor(new DefaultTradeProcessor())
+            .WithTransactionManager(new DefaultTransactionManager())
+            .WithDemographicManager(new DefaultDemographicManager())
             .WithDemandStrategy(TestDemandStrategy);
     }
 

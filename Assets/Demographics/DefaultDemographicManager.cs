@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BasicDemographicManager : iDemographicManager
+public class DefaultDemographicManager : iDemographicManager,iMarketAware
 {
     Market _market;
     public void SetMarket(Market market)=> _market = market;
