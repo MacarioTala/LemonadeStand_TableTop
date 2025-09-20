@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.YamlDotNet.Core;
 using UnityEngine;
 
 public static class MarketBuilder
@@ -132,8 +134,19 @@ public static class MarketBuilder
     {
         EnsureDefaultMarketEventManager(market);
         EnsureDefaultDemandManager(market);
+        EnsureDefaultDemographicManager(market);
 
         return market;
+    }
+
+    private static void EnsureDefaultDemographicManager(Market market)
+    {
+        if (market.DemographicManager is null)
+        {
+            var manager = new BasicDemographicManager();
+            manager.SetMarket(market);
+            market.SetDemographicManager(manager);
+        }
     }
 
     private static void EnsureDefaultDemandManager(Market market)

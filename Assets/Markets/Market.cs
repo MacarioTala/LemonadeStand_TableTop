@@ -33,6 +33,13 @@ public class Market : ScriptableObject, iEconAgent
         set => _companyName = value;
     }
     public AgentLevelEnum company_level;
+    //Cash and Inventory
+    private decimal cash = 0;
+    private readonly Inventory _inventory = new();
+    private readonly List<Recipe> _recipes = new();
+
+    #endregion
+
     #region Demand
     public List<MarketData> MarketData { get; } = new();//bid/ask spread for companies
 
@@ -57,11 +64,6 @@ public class Market : ScriptableObject, iEconAgent
     public void InitializeDemandForSpecificGood(Good good, int initialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
         => _demandManager.InitializeDemandForSpecificGood(good, initialDemand, minDemand, maxDemand, curvature);
     #endregion
-    
-    //Cash and Inventory
-    private decimal cash = 0;
-    private readonly Inventory _inventory = new();
-    private readonly List<Recipe> _recipes = new();
 
     //Graphics and Market Features
     public List<MarketFeature> MarketFeatures = new();
@@ -97,8 +99,6 @@ public class Market : ScriptableObject, iEconAgent
         return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
     }
 
-    #endregion
-
     #region Demographics
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();
     public LemonadeStandResultObject SetMarketInstability(float newInstability)
@@ -110,19 +110,8 @@ public class Market : ScriptableObject, iEconAgent
     public List<PopulationHistory> GetPopulationHistory() => _demographicManager.GetPopulationHistory(MarketId);
 
     public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationAgent marketParticipant)
-    {
-        var actor = _marketParticipants
-            .OfType<PopulationAgent>()
-            .Where(x => x.Equals(marketParticipant))
-            .FirstOrDefault();
-        if (actor == null)
-        {
-            return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {marketParticipant.Name} not found in Market {Name}");
-        }
-        _demographicManager.SetPopulation(newPopulation, actor);
-        return LemonadeStandResultObject.Success();
-    }
-
+        => _demographicManager.SetPopulation(newPopulation, marketParticipant);
+        
     public float GetPopulationGrowthRate() => _demographicManager.GetPopulationGrowthRate(0, CurrentPeriod);
 
     //Population Happiness
@@ -151,7 +140,7 @@ public class Market : ScriptableObject, iEconAgent
     public iStrategy GetStrategy() => _marketStrategy;
     public void SetStrategy(iStrategy strategy) => _marketStrategy = strategy;
 
-    #region Market Events
+#region Market Events
     public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents() => _marketEventManager.GetActiveMarketEvents();
     public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory()=> _marketEventManager.GetMarketEventHistory();
     public void AddPotentialMarketEvent(iMarketEvent marketEvent) =>
@@ -160,11 +149,9 @@ public class Market : ScriptableObject, iEconAgent
     public void RemovePotentialMarketEvent(iMarketEvent marketEvent) =>
         _marketEventManager.RemovePotentialMarketEvent(marketEvent);
     
-    public void ResolveMarketEvents() => 
-        _marketEventManager.ResolveMarketEvents();
-    public void RollForEvents() =>
-        _marketEventManager.RollForEvents();
-    #endregion
+    public void ResolveMarketEvents() => _marketEventManager.ResolveMarketEvents();
+    public void RollForEvents() =>_marketEventManager.RollForEvents();
+#endregion
     //Pricing  
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy { get; set; }

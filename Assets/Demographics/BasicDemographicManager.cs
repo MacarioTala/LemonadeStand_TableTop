@@ -43,15 +43,16 @@ public class BasicDemographicManager : iDemographicManager
         return _populationEnnui;
     }
 
-    public float GetPopulationGrowthRate(int startingPeriod,int endingPeriod)
+
+    public float GetPopulationGrowthRate(int startingPeriod, int endingPeriod)
     {
         var populationHistory = _populationHistoryHandler
                     .LoadHistorical(
-                                    x => x.Period >= startingPeriod 
+                                    x => x.Period >= startingPeriod
                                     && x.Period <= endingPeriod
                                     );
         throw new NotImplementedException();
-        
+
     }
 
     public float GetPopulationHappiness()
@@ -86,6 +87,15 @@ public class BasicDemographicManager : iDemographicManager
 
     public LemonadeStandResultObject SetPopulation(int newPopulation , PopulationAgent marketParticipant)
     {
+        var actor = _market.GetMarketParticipants()
+            .OfType<PopulationAgent>()
+            .Where(x => x.Equals(marketParticipant))
+            .FirstOrDefault();
+
+        if (actor == null)
+        {
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {marketParticipant.Name} not found in Market {_market.Name}");
+        }
         marketParticipant.Population = newPopulation;
         return LemonadeStandResultObject.Success();
     }
