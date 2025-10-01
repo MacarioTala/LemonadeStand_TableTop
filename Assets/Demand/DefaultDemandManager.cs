@@ -93,4 +93,13 @@ public class DefaultDemandManager : iDemandManager,iMarketAware
         marketBeingManaged.DemandStrategy.InitializeDemandForSpecificGood(marketBeingManaged, good, InitialDemand, minDemand, maxDemand, curvature);
         #pragma warning restore CS0618 // Type or member is obsolete
     }
+
+    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
+    {
+        if (!good.Elasticities.TryGetValue(elasticity, out float elasticityValue))
+        {
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
+        }
+        return LemonadeStandResultObject.Success(extraData: elasticityValue);
+    }
 }

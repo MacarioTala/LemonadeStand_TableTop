@@ -1,0 +1,105 @@
+using System.Linq;
+using UnityEngine;
+
+public class DefaultMarketInteractionManager : iMarketInteractionManager
+{
+    Market _market;
+
+    public void EvaluateParticipantCollapse(EconAgent company)
+    {
+        if (company.IsBankrupt())
+        {
+            TheEconomy.Instance.HandleParticipantCollapse(_market, company);
+        }
+        if (company is PopulationAgent populationCompany)
+        {
+            if (populationCompany.IsMaxEnnui())
+            {
+                TheEconomy.Instance.HandleParticipantCollapse(_market, company);
+            }
+        }
+    }
+
+    public void PopulationsAct(int period)
+    {
+        var marketParticipants = _market.GetMarketParticipants()
+                                .OfType<PopulationAgent>()
+                                .ToList();
+
+        if (marketParticipants.Count() == 0)
+        {
+            Debug.LogWarning($"No local agents found in Market {_market.Name}");
+        }
+        foreach (var participant in marketParticipants)
+        {
+            participant.PerformStrategy(period);
+        }
+    }
+
+    public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    {
+        context.TradeToSubmit.SubmittingCompany = _market;
+        var queueResult = QueueOrder(context);
+        if (!queueResult.Equals(LemonadeStandResultObject.Success()))
+            return queueResult;
+        return LemonadeStandResultObject.Success();
+    }
+
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
+    {
+        var contextValidationResult = context.ContainsValidTrade();
+        if (!contextValidationResult.Equals(LemonadeStandResultObject.Success()))
+            return context.ContainsValidTrade();
+
+        var queueResult = _market.TradeProcessor.QueueOrder(context);
+        if (!queueResult.Equals(LemonadeStandResultObject.Success()))
+            return queueResult;
+        //Record the order
+        _market.LogOrder(context.TradeToSubmit, context.Period);
+
+        return LemonadeStandResultObject.Success();
+    }
+
+    public void RegisterMarketParticipant(EconAgent marketParticipant)
+    {
+        var participants = _market.GetMarketParticipants();
+         if (!participants.Contains(marketParticipant))
+        {
+            participants.Add(marketParticipant);
+            marketParticipant.SetMarket(_market);
+        }
+        else
+        {
+            throw new TheEconomy_CompanyException($"Company {marketParticipant.Name} of type {marketParticipant.GetType()} already in Market {_market.MarketId}");
+        }
+        TheEconomy.Instance.RegisterCompany(marketParticipant);
+    }
+
+    public LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
+    {
+        var participants = _market.GetMarketParticipants();
+        if (participants.Contains(marketParticipant))
+        {
+            participants.Remove(marketParticipant);
+            marketParticipant.LeaveMarket();
+            return LemonadeStandResultObject.Success();
+        }
+        return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {marketParticipant.Name} not found in Market {_market.Name}");
+    }
+
+    public void SetMarket(Market market)
+        =>_market = market;
+
+    public void UpdateCompanyStatuses(int period)
+    {
+        var participantCopyforIteration = _market.GetMarketParticipants().ToList();
+        foreach (var agent in participantCopyforIteration)
+        {
+            //Update Company Statuses
+            agent.ExpireGoods(period);
+            agent.SubtractFixedCostsForPeriod(period);
+            agent.UpdateCurrentPeriod(period + 1);
+            EvaluateParticipantCollapse(agent);
+        }
+    }
+}

@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 224104e7137392f429f97bd89aff48fd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5675096041322555018
+    second: FD_Character_002_Idle_0
+  - first:
+      213: 3518513917849827003
+    second: FD_Character_002_Idle_1
+  - first:
+      213: 1809611644134133969
+    second: FD_Character_002_Idle_2
+  - first:
+      213: 1703996095670215556
+    second: FD_Character_002_Idle_3
+  - first:
+      213: -3075276413088102835
+    second: FD_Character_002_Idle_4
+  - first:
+      213: -171742018225588526
+    second: FD_Character_002_Idle_5
+  - first:
+      213: 5966696229929400055
+    second: FD_Character_002_Idle_6
+  - first:
+      213: -5297904367972012462
+    second: FD_Character_002_Idle_7
+  - first:
+      213: -218935093572343220
+    second: FD_Character_002_Idle_8
+  - first:
+      213: 996589961890724411
+    second: FD_Character_002_Idle_9
+  - first:
+      213: 2329209516174214470
+    second: FD_Character_002_Idle_10
+  - first:
+      213: -2282039729149938960
+    second: FD_Character_002_Idle_11
+  - first:
+      213: 9169754602983551638
+    second: FD_Character_002_Idle_12
+  - first:
+      213: 7996443426849312587
+    second: FD_Character_002_Idle_13
+  - first:
+      213: 7644363238005511120
+    second: FD_Character_002_Idle_14
+  - first:
+      213: 2753267572333845214
+    second: FD_Character_002_Idle_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 71
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a86a14918cdf1ce40800000000000000
+      internalID: 5675096041322555018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 71
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb6f4b234c544d030800000000000000
+      internalID: 3518513917849827003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 71
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d0960ed3380d1910800000000000000
+      internalID: 1809611644134133969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 71
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 483631dbb6fc5a710800000000000000
+      internalID: 1703996095670215556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_4
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 47
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d460fb3556c6255d0800000000000000
+      internalID: -3075276413088102835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_5
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 47
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d6b7aa5b89dd9df0800000000000000
+      internalID: -171742018225588526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_6
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 47
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f6ba93bb96fdc250800000000000000
+      internalID: 5966696229929400055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_7
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 47
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25ea90dfb001a76b0800000000000000
+      internalID: -5297904367972012462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_8
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 23
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4ae0ce31bf26fcf0800000000000000
+      internalID: -218935093572343220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_9
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 23
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3a77394a4994dd00800000000000000
+      internalID: 996589961890724411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_10
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 23
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 645060bd6b3035020800000000000000
+      internalID: 2329209516174214470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_11
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 23
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f270b405f09450e0800000000000000
+      internalID: -2282039729149938960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_12
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 692765c5a33814f70800000000000000
+      internalID: 9169754602983551638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_13
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 0
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4f4cd30ee219fe60800000000000000
+      internalID: 7996443426849312587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_14
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 0
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d39f570ddb361a60800000000000000
+      internalID: 7644363238005511120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Character_002_Idle_15
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 0
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda9f840542953620800000000000000
+      internalID: 2753267572333845214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      FD_Character_002_Idle_0: 5675096041322555018
+      FD_Character_002_Idle_1: 3518513917849827003
+      FD_Character_002_Idle_10: 2329209516174214470
+      FD_Character_002_Idle_11: -2282039729149938960
+      FD_Character_002_Idle_12: 9169754602983551638
+      FD_Character_002_Idle_13: 7996443426849312587
+      FD_Character_002_Idle_14: 7644363238005511120
+      FD_Character_002_Idle_15: 2753267572333845214
+      FD_Character_002_Idle_2: 1809611644134133969
+      FD_Character_002_Idle_3: 1703996095670215556
+      FD_Character_002_Idle_4: -3075276413088102835
+      FD_Character_002_Idle_5: -171742018225588526
+      FD_Character_002_Idle_6: 5966696229929400055
+      FD_Character_002_Idle_7: -5297904367972012462
+      FD_Character_002_Idle_8: -218935093572343220
+      FD_Character_002_Idle_9: 996589961890724411
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

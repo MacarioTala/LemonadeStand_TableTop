@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting.YamlDotNet.Core;
 
-public interface iSupplyProvider
+public interface iSupplyProvider : iMarketAware
 {
     /// <summary>
     ///     Methods for the market to supply goods outside of Companies

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Transactions;
 using UnityEngine;
 [assembly: InternalsVisibleTo("Tests")]
 [CreateAssetMenu(fileName = "Market", menuName = "LemonadeStandAssets/Market", order = 1)]
@@ -54,22 +53,18 @@ public class Market : ScriptableObject, iEconAgent
 
     #region Demand
     public List<MarketData> MarketData { get; } = new();//bid/ask spread for companies
-
+    public Dictionary<Good, DemandData> GetDemandForPeriod()
+        => DemandStrategy.GetDemandInPeriod(this, CurrentPeriod);
     public DemandData GetDemandFor(Good good) => _demandManager.GetDemandFor(good);
-    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket() => _demandManager.GetBidAskSpreadsFromMarket();
+    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket()
+        => _demandManager.GetBidAskSpreadsFromMarket();
+    public decimal GetPerceivedCostOfGood(Good good) 
+        => _demandManager.GetPerceivedCostOfGood(good);
+    internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1)
+        => _demandManager.UpdateFulfillmentRates(tradingPeriod);
 
-    public decimal GetPerceivedCostOfGood(Good good) => _demandManager.GetPerceivedCostOfGood(good);
-    internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1) => _demandManager.UpdateFulfillmentRates(tradingPeriod);
-
-    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
-    {
-        if (!good.Elasticities.TryGetValue(elasticity, out float elasticityValue))
-        {
-            return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
-        }
-
-        return LemonadeStandResultObject.Success(extraData: elasticityValue);
-    }
+    public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticityType)
+        => _demandManager.GetEffectiveElasticityForGood(good, elasticityType);
     public int GetMarketDemandForGood(string goodName) => _demandManager.GetMarketDemandForGood(goodName);
     public void SetMarketDemandForGood(Good good, DemandData demandData) => _demandManager.SetMarketDemandForGood(good, demandData);
 
@@ -80,28 +75,9 @@ public class Market : ScriptableObject, iEconAgent
     private readonly List<EconAgent> _marketParticipants = new();
     public List<EconAgent> GetMarketParticipants() => _marketParticipants;
     public void RegisterMarketParticipant(EconAgent marketParticipant)
-    {
-        if (!_marketParticipants.Contains(marketParticipant))
-        {
-            _marketParticipants.Add(marketParticipant);
-            marketParticipant.SetMarket(this);
-        }
-        else
-        {
-            throw new TheEconomy_CompanyException($"Company {marketParticipant.Name} of type {marketParticipant.GetType()} already in Market {MarketId}");
-        }
-        TheEconomy.Instance.RegisterCompany(marketParticipant);
-    }
-    public LemonadeStandResultObject RemoveMarketParticipant(EconAgent company)
-    {
-        if (_marketParticipants.Contains(company))
-        {
-            _marketParticipants.Remove(company);
-            company.LeaveMarket();
-            return LemonadeStandResultObject.Success();
-        }
-        return LemonadeStandResultObject.Failure(ResultTypeEnum.CompanyNotFound, $"Company {company.Name} not found in Market {Name}");
-    }
+        => _marketInteractionManager.RegisterMarketParticipant(marketParticipant);
+    public LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
+        => _marketInteractionManager.RemoveMarketParticipant(marketParticipant);
 
     #region Demographics
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();
@@ -160,6 +136,7 @@ public class Market : ScriptableObject, iEconAgent
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy { get; set; }
     private readonly List<iPriceModifier> _priceModifiers = new();
+    public List<iPriceModifier> PriceModifiers { get => _priceModifiers; }
     public void AddPriceModifier(iPriceModifier priceModifier)
     {
         if (!_priceModifiers.Contains(priceModifier))
@@ -251,6 +228,7 @@ public class Market : ScriptableObject, iEconAgent
     }
 
     #endregion
+
     #region Managers
     private void SetAndWire<T>(ref T managerFieldToSet, T newValue) where T : class
     {
@@ -268,10 +246,14 @@ public class Market : ScriptableObject, iEconAgent
     public iMarketDataManager MarketDataManager{ get=>_marketDataManager; }
     private iMarketDataManager _marketDataManager;
     public void SetMarketDataManager(iMarketDataManager marketDataManager) => SetAndWire(ref _marketDataManager,marketDataManager);
+    private iMarketInteractionManager _marketInteractionManager;
+    public iMarketInteractionManager MarketInteractionManager{ get => _marketInteractionManager; }
+    public void SetMarketInteractionManager(iMarketInteractionManager manager) => SetAndWire(ref _marketInteractionManager, manager);
     private iPriceManager _priceManager;
     public iPriceManager PriceManager{ get=>_priceManager; }
     public void SetPriceManager(iPriceManager priceManager) => SetAndWire(ref _priceManager ,priceManager);
     private iSupplyProvider _supplyProvider;
+    public iSupplyProvider SupplyProvider { get => _supplyProvider; }
     public void SetSupplyProvider(iSupplyProvider supplyProvider) => SetAndWire(ref _supplyProvider, supplyProvider);
     private iTradeProcessor _tradeProcessor;
     public iTradeProcessor TradeProcessor{ get => _tradeProcessor; }
@@ -288,66 +270,21 @@ public class Market : ScriptableObject, iEconAgent
     private iDemandManager _demandManager;
     public iDemandManager DemandManager{ get => _demandManager; }
     public void SetDemandManager(iDemandManager manager) => SetAndWire(ref _demandManager ,manager);
-
     #endregion
+
     #region Company Interactions
-    public void EvaluateParticipantCollapse(EconAgent company)
-    {
-        if (company.IsBankrupt())
-        {
-            TheEconomy.Instance.HandleParticipantCollapse(this, company);
-        }
-        if (company is PopulationAgent populationCompany)
-        {
-            if (populationCompany.IsMaxEnnui())
-            {
-                TheEconomy.Instance.HandleParticipantCollapse(this, company);
-            }
-        }
-    }
     public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
-    {
-        return _transactionManager.ProcessMarketTransaction(context);
-    }
-    public List<Order> ProcessCompanyOrders()
-    {
-        var CompanyOrdersExecuted = _tradeProcessor.ProcessCompanyOrders();
-        return CompanyOrdersExecuted;
-    }
+        => _transactionManager.ProcessMarketTransaction(context);
+    public List<Order> ProcessCompanyOrders() => _tradeProcessor.ProcessCompanyOrders();
     public LemonadeStandResultObject QueueOrder(ActionContext context)
-    {
-        var contextValidationResult = context.ContainsValidTrade();
-        if (!contextValidationResult.Equals(LemonadeStandResultObject.Success()))
-            return context.ContainsValidTrade();
-
-        var queueResult = _tradeProcessor.QueueOrder(context);
-        if (!queueResult.Equals(LemonadeStandResultObject.Success()))
-            return queueResult;
-        //Record the order
-        LogOrder(context.TradeToSubmit, context.Period);
-
-        return LemonadeStandResultObject.Success();
-    }
-
+        => _marketInteractionManager.QueueOrder(context);
+    public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+        => _marketInteractionManager.QueueMarketOrder(context);
     internal void UpdateCompanyStatuses(int period)
-    {
-        var participantCopyforIteration = _marketParticipants.ToList();
-        foreach (var company in participantCopyforIteration)
-        {
-            //Update Company Statuses
-            company.ExpireGoods(period);
-            company.SubtractFixedCostsForPeriod(period);
-            company.UpdateCurrentPeriod(period + 1);
-            EvaluateParticipantCollapse(company);
-        }
-    }
+        => _marketInteractionManager.UpdateCompanyStatuses(period);
     #endregion
-    #region Consumption and Demand
 
-    public Dictionary<Good, DemandData> GetDemandForPeriod()
-    {
-        return DemandStrategy.GetDemandInPeriod(this, CurrentPeriod);
-    }
+    #region Consumption and Demand
     internal void ConsumeGoods()
     {
         foreach (var participant in _marketParticipants.OfType<PopulationAgent>())
@@ -361,7 +298,7 @@ public class Market : ScriptableObject, iEconAgent
             company.GetInventory().ExpireGoods(period);
     }
     #endregion
-    #region Fixed costs
+    #region Fixed costs 
     public decimal CalculateFixedCostsForPeriod(int period)
     {
         if (FixedCostStrategy is not null)
@@ -373,17 +310,6 @@ public class Market : ScriptableObject, iEconAgent
             Debug.Log("Fixed Cost Strategy not set");
             return 0;
         }
-    }
-    #endregion
-    #region Goals and strategies
-    public void CompleteGoal(Goal goal)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void CheckCompanyGoals()
-    {
-        throw new NotImplementedException();
     }
     #endregion
     #region History
@@ -411,19 +337,14 @@ public class Market : ScriptableObject, iEconAgent
     #endregion
     #region Time 
     public void UpdateCurrentPeriod(int period)
-    {
-        CurrentPeriod = period;
-    }
+        => CurrentPeriod = period;
+    
     #endregion
     #region Buy and sell 
     public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
-    {
-        return DemandStrategy.GetTotalBoughtByPopulation(this, good, tradingPeriod);
-    }
+        => DemandStrategy.GetTotalBoughtByPopulation(this, good, tradingPeriod);
     public int GetTotalSoldByMarket(int tradingPeriod, Good good) //currently public for testing purposes
-    {
-        return DemandStrategy.GetTotalSoldByMarket(this, tradingPeriod, good);
-    }
+        => DemandStrategy.GetTotalSoldByMarket(this, tradingPeriod, good);
     #endregion
     /// <summary>
     /// A Market order is an order initiated by the Market
@@ -432,58 +353,32 @@ public class Market : ScriptableObject, iEconAgent
     /// etc.
     /// </summary>
     /// <param name="context"></param>
-    public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
-    {
-        context.TradeToSubmit.SubmittingCompany = this;
-        var queueResult = QueueOrder(context);
-        if (!queueResult.Equals(LemonadeStandResultObject.Success()))
-            return queueResult;
-        return LemonadeStandResultObject.Success();
-    }
+    
     #region Pricing
     internal void UpdatePrices()
-    {
-        _priceManager.UpdatePricesForMarket();
-    }
+        => _priceManager.UpdatePricesForMarket();
     public void CalculateNewBidAskSpreadForMarket()
-    {
-        //remember to call CalculateNewBidAskSpreadForMarket 
-        //as part of TheEconomy.Instance.ExecuteDailyTrades.
-        //eventually
-        _priceManager.CalculateNewBidAskSpreadForMarket();
-    }
+        // Originally, markets acted monolithically, but now various populations
+        // can set their own bid/ask spreads. Is this still needed?
+        // #RefactorCandidate
+        =>_priceManager.CalculateNewBidAskSpreadForMarket();
     public decimal GetMarketCostForGood(Market market, Good good)
-    {
-        return _priceManager.GetMarketCostForGood(good);
-    }
+        => _priceManager.GetMarketCostForGood(good);
+
     public Dictionary<Good, decimal> GetAverageMarketPrices()
-    {
-        var averagePrices = MarketData
-                            .GroupBy(x => x.Good)
-                            .ToDictionary(
-                                group => group.Key,
-                                group => group.Average(x => x.Ask)
-                            );
-        return averagePrices;
-    }
+        => _priceManager.GetAverageMarketPrices();
     #endregion
+
     #region Publishing
     public List<MarketData> PublishMarketData()
-    {
-        return _marketDataManager.PublishMarketData();
-    }
-
+        => _marketDataManager.PublishMarketData();
     public void PublishSpreadToMarket(ActionContext context)
-    {
-        _marketDataManager.PublishSpreadToMarket(context);
-    }
+        => _marketDataManager.PublishSpreadToMarket(context);
     #endregion
+
     #region Supply
     public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
-    {
-        return _supplyProvider.GetSupplyInPeriod(period);
-    }
-
+        => _supplyProvider.GetSupplyInPeriod(period);
     #endregion
 
     #region Interacting with the Economy
@@ -494,7 +389,7 @@ public class Market : ScriptableObject, iEconAgent
         RollForEvents();
         ResolveMarketEvents();
         //Local Agents
-        LocalAgentsAct(CurrentPeriod);
+        _marketInteractionManager.PopulationsAct(CurrentPeriod);
     }
 
     public void UnleashMarketForces(int period)
@@ -507,28 +402,10 @@ public class Market : ScriptableObject, iEconAgent
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
     }
-
-    private void LocalAgentsAct(int period)
-    {
-        var marketParticipants = _marketParticipants
-                                .OfType<PopulationAgent>()
-                                .ToList();
-
-        if (marketParticipants.Count() == 0)
-        {
-            Debug.LogWarning($"No local agents found in Market {Name}");
-        }
-        foreach (var participant in marketParticipants)
-        {
-            participant.PerformStrategy(period);
-        }
-    }
     #endregion
     #region Overrides
     public override string ToString()
-    {
-        return Name;
-    }
+        => Name;
     public override bool Equals(object obj)
     {
         if (obj is Market market)
@@ -538,21 +415,18 @@ public class Market : ScriptableObject, iEconAgent
         return false;
     }
     public override int GetHashCode()
-    {
-        return Name.GetHashCode();
-    }
+        => Name.GetHashCode();
     #endregion
     #region NotImplementeds
     /// Here lie notImplementeds that serve as arguments
     /// For markets not to be iCompanies
-
+    public void CompleteGoal(Goal goal)
+        => throw new NotImplementedException();
+    public void CheckCompanyGoals()
+        => throw new NotImplementedException();
     public decimal GetAggressionLevel()
-    {
-        throw new NotImplementedException();
-    }
+        =>throw new NotImplementedException();
     public void SetAggressionLevel(decimal aggressionLevel)
-    {
-        throw new NotImplementedException();
-    }
+        => throw new NotImplementedException();
     #endregion
 }

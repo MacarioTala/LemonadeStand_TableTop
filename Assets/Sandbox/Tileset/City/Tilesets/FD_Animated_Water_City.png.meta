@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 7e0d7aaf422192941a14fd03085ce6fb
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7271817383912879774
+    second: FD_Animated_Water_City_0
+  - first:
+      213: 1762995645048364755
+    second: FD_Animated_Water_City_1
+  - first:
+      213: 6876400468208808437
+    second: FD_Animated_Water_City_2
+  - first:
+      213: 1634111652482144819
+    second: FD_Animated_Water_City_3
+  - first:
+      213: -4399825938801904241
+    second: FD_Animated_Water_City_4
+  - first:
+      213: 6562964442794762800
+    second: FD_Animated_Water_City_5
+  - first:
+      213: 1883199538439278378
+    second: FD_Animated_Water_City_6
+  - first:
+      213: -5145855465954500775
+    second: FD_Animated_Water_City_7
+  - first:
+      213: -3321736820710929798
+    second: FD_Animated_Water_City_8
+  - first:
+      213: -4851844280167134547
+    second: FD_Animated_Water_City_9
+  - first:
+      213: -2884916610270002092
+    second: FD_Animated_Water_City_10
+  - first:
+      213: 340887941404883879
+    second: FD_Animated_Water_City_11
+  - first:
+      213: -5026285850424979416
+    second: FD_Animated_Water_City_12
+  - first:
+      213: 5948106540547984783
+    second: FD_Animated_Water_City_13
+  - first:
+      213: 9048502281339582822
+    second: FD_Animated_Water_City_14
+  - first:
+      213: -5923408702563537384
+    second: FD_Animated_Water_City_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 287
+        width: 49
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 269cc58fd90551b90800000000000000
+      internalID: -7271817383912879774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_1
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 287
+        width: 50
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3de1babc23b677810800000000000000
+      internalID: 1762995645048364755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_2
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 287
+        width: 50
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f17ae80bc1ed6f50800000000000000
+      internalID: 6876400468208808437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_3
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 287
+        width: 49
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33a5689d3e78da610800000000000000
+      internalID: 1634111652482144819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 191
+        width: 49
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f85b924be9da0f2c0800000000000000
+      internalID: -4399825938801904241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_5
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 191
+        width: 50
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0322d4e7365541b50800000000000000
+      internalID: 6562964442794762800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_6
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 191
+        width: 50
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2f4ad9a008722a10800000000000000
+      internalID: 1883199538439278378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_7
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 191
+        width: 49
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95f9746b7bf3698b0800000000000000
+      internalID: -5145855465954500775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 95
+        width: 49
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7a803cf5f1d6e1d0800000000000000
+      internalID: -3321736820710929798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_9
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 95
+        width: 50
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daa80275559caacb0800000000000000
+      internalID: -4851844280167134547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_10
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 95
+        width: 50
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4548b3eb0a7b6f7d0800000000000000
+      internalID: -2884916610270002092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_11
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 95
+        width: 49
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7abf6afc6c31bb400800000000000000
+      internalID: 340887941404883879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 49
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 820d8d146ab0f3ab0800000000000000
+      internalID: -5026285850424979416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_13
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 0
+        width: 50
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8d4a8b526beb8250800000000000000
+      internalID: 5948106540547984783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_14
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 0
+        width: 50
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 669be8442ecb29d70800000000000000
+      internalID: 9048502281339582822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FD_Animated_Water_City_15
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 0
+        width: 49
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81e2e382b23dbcda0800000000000000
+      internalID: -5923408702563537384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      FD_Animated_Water_City_0: -7271817383912879774
+      FD_Animated_Water_City_1: 1762995645048364755
+      FD_Animated_Water_City_10: -2884916610270002092
+      FD_Animated_Water_City_11: 340887941404883879
+      FD_Animated_Water_City_12: -5026285850424979416
+      FD_Animated_Water_City_13: 5948106540547984783
+      FD_Animated_Water_City_14: 9048502281339582822
+      FD_Animated_Water_City_15: -5923408702563537384
+      FD_Animated_Water_City_2: 6876400468208808437
+      FD_Animated_Water_City_3: 1634111652482144819
+      FD_Animated_Water_City_4: -4399825938801904241
+      FD_Animated_Water_City_5: 6562964442794762800
+      FD_Animated_Water_City_6: 1883199538439278378
+      FD_Animated_Water_City_7: -5145855465954500775
+      FD_Animated_Water_City_8: -3321736820710929798
+      FD_Animated_Water_City_9: -4851844280167134547
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

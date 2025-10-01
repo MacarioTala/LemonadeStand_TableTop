@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
@@ -53,4 +54,15 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
         }
 
     public void SetMarket(Market market)=>_market = market;
+
+    public Dictionary<Good, decimal> GetAverageMarketPrices()
+    {
+         var averagePrices = _market.MarketData
+                            .GroupBy(x => x.Good)
+                            .ToDictionary(
+                                group => group.Key,
+                                group => group.Average(x => x.Ask)
+                            );
+        return averagePrices;
+    }
 }

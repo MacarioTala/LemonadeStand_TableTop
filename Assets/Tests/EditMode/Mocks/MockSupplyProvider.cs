@@ -23,4 +23,9 @@ public class MockSupplyProvider : iSupplyProvider
     {
         throw new System.NotImplementedException();
     }
+
+    public void SetMarket(Market market)
+    {
+        _market = market;
+    }
 }
