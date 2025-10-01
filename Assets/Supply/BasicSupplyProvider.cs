@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BasicSupplyProvider : iSupplyProvider
+public class DefaultSupplyProvider : iSupplyProvider
 {
     Market _market;
     public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
@@ -24,6 +23,11 @@ public class BasicSupplyProvider : iSupplyProvider
     }
 
     public void Initialize(Market market)
+    {
+        _market = market;
+    }
+
+    public void SetMarket(Market market)
     {
         _market = market;
     }

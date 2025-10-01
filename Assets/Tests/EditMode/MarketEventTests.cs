@@ -38,7 +38,7 @@ public class MarketEventTests
         TestEconomy = TheEconomy.Instance;
 
         Strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        TestSupplyProvider = new BasicSupplyProvider();
+        TestSupplyProvider = new DefaultSupplyProvider();
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new DefaultDemographicManager();
         TestDemographicManager.SetPopulationHistoryHandler(new MockPopulationHistoryDataHandler());

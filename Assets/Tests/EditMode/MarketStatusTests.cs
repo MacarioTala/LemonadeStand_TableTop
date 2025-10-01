@@ -30,7 +30,7 @@ public class MarketStatusTests
             .WithTradeProcessor(new DefaultTradeProcessor())
             .WithTransactionManager(new DefaultTransactionManager())
             .WithPriceManager(new DefaultPriceManager())
-            .WithSupplyProvider(new BasicSupplyProvider())
+            .WithSupplyProvider(new DefaultSupplyProvider())
             .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
             .WithDemographicManager(new DefaultDemographicManager());
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);

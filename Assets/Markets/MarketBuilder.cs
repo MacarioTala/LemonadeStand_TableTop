@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -153,8 +154,15 @@ public static class MarketBuilder
         EnsureAtLeastOnePriceModifier(market);
         EnsureDefaultMarketLevel(market);
         EnsureDefaultMarketInteractionManager(market);
+        EnsureDefaultSupplyProvider(market);
 
         return market;
+    }
+
+    private static void EnsureDefaultSupplyProvider(Market market)
+    {
+        if (market.SupplyProvider is null)
+            market.SetSupplyProvider(new DefaultSupplyProvider());
     }
 
     private static void EnsureDefaultMarketInteractionManager(Market market)

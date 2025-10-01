@@ -23,7 +23,7 @@ public class SupplyAndDemandTests
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
     readonly iDemographicManager TestDemographicManager = new MockDemographicManager();
-    readonly iSupplyProvider TestSupplyProvider = new BasicSupplyProvider();
+    readonly iSupplyProvider TestSupplyProvider = new DefaultSupplyProvider();
 
     TheEconomy TestEconomy;
 

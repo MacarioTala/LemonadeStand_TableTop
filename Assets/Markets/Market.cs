@@ -253,6 +253,7 @@ public class Market : ScriptableObject, iEconAgent
     public iPriceManager PriceManager{ get=>_priceManager; }
     public void SetPriceManager(iPriceManager priceManager) => SetAndWire(ref _priceManager ,priceManager);
     private iSupplyProvider _supplyProvider;
+    public iSupplyProvider SupplyProvider { get => _supplyProvider; }
     public void SetSupplyProvider(iSupplyProvider supplyProvider) => SetAndWire(ref _supplyProvider, supplyProvider);
     private iTradeProcessor _tradeProcessor;
     public iTradeProcessor TradeProcessor{ get => _tradeProcessor; }
