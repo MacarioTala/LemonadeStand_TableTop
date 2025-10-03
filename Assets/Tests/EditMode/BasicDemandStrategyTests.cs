@@ -49,8 +49,7 @@ public class BasicDemandStrategyTests
 
         TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy)
-            .WithTradeProcessor(new DefaultTradeProcessor())
-            .WithTransactionManager(new DefaultTransactionManager())
+            .EnsureDefaults()
             .WithDemographicManager(new MockDemographicManager());
         
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);

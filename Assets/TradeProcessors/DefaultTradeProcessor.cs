@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 
 public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
 {
@@ -7,13 +8,13 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
      private List<iOrderPrioritizer> _orderPrioritizers = new();
      private readonly List<Order> _tradesSentToTheMarket = new();
 
-     private readonly iTransactionManager _transactionManager;
+     private iTransactionManager _transactionManager;
 
 
-    public DefaultTradeProcessor()
+    public DefaultTradeProcessor(iTransactionManager manager=null)
     {   
         _orderPrioritizers.Add(new LessaizfairePrioritizer());
-        _transactionManager = new DefaultTransactionManager();
+        _transactionManager = manager;
     }
     public List<Order> GetOrders()=>_tradesSentToTheMarket;
     public List<Order> GetOrderResults(ActionContext context)
@@ -198,5 +199,6 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
     public void SetMarket(Market market)
     {
         _market = market;
+        if (market.TransactionManager is not null) _transactionManager = market.TransactionManager;
     }
 }

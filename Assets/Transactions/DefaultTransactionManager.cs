@@ -150,6 +150,21 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
                                                     ,period      : period
                                                 );
         counterPartyOrder.AddExecution(counterPartyExecution);
+        //raise event
+         _market.RaiseOrderFulfilledEvent(
+            new OrderFulfilledEvent
+            {
+                Good = primaryOrder.Good,
+                FulfilledQuantity = primaryOrder.FilledQuantity,
+                OriginalQuantity = primaryOrder.Quantity,
+                FillPrice = primaryOrder.Price,
+                OrderMarket = _market,
+                Period = _market.CurrentPeriod,
+                PrimaryOrder = primaryOrder,
+                CounterPartyOrders = new List<Order>{counterPartyOrder}
+            }
+        );
+
         return LemonadeStandResultObject.Success();
     }
 

@@ -28,8 +28,8 @@ public class BasicTransactionManagerTests
 
         TestMarket = Market.Factory.CreateMarket("Test Market")
             .WithDemandStrategy(TestDemandStrategy)
-            .WithTradeProcessor(new DefaultTradeProcessor())
             .WithTransactionManager(new DefaultTransactionManager())
+            .WithTradeProcessor(new DefaultTradeProcessor())
             .WithDemographicManager(new DefaultDemographicManager())
             .WithCash(10000);
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
@@ -168,7 +168,7 @@ public class BasicTransactionManagerTests
             SubmittingCompany = Company2
         };
         var expected = LemonadeStandResultObject.Success();
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         //Act
         var actual = transactionManager.ProcessTransactionPair(order, counterPartyOrder, Period);
         //Assert
@@ -190,7 +190,7 @@ public class BasicTransactionManagerTests
         {
             SubmittingCompany = Company2
         };
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         var expectedBuyerCash = 999m;
         var expectedSellerCash = 1m;
         var expectedBuyerLemonQuantity = 1;
@@ -227,7 +227,7 @@ public class BasicTransactionManagerTests
         {
             SubmittingCompany = Company2
         };
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         var expectedBuyerCash = 999m;
         var expectedSellerCash = 1m;
         var expectedBuyerLemonQuantity = 1;
@@ -258,7 +258,7 @@ public class BasicTransactionManagerTests
     public void ProcessTransactionRecordsTwoCounterPartiesWhenTwoCounterPartiesArePresent()
     {
         //Arrange
-        var basicTransactionManager = new DefaultTransactionManager();
+        var basicTransactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
         
         Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
