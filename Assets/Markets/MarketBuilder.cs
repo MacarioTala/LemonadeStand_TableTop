@@ -148,8 +148,8 @@ public static class MarketBuilder
         EnsureDefaultDemographicManager(market);
         EnsureDefaulMarketDataManager(market);
         EnsureDefaultPriceManager(market);
+        EnsureDefaultTransactionManager(market); // Note: Transaction Manager always set before Trade processor. 
         EnsureDefaultTradeProcessor(market);
-        EnsureDefaultTransactionManager(market);
         EnsureDefaultDemandStrategy(market);
         EnsureAtLeastOnePriceModifier(market);
         EnsureDefaultMarketLevel(market);

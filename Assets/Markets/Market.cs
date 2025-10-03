@@ -260,7 +260,7 @@ public class Market : ScriptableObject, iEconAgent
     public void SetTradeProcessor(iTradeProcessor tradeProcessor) => SetAndWire(ref _tradeProcessor, tradeProcessor);
     private iTransactionManager _transactionManager;
     public iTransactionManager TransactionManager { get => _transactionManager; }
-    public void SetTransactionManager(iTransactionManager transactionManager) => _transactionManager = transactionManager;
+    public void SetTransactionManager(iTransactionManager transactionManager) => SetAndWire(ref _transactionManager,transactionManager);
     private iMarketDataService _marketDataService;
     public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
     [SerializeField] private ScriptableObject _demandStrategy;
