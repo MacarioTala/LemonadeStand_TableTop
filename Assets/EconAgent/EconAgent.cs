@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 {
@@ -13,12 +12,6 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         set => _company_name = value;
     }
     public AgentLevelEnum companyLevel;
-
-    private float _anxiety = 100;
-    public float GetAnxiety() => _anxiety;
-    public void SetAnxiety(float value) => _anxiety = value;
-    public bool IsBankrupt() => cash <= 0;
-
     public bool IsPlayer { get; set; } = false;
     private Market marketCompanyIsIn;
     public Market GetMarket() => marketCompanyIsIn;
@@ -103,7 +96,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         ResetActions();
     }
     #endregion
-    #region Perception
+#region Perception
     public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
     {
         var minimumBid = GetMarketIgnorantAssumedCOG();
@@ -114,7 +107,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         return perceivedCost;
     }
     #endregion
-    #region Demand
+#region Demand
     private decimal marketIgnorantAssumedCOG;
     public decimal GetMarketIgnorantAssumedCOG() => marketIgnorantAssumedCOG;
     public void SetMarketIgnorantAssumedCOG(decimal value) => marketIgnorantAssumedCOG = value;
@@ -137,11 +130,17 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         _demand[good] = demandData;
     }
 
-   
-    #endregion
 
-    #region Financials
+    #endregion
+#region Demographics
+    private float _anxiety = 100;
+    public float GetAnxiety() => _anxiety;
+    public void SetAnxiety(float value) => _anxiety = value;
+    readonly public DemographicPropertyBag Demographics = new();
+#endregion
+#region Financials
     private decimal cash = 0;
+    public bool IsBankrupt() => cash <= 0;
     private decimal minimumBid;
     public void SetMinimumBid(decimal minBid) => minimumBid = minBid;
     public decimal GetMinimumBid() => minimumBid;
