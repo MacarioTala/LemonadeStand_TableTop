@@ -48,7 +48,7 @@ public class IntegrationTests
             .WithPriceManager(new DefaultPriceManager())
             .WithTransactionManager(new DefaultTransactionManager());
         
-        TheEconomy.Instance.RegisterCompany(TestMarket);
+        TheEconomy.Instance.RegisterEconomicAgent(TestMarket);
 
         testFixedCostStrategy = new BasicFixedCostStrategy();
         testStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
@@ -325,7 +325,7 @@ public class IntegrationTests
             .WithTradeProcessor(new DefaultTradeProcessor())
             .WithPriceManager(new DefaultPriceManager());
 
-        TheEconomy.Instance.RegisterCompany(SecondMarket);
+        TheEconomy.Instance.RegisterEconomicAgent(SecondMarket);
         TestMarket.SetCash(1000000);
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
         Company2.SetCash(1000000);
@@ -340,7 +340,7 @@ public class IntegrationTests
         // Act
         TestEconomy.EndTradingPeriod();
         var actualTradeCount = TestEconomy.GetAllTransactions(0).Sum(x=> x.Value.Count());
-        var actualMarketCount = TheEconomy.Instance.companies.Where(c=>c is Market).Count();
+        var actualMarketCount = TheEconomy.Instance.EconomicAgents.Where(c=>c is Market).Count();
 
         // Assert
         Assert.AreEqual(expectedTradeCount, actualTradeCount,$"Expected {expectedTradeCount} trades, got {actualTradeCount}");

@@ -72,7 +72,7 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
         {
             throw new TheEconomy_CompanyException($"Company {marketParticipant.Name} of type {marketParticipant.GetType()} already in Market {_market.MarketId}");
         }
-        TheEconomy.Instance.RegisterCompany(marketParticipant);
+        TheEconomy.Instance.RegisterEconomicAgent(marketParticipant);
     }
 
     public LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)

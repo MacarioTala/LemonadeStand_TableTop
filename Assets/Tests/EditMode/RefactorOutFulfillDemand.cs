@@ -157,7 +157,7 @@ public class RefactorOutFulfillDemand
         // Arrange
         TestMarket.RegisterMarketParticipant(TestPopulation);
         TestMarket.RegisterMarketParticipant(TestCompany1);
-        TestEconomy.RegisterCompany(TestMarket);
+        TestEconomy.RegisterEconomicAgent(TestMarket);
 
         const int lemonadeQuantity = 100;
         const decimal lemonadePrice = 1m;

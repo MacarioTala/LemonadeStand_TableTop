@@ -33,7 +33,7 @@ public class BankruptcyTests
                             .EnsureDefaults();
 
         TestSupplyProvider.Initialize(TestMarket);
-        testEconomy.RegisterCompany(TestMarket);
+        testEconomy.RegisterEconomicAgent(TestMarket);
 
         //Set Demographics
         var populationHistory = new List<PopulationHistory>() 

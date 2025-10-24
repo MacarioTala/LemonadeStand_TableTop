@@ -69,7 +69,7 @@ public class GameOfLifeTest
         for (int i = 0; i < numberOfCompanies; i++)
         {
             var company = EconAgent.Factory.Create("Company" + i, AgentLevelEnum.Beginner);
-            TheEconomy.Instance.RegisterCompany(company);
+            TheEconomy.Instance.RegisterEconomicAgent(company);
             Companies.Add(company);
         }
         foreach (var company in Companies)

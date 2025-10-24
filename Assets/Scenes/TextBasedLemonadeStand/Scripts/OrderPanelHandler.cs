@@ -123,9 +123,9 @@ public class OrderPanelHandler : MonoBehaviour
 
     private Market GetMarket()
     {
-       if(TheEconomy.Instance.companies.OfType<Market>().Count() == 1)
+       if(TheEconomy.Instance.EconomicAgents.OfType<Market>().Count() == 1)
        {
-           return TheEconomy.Instance.companies.OfType<Market>().First();
+           return TheEconomy.Instance.EconomicAgents.OfType<Market>().First();
        }
        else
        {
@@ -137,7 +137,7 @@ public class OrderPanelHandler : MonoBehaviour
 
     public void InitializePlayer()
     {
-        var companies = TheEconomy.Instance.companies;
+        var companies = TheEconomy.Instance.EconomicAgents;
         var playerCompanies = companies.OfType<EconAgent>().Where(c => c.IsPlayer);
         if (playerCompanies.Count() == 1)
         {

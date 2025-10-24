@@ -41,7 +41,7 @@ namespace Sandbox
             for (int i = 0; i < numberOfCompanies; i++)
             {
                 var company = EconAgent.Factory.Create("Company" + i, AgentLevelEnum.Beginner);
-                economy.RegisterCompany(company);
+                economy.RegisterEconomicAgent(company);
                 // Associate company with the market
                 company.SetMarket(lemonadeMarket);
                 

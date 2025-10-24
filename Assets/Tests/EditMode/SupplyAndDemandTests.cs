@@ -81,7 +81,7 @@ public class SupplyAndDemandTests
                                                 .WithSupplyProvider(TestSupplyProvider)
                                                 .WithPriceManager(new DefaultPriceManager())
                                                 .WithPriceModifier(new SupplyDemandModifier());
-        TestEconomy.RegisterCompany(TestMarket);
+        TestEconomy.RegisterEconomicAgent(TestMarket);
         TestSupplyProvider.Initialize(TestMarket);
 
         //Create population dependencies

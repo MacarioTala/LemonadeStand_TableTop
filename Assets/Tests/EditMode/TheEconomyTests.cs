@@ -79,10 +79,10 @@ public class TheEconomyTests
         // Arrange
         var company = ScriptableObject.CreateInstance<EconAgent>();
         company.Name = "Test Company";
-        var expected = testEconomy.companies.Count + 1;
+        var expected = testEconomy.EconomicAgents.Count + 1;
         // Act
-        testEconomy.RegisterCompany(company);
-        var actual = testEconomy.companies.Count;
+        testEconomy.RegisterEconomicAgent(company);
+        var actual = testEconomy.EconomicAgents.Count;
         
         // Assert
         Assert.AreEqual(expected, actual);
@@ -93,13 +93,13 @@ public class TheEconomyTests
         // Arrange
         var company = ScriptableObject.CreateInstance<EconAgent>();
         company.Name = "Test Company";
-        testEconomy.RegisterCompany(company);
+        testEconomy.RegisterEconomicAgent(company);
         var company2 = ScriptableObject.CreateInstance<EconAgent>();
         company2.Name = "Test Company";
-        testEconomy.RegisterCompany(company2);
+        testEconomy.RegisterEconomicAgent(company2);
         var expected = 1;
         // Act
-        var actual=testEconomy.companies.Where(x=>x is not Market).Count();
+        var actual=testEconomy.EconomicAgents.Where(x=>x is not Market).Count();
         // Assert
         Assert.AreEqual(expected, actual);
     }
