@@ -18,7 +18,7 @@ public class RecordingDemographicHistoryTests
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
     iDemographicManager TestDemographicManager;
     iDataHandler<PopulationHistory> TestPopulationHistoryDataHandler;
-    readonly iSupplyProvider TestSupplyProvider = new MockSupplyProvider();
+    readonly iSupplyHelper TestSupplyProvider = new MockSupplyProvider();
 
     [SetUp]
     public void Setup()

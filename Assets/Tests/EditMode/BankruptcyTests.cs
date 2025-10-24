@@ -13,7 +13,7 @@ public class BankruptcyTests
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly iMarketDataService TestMarketDataService = new MockMarketDataService();
     readonly iDemographicManager TestDemographicManager = new MockDemographicManager();
-    readonly iSupplyProvider TestSupplyProvider = new MockSupplyProvider();
+    readonly iSupplyHelper TestSupplyProvider = new MockSupplyProvider();
 
     [SetUp]
     public void Setup()

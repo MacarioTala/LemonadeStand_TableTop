@@ -20,7 +20,7 @@ public class MarketEventTests
 
     iDemographicManager TestDemographicManager;
 
-    iSupplyProvider TestSupplyProvider;
+    iSupplyHelper TestSupplyProvider;
 
     int Period;
 
@@ -38,7 +38,7 @@ public class MarketEventTests
         TestEconomy = TheEconomy.Instance;
 
         Strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        TestSupplyProvider = new DefaultSupplyProvider();
+        TestSupplyProvider = new DefaultSupplyHelper();
         TestMarketDataService = new MockMarketDataService();
         TestDemographicManager = new DefaultDemographicManager();
         TestDemographicManager.SetPopulationHistoryHandler(new MockPopulationHistoryDataHandler());

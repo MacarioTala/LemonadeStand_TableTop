@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class DefaultSupplyProvider : iSupplyProvider
+public class DefaultSupplyHelper : iSupplyHelper
 {
     Market _market;
     public List<(Good Good, int Quantity, decimal Price)> GetSupplyInPeriod(int period)
@@ -30,10 +30,5 @@ public class DefaultSupplyProvider : iSupplyProvider
     public void SetMarket(Market market)
     {
         _market = market;
-    }
-
-    public LemonadeStandResultObject SupplyGoods()
-    {
-        throw new System.NotImplementedException();
-    }
+    }   
 }

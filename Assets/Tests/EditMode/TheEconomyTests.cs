@@ -96,9 +96,12 @@ public class TheEconomyTests
         testEconomy.RegisterCompany(company);
         var company2 = ScriptableObject.CreateInstance<EconAgent>();
         company2.Name = "Test Company";
+        testEconomy.RegisterCompany(company2);
+        var expected = 1;
         // Act
+        var actual=testEconomy.companies.Where(x=>x is not Market).Count();
         // Assert
-        Assert.Throws<TheEconomy_CompanyException>(() => testEconomy.RegisterCompany(company2));
+        Assert.AreEqual(expected, actual);
     }
 
     [Test]

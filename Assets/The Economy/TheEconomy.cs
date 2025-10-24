@@ -102,15 +102,15 @@ public class TheEconomy : MonoBehaviour
         _trade_logger?.SaveDailySummary(executedTrades);
     }
 
-    public void RegisterCompany(iEconAgent company)
+    public void RegisterCompany(iEconAgent agent)
     {
-        if(!companies.Any(x=>x.Name == company.Name))
+        if(!companies.Any(x=>x.Name == agent.Name))
         {
-            companies.Add(company);
+            companies.Add(agent);
         }
         else
         {
-            throw new TheEconomy_CompanyException($"{company.Name} already registered");
+            Debug.LogWarning ($"{agent.Name} already registered");
         }
         
     }
