@@ -27,7 +27,7 @@ public class FillsAndPartialFillsTests
 
         TestMarket = Market.Factory.CreateMarket("TestMarket")
             .WithDemandStrategy(ScriptableObject.CreateInstance<LinearDemandStrategy>())
-            .WithSupplyProvider(new DefaultSupplyProvider())
+            .WithSupplyProvider(new DefaultSupplyHelper())
             .WithTradeProcessor(new DefaultTradeProcessor())
             .WithTransactionManager(new DefaultTransactionManager());
 

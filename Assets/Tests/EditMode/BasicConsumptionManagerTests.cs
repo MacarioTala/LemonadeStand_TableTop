@@ -13,7 +13,7 @@ public class BasicConsumptionManagerTests
     iDemandStrategy TestDemandStrategy ;
     iMarketDataService TestMarketDataService;
     iDemographicManager TestDemographicManager;
-    iSupplyProvider TestSupplyProvider;
+    iSupplyHelper TestSupplyProvider;
     const int Period = 0;
 
     EconAgent Company1;

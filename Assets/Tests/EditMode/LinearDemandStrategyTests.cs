@@ -22,7 +22,7 @@ public partial class LinearDemandStrategyTests
 
     iDemographicManager TestDemographicManager;
 
-    iSupplyProvider TestSupplyProvider= new DefaultSupplyProvider();
+    iSupplyHelper TestSupplyProvider= new DefaultSupplyHelper();
 
     int Period = 0;
 

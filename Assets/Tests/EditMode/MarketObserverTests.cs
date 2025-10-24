@@ -17,7 +17,7 @@ public class MarketObserverTests
 
     Market TestMarket;
 
-    readonly iSupplyProvider TestSupplyProvider = new DefaultSupplyProvider();
+    readonly iSupplyHelper TestSupplyProvider = new DefaultSupplyHelper();
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     
     [SetUp]

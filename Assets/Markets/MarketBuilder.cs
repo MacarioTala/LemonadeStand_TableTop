@@ -62,7 +62,7 @@ public static class MarketBuilder
         market.SetPriceManager(priceManager);
         return market;
     }
-    public static Market WithSupplyProvider(this Market market, iSupplyProvider supplyProvider)
+    public static Market WithSupplyProvider(this Market market, iSupplyHelper supplyProvider)
     {
         market.SetSupplyProvider(supplyProvider);
         return market;
@@ -162,7 +162,7 @@ public static class MarketBuilder
     private static void EnsureDefaultSupplyProvider(Market market)
     {
         if (market.SupplyProvider is null)
-            market.SetSupplyProvider(new DefaultSupplyProvider());
+            market.SetSupplyProvider(new DefaultSupplyHelper());
     }
 
     private static void EnsureDefaultMarketInteractionManager(Market market)

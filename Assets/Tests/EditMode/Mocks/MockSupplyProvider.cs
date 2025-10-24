@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public class MockSupplyProvider : iSupplyProvider
+public class MockSupplyProvider : iSupplyHelper
 {
     Market _market;
     public void Initialize(Market market)

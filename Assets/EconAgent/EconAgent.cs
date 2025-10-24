@@ -393,9 +393,9 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 
     public override bool Equals(object other)
     {
-        if(other is EconAgent company)
+        if(other is EconAgent agent)
         {
-            return Name == company.Name;
+            return Name == agent.Name;
         }
         return false;
     }
