@@ -30,17 +30,15 @@ public class TheEconomy : MonoBehaviour
 
     public Dictionary<Guid,List<Execution>> GetAllTransactions(int period) 
     {
-        var markets = companies.OfType<Market>().ToList();
+        var markets = EconomicAgents.OfType<Market>().ToList();
         return _trade_logger?.GetAllTransactions(markets, period);
     }
     
-    public List<iEconAgent> companies = new();
+    public List<iEconAgent> EconomicAgents = new();
 
-    //The Initial Market is a company that is always present in the market.
-    //It contains the initial goods that are available in the market
-    //As well as the goods sold to the market by Producers and the players
-    //There will eventually be multiple markets,representing different regions
-
+    //The Initial Market is an EconAgent that is always present in the Economy.
+    //It contains the initial goods that are available in the Economy
+    //Might be time to refactor this out, since there are more robust ways to create an initial market.
     private Market InitialMarket;
 
     public void Initialize(ITradeLogger trade_logger)
@@ -59,16 +57,16 @@ public class TheEconomy : MonoBehaviour
 
     public Market GetMarketByName(string marketName)
     {
-        return companies.OfType<Market>().FirstOrDefault(x => x.Name == marketName);
+        return EconomicAgents.OfType<Market>().FirstOrDefault(x => x.Name == marketName);
     }
 
     public void RemoveMarket(Market market)
     {
-        companies.Remove(market);
+        EconomicAgents.Remove(market);
     }
     public void ClearEconomy()
     {
-        companies.Clear();
+        EconomicAgents.Clear();
         goods.Clear();
     }
 
@@ -77,11 +75,11 @@ public class TheEconomy : MonoBehaviour
         InitialMarket = Market.Factory.CreateStarterMarket(
                             "The First Market", 
                             ScriptableObject.CreateInstance<LinearDemandStrategy>());
-        RegisterCompany(InitialMarket);
+        RegisterEconomicAgent(InitialMarket);
     }
     public void StartTradingPeriod()
     {
-        var markets = companies.OfType<Market>().ToList();
+        var markets = EconomicAgents.OfType<Market>().ToList();
         foreach (var market in markets)
         {
             market.StartTradingPeriod();
@@ -91,7 +89,7 @@ public class TheEconomy : MonoBehaviour
     {
         var executedTrades = new List<Order>();
         //Update prices
-        foreach (Market market in companies.OfType<Market>())
+        foreach (Market market in EconomicAgents.OfType<Market>())
         {
             executedTrades = market.ProcessCompanyOrders();
             market.UnleashMarketForces(tradingPeriod);
@@ -102,11 +100,11 @@ public class TheEconomy : MonoBehaviour
         _trade_logger?.SaveDailySummary(executedTrades);
     }
 
-    public void RegisterCompany(iEconAgent agent)
+    public void RegisterEconomicAgent(iEconAgent agent)
     {
-        if(!companies.Any(x=>x.Name == agent.Name))
+        if(!EconomicAgents.Any(x=>x.Name == agent.Name))
         {
-            companies.Add(agent);
+            EconomicAgents.Add(agent);
         }
         else
         {
@@ -154,9 +152,9 @@ public class TheEconomy : MonoBehaviour
     {
         throw new NotImplementedException();
     }
-    public void ShowCollapseSummary(EconAgent bankruptCompany)
+    public void ShowCollapseSummary(EconAgent bankruptAgent)
     {
-        Debug.Log($"{bankruptCompany.Name} has collapsed after {tradingPeriod} trading periods");
+        Debug.Log($"{bankruptAgent.Name} has collapsed after {tradingPeriod} trading periods");
     }
 
     public static void SetupForTests(ITradeLogger logger)
@@ -213,7 +211,7 @@ public class TheEconomy : MonoBehaviour
                 .WithPriceModifier(new SupplyDemandModifier())
                 .WithOrderFulfilledEvents();
 
-            RegisterCompany(market);
+            RegisterEconomicAgent(market);
             Debug.Log($"Loaded Market: {market.Name} id:{market.MarketId}");
         }
     }

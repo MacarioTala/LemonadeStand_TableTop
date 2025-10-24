@@ -118,7 +118,7 @@ public partial class MarketTests
         // Arrange
         var expected = typeof(Market);
         // Act
-        var actual = from company in TestEconomy.companies
+        var actual = from company in TestEconomy.EconomicAgents
                      where company.Name == "The First Market"
                      select company.GetType();
         // Assert

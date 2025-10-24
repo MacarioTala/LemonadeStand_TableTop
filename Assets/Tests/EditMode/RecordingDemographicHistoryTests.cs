@@ -39,7 +39,7 @@ public class RecordingDemographicHistoryTests
         
         TestSupplyProvider.Initialize(TestMarket);
         
-        testEconomy.RegisterCompany(TestMarket);
+        testEconomy.RegisterEconomicAgent(TestMarket);
 
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner, null, TestFixedCostStrategy);
         TestMarket.RegisterMarketParticipant(Company1);
