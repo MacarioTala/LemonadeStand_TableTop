@@ -53,7 +53,7 @@ public class SupplierAgentTests
 
     private void SetupMarket()
     {
-       TestMarket=Market.Factory.CreateStarterMarket("Test Market", null)
+       TestMarket=Market.Factory.CreateStarterMarket("SupplierAgent Test Market", null)
                         .WithSupplyProvider(new MockSupplyProvider())
                         .WithDemographicManager(new MockDemographicManager())
                         ;
@@ -142,7 +142,7 @@ public class SupplierAgentTests
             .AtLevel(AgentLevelEnum.Beginner)
             .WithInitialCash(1000)
             .Build();
-        
+
         TestMarket.RegisterMarketParticipant(testSupplier);
 
         testSupplier.SeedSuppliedGoods(initialGoods);
@@ -162,22 +162,54 @@ public class SupplierAgentTests
 
         //Act
         testSupplier.ReplenishSupplies();
-        var actualWater      = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Water).quantity;
-        var actualLemon      = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Lemon).quantity;
-        var actualUranium    = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Uranium).quantity;
-        var actualFrancium   = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Francium).quantity;
+        var actualWater = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Water).quantity;
+        var actualLemon = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Lemon).quantity;
+        var actualUranium = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Uranium).quantity;
+        var actualFrancium = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Francium).quantity;
         var actualUnobtanium = testSupplier.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == Unobtanium).quantity;
 
         //Assert
-        Assert.AreEqual(expectedWater, actualWater,$"Expected {expectedWater} water, but got {actualWater} instead");
-        Assert.AreEqual(expectedLemon, actualLemon,$"Expected {expectedLemon} Lemon, but got {actualLemon} instead");
-        Assert.AreEqual(expectedUranium, actualUranium,$"Expected {expectedUranium} Uranium, but got {actualUranium} instead");
-        Assert.AreEqual(expectedFrancium, actualFrancium,$"Expected {expectedFrancium} Francium, but got {actualFrancium} instead");
+        Assert.AreEqual(expectedWater, actualWater, $"Expected {expectedWater} water, but got {actualWater} instead");
+        Assert.AreEqual(expectedLemon, actualLemon, $"Expected {expectedLemon} Lemon, but got {actualLemon} instead");
+        Assert.AreEqual(expectedUranium, actualUranium, $"Expected {expectedUranium} Uranium, but got {actualUranium} instead");
+        Assert.AreEqual(expectedFrancium, actualFrancium, $"Expected {expectedFrancium} Francium, but got {actualFrancium} instead");
         Assert.AreEqual(expectedUnobtanium, actualUnobtanium, $"Expected {expectedUnobtanium} Unobtanium, but got {actualUnobtanium} instead");
 
 
         //Cleanup
         testSupplier.LeaveMarket();
     }
-    
+
+    [Test]
+    public void SupplyGoodsCreatesOrders()
+    {
+        //Arrange
+        var testSupplier = SupplierAgent.SupplierAgentBuilder.Create()
+            .Named("Test Supplier")
+            .AtLevel(AgentLevelEnum.Beginner)
+            .Build();
+
+        TestMarket.RegisterMarketParticipant(testSupplier);
+        testSupplier.SeedSuppliedGoods(initialGoods);
+
+        testSupplier.InitializeRarityQuantities(
+                RarityQuantities[RarityEnum.Common],
+                RarityQuantities[RarityEnum.Uncommon],
+                RarityQuantities[RarityEnum.Rare],
+                RarityQuantities[RarityEnum.Very_Rare]
+                );
+
+        const int expectedBeforeOrderCount = 0;
+        int expectedAfterOrderCount = initialGoods.Count();
+
+        //Act
+        var actualBeforeOrderCount = TestMarket.GetOrdersSentToMarket().Count();
+        testSupplier.ReplenishSupplies();
+        testSupplier.SupplyGoods();
+        var actualAfterOrderCount = TestMarket.GetOrdersSentToMarket().Count();
+
+        //Assert
+        Assert.AreEqual(expectedBeforeOrderCount, actualBeforeOrderCount);
+        Assert.AreEqual(expectedAfterOrderCount,actualAfterOrderCount);
+    }
 }
