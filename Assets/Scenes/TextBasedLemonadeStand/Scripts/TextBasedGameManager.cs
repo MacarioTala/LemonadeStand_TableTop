@@ -43,7 +43,7 @@ public class TextBasedGameManager : MonoBehaviour
             return;
         }
 
-        storyHandler = FindObjectOfType<TextBasedStoryHandler>();
+        storyHandler = FindFirstObjectByType<TextBasedStoryHandler>();
         
         if (storyHandler == null)
         {
@@ -76,7 +76,7 @@ public class TextBasedGameManager : MonoBehaviour
         if(TheEconomy == null)
         {
             try{
-                TheEconomy = FindObjectOfType<TheEconomy>();
+                TheEconomy = FindFirstObjectByType<TheEconomy>();
             }
             catch (System.Exception)
             {
