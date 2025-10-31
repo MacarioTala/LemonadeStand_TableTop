@@ -209,7 +209,8 @@ public class TheEconomy : MonoBehaviour
                 .WithTradeProcessor(new DefaultTradeProcessor())
                 .WithTransactionManager(new DefaultTransactionManager())
                 .WithPriceModifier(new SupplyDemandModifier())
-                .WithOrderFulfilledEvents();
+                .WithOrderFulfilledEvents()
+                .EnsureDefaults();
 
             RegisterEconomicAgent(market);
             Debug.Log($"Loaded Market: {market.Name} id:{market.MarketId}");
