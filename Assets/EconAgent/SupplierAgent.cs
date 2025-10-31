@@ -69,7 +69,7 @@ public class SupplierAgent : EconAgent, iSupplier
         var _market = GetMarket();
         foreach (var inventoryEntry in GetInventory().GetInventoryEntries())
         {
-            var trade = new Order(null, this, inventoryEntry.good, inventoryEntry.quantity, inventoryEntry.Price);
+            var trade = new Order(null, this, inventoryEntry.good, inventoryEntry.quantity, inventoryEntry.good.GetPrice());
             var context = new ActionContext
             {
                 TradeToSubmit = trade,
