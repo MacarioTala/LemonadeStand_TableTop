@@ -34,16 +34,16 @@ public class StarterMarketInitializer : iMarketInitializer
         switch(company_level)
         {
             case AgentLevelEnum.Beginner:
-                market.SetCash(10000);
+                market.SetCash(1000);
                 break;
             case AgentLevelEnum.Intermediate:
-                market.SetCash(5000);
+                market.SetCash(500);
                 break;
             case AgentLevelEnum.Advanced:
-                market.SetCash(1000);
+                market.SetCash(100);
                 break;  
             case AgentLevelEnum.Market:
-                market.SetCash(1000000000000);
+                market.SetCash(100000);
                 break;
         }
     }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+[CreateAssetMenu(menuName ="LemonadeStandAssets/MarketEvent")]
 public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
 {
     public string EventName;
@@ -13,12 +13,12 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
     int _originalDuration;
     
     [SerializeReference]
-    List<iMarketEffect> Effects = new();
+    List<MarketEffectSO> Effects = new();
     public IEnumerable<iMarketEffect> GetEffects()
     {
         return Effects;
     }
-    public void AddEffect(iMarketEffect effect)
+    public void AddEffect(MarketEffectSO effect)
     {
         Effects.Add(effect);
         effect.SetParentEvent(this);

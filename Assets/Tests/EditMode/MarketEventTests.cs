@@ -63,16 +63,22 @@ public class MarketEventTests
                                     eventDescription: "Marauders attack the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
-        MaraudersAttack.AddEffect(new ChangePopulationEffect(-10));
+        var marauderChangePopEffect = ScriptableObject.CreateInstance<ChangePopulationEffect>();
+        marauderChangePopEffect.PopulationChangePercentage = -10;
+        MaraudersAttack.AddEffect(marauderChangePopEffect);
 
         GodzillaAttack.Initialize(eventName: "Godzilla Attack",
                                     eventDescription: "Godzilla attacks the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
-        GodzillaAttack.AddEffect(new ChangePopulationEffect(-30));
+        var godzillaChangePopEffect = ScriptableObject.CreateInstance<ChangePopulationEffect>();
+        godzillaChangePopEffect.PopulationChangePercentage = -30;
+        GodzillaAttack.AddEffect(godzillaChangePopEffect);
         GodzillaAttack.AddTag("SuperDisaster");
         GodzillaAttack.AddTag("Monster");
-        GodzillaAttack.AddEffect(new ModifyMonsterEffect(1, 2f));
+        var godzillaModifyMonsterEffect = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
+        godzillaModifyMonsterEffect.Initialize(1, 2f);
+        GodzillaAttack.AddEffect(godzillaModifyMonsterEffect);
     }
 
     [TearDown]
@@ -319,8 +325,12 @@ public class MarketEventTests
                                     eventDuration: 3);
         MothraAttacks.AddTag("SuperDisaster");
         MothraAttacks.AddTag("Monster");
-        MothraAttacks.AddEffect(new ChangePopulationEffect(-20));
-        MothraAttacks.AddEffect(new ModifyMonsterEffect(1, 2f));
+        var mothraAttacksChangePopulationEffect = ScriptableObject.CreateInstance<ChangePopulationEffect>();
+        mothraAttacksChangePopulationEffect.PopulationChangePercentage = -20;
+        MothraAttacks.AddEffect(mothraAttacksChangePopulationEffect);
+        var MEModifyMonsterEffect = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
+        MEModifyMonsterEffect.Initialize(1, 2f);
+        MothraAttacks.AddEffect(MEModifyMonsterEffect);
         var expectedGodzillaAttackDuration = 1;
         var expectedMothraAttackDuration = 1;
 
@@ -370,8 +380,12 @@ public class MarketEventTests
                                     eventDuration: 3);
         MothraAttacks.AddTag("SuperDisaster");
         MothraAttacks.AddTag("Monster");
-        MothraAttacks.AddEffect(new ChangePopulationEffect(-20));
-        MothraAttacks.AddEffect(new ModifyMonsterEffect(1, 2f));
+        var mothraCPE = ScriptableObject.CreateInstance<ChangePopulationEffect>();
+        mothraCPE.PopulationChangePercentage = -20;
+        MothraAttacks.AddEffect(mothraCPE);
+        var mothraMME = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
+        mothraMME.Initialize(1, 2f);
+        MothraAttacks.AddEffect(mothraMME);
         var expectedGodzillaAttackDuration = GodzillaAttack.GetDuration();
 
         //Act

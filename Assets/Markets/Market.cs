@@ -334,6 +334,11 @@ public class Market : ScriptableObject, iEconAgent
             _recipes.Add(recipe);
         }
     }
+    public void RemoveRecipe(Recipe recipe)
+    {
+        if(_recipes.Contains(recipe))
+            _recipes.Remove(recipe);
+    }
     #endregion
     #region Time 
     public void UpdateCurrentPeriod(int period)
@@ -428,5 +433,6 @@ public class Market : ScriptableObject, iEconAgent
         =>throw new NotImplementedException();
     public void SetAggressionLevel(decimal aggressionLevel)
         => throw new NotImplementedException();
+
     #endregion
 }

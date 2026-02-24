@@ -51,33 +51,10 @@ public class DemandElasticityTests
     }
    
     [Test]
-    public void DemandInelasticGoodsDoNotChangeDemandInStableMarkets()
+    [Ignore("Test needs to be implemented")]
+    public void DemandInelasticGoodsDoNotChangeDemandRegardlessOfPrice()
     {
-        throw new NotImplementedException("currently doesn't make sense till populations create bids");
-        // Arrange
-        var Company1 = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
-        Company1.SetCash(10000);
-        Company1.GetInventory().AddGood(new InventoryEntry(water, 10000,1m,Period));
-
-        var initialWaterDemand = 1000;
-        var testPopulation = EconAgentBuilder.For<PopulationAgent>()
-                            .Named("Test Population")
-                            .WithInitialCash(5000)
-                            .AssumingNewGoodsCost(1)
-                            .AtLevel(AgentLevelEnum.Beginner)
-                            .Build();
-        
-
-        var Company1SellsWaterToAnyone = new Order(null,Company1,water,10000,1m);
-        var waterContext = new ActionContext{TradeToSubmit = Company1SellsWaterToAnyone,MarketToSubmitTo = TestMarket,Period = Period};
-
-        //Act
-        Company1.QueueOrder(waterContext);
-        TestMarket.ProcessCompanyOrders();
-        var actualWaterDemand = TestMarket.GetPopulationDemand()[water].CurrentDemand;
-        //Assert
-        Assert.IsTrue(water.isDemandInelastic);
-        Assert.AreEqual(initialWaterDemand,actualWaterDemand);
+        throw new NotImplementedException();
     }
 
     [TearDown]

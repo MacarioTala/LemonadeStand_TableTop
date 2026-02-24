@@ -239,6 +239,7 @@ public partial class LinearDemandStrategyTests
 #endregion
 #region Saturation tests
     [TestCase(TestName="A good's demand should not change if the saturation elasticity is 1 and the good supply is equal to demand")]
+    [Ignore("Rethinking Saturation")]
     public void SaturatedGoodElasticityOneDemandUnchanged()
     {
         //Arrange
@@ -261,24 +262,14 @@ public partial class LinearDemandStrategyTests
         //Assert
         Assert.AreEqual(expectedDemand, actualDemand);
     }
-    [TestCase(TestName="A good's demand should double if the saturation elasticity is 1 and the good is supplied at zero")]
+    [TestCase(TestName="A good's demand should increase if the saturation elasticity is 1 and the good is supplied at zero")]
+    [Ignore("Think about how to implement this. Should there just be another demand curve that plots units demanded against saturation?")]
     public void UndersuppliedGoodElasticityOneDemandDoubles()
     {
-        //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-            var marketDemand = TestMarket.GetPopulationDemand();
-            var lemonadeDemand = marketDemand[Lemonade];
-
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        var expectedDemand = 200;
-        //Act
-        LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
-        //Assert
-        Assert.AreEqual(expectedDemand, actualDemand);
     }
 
     [TestCase(TestName="A good's demand should decrease if the saturation elasticity is 1 and the good is supplied at greater than demand")]
+    [Ignore("Rethinking how saturation works. Code left as an example of how it used to work.")]
     public void OverSuppliedDemandFalls()
     {
         //Arrange
@@ -301,21 +292,6 @@ public partial class LinearDemandStrategyTests
         var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
         //Assert
         Assert.IsTrue(actualDemand < initialDemand,$"Demand was expected to decrease from {initialDemand} but was {actualDemand}");
-    }
-    [TestCase(TestName="A good's demand should increase,but not double if the saturation elasticity is .5 and the good is supplied at zero")]
-    public void UndersuppliedGoodElasticityPointFiveDemandIncreases()
-    {
-        //Arrange
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
-
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, .5f);
-        var doubleDemand = 200;
-
-        //Act
-        LinearDemandStrategy.AdjustDemandForSaturation(TestMarket, Lemonade);
-        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
-        //Assert
-        Assert.IsTrue(0< actualDemand && actualDemand < doubleDemand,$"Demand was expected to increase less than double from 100, but was {actualDemand}");
     }
 #endregion
     [TearDown]

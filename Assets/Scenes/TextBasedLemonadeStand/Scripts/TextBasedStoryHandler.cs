@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.Reflection.Emit;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -80,27 +81,52 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void EndTurn()
     {
+        int.TryParse(ActionPointsText.text, out int currentActions);
+        currentActions--;
+        ActionPointsText.text = currentActions.ToString();
         Debug.Log("End Turn");
     }
 
     private void InitializeMarket()
     {
-        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
+        //Refactor this at some point. No need for 'the first market'
         var testMarket = TheEconomy.Instance.GetMarketByName("The First Market");
         TheEconomy.Instance.RemoveMarket(testMarket);
+
+        //This might need a cleaner solution. Episode 1 market is a scriptable Object stored in Resources
+        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market"); 
         var inventory = initialMarket.GetInventory();
         initialMarket.SetTradeProcessor(new DefaultTradeProcessor());
 
         var period = TheEconomy.Instance.tradingPeriod;
-        var Lemon = Good.CreateInstance("Lemons", new PriceBand(1, 3), RarityEnum.Common);
-        var Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 3), RarityEnum.Common);
-        var Water = Good.CreateInstance("Water", new PriceBand(1, 3), RarityEnum.Common);
+
+        var Lemon = new GoodBuilder()
+                    .Named("Lemons")
+                    .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
+                    .WithRarity(RarityEnum.Common)
+                    .Build();
+        
+        var Sugar = new GoodBuilder()
+                    .Named("Sugar")
+                    .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
+                    .WithRarity(RarityEnum.Common)
+                    .Build();
+        
+        var Water = new GoodBuilder()
+                    .Named("Water")
+                    .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
+                    .WithRarity(RarityEnum.Common)
+                    .Build();
+
         var lemonEntry=inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(),period));
-        lemonEntry.SetPrice(Lemon.GetPrice()*1.1m);
+        lemonEntry.SetPrice(Lemon.GetPrice());
         var sugarEntry= inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(),period));
-        sugarEntry.SetPrice(Sugar.GetPrice()*1.1m);
+        sugarEntry.SetPrice(Sugar.GetPrice());
         var waterEntry=inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(),period));
-        waterEntry.SetPrice(Water.GetPrice()*1.1m);
+        waterEntry.SetPrice(Water.GetPrice());
+
+       // AddMarketEvents();
+        
     }
     private void InitializePlayer()
     {
