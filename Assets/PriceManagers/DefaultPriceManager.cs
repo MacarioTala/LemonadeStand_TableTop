@@ -7,7 +7,7 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
     Market _market;
     public decimal GetMarketCostForGood(Good good)
     {
-        var recipeToUse = _market.GetRecipes().Where(recipe => recipe.GetProduct().Equals(good)).FirstOrDefault() ?? throw new Exception("No recipe found for " + good);
+        var recipeToUse = _market.GetRecipes().FirstOrDefault(recipe => recipe.GetProduct().Equals(good)) ?? throw new Exception("No recipe found for " + good);
         var costPerUnit = recipeToUse.GetCostPerUnit(_market.GetInventory());
         return costPerUnit;
     }

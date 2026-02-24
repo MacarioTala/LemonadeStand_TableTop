@@ -1,4 +1,7 @@
-public class ChangeAnxietyEffect : iMarketEffect
+using UnityEngine;
+
+[CreateAssetMenu(menuName ="LemonadeStandAssets/ChangeAnxietyEffect")]
+public class ChangeAnxietyEffect : MarketEffectSO
 {
     iMarketEvent _parentEvent;
     public float AnxietyChangePercentage;
@@ -16,7 +19,7 @@ public class ChangeAnxietyEffect : iMarketEffect
         AnxietyChangePercentage = multiplier / 100f;
     }
 
-    public void Apply(Market market)
+    public override void Apply(Market market)
     {
         var affectedAgents = market.GetMarketParticipants();
 
@@ -28,21 +31,9 @@ public class ChangeAnxietyEffect : iMarketEffect
         }
     }
 
-    public void Reset()
+    public override void Reset()
     {
         AnxietyChangePercentage = _originalAnxietyChangePercentage;
     }
-
-    public void SaveOriginalState()
-    {
-        //Noop: Original state saved in constructor
-    }
-    public iMarketEvent GetParentEvent()
-    {
-        return _parentEvent;
-    }
-    public void SetParentEvent(iMarketEvent marketEvent)
-    {
-        _parentEvent = marketEvent;
-    }
+   
 }

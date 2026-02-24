@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class ModifyMonsterEffect : iMarketEffect
+public class ModifyMonsterEffect : MarketEffectSO
 {
-    readonly float _destructionMultiplier;
+    float _destructionMultiplier;
     const string _populationReduction = "PopulationReduction";
-    readonly int newDuration;
+    int newDuration;
     
     List<(iMarketEvent Event, int OriginalDuration)> _originalEvents = new();
     public string TargetTag => "Monster";
-    private iMarketEvent _parentEvent;
 
-    public void Apply(Market market)
+    public override void Apply(Market market)
     {
         foreach (var (marketEvent,_,_) in market.GetActiveMarketEvents())
         {
@@ -37,22 +36,12 @@ public class ModifyMonsterEffect : iMarketEffect
         }
     }
 
-    public void SetParentEvent(iMarketEvent marketEvent)
-    {
-        _parentEvent = marketEvent;
-    }
-
-    public iMarketEvent GetParentEvent()
-    {
-        return _parentEvent;
-    }
-
     public void SaveOriginalState()
     {
         // No-op: Original state is saved in Apply method
     }
 
-    public void Reset()
+    public override void Reset()
     {
         foreach (var (marketEvent, originalDuration) in _originalEvents)
         {
@@ -67,7 +56,7 @@ public class ModifyMonsterEffect : iMarketEffect
         }
     }
 
-    public ModifyMonsterEffect( int newDuration, float destructionMultiplier)
+    public void Initialize( int newDuration, float destructionMultiplier)
     {
         _destructionMultiplier = destructionMultiplier;
         this.newDuration = newDuration;

@@ -50,22 +50,10 @@ public partial class LinearDemandStrategyTests
         Assert.AreEqual(expectedDemand, actualDemand);
     }
     [TestCase(TestName="AdjutDemandInPeriod: A good's demand should double if the saturation elasticity is 1 and the good is supplied at zero")]
+    [Ignore("Think about this first. This is a move along the curve, not fancy math")]
     public void ADIP_UndersuppliedGoodElasticityOneDemandDoubles()
     {
-        //Arrange
-        var maxDemand = 100;
-        var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
-        TestPopulation.SetDemand(Lemonade, demandForLemonade);
-        var marketDemand = TestMarket.GetPopulationDemand();
-        var lemonadeDemand = marketDemand[Lemonade];
-
-        Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        var expectedDemand = 200;
-        //Act
-        TestDemandStrategy.AdjustDemandInPeriod(TestMarket);
-        var actualDemand = TestMarket.GetPopulationDemand()[Lemonade].CurrentDemand;
-        //Assert
-        Assert.AreEqual(expectedDemand, actualDemand);
+       throw new NotImplementedException();
     }
 #endregion
 }

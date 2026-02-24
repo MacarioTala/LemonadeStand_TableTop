@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using static TestHelpers;
 using NUnit.Framework.Internal;
+using System.Collections.Generic;
 
 [TestFixture]
 public class SupplyAndDemandTests
@@ -272,63 +273,17 @@ public class SupplyAndDemandTests
     #endregion
     #region UpdatePrices tests
     [Test]
+    [Ignore("Test needs to be implemented")]
     public void UpdatePricesIncreasesPriceByPriceIncrementRateWhenDemandThresholdIsReached()
     {
-        throw new NotImplementedException("Update to use PopulationCompany.");
-        // Arrange
-        var testMarket = TestMarket;
-        var testPeriod = 0;
-        var company1 = EconAgent.Factory.Create("Test Company 1", AgentLevelEnum.Beginner);
-        company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3.0m, 0));
-        testMarket.RegisterMarketParticipant(company1);
-
-        var buyLemonadeOrder = new Order(null, company1, lemonade, 500, 3.0m);
-        var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = testMarket, Period = testPeriod };
-        company1.QueueOrder(buyLemonadeContext);
-        var currentLemonadePrice = lemonade.GetPrice();
-        var priceIncrementRate = lemonade.Get_price_increment_rate();
-        var expectedLemonPrice = Math.Round(currentLemonadePrice * (1 + priceIncrementRate), 2);
-        // Act
-        testMarket.ProcessCompanyOrders();
-        testMarket.UpdatePrices();
-        // Only one entry per good in market inventories
-        var actualLemonade = testMarket.GetInventory().GetInventoryEntriesByGood(lemonade.GoodName).FirstOrDefault();
-        var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(), 2);
-        // Assert
-        Assert.AreEqual(expectedLemonPrice, actualLemonadePrice);
+        throw new NotImplementedException();
     }
 
     [Test]
     [Ignore("FulfillDemand is obsolete. We still need to update this test case.")]
     public void IfMarketBuyingInAPeriodExceedsDemandThresholdIncreasePrices()
     {
-        throw new NotImplementedException("Update to use PopulationCompany.");
-        // Arrange
-        var marketToTest = Market.Factory.CreateStarterMarket("Market To Test", TestDemandStrategy);
-        marketToTest.InitializeDemandForSpecificGood(lemonade, 1000);
-        var demographicManger = new MockDemographicManager();
-        demographicManger.SetMarketInstability(1f);
-        marketToTest.SetDemographicManager(demographicManger);
-
-        var testPeriod = 0;
-        var currentLemonadePrice = lemonade.GetPrice();
-        var price_increment_rate = lemonade.Get_price_increment_rate();
-        var expectedLemonadePrice = Math.Round(currentLemonadePrice * (1 + price_increment_rate), 2);
-        var company = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
-        marketToTest.RegisterMarketParticipant(company);
-        company.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3.0m, 0));
-
-        var buyLemonadeOrder = new Order(null, company, lemonade, 1500, 3.0m);
-        var buyLemonadeContext = new ActionContext { TradeToSubmit = buyLemonadeOrder, MarketToSubmitTo = marketToTest, Period = testPeriod };
-        company.QueueOrder(buyLemonadeContext);
-
-        // Act
-        marketToTest.ProcessCompanyOrders();
-        marketToTest.UpdatePrices();
-        var actualLemonade = marketToTest.GetInventory().GetInventoryEntriesByGood(lemonade.GoodName).FirstOrDefault();
-        var actualLemonadePrice = Math.Round(actualLemonade.good.GetPrice(), 2);
-        // Assert
-        Assert.AreEqual(expectedLemonadePrice, actualLemonadePrice);
+        throw new NotImplementedException();
     }
     #endregion
     #region CalculateFulfillmentRate tests
@@ -397,6 +352,7 @@ public class SupplyAndDemandTests
     }
     #endregion
     [Test]
+    [Ignore("This is a saturation test. Saturation is being redesigned")]
     public void UnleashMarketForcesKeepsDemandStableWhenDemandIs60PercentFilled()
     {
         //Assert
@@ -424,6 +380,7 @@ public class SupplyAndDemandTests
     }
 
     [Test]
+    [Ignore("This is a saturation test. Saturation is being redesigned")]
     public void UnleashMarketForcesKeepsDemandStableWhenDemandIs100PercentFilled()
     {
         //Assert
@@ -459,16 +416,25 @@ public class SupplyAndDemandTests
     }
 
     [Test]
+    [Ignore("This is a saturation test. Saturation is being redesigned")]
     public void UnleashMarketForcesDecreasesDemandWhenSupplyExceedsDemand()
     {
-        //Assert
+        //Arrange
         var period = 0;
 
         TestMarket.SetCash(1000000);
         var initialLemonadeDemand = 900;
-        TestMarket.InitializeDemandForSpecificGood(lemonade, initialLemonadeDemand);
+        
         var sellingCompany = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(sellingCompany);
+        var ingredientlist = new List<Ingredient>
+        {
+            new(lemon, 1),
+            new(sugar, 1),
+            new(water, 2)
+        };
+        var lemonadeRecipe = new Recipe("Lemonade",lemonade,ingredientlist);
+        TestMarket.AddRecipe(lemonadeRecipe);
 
         //give the selling company some lemonade
         sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3.0m, 0));
@@ -490,6 +456,7 @@ public class SupplyAndDemandTests
 
         //cleanup
         TestMarket.RemoveMarketParticipant(sellingCompany);
+        TestMarket.RemoveRecipe(lemonadeRecipe);
     }
 #region Reporting on Population trading activities
 

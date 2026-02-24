@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TextBasedGameManager : MonoBehaviour
 {
@@ -8,16 +9,16 @@ public class TextBasedGameManager : MonoBehaviour
     [SerializeField] private GameObject ZorkView;
     [SerializeField] private GameObject SplashCanvas;
     [SerializeField] private float splashDuration = 3f;
-    [SerializeField] private readonly GameObject splashAnimation;
-    [SerializeField] private readonly GameObject mainMenu;
-    [SerializeField] private readonly GameObject gameScreen;
+    private readonly GameObject splashAnimation;
+    private readonly GameObject mainMenu;
     [SerializeField] private GameObject splashTypewriterPrefab;
     [SerializeField] private AudioSource splashScreenAudioSource;
     [SerializeField] private AudioClip splashScreenSoundClip;
     [SerializeField] private TextMeshProUGUI typeWrittenText;
     [SerializeField] private TextMeshProUGUI cursor;
     [SerializeField] private float blinkSpeed = 0.5f;
-    TextBasedStoryHandler storyHandler;
+    private readonly string gameSceneName = Scenes.ZorkView;
+    [SerializeField] private GameState gameState=GameState.Splash;
 #endregion
     public static TextBasedGameManager Instance { get; private set; }
     private TypeWriter typeWriterInstance;
@@ -30,43 +31,14 @@ public class TextBasedGameManager : MonoBehaviour
 #endregion
 
     private bool isCursorVisible = true;
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        storyHandler = FindFirstObjectByType<TextBasedStoryHandler>();
-        
-        if (storyHandler == null)
-        {
-            Debug.Log("Story Handler not found. Cannot start game.");
-            return;    
-        }
-        if(ZorkView != null) ZorkView.SetActive(false);
-    }
+   
 
     private void Start()
     {
         Initialize();
         typeWriterInstance.Initialize(typeWrittenText, splashScreenAudioSource, splashScreenSoundClip);
-//        StartCoroutine(BlinkCursor()); Fix this as soon as we have good game flow.
+        //StartCoroutine(BlinkCursor()); //Fix this as soon as we have good game flow.
         typingCoroutine = StartCoroutine(typeWriterInstance.TypeText(TypeWriter.splashMessage));
-    }
-
-    private void Update()
-    {
-        if(SplashCanvas.activeSelf && Input.GetKeyDown(KeyCode.Space)) 
-        {
-            SkipTypeWriter();
-        }
     }
 
     private void Initialize()
@@ -117,7 +89,7 @@ public class TextBasedGameManager : MonoBehaviour
     {
         while (true)
         {
-            cursor.text = isCursorVisible ? "|" : "";
+            typeWrittenText.text = isCursorVisible ? "|" : "";
             isCursorVisible = !isCursorVisible;
             yield return new WaitForSeconds(blinkSpeed);
         }
@@ -131,18 +103,10 @@ public class TextBasedGameManager : MonoBehaviour
 #endregion
 #region Main Menu
     public void StartNewGame()
-    {
-        
-        if(ZorkView == null)
-        {
-            Debug.Log("ZorkView not found. Cannot start new game.");
-            return;
-        }
-
-        SplashCanvas.SetActive(false);
-        ZorkView.SetActive(true);
-        storyHandler.StartTextBasedGame();
+    {        
         Debug.Log("Starting New Game");
+        gameState = GameState.Zork;
+        SceneManager.LoadScene(gameSceneName);
     }
 #endregion
 #region Game Loop
@@ -188,5 +152,64 @@ public class TextBasedGameManager : MonoBehaviour
         IsGameRunning = false;
         Debug.Log($"Game Over : {message}");
     }
-#endregion
+    #endregion
+
+    #region Overloads
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnDestroy()
+    {
+        if(Instance == this) SceneManager.sceneLoaded -=OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(scene.name!=gameSceneName) return;
+        
+        TextBasedStoryHandler found =null;
+
+        foreach(var root in scene.GetRootGameObjects())
+        {
+            found = root.GetComponentInChildren<TextBasedStoryHandler>(true);
+            if(found != null) break;
+        }    
+            if(found == null)
+            {
+                Debug.LogError($"Story Handler not found in scene: "+scene.name);
+                return;
+            }
+
+            found.StartTextBasedGame();
+    }
+    private void Update()
+    {
+        if(
+            gameState == GameState.Splash &&
+            Input.GetKeyDown(KeyCode.Space)) 
+        {
+            SkipTypeWriter();
+        }
+    }
+    
+    #endregion
+}
+
+public enum GameState{Splash,Zork}
+public static class Scenes
+{
+    public const string Splash = "Splash";
+    public const string ZorkView = "ZorkScene";
 }

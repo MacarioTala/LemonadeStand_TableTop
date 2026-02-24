@@ -43,10 +43,11 @@ public class OrderPanelHandler : MonoBehaviour
         QuantityInput.GetComponent<TMP_InputField>().onValueChanged.AddListener(value => HandleOrderQuantityChange(value));
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
 
-        ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
+        if(MarketInventoryEntries.Count>0)
+            ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
 
-        DetailedOrderPanel.SetActive(false);
-        ShowDetailedOrderButton.onClick.AddListener(ShowDetailedOrderPanel);
+        // DetailedOrderPanel.SetActive(false);
+        // ShowDetailedOrderButton.onClick.AddListener(ShowDetailedOrderPanel);
 
         InitializePlayer();
         InitializeOrderDropDown();
