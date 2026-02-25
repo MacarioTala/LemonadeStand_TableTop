@@ -27,6 +27,12 @@ public class MarketEventTests
     MarketEventSO MaraudersAttack;
     MarketEventSO GodzillaAttack;
 
+    ActiveMarketEvent MaraudersAttackActiveEvent;
+    ActiveMarketEvent GodzillaAttackActiveEvent;
+    const string maraudersAttackName = "Marauders Attack";
+    const string godzillaAttackName = "Godzilla Attack";
+        
+
     [SetUp]
     public void Setup()
     {
@@ -59,7 +65,7 @@ public class MarketEventTests
         MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();
         GodzillaAttack = ScriptableObject.CreateInstance<MarketEventSO>();
 
-        MaraudersAttack.Initialize(eventName: "Marauders Attack",
+        MaraudersAttack.Initialize(eventName: maraudersAttackName,
                                     eventDescription: "Marauders attack the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
@@ -67,7 +73,8 @@ public class MarketEventTests
         marauderChangePopEffect.PopulationChangePercentage = -10;
         MaraudersAttack.AddEffect(marauderChangePopEffect);
 
-        GodzillaAttack.Initialize(eventName: "Godzilla Attack",
+        
+        GodzillaAttack.Initialize(eventName: godzillaAttackName,
                                     eventDescription: "Godzilla attacks the neighbourhood, reducing population.",
                                     eventChance: 100f,
                                     eventDuration: 2);
@@ -79,6 +86,10 @@ public class MarketEventTests
         var godzillaModifyMonsterEffect = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
         godzillaModifyMonsterEffect.Initialize(1, 2f);
         GodzillaAttack.AddEffect(godzillaModifyMonsterEffect);
+
+        //Post refactor to MarketEventSO
+        MaraudersAttackActiveEvent = TestMarket.GetActiveMarketEvents().FirstOrDefault(x=>x.EventDefinition.EventName==maraudersAttackName);
+        GodzillaAttackActiveEvent = TestMarket.GetActiveMarketEvents().FirstOrDefault(x=>x.EventDefinition.EventName==godzillaAttackName);
     }
 
     [TearDown]
@@ -112,7 +123,7 @@ public class MarketEventTests
         TestMarket.RegisterMarketParticipant(testPopulation);
 
         //Act
-        MaraudersAttack.Invoke(TestMarket);
+        MaraudersAttack.Invoke(TestMarket,MaraudersAttackActiveEvent);
         var newPopulation = TestMarket.GetPopulation();
 
         //Assert
@@ -213,7 +224,8 @@ public class MarketEventTests
         //Act
         TestMarket.RollForEvents();
         TestMarket.RollForEvents(); //try to add it twice
-        var actualNumberOfActiveEvents = TestMarket.GetActiveMarketEvents().Count;
+        var actualNumberOfActiveEvents = TestMarket.GetActiveMarketEvents()
+        .Count(x=>x.EventDefinition.EventName==maraudersAttackName);
 
         //Assert
         Assert.AreEqual(expectedNumberOfActiveEvents, actualNumberOfActiveEvents);
@@ -263,14 +275,13 @@ public class MarketEventTests
     {
         //Arrange
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
-        var duration = TestMarket.CurrentPeriod + MaraudersAttack.GetDuration();
-        var expectedEventEnd = duration;
+        var expectedEventEnd = TestMarket.CurrentPeriod + MaraudersAttack.GetDuration();
         var expected = new List<(iMarketEvent Event, int PeriodStart, int periodEnd)>{
             (MaraudersAttack,TestMarket.CurrentPeriod,expectedEventEnd)
         };
 
         //Act
-        for (var i = 0; i <= duration; i++)
+        for(var i=0;i<MaraudersAttack.GetDuration()+1;i++)
         {
             TestMarket.StartTradingPeriod();
             TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
@@ -308,7 +319,7 @@ public class MarketEventTests
         TestMarket.StartTradingPeriod();
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
         var actual = TestMarket.GetActiveMarketEvents();
-        var actualEvent = actual.FirstOrDefault().Event;
+        var actualEvent = actual.FirstOrDefault().EventDefinition;
 
         //Assert
         Assert.AreEqual(1, actual.Count);
@@ -328,24 +339,31 @@ public class MarketEventTests
         var mothraAttacksChangePopulationEffect = ScriptableObject.CreateInstance<ChangePopulationEffect>();
         mothraAttacksChangePopulationEffect.PopulationChangePercentage = -20;
         MothraAttacks.AddEffect(mothraAttacksChangePopulationEffect);
-        var MEModifyMonsterEffect = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
-        MEModifyMonsterEffect.Initialize(1, 2f);
-        MothraAttacks.AddEffect(MEModifyMonsterEffect);
-        var expectedGodzillaAttackDuration = 1;
-        var expectedMothraAttackDuration = 1;
+        var MAModifyMonsterEffect = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
+        MAModifyMonsterEffect.Initialize(1, 2f);
+
+        MothraAttacks.AddEffect(MAModifyMonsterEffect);
+        var expectedGodzillaAttackDuration = GodzillaAttack.GetDuration()+1;
+        var expectedMothraAttackDuration = MothraAttacks.GetDuration();
 
         TestMarket.AddPotentialMarketEvent(GodzillaAttack);
         TestMarket.AddPotentialMarketEvent(MothraAttacks);
 
+        int actualGodzillaAttackDuration=0;
         //Act
         var duration = Math.Max(GodzillaAttack.GetDuration(), MothraAttacks.GetDuration());
-        for (var i = 0; i < duration; i++)//deliberately run for less than the duration of the event.
-                                          // to prevent effect from resetting
+        for (var i = 0; i < duration; i++)
         {
             TestMarket.StartTradingPeriod();
             TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+            if(i==0)//do this to grab the new duration from the ActiveMarketEvent only once.
+            {
+                actualGodzillaAttackDuration = TestMarket.GetActiveMarketEvents()
+                                .FirstOrDefault(x=>x.EventDefinition.EventName==godzillaAttackName)
+                                .PeriodEnd;
+            }
         }
-        var actualGodzillaAttackDuration = GodzillaAttack.GetDuration();
+        
         var actualMothraAttackDuration = MothraAttacks.GetDuration();
 
         //Assert
@@ -380,12 +398,15 @@ public class MarketEventTests
                                     eventDuration: 3);
         MothraAttacks.AddTag("SuperDisaster");
         MothraAttacks.AddTag("Monster");
+
         var mothraCPE = ScriptableObject.CreateInstance<ChangePopulationEffect>();
         mothraCPE.PopulationChangePercentage = -20;
         MothraAttacks.AddEffect(mothraCPE);
+
         var mothraMME = ScriptableObject.CreateInstance<ModifyMonsterEffect>();
         mothraMME.Initialize(1, 2f);
         MothraAttacks.AddEffect(mothraMME);
+
         var expectedGodzillaAttackDuration = GodzillaAttack.GetDuration();
 
         //Act
@@ -416,7 +437,8 @@ public class MarketEventTests
         TestMarket.RegisterMarketParticipant(company3);
 
         var marketCrash = ScriptableObject.CreateInstance<MarketEventSO>();
-        var anxietyEffect = new ChangeAnxietyEffect(50);
+        var anxietyEffect = ScriptableObject.CreateInstance<ChangeAnxietyEffect>();
+        anxietyEffect.AnxietyChangePercentage = 50;
 
         marketCrash.Initialize(eventName: "The Market Crashes",
                                     eventDescription: "The Market Crashes, everyone is on edge.",

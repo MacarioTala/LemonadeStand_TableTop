@@ -12,46 +12,26 @@ public class ModifyMonsterEffect : MarketEffectSO
 
     public override void Apply(Market market)
     {
-        foreach (var (marketEvent,_,_) in market.GetActiveMarketEvents())
+        foreach (var marketEvent in market.GetActiveMarketEvents())
         {
-            if (_parentEvent == marketEvent) continue;
+            if (_parentEvent == marketEvent.EventDefinition) continue;
 
-            _originalEvents.Add(new(marketEvent, marketEvent.GetDuration()));
+            _originalEvents.Add(new(marketEvent.EventDefinition, marketEvent.EventDefinition.GetDuration()));
 
-            if (marketEvent.HasTag(TargetTag))
+            if (marketEvent.EventDefinition.HasTag(TargetTag))
             {
-                marketEvent.SetDuration(newDuration);        
+                marketEvent.Extend(newDuration);        
             }
-            if (marketEvent.HasTag(_populationReduction))
+            if (marketEvent.EventDefinition.HasTag(_populationReduction))
             {
                 var changepopulationEffect = marketEvent
+                        .EventDefinition
                         .GetEffects()
                         .OfType<ChangePopulationEffect>()
                         .FirstOrDefault();
-                
-                changepopulationEffect.SaveOriginalState();
+            
                 var newMultiplier = changepopulationEffect.PopulationChangePercentage * _destructionMultiplier;
                 changepopulationEffect.ChangeEffectMultiplier(newMultiplier);
-            }
-        }
-    }
-
-    public void SaveOriginalState()
-    {
-        // No-op: Original state is saved in Apply method
-    }
-
-    public override void Reset()
-    {
-        foreach (var (marketEvent, originalDuration) in _originalEvents)
-        {
-            marketEvent.SetDuration(originalDuration);
-            foreach (var effect in marketEvent.GetEffects())
-            {
-                if (effect is ChangePopulationEffect changePopulationEffect)
-                {
-                    changePopulationEffect.Reset();
-                }
             }
         }
     }

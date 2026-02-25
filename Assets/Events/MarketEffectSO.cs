@@ -4,14 +4,13 @@ using UnityEngine;
 /// </summary>
 public abstract class MarketEffectSO : ScriptableObject, iMarketEffect
 {
-    protected iMarketEvent _parentEvent;
+    protected MarketEventSO _parentEvent;
     public abstract void Apply(Market market);
-    public iMarketEvent GetParentEvent()
+    public MarketEventSO GetParentEvent()
     {
         return _parentEvent;
     }
-    public virtual void Reset(){}
-    public void SetParentEvent(iMarketEvent marketEvent)
+    public void SetParentEvent(MarketEventSO marketEvent)
     {
         _parentEvent = marketEvent;
     }

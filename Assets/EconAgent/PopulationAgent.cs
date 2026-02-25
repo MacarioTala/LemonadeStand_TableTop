@@ -7,6 +7,7 @@ public class PopulationAgent : EconAgent
 {
 
     #region Demographics
+    [SerializeField]
     private int _population;
 
     private float _ennui;

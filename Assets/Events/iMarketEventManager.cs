@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 public interface iMarketEventManager
 {
-    void AddPotentialMarketEvent(iMarketEvent potentialEvent);
-    void RemovePotentialMarketEvent(iMarketEvent potentialEvent);
+    void AddPotentialMarketEvent(MarketEventSO potentialEvent);
+    void RemovePotentialMarketEvent(MarketEventSO potentialEvent);
     void ResolveMarketEvents();
     void RollForEvents();
-    public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents();
-    public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory();
+    public List<ActiveMarketEvent> GetActiveMarketEvents();
+    public List<(MarketEventSO Event, int PeriodStart, int periodEnd)> GetMarketEventHistory();
 
 }

@@ -70,7 +70,7 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
         return EventChance;
     }
 
-    public void Invoke(Market market)
+    public void Invoke(Market market,ActiveMarketEvent activeEvent)
     {
         foreach (var effect in Effects)
         {
@@ -86,14 +86,5 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
         EventChance = eventChance;
         _eventDuration = eventDuration;
         _originalDuration = eventDuration;
-    }
-
-    public void Reset()
-    {
-        _eventDuration = _originalDuration;
-        foreach (var effect in Effects)
-        {
-            effect.Reset();
-        }
     }
 }

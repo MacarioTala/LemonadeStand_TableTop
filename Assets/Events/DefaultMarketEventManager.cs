@@ -4,53 +4,53 @@ using System.Linq;
 public class DefaultMarketEventManager : iMarketEventManager, iMarketAware
 {
     private Market _market;
-    readonly List<(iMarketEvent Event, int PeriodStart, int duration)> _activeEvents = new();
-    readonly List<(iMarketEvent Event, int PeriodStart, int periodEnd)> _marketEventHistory = new();
-    private List<iMarketEvent> _potentialMarketEvents { get; } = new();
+    readonly List<ActiveMarketEvent> _activeEvents = new();
+    readonly List<(MarketEventSO Event, int PeriodStart, int periodEnd)> _marketEventHistory = new();
+    private List<MarketEventSO> PotentialMarketEvents { get; } = new();
 
-    public void AddPotentialMarketEvent(iMarketEvent potentialEvent)
+    public void AddPotentialMarketEvent(MarketEventSO potentialEvent)
     {
-          if (!_potentialMarketEvents.Contains(potentialEvent))
+          if (!PotentialMarketEvents.Contains(potentialEvent))
         {
-            _potentialMarketEvents.Add(potentialEvent);
+            PotentialMarketEvents.Add(potentialEvent);
         }
     }
 
-    public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents() => _activeEvents;
+    public List<ActiveMarketEvent> GetActiveMarketEvents() => _activeEvents;
 
-    public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory()=> _marketEventHistory;
+    public List<(MarketEventSO Event, int PeriodStart, int periodEnd)> GetMarketEventHistory()=> _marketEventHistory;
 
     public void ResolveMarketEvents()
     {
         //Check if any active events have expired
         var expiredEvents = _activeEvents
-                            .Where(x => x.Event.IsExpiredAt(x.PeriodStart, _market.CurrentPeriod))
+                            .Where(x => x.IsExpired(_market.CurrentPeriod))
                             .ToList();
         foreach (var marketEvent in expiredEvents)
         {
             _activeEvents.Remove(marketEvent);
-            _marketEventHistory.Add((marketEvent.Event, marketEvent.PeriodStart, _market.CurrentPeriod));
-            marketEvent.Event.Reset();
+            _marketEventHistory.Add((marketEvent.EventDefinition, marketEvent.PeriodStart, marketEvent.PeriodEnd));
         }
 
         //Invoke any active events
         foreach (var marketEvent in _activeEvents)
         {
-            marketEvent.Event.Invoke(_market);
+            marketEvent.EventDefinition.Invoke(_market,marketEvent);
         }
     }
 
     public void RollForEvents()
     {
-        foreach (var marketEvent in _potentialMarketEvents)
+        foreach (var marketEvent in PotentialMarketEvents)
         {
-            if (_activeEvents.Any(x => !x.Event.IsCompatibleWith(marketEvent))) continue;
+            if (_activeEvents.Any(x => !x.EventDefinition.IsCompatibleWith(marketEvent))) continue;
 
-            if (_activeEvents.Any(x => x.Event.Equals(marketEvent))) continue;
+            if (_activeEvents.Any(x => ReferenceEquals(x.EventDefinition,marketEvent))) continue;
 
             if (EventRollSucceeds(marketEvent))
             {
-                _activeEvents.Add((marketEvent, _market.CurrentPeriod, marketEvent.GetDuration()));
+                var activeEvent = new ActiveMarketEvent(marketEvent,_market.CurrentPeriod,marketEvent.GetDuration());
+                _activeEvents.Add(activeEvent);
             }
         }
     }
@@ -62,11 +62,11 @@ public class DefaultMarketEventManager : iMarketEventManager, iMarketAware
         return chanceOfEvent >= currentRoll; ;
     }
 
-    public void RemovePotentialMarketEvent(iMarketEvent potentialEvent)
+    public void RemovePotentialMarketEvent(MarketEventSO potentialEvent)
     {
-        if (_potentialMarketEvents.Contains(potentialEvent))
+        if (PotentialMarketEvents.Contains(potentialEvent))
         {
-            _potentialMarketEvents.Remove(potentialEvent);
+            PotentialMarketEvents.Remove(potentialEvent);
         }
     }
 

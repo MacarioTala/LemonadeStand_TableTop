@@ -121,12 +121,12 @@ public class Market : ScriptableObject, iEconAgent
     public void SetStrategy(iStrategy strategy) => _marketStrategy = strategy;
 
 #region Market Events
-    public List<(iMarketEvent Event, int PeriodStart, int duration)> GetActiveMarketEvents() => _marketEventManager.GetActiveMarketEvents();
-    public List<(iMarketEvent Event, int PeriodStart, int periodEnd)> GetMarketEventHistory()=> _marketEventManager.GetMarketEventHistory();
-    public void AddPotentialMarketEvent(iMarketEvent marketEvent) =>
+    public List<ActiveMarketEvent> GetActiveMarketEvents() => _marketEventManager.GetActiveMarketEvents();
+    public List<(MarketEventSO Event, int PeriodStart, int periodEnd)> GetMarketEventHistory()=> _marketEventManager.GetMarketEventHistory();
+    public void AddPotentialMarketEvent(MarketEventSO marketEvent) =>
         _marketEventManager.AddPotentialMarketEvent(marketEvent);
     
-    public void RemovePotentialMarketEvent(iMarketEvent marketEvent) =>
+    public void RemovePotentialMarketEvent(MarketEventSO marketEvent) =>
         _marketEventManager.RemovePotentialMarketEvent(marketEvent);
     
     public void ResolveMarketEvents() => _marketEventManager.ResolveMarketEvents();
