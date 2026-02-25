@@ -608,6 +608,14 @@ PrefabInstance:
       propertyPath: ActionPointsText
       value: 
       objectReference: {fileID: 1783571879}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: numberOfNPCFirms
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: numberOfPopulations
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5004626964252845080, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
       propertyPath: m_Name
       value: TextBasedStoryHandler

@@ -114,11 +114,11 @@ public class SupplyAndDemandTests
     [TearDown]
     public void TearDown()
     {
-        ScriptableObject.DestroyImmediate(TestMarket);
-        ScriptableObject.DestroyImmediate(lemon);
-        ScriptableObject.DestroyImmediate(water);
-        ScriptableObject.DestroyImmediate(sugar);
-        GameObject.DestroyImmediate(TestEconomy);
+        UnityEngine.Object.DestroyImmediate(TestMarket);
+        UnityEngine.Object.DestroyImmediate(lemon);
+        UnityEngine.Object.DestroyImmediate(water);
+        UnityEngine.Object.DestroyImmediate(sugar);
+        UnityEngine.Object.DestroyImmediate(TestEconomy);
         TestPopulation = null;
         TestMarket = null;
         Company1 = null;

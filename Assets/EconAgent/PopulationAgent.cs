@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+[CreateAssetMenu(menuName ="LemonadeStandAssets/PopulationAgent")]
 
 public class PopulationAgent : EconAgent
 {
