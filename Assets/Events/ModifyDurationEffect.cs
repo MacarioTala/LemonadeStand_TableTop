@@ -4,24 +4,4 @@ public class ModifyDurationEffect : iMarketEffect
     {
         throw new System.NotImplementedException();
     }
-
-    public iMarketEvent GetParentEvent()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void Reset()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void SaveOriginalState()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void SetParentEvent(iMarketEvent marketEvent)
-    {
-        throw new System.NotImplementedException();
-    }
 }
