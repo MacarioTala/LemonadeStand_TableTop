@@ -71,7 +71,7 @@ public class Market : ScriptableObject, iEconAgent
     public void InitializeDemandForSpecificGood(Good good, int initialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
         => _demandManager.InitializeDemandForSpecificGood(good, initialDemand, minDemand, maxDemand, curvature);
     #endregion
-    //Companies
+    //Econ Agents
     private readonly List<EconAgent> _marketParticipants = new();
     public List<EconAgent> GetMarketParticipants() => _marketParticipants;
     public void RegisterMarketParticipant(EconAgent marketParticipant)

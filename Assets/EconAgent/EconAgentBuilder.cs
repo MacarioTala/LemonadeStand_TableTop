@@ -37,7 +37,7 @@ public class EconAgentBuilder<T> where T : EconAgent
 
     public EconAgentBuilder<T> AtLevel(AgentLevelEnum companyLevel)
     {
-        agentToReturn.companyLevel = companyLevel;
+        agentToReturn.agentLevel = companyLevel;
         return this;
     }
 
@@ -109,8 +109,14 @@ public class EconAgentBuilder<T> where T : EconAgent
 public static class EconAgentBuilder
 {
     public static EconAgentBuilder<T> For<T>() where T : EconAgent
-            => EconAgentBuilder<T>.Create();
+        => EconAgentBuilder<T>.Create();
 
     public static EconAgentBuilder<EconAgent> ForBaseAgent()
         => EconAgentBuilder<EconAgent>.Create();
+    
+    public static EconAgentBuilder<T> FromTemplate<T> (T existingTemplate) where T: EconAgent
+        => new(existingTemplate);
+
+    public static EconAgentBuilder<EconAgent> Wrap(EconAgent existingTemplate)
+        => new(existingTemplate);
 }

@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+[CreateAssetMenu(menuName ="LemonadeStandAssets/EconAgent")]
 public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 {
 #region Identity and Initialization
     //Fields to get around Unity's limitation of not having automatic backing properties.
-    [SerializeField]private string _company_name;
+    [SerializeField]private string _agentName;
     public string Name
     {
-        get => _company_name;
-        set => _company_name = value;
+        get => _agentName;
+        set => _agentName = value;
     }
-    public AgentLevelEnum companyLevel;
+    public AgentLevelEnum agentLevel;
     public bool IsPlayer { get; set; } = false;
     private Market marketCompanyIsIn;
     public Market GetMarket() => marketCompanyIsIn;
@@ -33,11 +34,12 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     internal void Initialize (string companyName, AgentLevelEnum company_level,iStrategy strategy=null)
     {
         Name = companyName;
-        companyLevel = company_level;
+        agentLevel = company_level;
         _companyStrategy = strategy;
 
         //setup
-        SetInitialCash();
+        if(initialCash==0) 
+            SetInitialCash();
         SetInitialActions();
     }
 
@@ -78,7 +80,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     public void AddAllowedAction(AllowedAction action) => allowedActions.Add(action);
     public void SetInitialActions()
     {
-        switch(companyLevel)
+        switch(agentLevel)
         {
             case AgentLevelEnum.Beginner:
                 actionsPerCycle = 3;
@@ -139,6 +141,8 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     readonly public DemographicPropertyBag Demographics = new();
 #endregion
 #region Financials
+    public double InitialCash;
+    private decimal initialCash => (decimal)InitialCash;
     private decimal cash = 0;
     public bool IsBankrupt() => cash <= 0;
     private decimal minimumBid;
@@ -150,7 +154,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     public List<FixedCost> FixedCosts {get;set;} = new();
     private void SetInitialCash()
         {
-            switch(companyLevel)
+            switch(agentLevel)
             {
                 case AgentLevelEnum.Beginner:
                     cash = 10000;

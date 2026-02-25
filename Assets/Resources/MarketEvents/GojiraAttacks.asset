@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f30e2e0baf0469cae0a5f1f19923ed, type: 3}
   m_Name: GojiraAttacks
   m_EditorClassIdentifier: GameAssembly::MarketEventSO
-  EventName: 
-  EventDescription: 
-  EventChance: 0
-  _eventDuration: 0
-  Effects: []
+  EventName: Gojira Attacks
+  EventDescription: Gojira attacks, reducing population by 10%
+  EventChance: 50
+  _eventDuration: 2
+  Effects:
+  - {fileID: 11400000, guid: 62cf6d85ac74f492095cae22bbd342d6, type: 2}
   _tags: []
-  references:
-    version: 2
-    RefIds: []

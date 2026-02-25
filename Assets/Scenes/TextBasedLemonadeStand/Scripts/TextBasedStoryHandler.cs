@@ -3,14 +3,16 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
-using System.Reflection.Emit;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
+    private static readonly WaitForSeconds _waitForSeconds1 = new(1);
     [SerializeField] private TextMeshProUGUI textScroll;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button EndTurnButton;
     [SerializeField] private TextMeshProUGUI ActionPointsText;
+    [SerializeField] private int numberOfPopulations;
+    [SerializeField] private int numberOfNPCFirms;
     public static TextBasedStoryHandler Instance { get; private set; }
 #region Game Variables
     private EconAgent PlayerCompany;
@@ -63,6 +65,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         InitializeMarket();
         InitializePlayer();
+        CreateNpcs();
+        //CreateEvents();
         WireUpButtons();
         playerActionsRemaining = PlayerCompany.GetActionsRemaining();
         ActionPointsText.text = playerActionsRemaining.ToString();
@@ -73,7 +77,51 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
         Instance.StartCoroutine(Instance.StartGameLoop());
     }
+#region NPCs
+    private void CreateNpcs()
+    {
+        CreatePopulations();
+        CreateFirms();
+    }
 
+    private void CreateFirms()
+    {
+        var firmTemplates = Resources.LoadAll<EconAgent>("EconAgents/Firms");
+        foreach(var firm in firmTemplates)
+        {
+            SpawnAgentFromTemplate(firm);
+        }
+    }
+
+    private void SpawnAgentFromTemplate(EconAgent firm)
+    {
+        var instance = ScriptableObject.Instantiate(firm);
+        EconAgentBuilder.Wrap(instance)
+                        .Named($"{firm.Name}_{Guid.NewGuid().ToString("N")[..6]}")
+                        .Build();
+        initialMarket.RegisterMarketParticipant(instance);
+    }
+
+    private void CreatePopulations()
+    {
+        var populationTemplates = Resources.LoadAll<PopulationAgent>("EconAgents/Populations");
+        foreach(var population in populationTemplates)
+        {
+            SpawnAgentFromTemplate(population);
+        }
+    }
+#endregion
+
+    // #region Events
+    // public void CreateEvents()
+    // {
+    //     var eventTemplates = Resources.LoadAll<MarketEventSO>("MarketEvents");
+    //     foreach(var template in eventTemplates)
+    //     {
+    //         initialMarket.AddPotentialMarketEvent(template);
+    //     }
+    // }
+    // #endregion
     private void WireUpButtons()
     {
         EndTurnButton.onClick.AddListener(EndTurn);
@@ -140,11 +188,11 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         textScroll.text = "";
         LogMessage("Welcome to Lemonade Stand!");
-        yield return new WaitForSeconds(1);
+        yield return _waitForSeconds1;
         LogMessage("Can you save Capitalism?");
-        yield return new WaitForSeconds(1);
+        yield return _waitForSeconds1;
         LogMessage("Let's find out!");
-        yield return new WaitForSeconds(1);
+        yield return _waitForSeconds1;
         DisplayChoices();
     }
 
