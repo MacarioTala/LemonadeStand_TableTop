@@ -10,7 +10,7 @@ public class ModifyMonsterEffect : MarketEffectSO
     List<(iMarketEvent Event, int OriginalDuration)> _originalEvents = new();
     public string TargetTag => "Monster";
 
-    public override void Apply(Market market)
+    public override void Apply(Market market,ActiveMarketEvent activeMarketEvent)
     {
         foreach (var marketEvent in market.GetActiveMarketEvents())
         {
@@ -22,6 +22,7 @@ public class ModifyMonsterEffect : MarketEffectSO
             {
                 marketEvent.Extend(newDuration);        
             }
+ 
             if (marketEvent.EventDefinition.HasTag(_populationReduction))
             {
                 var changepopulationEffect = marketEvent
@@ -36,9 +37,9 @@ public class ModifyMonsterEffect : MarketEffectSO
         }
     }
 
-    public void Initialize( int newDuration, float destructionMultiplier)
+    public void Initialize( int newDuration, float populationReductionMultiplier)
     {
-        _destructionMultiplier = destructionMultiplier;
+        _destructionMultiplier = populationReductionMultiplier;
         this.newDuration = newDuration;
     }
 }

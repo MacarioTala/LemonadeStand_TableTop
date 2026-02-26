@@ -16,7 +16,7 @@ public class ChangeAnxietyEffect : MarketEffectSO
         AnxietyChangePercentage = multiplier / 100f;
     }
 
-    public override void Apply(Market market)
+    public override void Apply(Market market,ActiveMarketEvent activeMarketEvent)
     {
         var affectedAgents = market.GetMarketParticipants();
 

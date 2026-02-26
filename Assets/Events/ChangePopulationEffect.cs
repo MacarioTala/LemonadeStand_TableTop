@@ -9,7 +9,7 @@ public class ChangePopulationEffect : MarketEffectSO
     public float PopulationChangePercentage;
     float _conversion => PopulationChangePercentage / 100f;
     
-    public override void Apply(Market market)
+    public override void Apply(Market market,ActiveMarketEvent activeMarketEvent)
     {
         var marketPopulations = market.GetMarketParticipants()
             .Where(x => x is PopulationAgent)
