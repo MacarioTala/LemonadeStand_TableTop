@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 4402122153729276839}
   - component: {fileID: 3808823939431821315}
   m_Layer: 5
-  m_Name: ActionLabel
+  m_Name: PeriodLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Actions : '
+  m_text: 'Period : '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -879,7 +879,7 @@ GameObject:
   - component: {fileID: 263920381379384290}
   - component: {fileID: 3976151657630620411}
   m_Layer: 5
-  m_Name: ActionCounter
+  m_Name: PeriodCounter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

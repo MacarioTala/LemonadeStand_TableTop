@@ -34,6 +34,7 @@ public class Market : ScriptableObject, iEconAgent
     }
     public AgentLevelEnum company_level;
     //Cash and Inventory
+    public long InitialCashInCents;
     private decimal cash = 0;
     private readonly Inventory _inventory = new();
     private readonly List<Recipe> _recipes = new();

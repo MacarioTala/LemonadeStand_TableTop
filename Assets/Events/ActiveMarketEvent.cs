@@ -6,7 +6,7 @@ public sealed class ActiveMarketEvent
     public int PeriodStart {get;}
     public int PeriodEnd {get; private set;}
 
-    private readonly List<MarketEffectSO> extraEffects = new();
+    public readonly List<MarketEffectSO> ExtraEffects = new();
 
     public ActiveMarketEvent(MarketEventSO template, int periodStart,int duration)
     {
@@ -22,6 +22,6 @@ public sealed class ActiveMarketEvent
         => PeriodEnd+= extraPeriods;
     
     public void AddEffect(MarketEffectSO effect)
-        => extraEffects.Add(effect);
+        => ExtraEffects.Add(effect);
 
 }

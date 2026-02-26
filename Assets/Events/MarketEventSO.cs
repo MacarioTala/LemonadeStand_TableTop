@@ -10,7 +10,6 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
     public float EventChance; 
     [SerializeField,Tooltip("The duration of the event in periods. 0 = permanent")]
     int _eventDuration;
-    int _originalDuration;
     
     [SerializeReference]
     List<MarketEffectSO> Effects = new();
@@ -74,7 +73,12 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
     {
         foreach (var effect in Effects)
         {
-            effect.Apply(market);
+            effect.Apply(market,activeEvent);
+        }
+
+        foreach (var effect in activeEvent.ExtraEffects)
+        {
+            effect.Apply(market,activeEvent);
         }
     }
 
@@ -85,6 +89,5 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
         EventDescription = eventDescription;
         EventChance = eventChance;
         _eventDuration = eventDuration;
-        _originalDuration = eventDuration;
     }
 }

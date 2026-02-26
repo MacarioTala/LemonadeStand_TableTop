@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class MarketEffectSO : ScriptableObject, iMarketEffect
 {
     protected MarketEventSO _parentEvent;
-    public abstract void Apply(Market market);
+    public abstract void Apply(Market marke,ActiveMarketEvent activeMarketEvent);
     public MarketEventSO GetParentEvent()
     {
         return _parentEvent;

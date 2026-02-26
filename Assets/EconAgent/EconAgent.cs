@@ -141,8 +141,8 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     readonly public DemographicPropertyBag Demographics = new();
 #endregion
 #region Financials
-    public double InitialCash;
-    private decimal initialCash => (decimal)InitialCash;
+    public long InitialCashInCents;
+    private decimal initialCash => InitialCashInCents/100;
     private decimal cash = 0;
     public bool IsBankrupt() => cash <= 0;
     private decimal minimumBid;

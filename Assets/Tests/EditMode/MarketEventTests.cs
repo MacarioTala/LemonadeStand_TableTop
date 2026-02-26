@@ -115,19 +115,19 @@ public class MarketEventTests
         var expectedPopulation = 90;
         var testPopulation = EconAgentBuilder.For<PopulationAgent>()
             .WithPopulation(initialPopulation)
-            .WithFixedCostStrategy(new BasicFixedCostStrategy())
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
 
         TestMarket.RegisterMarketParticipant(testPopulation);
+        var maraudersAttackActiveEvent = new ActiveMarketEvent(MaraudersAttack,TestMarket.CurrentPeriod,1);
 
         //Act
-        MaraudersAttack.Invoke(TestMarket,MaraudersAttackActiveEvent);
-        var newPopulation = TestMarket.GetPopulation();
+         MaraudersAttack.Invoke(TestMarket,maraudersAttackActiveEvent);
 
         //Assert
-        Assert.AreEqual(expectedPopulation, newPopulation);
+        Assert.AreEqual(expectedPopulation, TestMarket.GetPopulation());
+
     }
     #region MarketEventDuration tests
     [Test]

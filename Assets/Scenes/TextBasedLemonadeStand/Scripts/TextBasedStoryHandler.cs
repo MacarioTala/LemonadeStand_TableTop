@@ -66,10 +66,9 @@ public class TextBasedStoryHandler : MonoBehaviour
         InitializeMarket();
         InitializePlayer();
         CreateNpcs();
-        //CreateEvents();
+        CreateEvents();
+        ActionPointsText.text = TheEconomy.Instance.tradingPeriod.ToString();
         WireUpButtons();
-        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
-        ActionPointsText.text = playerActionsRemaining.ToString();
         if (Instance == null)
         {
             Debug.Log("TextBasedStoryHandler is not initialized.");
@@ -98,6 +97,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         var instance = ScriptableObject.Instantiate(firm);
         EconAgentBuilder.Wrap(instance)
                         .Named($"{firm.Name}_{Guid.NewGuid().ToString("N")[..6]}")
+                        .WithInitialCashFromTemplate()
                         .Build();
         initialMarket.RegisterMarketParticipant(instance);
     }
@@ -112,16 +112,16 @@ public class TextBasedStoryHandler : MonoBehaviour
     }
 #endregion
 
-    // #region Events
-    // public void CreateEvents()
-    // {
-    //     var eventTemplates = Resources.LoadAll<MarketEventSO>("MarketEvents");
-    //     foreach(var template in eventTemplates)
-    //     {
-    //         initialMarket.AddPotentialMarketEvent(template);
-    //     }
-    // }
-    // #endregion
+    #region Events
+    public void CreateEvents()
+    {
+        var eventTemplates = Resources.LoadAll<MarketEventSO>("MarketEvents");
+        foreach(var template in eventTemplates)
+        {
+            initialMarket.AddPotentialMarketEvent(template);
+        }
+    }
+    #endregion
     private void WireUpButtons()
     {
         EndTurnButton.onClick.AddListener(EndTurn);
@@ -129,9 +129,6 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void EndTurn()
     {
-        int.TryParse(ActionPointsText.text, out int currentActions);
-        currentActions--;
-        ActionPointsText.text = currentActions.ToString();
         Debug.Log("End Turn");
     }
 
@@ -142,7 +139,8 @@ public class TextBasedStoryHandler : MonoBehaviour
         TheEconomy.Instance.RemoveMarket(testMarket);
 
         //This might need a cleaner solution. Episode 1 market is a scriptable Object stored in Resources
-        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market"); 
+        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
+        initialMarket.SetCash(initialMarket.InitialCashInCents/100);
         var inventory = initialMarket.GetInventory();
         initialMarket.SetTradeProcessor(new DefaultTradeProcessor());
 
