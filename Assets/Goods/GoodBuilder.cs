@@ -15,6 +15,12 @@ public class GoodBuilder
         goodToReturn.SetRarity(rarity);
         return this;
     }
+    
+    public GoodBuilder WithExpiryAfter(int periods)
+    {
+        goodToReturn.SetExpiry(periods);
+        return this;
+    }
 
     public GoodBuilder Costing(decimal cost)
     {

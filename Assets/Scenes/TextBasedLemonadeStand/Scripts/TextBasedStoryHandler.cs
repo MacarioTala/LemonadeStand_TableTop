@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -40,6 +41,7 @@ public class TextBasedStoryHandler : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
+            ClearUISelection();
             isWaitingForPlayerInput = false;
             ClearTextScroll();
             DisplayChoices();
@@ -52,13 +54,20 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void ChoicesMainMenu()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) ChooseFromMainMenu(1);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) ChooseFromMainMenu(2);
+        if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
+        if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
+        if (Input.GetKeyDown(KeyCode.N)) ChooseFromMainMenu('N');
     }
 
     private void ChoicesOrderSupplies()
     {
         throw new NotImplementedException();
+    }
+ 
+    private void ClearUISelection()
+    {
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void StartTextBasedGame()
@@ -129,6 +138,9 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void EndTurn()
     {
+        TheEconomy.Instance.StartTradingPeriod();
+        TheEconomy.Instance.EndTradingPeriod();
+        ActionPointsText.text = TheEconomy.Instance.tradingPeriod.ToString();
         Debug.Log("End Turn");
     }
 
@@ -141,8 +153,9 @@ public class TextBasedStoryHandler : MonoBehaviour
         //This might need a cleaner solution. Episode 1 market is a scriptable Object stored in Resources
         initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
         initialMarket.SetCash(initialMarket.InitialCashInCents/100);
+        initialMarket.WithMarketInteractionManager(new Episode1InteractionManager());
+        initialMarket.WithTradeProcessor(new DefaultTradeProcessor());
         var inventory = initialMarket.GetInventory();
-        initialMarket.SetTradeProcessor(new DefaultTradeProcessor());
 
         var period = TheEconomy.Instance.tradingPeriod;
 
@@ -150,18 +163,21 @@ public class TextBasedStoryHandler : MonoBehaviour
                     .Named("Lemons")
                     .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
                     .WithRarity(RarityEnum.Common)
+                    .WithExpiryAfter(5)
                     .Build();
         
         var Sugar = new GoodBuilder()
                     .Named("Sugar")
                     .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
                     .WithRarity(RarityEnum.Common)
+                    .WithExpiryAfter(5)
                     .Build();
         
         var Water = new GoodBuilder()
                     .Named("Water")
                     .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
                     .WithRarity(RarityEnum.Common)
+                    .WithExpiryAfter(int.MaxValue)
                     .Build();
 
         var lemonEntry=inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(),period));
@@ -198,16 +214,19 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         if(textScroll!=null) textScroll.text = "";
     }
-    private void ChooseFromMainMenu(int choice)
+    private void ChooseFromMainMenu(char choice)
     {
         ClearTextScroll();
         switch (choice)
         {
-            case 1:
+            case 'C':
                 DisplayInventory();
                 break;
-            case 2:
+            case 'S':
                 SetLemonadePrice();
+                break;
+            case 'N':
+                CheckNews();
                 break;
             default:
                 LogMessage("Invalid choice. Please choose again.");
@@ -215,21 +234,24 @@ public class TextBasedStoryHandler : MonoBehaviour
                 break;
         }
         isWaitingForPlayerInput = true;
-        LogMessage("Press Space to continue.");
+        LogMessage("Press <space> to continue.");
     }
 
     private void DisplayChoices()
     {
+        ClearUISelection();
         isWaitingForPlayerInput = true;
         CurrentMenuState = MenuStateEnum.MainMenu;
         LogMessage("What would you like to do?");
-        LogMessage("1. Check Inventory");
-        LogMessage("2. Set Lemonade Price");
+        LogMessage("(C)heck Inventory");
+        LogMessage("(S)et Lemonade Price");
+        LogMessage("Check (N)ews");
         LogMessage("\n");
     }
 
     private void CheckNews()
     {
+        ClearUISelection();
         LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
         LogMessage($"You have {PlayerCompany.GetCash()} credits.");
         LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
@@ -237,6 +259,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     }
     private void DisplayInventory()
     {
+        ClearUISelection();
         var inventory = PlayerCompany.GetInventory().GetInventoryEntries();
         LogMessage("Inventory:");
         foreach (var item in inventory)
@@ -247,28 +270,8 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void SetLemonadePrice()
     {
+        ClearUISelection();
         LogMessage("Cannot set Lemonade Price yet");
-    }
-
-    private void OrderSupplies()
-    {
-        var inventory = initialMarket.GetInventory().GetInventoryEntries();
-
-        if (inventory.Count == 0)
-        {
-            LogMessage("The grocery store is out of supplies.");
-        }
-        else
-        {
-            LogMessage($"The following supplies are available in this store:");
-        
-            foreach (var item in inventory)
-            {
-                LogMessage($"{item.quantity} {item.good} at {item.Cost}");
-            }
-            
-            LogMessage("What would you like to buy?");
-        }
     }
 
     public void LogMessage(string message)

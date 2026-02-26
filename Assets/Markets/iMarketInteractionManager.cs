@@ -7,4 +7,5 @@ public interface iMarketInteractionManager : iMarketAware
     LemonadeStandResultObject QueueOrder(ActionContext context);
     LemonadeStandResultObject QueueMarketOrder(ActionContext context);
     void UpdateCompanyStatuses(int period);
+    void MarketsProvideLiquidityOfLastResort();
 }

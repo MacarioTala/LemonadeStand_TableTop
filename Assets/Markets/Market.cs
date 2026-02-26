@@ -396,6 +396,7 @@ public class Market : ScriptableObject, iEconAgent
         ResolveMarketEvents();
         //Local Agents
         _marketInteractionManager.PopulationsAct(CurrentPeriod);
+        _marketInteractionManager.MarketsProvideLiquidityOfLastResort();
     }
 
     public void UnleashMarketForces(int period)
