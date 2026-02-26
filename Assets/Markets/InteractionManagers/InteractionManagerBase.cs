@@ -1,11 +1,10 @@
 using System.Linq;
 using UnityEngine;
-
-public class DefaultMarketInteractionManager : iMarketInteractionManager
+public abstract class InteractionManagerBase : iMarketInteractionManager
 {
-    Market _market;
+    protected Market _market;
 
-    public void EvaluateParticipantCollapse(EconAgent company)
+    public virtual void EvaluateParticipantCollapse(EconAgent company)
     {
         if (company.IsBankrupt())
         {
@@ -20,7 +19,9 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
         }
     }
 
-    public void PopulationsAct(int period)
+    public abstract void MarketsProvideLiquidityOfLastResort();
+    
+    public virtual void PopulationsAct(int period)
     {
         var marketParticipants = _market.GetMarketParticipants()
                                 .OfType<PopulationAgent>()
@@ -36,7 +37,7 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
         }
     }
 
-    public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    public virtual LemonadeStandResultObject QueueMarketOrder(ActionContext context)
     {
         context.TradeToSubmit.SubmittingCompany = _market;
         var queueResult = QueueOrder(context);
@@ -45,7 +46,7 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
         return LemonadeStandResultObject.Success();
     }
 
-    public LemonadeStandResultObject QueueOrder(ActionContext context)
+    public virtual LemonadeStandResultObject QueueOrder(ActionContext context)
     {
         var contextValidationResult = context.ContainsValidTrade();
         if (!contextValidationResult.Equals(LemonadeStandResultObject.Success()))
@@ -60,7 +61,7 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
         return LemonadeStandResultObject.Success();
     }
 
-    public void RegisterMarketParticipant(EconAgent marketParticipant)
+    public virtual void RegisterMarketParticipant(EconAgent marketParticipant)
     {
         var participants = _market.GetMarketParticipants();
          if (!participants.Contains(marketParticipant))
@@ -75,7 +76,7 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
         TheEconomy.Instance.RegisterEconomicAgent(marketParticipant);
     }
 
-    public LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
+    public virtual LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
     {
         var participants = _market.GetMarketParticipants();
         if (participants.Contains(marketParticipant))
@@ -90,7 +91,7 @@ public class DefaultMarketInteractionManager : iMarketInteractionManager
     public void SetMarket(Market market)
         =>_market = market;
 
-    public void UpdateCompanyStatuses(int period)
+    public virtual void UpdateCompanyStatuses(int period)
     {
         var participantCopyforIteration = _market.GetMarketParticipants().ToList();
         foreach (var agent in participantCopyforIteration)

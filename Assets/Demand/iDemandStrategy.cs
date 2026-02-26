@@ -17,7 +17,7 @@ public interface iDemandStrategy
         Dictionary<Good, DemandData> calculatedDemand = new();
         var orders = market.GetOrdersSubmittedInPeriod(tradingPeriod);
         var allOrdersInPeriod = market.GetOrdersSubmittedInPeriod(tradingPeriod)
-            .Where(x => x.Buyer.Equals(x.SubmittingCompany))
+            .Where(x => Equals(x.Buyer,x.SubmittingCompany))
             .ToList();
         foreach (var order in allOrdersInPeriod)
         {

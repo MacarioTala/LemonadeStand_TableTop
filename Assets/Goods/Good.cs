@@ -45,6 +45,8 @@ public class Good : ScriptableObject
     private PriceBand PriceBand;
 
     public int ExpiresAfterPeriods { get; set; } = int.MaxValue;
+    public void SetExpiry(int periods)
+        => ExpiresAfterPeriods = periods;
     private RarityEnum _rarity;
 
     public bool IsProducedGood { get; set; } = false;
