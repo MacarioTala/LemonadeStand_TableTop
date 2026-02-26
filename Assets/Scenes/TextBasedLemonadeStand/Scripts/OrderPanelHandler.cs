@@ -175,7 +175,7 @@ public class OrderPanelHandler : MonoBehaviour
         if (result == LemonadeStandResultObject.Success())
         {
             ShowOrderConfirmation();
-            DecrementActionCounter();
+            //DecrementActionCounter(); //Do we want limited actions/turn?
         }
         else
         {

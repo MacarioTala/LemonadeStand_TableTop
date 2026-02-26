@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,11 @@ public class EconAgentBuilder<T> where T : EconAgent
     public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
     {
         agentToReturn.SetCash(initialCash);
+        return this;
+    }
+    public EconAgentBuilder<T> WithInitialCashFromTemplate()
+    {
+        agentToReturn.SetCash(agentToReturn.InitialCashInCents/100);
         return this;
     }
     public EconAgentBuilder<T> WithActionsPerTurn(int actionsPerTurn)
