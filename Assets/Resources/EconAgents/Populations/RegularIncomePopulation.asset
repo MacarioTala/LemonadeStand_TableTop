@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::PopulationAgent
   _agentName: RegularPopulation
   agentLevel: 0
-  InitialCash: 10000
+  InitialCashInCents: 1000000
+  _population: 100
