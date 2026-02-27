@@ -12,7 +12,7 @@ public class OrderPanelHandler : MonoBehaviour
     [SerializeField] private GameObject QuantityInput;
     [SerializeField] private Button OrderButton;
     [SerializeField] private Button SummaryButton;
-    [SerializeField] private GameObject TurnLabel;
+    [SerializeField] private GameObject ArrivingLabel;
     [SerializeField] private TextMeshProUGUI ValueLabel;
     [SerializeField] private GameObject TotalLabel;
     [SerializeField] private TextMeshProUGUI actionCounter;
@@ -46,21 +46,24 @@ public class OrderPanelHandler : MonoBehaviour
         if(MarketInventoryEntries.Count>0)
             ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
 
-        // DetailedOrderPanel.SetActive(false);
-        // ShowDetailedOrderButton.onClick.AddListener(ShowDetailedOrderPanel);
-
         InitializePlayer();
         InitializeOrderDropDown();
     }
 
-    private void ShowDetailedOrderPanel()
-    {
-        DetailedOrderPanel.SetActive(true);
-    }
-
     private void ShowOrderConfirmation()
     {
+        ArrivingLabel.SetActive(true);
+        var arrivingText = ArrivingLabel.GetComponent<TextMeshProUGUI>();
+        arrivingText.text = "Goods are arriving next turn";
+        ResetOrderPanel();
         StartCoroutine(FadeText("Order Queued"));
+    }
+
+    private void ResetOrderPanel()
+    {
+        QuantityInput.GetComponent<TMP_InputField>().text = 0.ToString();
+        dropdown.value = 0;
+        ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
     }
 
     private IEnumerator FadeText(string message)
@@ -115,7 +118,6 @@ public class OrderPanelHandler : MonoBehaviour
     {
         var selectedEntry = MarketInventoryEntries[selectedIndex];
         var price = selectedEntry.Price;
-        var selectedGood = selectedEntry.good;
         int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out int quantity);
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         ValueLabel.text = price.ToString();
@@ -175,19 +177,10 @@ public class OrderPanelHandler : MonoBehaviour
         if (result == LemonadeStandResultObject.Success())
         {
             ShowOrderConfirmation();
-            //DecrementActionCounter(); //Do we want limited actions/turn?
         }
         else
         {
             Debug.Log(result.Message);
         }
-    }
-
-    private void DecrementActionCounter()
-    {
-        var actionCounterText = actionCounter.text;
-        int.TryParse(actionCounterText, out var actionsRemaining);
-        actionsRemaining--;
-        actionCounter.text = actionsRemaining.ToString();
     }
 }

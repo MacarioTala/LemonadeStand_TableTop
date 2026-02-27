@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: Lemon
   m_EditorClassIdentifier: GameAssembly::Good
   GoodName: Lemon
+  GoodSprite: {fileID: 0}
+  ExpiresAfterPeriods: 5
+  _rarity: 0
+  IsProducedGood: 0
   price_increase_threshold: 0
   price_decrease_threshold: 0
