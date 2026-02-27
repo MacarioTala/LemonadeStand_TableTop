@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,8 +21,9 @@ public class OrderSummaryPopupHandler : MonoBehaviour
     {
         LocalMarket = market;
         Debug.Log("Showing Order Summary"+OrderSummaryPanel.activeInHierarchy);
-        try{
-                var orders = LocalMarket.GetOrdersSentToMarket();
+                var player = LocalMarket.GetMarketParticipants().FirstOrDefault(x=>x.Name=="Player1");
+                var orders = LocalMarket.GetOrdersSentToMarket()
+                    .Where(x=>x !=null && (Equals(player,x.Buyer) || Equals(player,x.Seller)));
                 var panelText = OrderSummaryText.GetComponent<TextMeshProUGUI>();
                 panelText.text = "";
 
@@ -28,21 +31,21 @@ public class OrderSummaryPopupHandler : MonoBehaviour
                 panelText.text += "\n";
                 panelText.text += "----------------";
                 panelText.text += "\n";
-                foreach(var order in orders){
-                    var line = new OrderSummaryLineItem{
-                        GoodName = order.Good.ToString(),
-                        Quantity = order.Quantity,
-                        Price = order.Price
-                    };
-                    panelText.text += line.ToString();
-                    panelText.text += "\n";
+                
+                if(orders.Any())
+                    {
+                        foreach(var order in orders)
+                        {
+                            var line = new OrderSummaryLineItem{
+                                GoodName = order.Good.ToString(),
+                                Quantity = order.Quantity,
+                                Price = order.Price
+                            };
+                            panelText.text += line.ToString();
+                            panelText.text += "\n";
+                    }
                 }
-                OrderSummaryPanel.SetActive(true);
-            }
-        catch(Exception e){
-            Debug.Log(e);
-        }
-        
+                OrderSummaryPanel.SetActive(true);  
     }
 
     public void CloseOrderSummary()

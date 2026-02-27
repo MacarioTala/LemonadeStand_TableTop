@@ -15,6 +15,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ActionPointsText;
     [SerializeField] private int numberOfPopulations;
     [SerializeField] private int numberOfNPCFirms;
+    [SerializeField] TextMeshProUGUI OrderPanelArrivingText;
+    [SerializeField] TextMeshProUGUI SummaryPanelText;
     [SerializeField] Recipe BasicLemonadeRecipe;
     private const string BasicLemonadeRecipeName = "Basic Lemonade";
     public static TextBasedStoryHandler Instance { get; private set; }
@@ -51,13 +53,6 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
 
         if(CurrentMenuState==MenuStateEnum.MainMenu) ChoicesMainMenu();
-
-        if(CurrentMenuState==MenuStateEnum.OrderSupplies) ChoicesOrderSupplies();
-    }
-
-    private void ChoicesOrderSupplies()
-    {
-        throw new NotImplementedException();
     }
  
     private void ClearUISelection()
@@ -77,6 +72,8 @@ public class TextBasedStoryHandler : MonoBehaviour
             Debug.Log("TextBasedStoryHandler is not initialized.");
             return;
         }
+        UpdateOrderPanelArrivingText(string.Empty);
+        UpdateOrderSummaryArrivingText(string.Empty);
         Instance.StartCoroutine(Instance.StartGameLoop());
     }
 #region NPCs
@@ -133,11 +130,13 @@ public class TextBasedStoryHandler : MonoBehaviour
     private void EndTurn()
     {
         TheEconomy.Instance.StartTradingPeriod();
+        UpdateOrderPanelArrivingText("Goods have arrived");
         TheEconomy.Instance.EndTradingPeriod();
         ActionPointsText.text = TheEconomy.Instance.tradingPeriod.ToString();
         Debug.Log("End Turn");
     }
 
+#region Initialization
     private void InitializeMarket()
     {
         //Refactor this at some point. No need for 'the first market'
@@ -186,7 +185,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         var recipes = Resources.LoadAll<Recipe>("Recipes");
         BasicLemonadeRecipe= recipes.FirstOrDefault(x=>x.RecipeName==BasicLemonadeRecipeName);
     }
-
+#endregion
     private void ClearTextScroll()
     {
         if(textScroll!=null) textScroll.text = "";
@@ -224,7 +223,21 @@ public class TextBasedStoryHandler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.N)) ChooseFromMainMenu('N');
         if (Input.GetKeyDown(KeyCode.M)) ChooseFromMainMenu('M');
     }
+
+    private void DisplayChoices()
+    {
+        ClearUISelection();
+        isWaitingForPlayerInput = true;
+        CurrentMenuState = MenuStateEnum.MainMenu;
+        LogMessage("What would you like to do?");
+        LogMessage("(C)heck Inventory");
+        LogMessage("(M)ake Lemonade from recipe");
+        LogMessage("(S)et Lemonade Price");
+        LogMessage("Check (N)ews");
+        LogMessage("\n");
+    }
 #endregion
+   
     private void CheckNews()
     {
         ClearUISelection();
@@ -239,21 +252,6 @@ public class TextBasedStoryHandler : MonoBehaviour
             LogMessage("You have not discovered any recipes");
         LogMessage("The news is not available yet.");
     }
-
-    private void DisplayChoices()
-    {
-        ClearUISelection();
-        isWaitingForPlayerInput = true;
-        CurrentMenuState = MenuStateEnum.MainMenu;
-        LogMessage("What would you like to do?");
-        LogMessage("(C)heck Inventory");
-        LogMessage("(M)ake Lemonade from recipe");
-        LogMessage("(S)et Lemonade Price");
-        LogMessage("Check (N)ews");
-        LogMessage("\n");
-    }
-
-   
     private void DisplayInventory()
     {
         ClearUISelection();
@@ -301,12 +299,18 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
     }
 
+    private void UpdateOrderPanelArrivingText(string message)
+        => OrderPanelArrivingText.text = message;
+    private void UpdateOrderSummaryArrivingText(string message)
+        => SummaryPanelText.text = message;
+
     private void SetLemonadePrice()
     {
         ClearUISelection();
         LogMessage("Cannot set Lemonade Price yet");
     }
 
+#region helpers
     public void LogMessage(string message)
     {
         if (textScroll != null)
@@ -336,6 +340,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         yield return _waitForSeconds1;
         DisplayChoices();
     }
+#endregion
     
 }
 

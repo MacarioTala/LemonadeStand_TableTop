@@ -609,13 +609,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1783571879}
     - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: SummaryPanelText
+      value: 
+      objectReference: {fileID: 1169433518}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
       propertyPath: numberOfNPCFirms
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: BasicLemonadeRecipe
+      value: 
+      objectReference: {fileID: 11400000, guid: 235237ed3ec554329b751e8f7359a58c, type: 2}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
       propertyPath: numberOfPopulations
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: OrderPanelArrivingText
+      value: 
+      objectReference: {fileID: 851550599}
     - target: {fileID: 5004626964252845080, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
       propertyPath: m_Name
       value: TextBasedStoryHandler
@@ -1010,6 +1022,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7551323336118789682, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
+      propertyPath: m_text
+      value: dummyText
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551323336118789682, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551323336118789682, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
+      propertyPath: m_margin.x
+      value: 4.5151367
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551323336118789682, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
+      propertyPath: m_margin.z
+      value: -216.82886
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1020,6 +1048,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6179254379900126479, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
   m_PrefabInstance: {fileID: 851550597}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &851550599 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7551323336118789682, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
+  m_PrefabInstance: {fileID: 851550597}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1027796974
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,6 +1095,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &1169433518 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6086767348741969206, guid: c7a7d6987403c4b8d86a0098450c66b9, type: 3}
+  m_PrefabInstance: {fileID: 2112629511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1247256549 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1381728801637782874, guid: 6565aab43edb94d0b98793a59bd89efd, type: 3}
