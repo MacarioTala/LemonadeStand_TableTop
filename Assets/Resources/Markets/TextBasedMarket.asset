@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _marketId: d2b42c18-2d70-4b25-acfc-f0c147768b38
   _companyName: Episode 1 Market
-  company_level: 0
-  CompaniesInThisMarket: []
-  PopulationEnnui: 0.8
-  PopulationHappiness: 3
+  company_level: 3
+  InitialCashInCents: 1000000
   _demandStrategy: {fileID: 11400000, guid: 602599ce4ef314835aa3df168bf31309, type: 2}

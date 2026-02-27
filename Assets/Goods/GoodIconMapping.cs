@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GoodIconMapping", menuName = "LemonadeStand/Good Icon Mapping")]
+[CreateAssetMenu(fileName = "GoodIconMapping", menuName = "LemonadeStandAssets/Mapping/Good Icon Mapping")]
 public class GoodIconMapping : ScriptableObject
 {
     [System.Serializable]

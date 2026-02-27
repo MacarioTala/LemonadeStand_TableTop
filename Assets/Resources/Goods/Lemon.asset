@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b1b96de85d8844d8abe812516e62a4d, type: 3}
-  m_Name: RegularIncomePopulation
-  m_EditorClassIdentifier: GameAssembly::PopulationAgent
-  _agentName: RegularPopulation
-  agentLevel: 0
-  InitialCashInCents: 1000000
-  _population: 100
+  m_Script: {fileID: 11500000, guid: 7b833e4e5645045f7acafd0c9b10b948, type: 3}
+  m_Name: Lemon
+  m_EditorClassIdentifier: GameAssembly::Good
+  GoodName: Lemon
+  price_increase_threshold: 0
+  price_decrease_threshold: 0

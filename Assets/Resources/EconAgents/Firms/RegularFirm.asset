@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::EconAgent
   _agentName: RegularFirm
   agentLevel: 0
-  InitialCash: 1000
+  InitialCashInCents: 100000

@@ -7,9 +7,11 @@ using UnityEngine;
 public class Good : ScriptableObject
 {
     public string GoodName;
+    public Sprite GoodSprite;
 
     private decimal _price;
     private decimal _minAskPrice;
+    public long ExpiresAfterPeriods;
 
     public decimal GetCostOfGood(Recipe recipe)
     {
@@ -36,7 +38,7 @@ public class Good : ScriptableObject
         get {
             return Elasticities.Count == 0
             ||
-            Elasticities.Where(x=>x.Value!=0).Count()==0
+            Elasticities.Count(x=>x.Value!=0)==0
             ;
         }
     }
@@ -44,12 +46,11 @@ public class Good : ScriptableObject
     private decimal price_increment_rate;
     private PriceBand PriceBand;
 
-    public int ExpiresAfterPeriods { get; set; } = int.MaxValue;
     public void SetExpiry(int periods)
         => ExpiresAfterPeriods = periods;
-    private RarityEnum _rarity;
+    [SerializeField]private RarityEnum _rarity;
 
-    public bool IsProducedGood { get; set; } = false;
+    public bool IsProducedGood;
     public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
     public int price_decrease_threshold; //ibid
 
