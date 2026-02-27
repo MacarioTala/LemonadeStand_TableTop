@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ActionPointsText;
     [SerializeField] private int numberOfPopulations;
     [SerializeField] private int numberOfNPCFirms;
+    [SerializeField] Recipe BasicLemonadeRecipe;
+    private const string BasicLemonadeRecipeName = "Basic Lemonade";
     public static TextBasedStoryHandler Instance { get; private set; }
 #region Game Variables
     private EconAgent PlayerCompany;
@@ -52,13 +55,6 @@ public class TextBasedStoryHandler : MonoBehaviour
         if(CurrentMenuState==MenuStateEnum.OrderSupplies) ChoicesOrderSupplies();
     }
 
-    private void ChoicesMainMenu()
-    {
-        if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
-        if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
-        if (Input.GetKeyDown(KeyCode.N)) ChooseFromMainMenu('N');
-    }
-
     private void ChoicesOrderSupplies()
     {
         throw new NotImplementedException();
@@ -74,8 +70,6 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         InitializeMarket();
         InitializePlayer();
-        CreateNpcs();
-        CreateEvents();
         ActionPointsText.text = TheEconomy.Instance.tradingPeriod.ToString();
         WireUpButtons();
         if (Instance == null)
@@ -152,68 +146,52 @@ public class TextBasedStoryHandler : MonoBehaviour
 
         //This might need a cleaner solution. Episode 1 market is a scriptable Object stored in Resources
         initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
-        initialMarket.SetCash(initialMarket.InitialCashInCents/100);
+        initialMarket.SetCash(initialMarket.InitialCashInCents / 100);
         initialMarket.WithMarketInteractionManager(new Episode1InteractionManager());
         initialMarket.WithTradeProcessor(new DefaultTradeProcessor());
+        LoadGoods();
+        LoadRecipes();
+        CreateNpcs();
+        CreateEvents();
+    }
+
+    private void LoadGoods()
+    {
+        var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
+        var period = TheEconomy.Instance.tradingPeriod;
         var inventory = initialMarket.GetInventory();
 
-        var period = TheEconomy.Instance.tradingPeriod;
+        var Lemon = goods.FirstOrDefault(x=>x.GoodName == "Lemon");
+        Lemon.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
+        Lemon.SetExpiry(5);
 
-        var Lemon = new GoodBuilder()
-                    .Named("Lemons")
-                    .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
-                    .WithRarity(RarityEnum.Common)
-                    .WithExpiryAfter(5)
-                    .Build();
-        
-        var Sugar = new GoodBuilder()
-                    .Named("Sugar")
-                    .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
-                    .WithRarity(RarityEnum.Common)
-                    .WithExpiryAfter(5)
-                    .Build();
-        
-        var Water = new GoodBuilder()
-                    .Named("Water")
-                    .Costing((decimal)UnityEngine.Random.Range(1.0f,3.0f))
-                    .WithRarity(RarityEnum.Common)
-                    .WithExpiryAfter(int.MaxValue)
-                    .Build();
+        var Sugar = goods.FirstOrDefault(x=>x.GoodName == "Sugar");
+        Sugar.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
+        Lemon.SetExpiry(5);
 
-        var lemonEntry=inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(),period));
+        var Water = goods.FirstOrDefault(x=>x.GoodName == "Water");
+        Water.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
+        Lemon.SetExpiry(5);
+
+        var lemonEntry = inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(), period));
         lemonEntry.SetPrice(Lemon.GetPrice());
-        var sugarEntry= inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(),period));
+        var sugarEntry = inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(), period));
         sugarEntry.SetPrice(Sugar.GetPrice());
-        var waterEntry=inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(),period));
+        var waterEntry = inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(), period));
         waterEntry.SetPrice(Water.GetPrice());
-
-       // AddMarketEvents();
-        
-    }
-    private void InitializePlayer()
-    {
-        PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
-        PlayerCompany.IsPlayer= true;
-        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
-        initialMarket.RegisterMarketParticipant(PlayerCompany);
     }
 
-    private IEnumerator StartGameLoop()
+    private void LoadRecipes()
     {
-        textScroll.text = "";
-        LogMessage("Welcome to Lemonade Stand!");
-        yield return _waitForSeconds1;
-        LogMessage("Can you save Capitalism?");
-        yield return _waitForSeconds1;
-        LogMessage("Let's find out!");
-        yield return _waitForSeconds1;
-        DisplayChoices();
+        var recipes = Resources.LoadAll<Recipe>("Recipes");
+        BasicLemonadeRecipe= recipes.FirstOrDefault(x=>x.RecipeName==BasicLemonadeRecipeName);
     }
 
     private void ClearTextScroll()
     {
         if(textScroll!=null) textScroll.text = "";
     }
+#region Menu stuff
     private void ChooseFromMainMenu(char choice)
     {
         ClearTextScroll();
@@ -228,6 +206,9 @@ public class TextBasedStoryHandler : MonoBehaviour
             case 'N':
                 CheckNews();
                 break;
+            case 'M':
+                MakeLemonade();
+                break;
             default:
                 LogMessage("Invalid choice. Please choose again.");
                 DisplayChoices();
@@ -235,6 +216,28 @@ public class TextBasedStoryHandler : MonoBehaviour
         }
         isWaitingForPlayerInput = true;
         LogMessage("Press <space> to continue.");
+    }
+    private void ChoicesMainMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
+        if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
+        if (Input.GetKeyDown(KeyCode.N)) ChooseFromMainMenu('N');
+        if (Input.GetKeyDown(KeyCode.M)) ChooseFromMainMenu('M');
+    }
+#endregion
+    private void CheckNews()
+    {
+        ClearUISelection();
+        LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
+        LogMessage($"You have {PlayerCompany.GetCash()} credits.");
+        LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
+        if(PlayerCompany.Recipes.Count()>0)
+        {
+            LogMessage("You have a recipe for: " + PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade"));
+        }
+        else
+            LogMessage("You have not discovered any recipes");
+        LogMessage("The news is not available yet.");
     }
 
     private void DisplayChoices()
@@ -244,19 +247,13 @@ public class TextBasedStoryHandler : MonoBehaviour
         CurrentMenuState = MenuStateEnum.MainMenu;
         LogMessage("What would you like to do?");
         LogMessage("(C)heck Inventory");
+        LogMessage("(M)ake Lemonade from recipe");
         LogMessage("(S)et Lemonade Price");
         LogMessage("Check (N)ews");
         LogMessage("\n");
     }
 
-    private void CheckNews()
-    {
-        ClearUISelection();
-        LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
-        LogMessage($"You have {PlayerCompany.GetCash()} credits.");
-        LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
-        LogMessage("The news is not available yet.");
-    }
+   
     private void DisplayInventory()
     {
         ClearUISelection();
@@ -265,6 +262,42 @@ public class TextBasedStoryHandler : MonoBehaviour
         foreach (var item in inventory)
         {
             LogMessage($"Item: {item.good} Quantity: {item.quantity} Acquired at: {item.Cost}");
+        }
+    }
+    private void InitializePlayer()
+    {
+        PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
+        PlayerCompany.IsPlayer= true;
+        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
+        initialMarket.RegisterMarketParticipant(PlayerCompany);
+        if(BasicLemonadeRecipe != null)
+            PlayerCompany.AddRecipe(BasicLemonadeRecipe);
+    }
+    private void MakeLemonade()
+    {
+        ClearUISelection();
+        if(PlayerCompany.Recipes.Count==0)
+        {
+            LogMessage("You have no recipes!");
+        }
+        {
+            var maxQuantity = BasicLemonadeRecipe.Get_max_quantity(PlayerCompany.GetInventory().GetInventoryEntries());
+
+            if(BasicLemonadeRecipe.CanRecipeBeMadeFrom(PlayerCompany.GetInventory().GetInventoryEntries()))
+            {
+                var context = new ActionContext()
+                {
+                    RecipeMaker=PlayerCompany,
+                    Recipe=BasicLemonadeRecipe,
+                    QuantityToMake=maxQuantity
+                };
+                PlayerCompany.MakeRecipe(context);
+                LogMessage("Made "+maxQuantity+" units of: "+BasicLemonadeRecipe.GetProduct());
+            }
+            else
+            {
+                LogMessage("Insufficient ingredients to make:"+BasicLemonadeRecipe.name);
+            }
         }
     }
 
@@ -291,6 +324,17 @@ public class TextBasedStoryHandler : MonoBehaviour
         {
             Debug.Log("GameLogTMP is not assigned in the inspector.");
         }
+    }
+    private IEnumerator StartGameLoop()
+    {
+        textScroll.text = "";
+        LogMessage("Welcome to Lemonade Stand!");
+        yield return _waitForSeconds1;
+        LogMessage("Can you save Capitalism?");
+        yield return _waitForSeconds1;
+        LogMessage("Let's find out!");
+        yield return _waitForSeconds1;
+        DisplayChoices();
     }
     
 }

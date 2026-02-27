@@ -104,7 +104,8 @@ public partial class MarketTests
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
-                                                                        new(water, 7) });                
+                                                                        new(water, 7) });  
+        water.ExpiresAfterPeriods = int.MaxValue;              
         test_goods.Add(lemon);
         test_goods.Add(water);
         test_goods.Add(sugar);

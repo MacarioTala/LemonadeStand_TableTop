@@ -1,14 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 
-public class Recipe
+[CreateAssetMenu(menuName ="LemonadeStandAssets/Recipes")]
+public class Recipe : ScriptableObject
 {
     public string RecipeName;
-    private readonly List<Ingredient> ingredients;
-    private readonly Good product;
+    private List<Ingredient> ingredients=new();
+    [SerializeField]
+    private Good product;
     public Good GetProduct() => product;
+    [SerializeField]
+    private List<SerializableIngredient> SerializableIngredients=new();
 
+    public bool CanRecipeBeMadeFrom(List<InventoryEntry> entries)
+    {
+        return Get_max_quantity(entries)>0;
+    }
     public Recipe(string RecipeName, Good product, List<Ingredient> ingredients)
     {
         this.RecipeName = RecipeName;
@@ -16,18 +26,11 @@ public class Recipe
         this.ingredients = ingredients;
     }
     public List<string> GetIngredientNames()
-    {
-        return ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
-    }
-    public List<Ingredient> GetIngredients()
-    {
-        return ingredients;
-    }
+        =>ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
+    
+    public List<Ingredient> GetIngredients() => ingredients;
 
-    public List<Ingredient> Get_recipe()
-    {
-        return ingredients;
-    }
+    public List<Ingredient> Get_recipe() => ingredients;
 
     public int Get_max_quantity(List<InventoryEntry> stock)
     {
@@ -115,6 +118,19 @@ public class Recipe
             }
         return Math.Round(totalCost, 2);
     }
+    #region Unity Stuff
+    void OnEnable()
+    {
+        ingredients??=new List<Ingredient>();
+        ingredients.Clear();
+        if( SerializableIngredients == null) return;
+        foreach(var si in SerializableIngredients)
+        {
+            if(Equals(si.Good,null)) continue;
+            ingredients.Add(new Ingredient(si.Good,si.QuantityNeeded));
+        }
+    }
+    #endregion
 }
 
 public class Ingredient
@@ -134,4 +150,11 @@ public class RecipeException : Exception
     public RecipeException(string message) : base(message)
     {
     }
+}
+
+[Serializable]
+public struct SerializableIngredient
+{
+    public Good Good;
+    [Min(1)]public int QuantityNeeded;
 }
