@@ -132,8 +132,13 @@ public class Market : ScriptableObject, iEconAgent
     
     public void ResolveMarketEvents() => _marketEventManager.ResolveMarketEvents();
     public void RollForEvents() =>_marketEventManager.RollForEvents();
+    public event Action<Market, MarketEventSO> OnMarketEventFired;
+    public void FireEvent(MarketEventSO e)
+    {
+        OnMarketEventFired?.Invoke(this,e);
+    }
 #endregion
-    //Pricing  
+    #region Pricing
     public List<FixedCost> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy { get; set; }
     private readonly List<iPriceModifier> _priceModifiers = new();
@@ -145,7 +150,7 @@ public class Market : ScriptableObject, iEconAgent
             _priceModifiers.Add(priceModifier);
         }
     }
-
+    #endregion
     #region Reporting
     public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
         => _marketDataManager.RecordOrderInPeriod(order, period);
