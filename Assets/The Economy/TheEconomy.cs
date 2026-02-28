@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting.YamlDotNet.Core;
 
 [assembly: InternalsVisibleTo("Tests")]
 public class TheEconomy : MonoBehaviour
@@ -62,6 +63,7 @@ public class TheEconomy : MonoBehaviour
 
     public void RemoveMarket(Market market)
     {
+        market.OnMarketEventFired -= HandleMarketEvent;
         EconomicAgents.Remove(market);
     }
     public void ClearEconomy()
@@ -105,13 +107,23 @@ public class TheEconomy : MonoBehaviour
         if(!EconomicAgents.Any(x=>x.Name == agent.Name))
         {
             EconomicAgents.Add(agent);
+            if(agent is Market market)
+            {
+                market.OnMarketEventFired += HandleMarketEvent;
+            }
         }
         else
         {
             Debug.LogWarning ($"{agent.Name} already registered");
         }
-        
     }
+#region Events
+    public event Action<Market,MarketEventSO> OnMarketEventFired;
+    private void HandleMarketEvent(Market market, MarketEventSO e)
+    {
+        OnMarketEventFired?.Invoke(market,e);
+    }
+#endregion
 
     public iEconAgent GetGlobalMarket() => InitialMarket;
     public void CreateInitialGoods(List<Good> goods)//move static data to DB in future
@@ -216,10 +228,7 @@ public class TheEconomy : MonoBehaviour
             Debug.Log($"Loaded Market: {market.Name} id:{market.MarketId}");
         }
     }
-    private void Update()
-    {
-    //   Debug.Log("The Economy is running");
-    }
+    
 
 #endregion
 }

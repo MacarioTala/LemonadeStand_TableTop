@@ -35,6 +35,7 @@ public class DefaultMarketEventManager : iMarketEventManager, iMarketAware
         //Invoke any active events
         foreach (var marketEvent in _activeEvents)
         {
+            _market.FireEvent(marketEvent.EventDefinition);
             marketEvent.EventDefinition.Invoke(_market,marketEvent);
         }
     }

@@ -18,6 +18,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] TextMeshProUGUI OrderPanelArrivingText;
     [SerializeField] TextMeshProUGUI SummaryPanelText;
     [SerializeField] Recipe BasicLemonadeRecipe;
+    [SerializeField] NewsfeedController newsfeedController;
     private const string BasicLemonadeRecipeName = "Basic Lemonade";
     public static TextBasedStoryHandler Instance { get; private set; }
 #region Game Variables
@@ -121,6 +122,12 @@ public class TextBasedStoryHandler : MonoBehaviour
             initialMarket.AddPotentialMarketEvent(template);
         }
     }
+
+    private void OnMarketEvent(Market market, MarketEventSO so)
+    {
+        newsfeedController.PlayBreakingNews();
+    }
+
     #endregion
     private void WireUpButtons()
     {
@@ -185,11 +192,17 @@ public class TextBasedStoryHandler : MonoBehaviour
         var recipes = Resources.LoadAll<Recipe>("Recipes");
         BasicLemonadeRecipe= recipes.FirstOrDefault(x=>x.RecipeName==BasicLemonadeRecipeName);
     }
-#endregion
-    private void ClearTextScroll()
+    private void InitializePlayer()
     {
-        if(textScroll!=null) textScroll.text = "";
+        PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
+        PlayerCompany.IsPlayer= true;
+        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
+        initialMarket.RegisterMarketParticipant(PlayerCompany);
+        if(BasicLemonadeRecipe != null)
+            PlayerCompany.AddRecipe(BasicLemonadeRecipe);
     }
+#endregion
+   
 #region Menu stuff
     private void ChooseFromMainMenu(char choice)
     {
@@ -237,20 +250,23 @@ public class TextBasedStoryHandler : MonoBehaviour
         LogMessage("\n");
     }
 #endregion
-   
+
+#region Game Choices
     private void CheckNews()
     {
         ClearUISelection();
         LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
         LogMessage($"You have {PlayerCompany.GetCash()} credits.");
         LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
-        if(PlayerCompany.Recipes.Count()>0)
+        if(initialMarket.CurrentPeriod !=0)
         {
-            LogMessage("You have a recipe for: " + PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade"));
+            LogMessage("The following trades happened yesterday");
+            LogMessage("--------");
+            foreach(var trade in initialMarket.GetExecutionsInPeriod(initialMarket.CurrentPeriod-1))
+            {
+                LogMessage(trade.ToString());
+            }
         }
-        else
-            LogMessage("You have not discovered any recipes");
-        LogMessage("The news is not available yet.");
     }
     private void DisplayInventory()
     {
@@ -261,15 +277,12 @@ public class TextBasedStoryHandler : MonoBehaviour
         {
             LogMessage($"Item: {item.good} Quantity: {item.quantity} Acquired at: {item.Cost}");
         }
-    }
-    private void InitializePlayer()
-    {
-        PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
-        PlayerCompany.IsPlayer= true;
-        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
-        initialMarket.RegisterMarketParticipant(PlayerCompany);
-        if(BasicLemonadeRecipe != null)
-            PlayerCompany.AddRecipe(BasicLemonadeRecipe);
+        if(PlayerCompany.Recipes.Count()>0)
+        {
+            LogMessage("You have a recipe for: " + PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade"));
+        }
+        else
+            LogMessage("You have not discovered any recipes");
     }
     private void MakeLemonade()
     {
@@ -298,19 +311,25 @@ public class TextBasedStoryHandler : MonoBehaviour
             }
         }
     }
+     private void SetLemonadePrice()
+    {
+        ClearUISelection();
+        LogMessage("Cannot set Lemonade Price yet");
+    }
+    #endregion
 
     private void UpdateOrderPanelArrivingText(string message)
         => OrderPanelArrivingText.text = message;
     private void UpdateOrderSummaryArrivingText(string message)
         => SummaryPanelText.text = message;
 
-    private void SetLemonadePrice()
-    {
-        ClearUISelection();
-        LogMessage("Cannot set Lemonade Price yet");
-    }
+   
 
 #region helpers
+    private void ClearTextScroll()
+    {
+        if(textScroll!=null) textScroll.text = "";
+    }
     public void LogMessage(string message)
     {
         if (textScroll != null)
@@ -340,8 +359,18 @@ public class TextBasedStoryHandler : MonoBehaviour
         yield return _waitForSeconds1;
         DisplayChoices();
     }
-#endregion
-    
+    #endregion
+    #region Unity Stuff
+    private void OnEnable()
+    {
+        TheEconomy.Instance.OnMarketEventFired += OnMarketEvent;
+    }
+    private void OnDisable()
+    {
+        TheEconomy.Instance.OnMarketEventFired -= OnMarketEvent;
+    }
+
+    #endregion
 }
 
 internal enum MenuStateEnum
