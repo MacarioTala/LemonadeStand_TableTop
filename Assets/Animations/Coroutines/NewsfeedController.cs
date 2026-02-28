@@ -12,14 +12,17 @@ public class NewsfeedController : MonoBehaviour
 
     [SerializeField] private float WinkDuration =.2f;
     [SerializeField] private float holdDuration = 2f;
+    [SerializeField] private Image Screen;
 
     private void Awake()
     {
         NewsImage.transform.localScale = Vector3.zero;
+        Screen.transform.localScale = Vector3.zero;
     }
 
     public void PlayBreakingNews()
     {
+        Screen.transform.localScale = Vector3.one;   
         StopAllCoroutines();
         StartCoroutine(BreakingNewsRoutine());
     }
