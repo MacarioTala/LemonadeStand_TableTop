@@ -1,7 +1,7 @@
 using UnityEngine.UI;
 using UnityEngine;
-using System;
 using System.Collections;
+using System;
 
 public class NewsfeedController : MonoBehaviour
 {
@@ -9,15 +9,41 @@ public class NewsfeedController : MonoBehaviour
     [SerializeField] private Sprite BreakingNewsSprite;
     [SerializeField] private Sprite NewsAnchorSprite;
     [SerializeField] private Image StaticOverlay;
+    [SerializeField] private Image NewsFeed;
+    [SerializeField] private GameObject EventSplash;
 
     [SerializeField] private float WinkDuration =.2f;
     [SerializeField] private float holdDuration = 2f;
     [SerializeField] private Image Screen;
 
+    private Button newsbutton;
+
     private void Awake()
     {
         NewsImage.transform.localScale = Vector3.zero;
         Screen.transform.localScale = Vector3.zero;
+        EventSplash.SetActive(false);
+        newsbutton = NewsFeed.GetComponent<Button>();
+        newsbutton.interactable = false;
+    }
+
+    void Start()
+    {
+        NewsFeed.GetComponent<Button>().onClick.AddListener(ShowEventSplash);
+    }
+
+    public void OnEventFired()
+    {
+        newsbutton.interactable = true; 
+    }
+
+    public void OnEventSplashClosed()
+    {
+        newsbutton.interactable = false;
+    }
+    private void ShowEventSplash()
+    {
+        EventSplash.SetActive(true);
     }
 
     public void PlayBreakingNews()
