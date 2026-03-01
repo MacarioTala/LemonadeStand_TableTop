@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4517faf1added472c9938f1ce42263f8
+guid: cddeb60cf6a324f3eb54acddbbdc3bbe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6692991728515609814
-    second: C64 V2_0
+      213: 3596058558628764842
+    second: Anchor Animation fixed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,23 +113,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: C64 V2_0
+      name: Anchor Animation fixed_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 1536
-        height: 1024
+        y: 512
+        width: 768
+        height: 512
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a2b0331eb77bd13a0800000000000000
-      internalID: -6692991728515609814
+      spriteID: aac1292d434c7e130800000000000000
+      internalID: 3596058558628764842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Anchor Animation fixed_1
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 512
+        width: 768
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcd887ef8e2de4da0ad0e9599e7946f0
+      internalID: 737435766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Anchor Animation fixed_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 768
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 998c10867eae04af89220fc09e787e52
+      internalID: 1048662227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Anchor Animation fixed_3
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 768
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a8e5b5c8c6e148989f0ecbcd20501fa
+      internalID: 60865619
       vertices: []
       indices: 
       edges: []
@@ -138,7 +204,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 490e1b8b3f7314b8ea0bbbde23ddbf90
     internalID: 0
     vertices: []
     indices: 
@@ -146,9 +212,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":2.0,"y":2.0},"gridSpriteSize":{"x":768.0,"y":512.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      C64 V2_0: -6692991728515609814
+      Anchor Animation fixed_0: 3596058558628764842
+      Anchor Animation fixed_1: 737435766
+      Anchor Animation fixed_2: 1048662227
+      Anchor Animation fixed_3: 60865619
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
