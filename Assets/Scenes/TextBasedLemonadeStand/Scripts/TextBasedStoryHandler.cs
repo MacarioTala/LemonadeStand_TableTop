@@ -25,8 +25,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     private EconAgent PlayerCompany;
     private bool isWaitingForPlayerInput = false;
     private Market initialMarket;
-    private int playerActionsRemaining;
-
+    
     private MenuStateEnum CurrentMenuState = MenuStateEnum.Splash;
 #endregion
     private void Awake()
@@ -196,7 +195,6 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
         PlayerCompany.IsPlayer= true;
-        playerActionsRemaining = PlayerCompany.GetActionsRemaining();
         initialMarket.RegisterMarketParticipant(PlayerCompany);
         if(BasicLemonadeRecipe != null)
             PlayerCompany.AddRecipe(BasicLemonadeRecipe);

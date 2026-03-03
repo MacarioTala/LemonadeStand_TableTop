@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Runtime.CompilerServices;
-using Unity.VisualScripting.YamlDotNet.Core;
 
 [assembly: InternalsVisibleTo("Tests")]
 public class TheEconomy : MonoBehaviour
@@ -194,7 +193,6 @@ public class TheEconomy : MonoBehaviour
                 if (_instance == null)
                     {
                         _instance = this;
-                        DontDestroyOnLoad(gameObject);
                         LoadMarketsFromResources();
                     }
                 else if (_instance != this)

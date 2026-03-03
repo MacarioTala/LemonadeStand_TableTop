@@ -148,11 +148,11 @@ public class OrderPanelHandler : MonoBehaviour
         }
         else if (playerCompanies.Count()>1)
         {
-            throw new Exception("If you are seeing this message, congratulations! We have expanded and now it's your job to implement multipleplayer.");
+            Debug.Log("If you are seeing this message, congratulations! We have expanded and now it's your job to implement multipleplayer.");
         }
         else
         {
-            throw new Exception("no players exist.");
+            Debug.Log("no players exist.");
         }
     }
 

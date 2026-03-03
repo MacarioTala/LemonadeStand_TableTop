@@ -6,11 +6,8 @@ using UnityEngine.SceneManagement;
 public class TextBasedGameManager : MonoBehaviour
 {
  #region Serialized Fields
-    [SerializeField] private GameObject ZorkView;
     [SerializeField] private GameObject SplashCanvas;
     [SerializeField] private float splashDuration = 3f;
-    private readonly GameObject splashAnimation;
-    private readonly GameObject mainMenu;
     [SerializeField] private GameObject splashTypewriterPrefab;
     [SerializeField] private AudioSource splashScreenAudioSource;
     [SerializeField] private AudioClip splashScreenSoundClip;
@@ -22,21 +19,26 @@ public class TextBasedGameManager : MonoBehaviour
 #endregion
     public static TextBasedGameManager Instance { get; private set; }
     private TypeWriter typeWriterInstance;
-    public TheEconomy TheEconomy;
-    private ITradeLogger TradeLogger;
+    public TheEconomy TheEconomyInstance;
 #region Game Variables
     public bool IsGameRunning { get; private set; }
     int Period = 0;
     private Coroutine typingCoroutine;
 #endregion
-
-    private bool isCursorVisible = true;
    
 
     private void Start()
     {
         Initialize();
-        typeWriterInstance.Initialize(typeWrittenText, splashScreenAudioSource, splashScreenSoundClip);
+        if(typeWriterInstance == null)
+        {
+            Debug.LogError("Typewriter instance missing. Did you forget to wire a prefab in the Inspector?");
+            return;
+        }
+        else
+        {
+            typeWriterInstance.Initialize(typeWrittenText, splashScreenAudioSource, splashScreenSoundClip);
+         }
         //StartCoroutine(BlinkCursor()); //Fix this as soon as we have good game flow.
         typingCoroutine = StartCoroutine(typeWriterInstance.TypeText(TypeWriter.splashMessage));
     }
@@ -45,22 +47,20 @@ public class TextBasedGameManager : MonoBehaviour
     {
         IsGameRunning = true;
 
-        if(TheEconomy == null)
+        if(GameRoot.Instance == null)
         {
-            try{
-                TheEconomy = FindFirstObjectByType<TheEconomy>();
-            }
-            catch (System.Exception)
-            {
-                Debug.Log("The Economy is not initialised. Add Economy to Scene.");
-                return;
-            }
+            Debug.LogError("Gameroot is missing. Play from GameRoot");
+            return;
         }
 
-        TradeLogger = new TradeLoggerV1();
-        Period = TheEconomy.Instance.tradingPeriod;
-        TheEconomy.Initialize(TradeLogger);
-
+        TheEconomyInstance = GameRoot.Instance.EconomyInstance;
+        if(TheEconomyInstance == null)
+        {
+            Debug.Log("TheEconomyInstance is null on GameRoot. Exiting");
+            return;
+        }
+        Period = TheEconomyInstance.tradingPeriod;
+        
         if(splashTypewriterPrefab != null)
         {
             var typeWriterInstanceObject = Instantiate(splashTypewriterPrefab);
@@ -84,29 +84,14 @@ public class TextBasedGameManager : MonoBehaviour
             typeWriterInstance.StopTyping();
         }
     }
-
-    private IEnumerator BlinkCursor()
-    {
-        while (true)
-        {
-            typeWrittenText.text = isCursorVisible ? "|" : "";
-            isCursorVisible = !isCursorVisible;
-            yield return new WaitForSeconds(blinkSpeed);
-        }
-    }
-    private IEnumerator TransitionToMainMenu()
-    {
-        yield return new WaitForSeconds(splashDuration);
-        splashAnimation.SetActive(false);
-        mainMenu.SetActive(true);
-    }
 #endregion
 #region Main Menu
     public void StartNewGame()
-    {        
+    {   
         Debug.Log("Starting New Game");
+        if(gameState!= GameState.Splash) return;
         gameState = GameState.Zork;
-        SceneManager.LoadScene(gameSceneName);
+        GameRoot.Instance.Bus.Publish(new RequestLoadScene(gameSceneName));
     }
 #endregion
 #region Game Loop
@@ -131,8 +116,8 @@ public class TextBasedGameManager : MonoBehaviour
         }
 
         Debug.Log($"Ending Turn {Period}");
-        TheEconomy.Instance.EndTradingPeriod();
-        Period = TheEconomy.Instance.tradingPeriod;
+        TheEconomyInstance.EndTradingPeriod();
+        Period = TheEconomyInstance.tradingPeriod;
 
         CheckGameStatus();
     }
@@ -162,12 +147,8 @@ public class TextBasedGameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-
+       Instance = this;
+       
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
     void OnDestroy()
@@ -208,8 +189,3 @@ public class TextBasedGameManager : MonoBehaviour
 }
 
 public enum GameState{Splash,Zork}
-public static class Scenes
-{
-    public const string Splash = "Splash";
-    public const string ZorkView = "ZorkScene";
-}
