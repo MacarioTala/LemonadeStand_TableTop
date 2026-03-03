@@ -11,12 +11,14 @@ public class NewsfeedController : MonoBehaviour
     [SerializeField] private Image StaticOverlay;
     [SerializeField] private Image NewsFeed;
     [SerializeField] private GameObject EventSplash;
+    [SerializeField] private GameObject CloseButton;
 
     [SerializeField] private float WinkDuration =.2f;
     [SerializeField] private float holdDuration = 2f;
     [SerializeField] private Image Screen;
 
     private Button newsbutton;
+    private Button closebutton;
 
     private void Awake()
     {
@@ -24,12 +26,18 @@ public class NewsfeedController : MonoBehaviour
         Screen.transform.localScale = Vector3.zero;
         EventSplash.SetActive(false);
         newsbutton = NewsFeed.GetComponent<Button>();
-        newsbutton.interactable = false;
+        closebutton = CloseButton.GetComponent<Button>();
     }
 
     void Start()
     {
         NewsFeed.GetComponent<Button>().onClick.AddListener(ShowEventSplash);
+        closebutton.onClick.AddListener(CloseEventSplash);
+    }
+
+    private void CloseEventSplash()
+    {
+        EventSplash.SetActive(false);
     }
 
     public void OnEventFired()
