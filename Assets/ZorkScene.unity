@@ -763,6 +763,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: PeriodText
+      value: 
+      objectReference: {fileID: 1783571879}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
       propertyPath: scrollRect
       value: 
       objectReference: {fileID: 1366050469}
@@ -1915,6 +1919,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

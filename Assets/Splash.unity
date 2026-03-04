@@ -176,6 +176,10 @@ PrefabInstance:
       propertyPath: mainMenu
       value: 
       objectReference: {fileID: 1415959859}
+    - target: {fileID: 5882753890171725669, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
+      propertyPath: textBasedGameManager
+      value: 
+      objectReference: {fileID: 1660055975}
     - target: {fileID: 6216684440711921328, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

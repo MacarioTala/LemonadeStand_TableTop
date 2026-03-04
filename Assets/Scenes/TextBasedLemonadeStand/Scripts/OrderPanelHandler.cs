@@ -37,8 +37,6 @@ public class OrderPanelHandler : MonoBehaviour
     void Awake()
     {
         CheckForGameRoot();
-        if(!isSceneOnly)
-            WireUpBackend();
     }
     public void Start()
     {
@@ -46,6 +44,8 @@ public class OrderPanelHandler : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
+        if(!isSceneOnly)
+            WireUpBackend();
 
         WireUpOrderPanel();
     }

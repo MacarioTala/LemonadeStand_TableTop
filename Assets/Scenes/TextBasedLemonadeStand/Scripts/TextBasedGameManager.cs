@@ -61,7 +61,7 @@ public class TextBasedGameManager : MonoBehaviour
             TheEconomyInstance = GameRoot.Instance.EconomyInstance;
             if(TheEconomyInstance == null)
             {
-                Debug.Log("TheEconomyInstance is null on GameRoot. Exiting");
+                Debug.LogError("TheEconomyInstance is null on GameRoot. Exiting");
                 return;
             }
             Period = TheEconomyInstance.tradingPeriod;
