@@ -204,6 +204,10 @@ public class TheEconomy : MonoBehaviour
     }
     private void LoadMarketsFromResources()
     {
+        //Refactor this at some point. No need for 'the first market'
+        var testMarket = Instance.GetMarketByName("The First Market");
+        Instance.RemoveMarket(testMarket);
+
         var markets = Resources.LoadAll<Market>("Markets");
         foreach (var market in markets)
         {

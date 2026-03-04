@@ -12,7 +12,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textScroll;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button EndTurnButton;
-    [SerializeField] private TextMeshProUGUI ActionPointsText;
+    [SerializeField] private TextMeshProUGUI PeriodText;
     [SerializeField] private int numberOfPopulations;
     [SerializeField] private int numberOfNPCFirms;
     [SerializeField] TextMeshProUGUI OrderPanelArrivingText;
@@ -21,6 +21,14 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] NewsfeedController newsfeedController;
     private const string BasicLemonadeRecipeName = "Basic Lemonade";
     public static TextBasedStoryHandler Instance { get; private set; }
+    public TheEconomy TheEconomyInstance;
+
+    private bool isSceneOnly = true;
+    private bool areEventsSubscribed =false;
+    private bool isSceneRunning =false;
+    private bool areButtonsWired=false;
+    private bool isContentInitialized = false;
+    
 #region Game Variables
     private EconAgent PlayerCompany;
     private bool isWaitingForPlayerInput = false;
@@ -30,13 +38,11 @@ public class TextBasedStoryHandler : MonoBehaviour
 #endregion
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
+        if (Instance == null) Instance = this;
+        else 
         {
             Destroy(gameObject);
+            return;
         }
     }
 
@@ -63,20 +69,46 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     public void StartTextBasedGame()
     {
-        InitializeMarket();
-        InitializePlayer();
-        ActionPointsText.text = TheEconomy.Instance.tradingPeriod.ToString();
+        if(isSceneRunning) return;
+        isSceneRunning = true;
+        Initialize();
         WireUpButtons();
-        if (Instance == null)
+
+        if (isSceneOnly)
         {
-            Debug.Log("TextBasedStoryHandler is not initialized.");
+            LogMessage("Scene-only mode: Backend disabled");
             return;
         }
         UpdateOrderPanelArrivingText(string.Empty);
         UpdateOrderSummaryArrivingText(string.Empty);
-        Instance.StartCoroutine(Instance.StartGameLoop());
+        StartCoroutine(StartGameLoop());
     }
-#region NPCs
+
+    private void Initialize()
+    {
+        if(GameRoot.Instance == null)
+        {
+            Debug.LogError("Gameroot is missing. Playing scene in scene-only mode.");
+            return;
+        }
+        else
+        {
+            isSceneOnly = false;
+            TheEconomyInstance = GameRoot.Instance.EconomyInstance;
+            PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
+            InitializeContent();
+            InitializePlayer();
+            SubscribeToEvents();
+        }
+    }
+
+    private void SubscribeToEvents()
+    {
+        if(areEventsSubscribed) return;
+        TheEconomyInstance.OnMarketEventFired += OnMarketEvent;
+        areEventsSubscribed = true;
+    }
+    #region NPCs
     private void CreateNpcs()
     {
         CreatePopulations();
@@ -124,33 +156,43 @@ public class TextBasedStoryHandler : MonoBehaviour
 
     private void OnMarketEvent(Market market, MarketEventSO so)
     {
-        newsfeedController.PlayBreakingNews();
+        if(newsfeedController!=null)
+            newsfeedController.PlayBreakingNews();
+        else
+            Debug.LogWarning("NewsfeedController missing, did you wire this in the inspector?");
     }
 
     #endregion
     private void WireUpButtons()
     {
+        if(areButtonsWired) return;
+        
+        areButtonsWired=true;
         EndTurnButton.onClick.AddListener(EndTurn);
+
     }
 
     private void EndTurn()
     {
-        TheEconomy.Instance.StartTradingPeriod();
-        UpdateOrderPanelArrivingText("Goods have arrived");
-        TheEconomy.Instance.EndTradingPeriod();
-        ActionPointsText.text = TheEconomy.Instance.tradingPeriod.ToString();
+        if(!isSceneOnly)
+        {
+            TheEconomyInstance.StartTradingPeriod();
+            UpdateOrderPanelArrivingText("Goods have arrived");
+            TheEconomyInstance.EndTradingPeriod();
+            PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
+        }
         Debug.Log("End Turn");
     }
 
 #region Initialization
-    private void InitializeMarket()
+    private void InitializeContent()
     {
-        //Refactor this at some point. No need for 'the first market'
-        var testMarket = TheEconomy.Instance.GetMarketByName("The First Market");
-        TheEconomy.Instance.RemoveMarket(testMarket);
+        if(isContentInitialized) return;
+
+        isContentInitialized = true;
 
         //This might need a cleaner solution. Episode 1 market is a scriptable Object stored in Resources
-        initialMarket = TheEconomy.Instance.GetMarketByName("Episode 1 Market");
+        initialMarket = TheEconomyInstance.GetMarketByName("Episode 1 Market");
         initialMarket.SetCash(initialMarket.InitialCashInCents / 100);
         initialMarket.WithMarketInteractionManager(new Episode1InteractionManager());
         initialMarket.WithTradeProcessor(new DefaultTradeProcessor());
@@ -163,7 +205,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     private void LoadGoods()
     {
         var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
-        var period = TheEconomy.Instance.tradingPeriod;
+        var period = TheEconomyInstance.tradingPeriod;
         var inventory = initialMarket.GetInventory();
 
         var Lemon = goods.FirstOrDefault(x=>x.GoodName == "Lemon");
@@ -172,11 +214,11 @@ public class TextBasedStoryHandler : MonoBehaviour
 
         var Sugar = goods.FirstOrDefault(x=>x.GoodName == "Sugar");
         Sugar.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
-        Lemon.SetExpiry(5);
+        Sugar.SetExpiry(5);
 
         var Water = goods.FirstOrDefault(x=>x.GoodName == "Water");
         Water.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
-        Lemon.SetExpiry(5);
+        Water.SetExpiry(int.MaxValue);
 
         var lemonEntry = inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(), period));
         lemonEntry.SetPrice(Lemon.GetPrice());
@@ -193,9 +235,18 @@ public class TextBasedStoryHandler : MonoBehaviour
     }
     private void InitializePlayer()
     {
-        PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
-        PlayerCompany.IsPlayer= true;
-        initialMarket.RegisterMarketParticipant(PlayerCompany);
+        var existingPlayer = TheEconomyInstance.EconomicAgents
+                            .OfType<EconAgent>()
+                            .FirstOrDefault(x=>x.IsPlayer);
+        if(existingPlayer == null)
+        {
+            PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
+            PlayerCompany.IsPlayer= true;
+            initialMarket.RegisterMarketParticipant(PlayerCompany);
+        }
+        else 
+        PlayerCompany = existingPlayer;
+        
         if(BasicLemonadeRecipe != null)
             PlayerCompany.AddRecipe(BasicLemonadeRecipe);
     }
@@ -253,7 +304,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     private void CheckNews()
     {
         ClearUISelection();
-        LogMessage($"It is Period : {TheEconomy.Instance.tradingPeriod}.");
+        LogMessage($"It is Period : {TheEconomyInstance.tradingPeriod}.");
         LogMessage($"You have {PlayerCompany.GetCash()} credits.");
         LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
         if(initialMarket.CurrentPeriod !=0)
@@ -359,15 +410,19 @@ public class TextBasedStoryHandler : MonoBehaviour
     }
     #endregion
     #region Unity Stuff
-    private void OnEnable()
-    {
-        TheEconomy.Instance.OnMarketEventFired += OnMarketEvent;
-    }
     private void OnDisable()
-    {
-        TheEconomy.Instance.OnMarketEventFired -= OnMarketEvent;
-    }
+        => CleanupSubscription();
+    private void OnDestroy()
+        => CleanupSubscription();
 
+    private void CleanupSubscription()
+    {
+        if (areEventsSubscribed && TheEconomyInstance != null)
+            {
+                TheEconomyInstance.OnMarketEventFired -= OnMarketEvent;
+                areEventsSubscribed = false;
+            }
+    }
     #endregion
 }
 

@@ -23,31 +23,56 @@ public class OrderPanelHandler : MonoBehaviour
     private EconAgent PlayerCompany;
     private Market LocalMarket;
     private List<InventoryEntry> MarketInventoryEntries;
-    private TMP_Dropdown dropdown;
+    private TMP_Dropdown orderPanelDropdown;
     private TextMeshProUGUI OrderConfirmationText;
+    private TheEconomy TheEconomyInstance;
+
+    private bool isSceneOnly = true;
 #region UnityBuiltIns
+
+    private void CheckForGameRoot()
+    {
+        if(GameRoot.Instance != null) isSceneOnly = false;
+    }
+    void Awake()
+    {
+        CheckForGameRoot();
+        if(!isSceneOnly)
+            WireUpBackend();
+    }
     public void Start()
     {
-        OrderConfirmationText = OrderQueuedLabel.GetComponent<TextMeshProUGUI>();
-        OrderConfirmationText.alpha = 0;
-        var summaryPanelHandler = OrderSummaryPanel.GetComponent<OrderSummaryPopupHandler>();
         if (!gameObject.activeInHierarchy)
         {
             gameObject.SetActive(true);
         }
 
-        dropdown = ItemDropdown.GetComponent<TMP_Dropdown>();
-        LocalMarket = GetMarket();
-        OrderButton.onClick.AddListener(SubmitOrder);
-        SummaryButton.onClick.AddListener(() => summaryPanelHandler.ShowOrderSummary(LocalMarket));
+        WireUpOrderPanel();
+    }
+
+    private void WireUpOrderPanel()
+    {
+        
+        var summaryPanelHandler = OrderSummaryPanel.GetComponent<OrderSummaryPopupHandler>();
+        OrderConfirmationText = OrderQueuedLabel.GetComponent<TextMeshProUGUI>();
+        OrderConfirmationText.alpha = 0;
         QuantityInput.GetComponent<TMP_InputField>().onValueChanged.AddListener(value => HandleOrderQuantityChange(value));
+        orderPanelDropdown = ItemDropdown.GetComponent<TMP_Dropdown>();
+
+        LocalMarket = GetMarket();
+        SummaryButton.onClick.AddListener(() => summaryPanelHandler.ShowOrderSummary(LocalMarket));
+
+        OrderButton.onClick.AddListener(SubmitOrder);
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
 
         if(MarketInventoryEntries.Count>0)
             ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
-
-        InitializePlayer();
         InitializeOrderDropDown();
+    }
+    private void WireUpBackend()
+    {
+        TheEconomyInstance = GameRoot.Instance.EconomyInstance;
+        FindPlayer();
     }
 
     private void ShowOrderConfirmation()
@@ -62,7 +87,7 @@ public class OrderPanelHandler : MonoBehaviour
     private void ResetOrderPanel()
     {
         QuantityInput.GetComponent<TMP_InputField>().text = 0.ToString();
-        dropdown.value = 0;
+        orderPanelDropdown.value = 0;
         ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
     }
 
@@ -95,7 +120,7 @@ public class OrderPanelHandler : MonoBehaviour
     private void HandleOrderQuantityChange(string value)
     {
         int.TryParse(value, out int quantity);
-        var selectedEntry = MarketInventoryEntries[dropdown.value];
+        var selectedEntry = MarketInventoryEntries[orderPanelDropdown.value];
         var price = selectedEntry.Price;
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         totalText.text = (price * quantity).ToString();
@@ -103,15 +128,15 @@ public class OrderPanelHandler : MonoBehaviour
 
     private void InitializeOrderDropDown()
     {
-        dropdown.onValueChanged.AddListener(HandleOrderSelection);
-        dropdown.ClearOptions();
+        orderPanelDropdown.onValueChanged.AddListener(HandleOrderSelection);
+        orderPanelDropdown.ClearOptions();
         List<TMP_Dropdown.OptionData> options = new();
         foreach (var entry in MarketInventoryEntries)
         {
             options.Add(new TMP_Dropdown.OptionData(entry.good.GoodName));
         }
-        dropdown.AddOptions(options);
-        dropdown.RefreshShownValue();
+        orderPanelDropdown.AddOptions(options);
+        orderPanelDropdown.RefreshShownValue();
     }
 
     private void HandleOrderSelection(int selectedIndex)
@@ -126,9 +151,9 @@ public class OrderPanelHandler : MonoBehaviour
 
     private Market GetMarket()
     {
-       if(TheEconomy.Instance.EconomicAgents.OfType<Market>().Count() == 1)
+       if(TheEconomyInstance.EconomicAgents.OfType<Market>().Count() == 1)
        {
-           return TheEconomy.Instance.EconomicAgents.OfType<Market>().First();
+           return TheEconomyInstance.EconomicAgents.OfType<Market>().First();
        }
        else
        {
@@ -138,9 +163,9 @@ public class OrderPanelHandler : MonoBehaviour
 
     #endregion
 
-    public void InitializePlayer()
+    public void FindPlayer()
     {
-        var companies = TheEconomy.Instance.EconomicAgents;
+        var companies = TheEconomyInstance.EconomicAgents;
         var playerCompanies = companies.OfType<EconAgent>().Where(c => c.IsPlayer);
         if (playerCompanies.Count() == 1)
         {
@@ -158,7 +183,7 @@ public class OrderPanelHandler : MonoBehaviour
 
     public void SubmitOrder()
     {
-        var selectedGood = MarketInventoryEntries[dropdown.value].good;
+        var selectedGood = MarketInventoryEntries[orderPanelDropdown.value].good;
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         var totalprice = decimal.Parse(totalText.text);
         int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out var quantity);

@@ -19,7 +19,7 @@ public class TextBasedGameManager : MonoBehaviour
 #endregion
     public static TextBasedGameManager Instance { get; private set; }
     private TypeWriter typeWriterInstance;
-    public TheEconomy TheEconomyInstance;
+    public TheEconomy TheEconomyInstance{get; private set;}
 #region Game Variables
     public bool IsGameRunning { get; private set; }
     int Period = 0;
