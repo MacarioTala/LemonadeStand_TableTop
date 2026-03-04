@@ -134,7 +134,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 913633284649189724, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 913633284649189724, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -1100,8 +1100,6 @@ MonoBehaviour:
   typeWrittenText: {fileID: 1358345798}
   cursor: {fileID: 0}
   blinkSpeed: 0.5
-  gameState: 0
-  TheEconomyInstance: {fileID: 0}
 --- !u!1 &1825583430
 GameObject:
   m_ObjectHideFlags: 0

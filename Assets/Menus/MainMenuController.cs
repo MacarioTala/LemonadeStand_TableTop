@@ -11,6 +11,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button settingsButton;
     [SerializeField] GameObject mainMenu;
+    [SerializeField] private TextBasedGameManager textBasedGameManager;
     #pragma warning restore 0649
     Animator mainMenuAnimator;
     private void Start()
@@ -56,7 +57,16 @@ public class MainMenuController : MonoBehaviour
 
     private void StartNewGame()
     {
-        Debug.Log("Starting New Game");
+        if(textBasedGameManager==null)
+        {
+            Debug.LogError($"TextBasedGameManager not found. Check Inspector for wiring",this);
+            return;
+        }
+        else
+            {
+                textBasedGameManager.StartNewGame();
+                Debug.Log("Starting New Game");
+            }
     }
     private void ShowMainMenu()
     {

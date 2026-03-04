@@ -88,7 +88,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         if(GameRoot.Instance == null)
         {
-            Debug.LogError("Gameroot is missing. Playing scene in scene-only mode.");
+            Debug.LogWarning("Gameroot is missing. Playing scene in scene-only mode.");
             return;
         }
         else

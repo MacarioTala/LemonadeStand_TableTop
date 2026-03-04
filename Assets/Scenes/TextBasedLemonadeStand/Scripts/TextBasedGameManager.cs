@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,13 +14,13 @@ public class TextBasedGameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI cursor;
     [SerializeField] private float blinkSpeed = 0.5f;
     private readonly string gameSceneName = Scenes.ZorkView;
-    [SerializeField] private GameState gameState=GameState.Splash;
 #endregion
     public static TextBasedGameManager Instance { get; private set; }
     private TypeWriter typeWriterInstance;
     public TheEconomy TheEconomyInstance{get; private set;}
 #region Game Variables
     public bool IsGameRunning { get; private set; }
+    private bool IsSceneOnly=true;
     int Period = 0;
     private Coroutine typingCoroutine;
 #endregion
@@ -47,24 +46,25 @@ public class TextBasedGameManager : MonoBehaviour
     {
         IsGameRunning = true;
 
-        if(GameRoot.Instance == null)
-        {
-            Debug.LogError("Gameroot is missing. Play from GameRoot");
-            return;
-        }
-
-        TheEconomyInstance = GameRoot.Instance.EconomyInstance;
-        if(TheEconomyInstance == null)
-        {
-            Debug.Log("TheEconomyInstance is null on GameRoot. Exiting");
-            return;
-        }
-        Period = TheEconomyInstance.tradingPeriod;
-        
         if(splashTypewriterPrefab != null)
         {
             var typeWriterInstanceObject = Instantiate(splashTypewriterPrefab);
             typeWriterInstance = typeWriterInstanceObject.GetComponent<TypeWriter>();
+        }
+
+        if(GameRoot.Instance == null)
+        {
+            Debug.LogWarning("Gameroot is missing. Playing in scene-only mode");
+        }
+        else
+        {
+            TheEconomyInstance = GameRoot.Instance.EconomyInstance;
+            if(TheEconomyInstance == null)
+            {
+                Debug.Log("TheEconomyInstance is null on GameRoot. Exiting");
+                return;
+            }
+            Period = TheEconomyInstance.tradingPeriod;
         }
 
         Debug.Log("Text Based Game Manager Initialized");
@@ -89,55 +89,12 @@ public class TextBasedGameManager : MonoBehaviour
     public void StartNewGame()
     {   
         Debug.Log("Starting New Game");
-        if(gameState!= GameState.Splash) return;
-        gameState = GameState.Zork;
-        GameRoot.Instance.Bus.Publish(new RequestLoadScene(gameSceneName));
+        if(IsSceneOnly)
+            Debug.Log("Running in Scene-only mode");
+        else
+            GameRoot.Instance.Bus.Publish(new RequestLoadScene(gameSceneName));
     }
 #endregion
-#region Game Loop
-
-    public void StartTurn()
-    {
-        if(!IsGameRunning)
-        {
-            Debug.Log("Game is not running. Cannot start turn.");
-            return;
-        }
-
-        Debug.Log($"Starting Turn {Period}");
-    }
-
-    public void EndTurn()
-    {
-        if(!IsGameRunning)
-        {
-            Debug.Log("Game is not running. Cannot end turn.");
-            return;
-        }
-
-        Debug.Log($"Ending Turn {Period}");
-        TheEconomyInstance.EndTradingPeriod();
-        Period = TheEconomyInstance.tradingPeriod;
-
-        CheckGameStatus();
-    }
-    private void CheckGameStatus()
-    {
-        //Win/Lose Conditions here
-        Debug.Log("Checking Game Status");
-    }
-
-    public void TriggerEvent(string eventName)
-    {
-        Debug.Log($"Event Triggered : {eventName}");
-    }
-
-    public void EndGame(string message)
-    {
-        IsGameRunning = false;
-        Debug.Log($"Game Over : {message}");
-    }
-    #endregion
 
     #region Overloads
     private void Awake()
@@ -148,38 +105,13 @@ public class TextBasedGameManager : MonoBehaviour
             return;
         }
        Instance = this;
-       
-        SceneManager.sceneLoaded += OnSceneLoaded;
+       if(GameRoot.Instance!=null)
+        IsSceneOnly=false;
     }
-    void OnDestroy()
-    {
-        if(Instance == this) SceneManager.sceneLoaded -=OnSceneLoaded;
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if(scene.name!=gameSceneName) return;
-        
-        TextBasedStoryHandler found =null;
-
-        foreach(var root in scene.GetRootGameObjects())
-        {
-            found = root.GetComponentInChildren<TextBasedStoryHandler>(true);
-            if(found != null) break;
-        }    
-            if(found == null)
-            {
-                Debug.LogError($"Story Handler not found in scene: "+scene.name);
-                return;
-            }
-
-            found.StartTextBasedGame();
-    }
+   
     private void Update()
     {
-        if(
-            gameState == GameState.Splash &&
-            Input.GetKeyDown(KeyCode.Space)) 
+        if(Input.GetKeyDown(KeyCode.Space)) 
         {
             SkipTypeWriter();
         }
@@ -187,5 +119,3 @@ public class TextBasedGameManager : MonoBehaviour
     
     #endregion
 }
-
-public enum GameState{Splash,Zork}
