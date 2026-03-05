@@ -63,10 +63,13 @@ public class OrderPanelHandler : MonoBehaviour
         SummaryButton.onClick.AddListener(() => summaryPanelHandler.ShowOrderSummary(LocalMarket));
 
         OrderButton.onClick.AddListener(SubmitOrder);
-        MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
+        if(!isSceneOnly)
+        {
+            MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
 
-        if(MarketInventoryEntries.Count>0)
-            ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
+            if(MarketInventoryEntries.Count>0)
+                ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
+        }
         InitializeOrderDropDown();
     }
     private void WireUpBackend()
@@ -131,12 +134,15 @@ public class OrderPanelHandler : MonoBehaviour
         orderPanelDropdown.onValueChanged.AddListener(HandleOrderSelection);
         orderPanelDropdown.ClearOptions();
         List<TMP_Dropdown.OptionData> options = new();
-        foreach (var entry in MarketInventoryEntries)
+        if(!isSceneOnly)
         {
-            options.Add(new TMP_Dropdown.OptionData(entry.good.GoodName));
+            foreach (var entry in MarketInventoryEntries)
+            {
+                options.Add(new TMP_Dropdown.OptionData(entry.good.GoodName));
+            }
+            orderPanelDropdown.AddOptions(options);
+            orderPanelDropdown.RefreshShownValue();
         }
-        orderPanelDropdown.AddOptions(options);
-        orderPanelDropdown.RefreshShownValue();
     }
 
     private void HandleOrderSelection(int selectedIndex)
@@ -151,6 +157,7 @@ public class OrderPanelHandler : MonoBehaviour
 
     private Market GetMarket()
     {
+       if(isSceneOnly) return null;
        if(TheEconomyInstance.EconomicAgents.OfType<Market>().Count() == 1)
        {
            return TheEconomyInstance.EconomicAgents.OfType<Market>().First();
