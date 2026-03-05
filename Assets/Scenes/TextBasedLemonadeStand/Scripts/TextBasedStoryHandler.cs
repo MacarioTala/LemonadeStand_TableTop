@@ -29,7 +29,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     private bool areButtonsWired=false;
     
 #region Game Variables
-    private readonly EconAgent PlayerCompany=null;
+    private EconAgent PlayerCompany=null;
     private bool isWaitingForPlayerInput = false;
     private Market initialMarket;
     
@@ -51,6 +51,8 @@ public class TextBasedStoryHandler : MonoBehaviour
         if(!isSceneOnly)
         {
             initialMarket = TheEconomyInstance.GetMarketByName(InitialMarketName);
+            PlayerCompany = initialMarket.GetMarketParticipants()
+                            .FirstOrDefault(x=>x.IsPlayer);
         }
         StartTextBasedGame();
     }
