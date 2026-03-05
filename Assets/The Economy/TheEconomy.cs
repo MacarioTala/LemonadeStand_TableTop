@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Runtime.CompilerServices;
-using Unity.VisualScripting.YamlDotNet.Core;
 
 [assembly: InternalsVisibleTo("Tests")]
 public class TheEconomy : MonoBehaviour
@@ -16,8 +15,12 @@ public class TheEconomy : MonoBehaviour
             {
                 if(_instance == null)
                 {
-                    var economyObject = new GameObject("Lemonade Stand Economy");
-                    _instance = economyObject.AddComponent<TheEconomy>();
+                    _instance = FindFirstObjectByType<TheEconomy>();
+                    if(_instance == null)
+                    {
+                        var economyObject = new GameObject("Lemonade Stand: Economy Episode 1");
+                        _instance = economyObject.AddComponent<TheEconomy>();
+                    }
                 }
                 return _instance;
             }
@@ -51,8 +54,8 @@ public class TheEconomy : MonoBehaviour
         }
 
         _trade_logger = trade_logger;
-        CreateInitialGoods(goods);
         CreateInitialMarket();
+        CreateInitialGoods(goods);
         Debug.Log("Lemonade Stand Economy initialized successfully.");
     }
 
@@ -104,7 +107,7 @@ public class TheEconomy : MonoBehaviour
 
     public void RegisterEconomicAgent(iEconAgent agent)
     {
-        if(!EconomicAgents.Any(x=>x.Name == agent.Name))
+         if(!EconomicAgents.Any(x=>x.Name == agent.Name))
         {
             EconomicAgents.Add(agent);
             if(agent is Market market)
@@ -195,17 +198,29 @@ public class TheEconomy : MonoBehaviour
                     {
                         _instance = this;
                         DontDestroyOnLoad(gameObject);
-                        LoadMarketsFromResources();
                     }
                 else if (_instance != this)
                     {
-                        Debug.LogWarning("Duplicate Economy detected. Destroying...");
+                        Debug.LogWarning("Duplicate Economy detected. Destroying...",this);
                         Destroy(gameObject);
                     }
             }
+     }
+    public void InitializeEconomyForGame()
+    {
+        //Refactor this at some point. No need for 'the first market'
+        var testMarket = Instance.GetMarketByName("The First Market");
+         if(testMarket !=null)
+            {
+                Instance.RemoveMarket(testMarket);
+                InitialMarket = null;
+            }
+        LoadMarketsFromResources();
     }
     private void LoadMarketsFromResources()
     {
+       
+
         var markets = Resources.LoadAll<Market>("Markets");
         foreach (var market in markets)
         {
@@ -225,12 +240,18 @@ public class TheEconomy : MonoBehaviour
                 .EnsureDefaults();
 
             RegisterEconomicAgent(market);
+            InitialMarket = market;
             Debug.Log($"Loaded Market: {market.Name} id:{market.MarketId}");
         }
     }
     
 
 #endregion
+private void OnEnable() =>
+    Debug.Log($"[EC] OnEnable id={GetInstanceID()} go={gameObject.name} scene={gameObject.scene.name}", this);
+
+private void OnDestroy() =>
+    Debug.LogError($"[EC] OnDestroy id={GetInstanceID()} go={gameObject.name} scene={gameObject.scene.name}", this);
 }
 
 

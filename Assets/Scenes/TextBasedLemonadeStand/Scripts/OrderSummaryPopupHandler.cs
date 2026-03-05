@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using TMPro;
@@ -19,32 +20,39 @@ public class OrderSummaryPopupHandler : MonoBehaviour
 
     public void ShowOrderSummary(Market market)
     {
-        LocalMarket = market;
         Debug.Log("Showing Order Summary"+OrderSummaryPanel.activeInHierarchy);
-                var player = LocalMarket.GetMarketParticipants().FirstOrDefault(x=>x.Name=="Player1");
-                var orders = LocalMarket.GetOrdersSentToMarket()
-                    .Where(x=>x !=null && (Equals(player,x.Buyer) || Equals(player,x.Seller)));
-                var panelText = OrderSummaryText.GetComponent<TextMeshProUGUI>();
+        
+        LocalMarket = market;
+        var panelText = OrderSummaryText.GetComponent<TextMeshProUGUI>();
                 panelText.text = "";
-
                 panelText.text += "Orders";
                 panelText.text += "\n";
                 panelText.text += "----------------";
                 panelText.text += "\n";
-                
-                if(orders.Any())
+
+        if(LocalMarket != null)
+        {
+            var player = LocalMarket.GetMarketParticipants().FirstOrDefault(x=>x.Name=="Player1");
+            var orders = LocalMarket.GetOrdersSentToMarket()
+                .Where(x=>x !=null && (Equals(player,x.Buyer) || Equals(player,x.Seller)));
+            if(orders.Any())
+                {
+                    foreach(var order in orders)
                     {
-                        foreach(var order in orders)
-                        {
-                            var line = new OrderSummaryLineItem{
-                                GoodName = order.Good.ToString(),
-                                Quantity = order.Quantity,
-                                Price = order.Price
-                            };
-                            panelText.text += line.ToString();
-                            panelText.text += "\n";
-                    }
+                        var line = new OrderSummaryLineItem{
+                            GoodName = order.Good.ToString(),
+                            Quantity = order.Quantity,
+                            Price = order.Price
+                        };
+                        panelText.text += line.ToString();
+                        panelText.text += "\n";
                 }
+            }
+        }
+        else
+        {
+            panelText.text += "No backend detected";   
+        }    
                 OrderSummaryPanel.SetActive(true);  
     }
 

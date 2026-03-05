@@ -134,7 +134,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 913633284649189724, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 913633284649189724, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -176,6 +176,10 @@ PrefabInstance:
       propertyPath: mainMenu
       value: 
       objectReference: {fileID: 1415959859}
+    - target: {fileID: 5882753890171725669, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
+      propertyPath: textBasedGameManager
+      value: 
+      objectReference: {fileID: 1660055975}
     - target: {fileID: 6216684440711921328, guid: 12b8d69271d8948a9872cfd4648f609b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -865,52 +869,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &1458573420
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1458573422}
-  - component: {fileID: 1458573421}
-  m_Layer: 0
-  m_Name: TheEconomy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1458573421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1458573420}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92ec79c158a30424db5e55acfdcfd46e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tradingPeriod: 0
-  goods: []
---- !u!4 &1458573422
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1458573420}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 337.25, y: 276.25, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1520872902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1138,7 +1096,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89362f9124cdf4b9ebe70e7c79c4b772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ZorkView: {fileID: 0}
   SplashCanvas: {fileID: 812997438}
   splashDuration: 3
   splashTypewriterPrefab: {fileID: 203730373}
@@ -1147,8 +1104,6 @@ MonoBehaviour:
   typeWrittenText: {fileID: 1358345798}
   cursor: {fileID: 0}
   blinkSpeed: 0.5
-  gameState: 0
-  TheEconomy: {fileID: 1458573421}
 --- !u!1 &1825583430
 GameObject:
   m_ObjectHideFlags: 0
@@ -1224,6 +1179,5 @@ SceneRoots:
   - {fileID: 1648211983}
   - {fileID: 1825583433}
   - {fileID: 1660055974}
-  - {fileID: 1458573422}
   - {fileID: 972291646}
   - {fileID: 672184632}
