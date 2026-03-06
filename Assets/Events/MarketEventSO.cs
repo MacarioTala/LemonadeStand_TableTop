@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 [CreateAssetMenu(menuName ="LemonadeStandAssets/MarketEvent")]
 public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
@@ -10,7 +11,9 @@ public class MarketEventSO : ScriptableObject, iMarketEvent,iTaggable
     public float EventChance; 
     [SerializeField,Tooltip("The duration of the event in periods. 0 = permanent")]
     int _eventDuration;
-    
+    [SerializeField]
+    public Sprite EventSprite;
+    public string FlavourText;
     [SerializeReference]
     List<MarketEffectSO> Effects = new();
     public IEnumerable<iMarketEffect> GetEffects()

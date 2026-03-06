@@ -12,10 +12,13 @@ public class NewsfeedController : MonoBehaviour
     [SerializeField] private Image NewsFeed;
     [SerializeField] private GameObject EventSplash;
     [SerializeField] private GameObject CloseButton;
+    [SerializeField] private EventCard EventCard;
 
     [SerializeField] private float WinkDuration =.2f;
     [SerializeField] private float holdDuration = 2f;
     [SerializeField] private Image Screen;
+
+    private MarketEventSO ActiveEvent;
 
     private Button newsbutton;
     private Button closebutton;
@@ -54,9 +57,11 @@ public class NewsfeedController : MonoBehaviour
         EventSplash.SetActive(true);
     }
 
-    public void PlayBreakingNews()
+    public void PlayBreakingNews(MarketEventSO so)
     {
-        Screen.transform.localScale = Vector3.one;   
+        ActiveEvent = so;
+        Screen.transform.localScale = Vector3.one;  
+        EventCard.Display(so);
         StopAllCoroutines();
         StartCoroutine(BreakingNewsRoutine());
     }
@@ -64,6 +69,7 @@ public class NewsfeedController : MonoBehaviour
     public IEnumerator BreakingNewsRoutine()
     {
         NewsImage.sprite = BreakingNewsSprite;
+        
         
         //Wink On
         yield return StartCoroutine(WinkOn());

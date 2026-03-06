@@ -133,7 +133,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     private void OnMarketEvent(Market market, MarketEventSO so)
     {
         if(newsfeedController!=null)
-            newsfeedController.PlayBreakingNews();
+            newsfeedController.PlayBreakingNews(so);
         else
             Debug.LogWarning("NewsfeedController missing, did you wire this in the inspector?");
     }

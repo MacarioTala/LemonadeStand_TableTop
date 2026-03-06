@@ -16,6 +16,8 @@ MonoBehaviour:
   EventDescription: Gojira attacks, reducing population by 10%
   EventChance: 100
   _eventDuration: 2
+  EventSprite: {fileID: -8069170933174370870, guid: 7aac15e502d914efd86dc843772241f6, type: 3}
+  FlavourText: '"Sometimes you''re Gojira, sometimes you''re Japan"'
   Effects:
   - {fileID: 11400000, guid: 62cf6d85ac74f492095cae22bbd342d6, type: 2}
   _tags: []
