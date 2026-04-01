@@ -155,7 +155,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
     public void GetPerceivedCostOfGoodReturnsCostOfRecipePresent_NoMarketPrices()
     {
         //Arrange
-        TestPopulation.Add_recipe(LemonadeRecipe);
+        TestPopulation.AddRecipe(LemonadeRecipe);
         var expected = LemonadeRecipe.GetCostPerUnit(null);
 
         //Act
@@ -172,7 +172,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
     public void GetPerceivedCostOfGoodReturnsCostOfRecipePresent_MarketPricesPassed()
     {
         //Arrange
-        TestPopulation.Add_recipe(LemonadeRecipe);
+        TestPopulation.AddRecipe(LemonadeRecipe);
         var prices = new Dictionary<Good,decimal>
                         {
                             { Lemon,.3m },
@@ -194,7 +194,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
     public void GetPerceivedCostOfGoodReturnsRecipeCostFromIStrategy()
     {
         //Arrange
-        TestPopulation.Add_recipe(LemonadeRecipe);
+        TestPopulation.AddRecipe(LemonadeRecipe);
         var company1 = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
 
         var prices = new Dictionary<Good, decimal>

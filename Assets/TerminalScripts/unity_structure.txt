@@ -1,0 +1,2358 @@
+Unity Project Structure
+Generated: Mon Mar 30 16:57:04 PDT 2026
+Root: /Users/jose_volunteermatch/Personal/LemonadeStand/Source/TextBasedLemonadeStand/Assets/TerminalScripts
+
+
+━━━ ..//Actions/ActionContext.cs
+  class class ActionContext
+  modifiers: public
+    method      public LemonadeStandResultObject HasSubmittingCompany()
+    method      public LemonadeStandResultObject ContainsValidTrade()
+    method      public LemonadeStandResultObject DoesContextContainValidBidAskSpread()
+    method      internal LemonadeStandResultObject ContainsValidPairedOrders()
+    method      public ContextException(string message)
+    method      public ActionContextBuilder()
+    method      public ActionContextBuilder WithAction(ActionEnum action)
+    method      public ActionContextBuilder ForMarket(Market market)
+    method      public ActionContextBuilder ForPeriod(int period)
+    method      public ActionContextBuilder WithTrade(Order trade)
+    method      public ActionContext Build()
+
+━━━ ..//Actions/ActionContext.cs
+  class class ContextException
+  : Exception
+  modifiers: public
+    method      public ContextException(string message)
+    method      public ActionContextBuilder()
+    method      public ActionContextBuilder WithAction(ActionEnum action)
+    method      public ActionContextBuilder ForMarket(Market market)
+    method      public ActionContextBuilder ForPeriod(int period)
+    method      public ActionContextBuilder WithTrade(Order trade)
+    method      public ActionContext Build()
+
+━━━ ..//Actions/ActionContext.cs
+  class class ActionContextBuilder
+  modifiers: public
+    method      public ActionContextBuilder()
+    method      public ActionContextBuilder WithAction(ActionEnum action)
+    method      public ActionContextBuilder ForMarket(Market market)
+    method      public ActionContextBuilder ForPeriod(int period)
+    method      public ActionContextBuilder WithTrade(Order trade)
+    method      public ActionContext Build()
+
+━━━ ..//Actions/ActionEnum.cs
+  enum enum ActionEnum
+  modifiers: public
+
+━━━ ..//Actions/AllowedAction.cs
+  class class AllowedAction
+  modifiers: public
+    method      public AllowedAction(string name, string description, Action action)
+
+━━━ ..//Animations/Coroutines/NewsfeedController.cs
+  class class NewsfeedController
+  : MonoBehaviour
+  modifiers: public
+    method      public void OnEventFired()
+    method      public void OnEventSplashClosed()
+    method      public void PlayBreakingNews(MarketEventSO so)
+    method      public IEnumerator BreakingNewsRoutine()
+
+━━━ ..//Attributes/DemographicHistoryAttribute.cs
+  class class DemographicHistoryAttribute
+  : Attribute
+  modifiers: public
+    method      public DemographicHistoryAttribute(string label=null)
+
+━━━ ..//Attributes/DemographicHistoryAttribute.cs
+  interface interface IDemographicObserver
+  modifiers: public
+
+━━━ ..//Common/ListExtensions.cs
+  class class ListExtensions
+  modifiers: public static
+    method      public static List<T> Shuffle<T>(this IList<T> list)
+
+━━━ ..//Common/MathHelper.cs
+  class class MathHelper
+  modifiers: public static
+    method      public static float EstimatePeriodsToFinal(float initialValue, float targetValue, float rate)
+    method      public static float GetSingleCoeffientCubicOutput(float ratio, float coefficient)
+    method      public static decimal Median<T>(this IEnumerable<T> source, Func<T, decimal> selector)
+
+━━━ ..//Common/MetricModifier.cs
+  class class MetricModifier
+  modifiers: public
+    method      public MetricModifier(Func<T, float> metricToModify, Action<T, float> modifier)
+    method      public void Modify(T target, float amount)
+
+━━━ ..//Demand/BasicConsumptionManager.cs
+  class class BasicConsumptionManager
+  : iConsumptionManager
+  modifiers: public
+    method      public LemonadeStandResultObject FulfillDemand(Market market)
+
+━━━ ..//Demand/DefaultDemandManager.cs
+  class class DefaultDemandManager
+  : iDemandManager,iMarketAware
+  modifiers: public
+    method      public IEnumerable<(Good good, decimal Bid, decimal Ask)
+    method      public DemandData GetDemandFor(Good good)
+    method      public int GetMarketDemandForGood(string goodName)
+    method      public void SetMarketDemandForGood(Good good, DemandData demandData)
+    method      public decimal GetPerceivedCostOfGood(Good good)
+    method      public void SetMarket(Market market)
+    method      public LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1)
+    method      public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand = 0, int maxDemand = 10000, float curvature = 1)
+    method      public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
+
+━━━ ..//Demand/DemandData.cs
+  class class DemandData
+  modifiers: public
+    method      public List<ElasticDemandComponent> ElasticDemandComponents { get; set; } = new()
+    method      public int GetAdjustedDemand(Dictionary<ElasticDemandComponentEnum, float > stateChanges)
+    method      public bool IsVeblenGood()
+    method      public int GetDemandAdjustment(float percentChangeInFactor, int currentDemand)
+    method      public bool IsBlackSwanToZero(float percentChangeInFactor)
+    method      public bool IsBlackSwanToVertical(float percentChangeInFactor)
+
+━━━ ..//Demand/DemandData.cs
+  class class ElasticDemandComponent
+  modifiers: public
+    method      public bool IsVeblenGood()
+    method      public int GetDemandAdjustment(float percentChangeInFactor, int currentDemand)
+    method      public bool IsBlackSwanToZero(float percentChangeInFactor)
+    method      public bool IsBlackSwanToVertical(float percentChangeInFactor)
+
+━━━ ..//Demand/DemandData.cs
+  enum enum ElasticDemandComponentEnum
+  modifiers: public
+
+━━━ ..//Demand/ElasticityTypeEnum.cs
+  enum enum ElasticityTypeEnum
+  modifiers: public
+
+━━━ ..//Demand/LinearDemandStrategy.cs
+  class class LinearDemandStrategy
+  : ScriptableObject,iDemandStrategy
+  modifiers: public
+    method      public LemonadeStandResultObject AdjustDemandInPeriod(Market market)
+    method      internal void AdjustDemandForPopulation(Market market,Good good)
+    method      internal LemonadeStandResultObject AdjustDemandBasedOnElasticityAndHistory(Market market, Good good, ElasticityTypeEnum elasticity,float percentageChangeInMetric)
+    method      public void InitializeDemandForSpecificGood(Market market,Good good,int initialDemand, int minDemand=GlobalMinDemand, int maxDemand=GlobalMaxDemand,float curvature=1f)
+    method      public void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent)
+    method      internal static void AdjustDemandForSaturation(Market market,Good good)
+
+━━━ ..//Demand/iConsumptionManager.cs
+  interface interface iConsumptionManager
+  modifiers: public
+
+━━━ ..//Demand/iDemandManager.cs
+  interface interface iDemandManager
+  modifiers: public
+
+━━━ ..//Demand/iDemandStrategy.cs
+  interface interface iDemandStrategy
+  modifiers: public
+    method      public Dictionary<Good, DemandData> GetDemandInPeriod(Market market, int tradingPeriod)
+    method      public Dictionary<Good, int> CalculateSupplyForPeriod(Market market, int tradingPeriod)
+    method      public int GetTotalBoughtByPopulation(Market market,Good good,int tradingPeriod)
+    method      public int GetTotalSoldByMarket(Market market,int tradingPeriod, Good good)
+
+━━━ ..//Demographics/BasicPopulationHistoryHandler.cs
+  class class BasicPopulationHistoryHandler
+  : iDataHandler<PopulationHistory>
+  modifiers: public
+    method      public void Save(PopulationHistory data)
+    method      public IEnumerable<PopulationHistory> LoadHistorical(Func<PopulationHistory, bool> predicate)
+    method      public PopulationHistory Load(string path)
+    method      public void Delete(int id)
+
+━━━ ..//Demographics/BasicPopulationHistoryHandler.cs
+  interface interface methods
+    method      public PopulationHistory Load(string path)
+    method      public void Delete(int id)
+
+━━━ ..//Demographics/DefaultDemographicManager.cs
+  class class DefaultDemographicManager
+  : iDemographicManager,iMarketAware
+  modifiers: public
+    method      public void SetMarket(Market market)
+    method      public iDemographicManager SetPopulationHistoryHandler(iDataHandler<PopulationHistory> handler)
+    method      public float GetMarketInstability()
+    method      public int GetPopulation()
+    method      public float GetPopulationEnnui()
+    method      public float GetPopulationGrowthRate(int startingPeriod, int endingPeriod)
+    method      public float GetPopulationHappiness()
+    method      public List<PopulationHistory> GetPopulationHistory(Guid marketId)
+    method      public LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period, TurnPhase phase)
+    method      public LemonadeStandResultObject SetMarketInstability(float newInstability)
+    method      public LemonadeStandResultObject SetPopulation(int newPopulation , PopulationAgent marketParticipant)
+    method      public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)
+
+━━━ ..//Demographics/DemographicProperty.cs
+  class class DemographicProperty
+  modifiers: public
+    method      public static DemographicProperty Money(string propertyName, decimal amount, string desc="")
+    method      public static DemographicProperty Percentage(string propertyName, decimal value, string desc="")
+    method      public static DemographicProperty Raw(string propertyName, decimal value, string desc="")
+    method      public float AsPercentage()
+    method      public decimal AsRaw()
+    method      public decimal AsMoney()
+
+━━━ ..//Demographics/DemographicPropertyBag.cs
+  class class DemographicPropertyBag
+  modifiers: public partial
+    method      public DemographicProperty GetProperty(string propertyName)
+    method      internal void AddProperty(DemographicProperty propertyToAdd)
+    method      internal void RemoveProperty(string propertyName)
+
+━━━ ..//Demographics/PropertyTypeEnum.cs
+  enum enum PropertyTypeEnum
+  modifiers: public
+
+━━━ ..//Demographics/iDemographicManager.cs
+  interface interface iDemographicManager
+  modifiers: public
+
+━━━ ..//EconAgent/AgentLevelEnum.cs
+  enum enum AgentLevelEnum
+  modifiers: public
+
+━━━ ..//EconAgent/EconAgent.cs
+  class class EconAgent
+  : ScriptableObject, iEconAgent, iMarketParticipant
+  modifiers: public
+    method      public Market GetMarket()
+    method      public LemonadeStandResultObject SetMarket(Market market)
+    method      public LemonadeStandResultObject LeaveMarket()
+    method      protected EconAgent()
+    method      internal void Initialize (string companyName, AgentLevelEnum company_level,iStrategy strategy=null)
+    method      public static EconAgent Create(string companyName, AgentLevelEnum company_level,iStrategy strategy=null)
+    method      public static EconAgent Create(string companyName, AgentLevelEnum company_level, iStrategy strategy, iFixedCostStrategy fixedCostStrategy)
+    method      public static T Create<T>()
+    method      public int GetActionsRemaining()
+    method      public void ResetActions()
+    method      public void SetActionsPerCycle(int actions)
+    method      public void AddAllowedAction(AllowedAction action)
+    method      public void SetInitialActions()
+    method      public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
+    method      public decimal GetMarketIgnorantAssumedCOG()
+    method      public void SetMarketIgnorantAssumedCOG(decimal value)
+    method      public Dictionary<Good, DemandData> GetDemand()
+    method      public DemandData GetDemandFor(Good good)
+    method      public void SetDemand(Good good, DemandData demandData)
+    method      public float GetAnxiety()
+    method      public void SetAnxiety(float value)
+    method      public bool IsBankrupt()
+    method      public void SetMinimumBid(decimal minBid)
+    method      public decimal GetMinimumBid()
+    method      public decimal GetCash()
+    method      public void SetCash(decimal newCash)
+    method      public List<FixedCost> FixedCosts {get;set;} = new()
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public Inventory GetInventory()
+    method      public void SetInventory(Inventory newInventory)
+    method      public List<Recipe> Recipes{get; private set;} = new()
+    method      public void AddRecipe(Recipe recipe)
+    method      public void RemoveRecipe(Recipe recipe)
+    method      public void MakeRecipe(ActionContext context)
+    method      public void ExpireGoods(int period)
+    method      public iStrategy GetStrategy()
+    method      public void SetStrategy(iStrategy strategy)
+    method      public List<Goal> Goals {get;set;} = new()
+    method      public void AddGoal(Goal goal)
+    method      public void CompleteGoal(Goal goal)
+    method      public void CheckCompanyGoals()
+    method      public decimal GetAggressionLevel()
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+    method      public void PerformStrategy(int period)
+    method      public void BuyGood(Good good, int quantity,decimal price,int period=0)
+    method      internal bool HasMoney(decimal money_needed)
+    method      internal bool HasGood(Good good, int quantity)
+    method      public void SellGood(Good good, int quantity, decimal price,int period=0)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public void SubtractFixedCostsForPeriod(int period)
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public LemonadeStandResultObject SubmitBidAskSpreadToMarket(ActionContext context)
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+
+━━━ ..//EconAgent/EconAgent.cs
+  class class Factory
+  modifiers: public static
+    method      public static EconAgent Create(string companyName, AgentLevelEnum company_level,iStrategy strategy=null)
+    method      public static EconAgent Create(string companyName, AgentLevelEnum company_level, iStrategy strategy, iFixedCostStrategy fixedCostStrategy)
+    method      public static T Create<T>()
+    method      public int GetActionsRemaining()
+    method      public void ResetActions()
+    method      public void SetActionsPerCycle(int actions)
+    method      public void AddAllowedAction(AllowedAction action)
+    method      public void SetInitialActions()
+    method      public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
+    method      public decimal GetMarketIgnorantAssumedCOG()
+    method      public void SetMarketIgnorantAssumedCOG(decimal value)
+    method      public Dictionary<Good, DemandData> GetDemand()
+    method      public DemandData GetDemandFor(Good good)
+    method      public void SetDemand(Good good, DemandData demandData)
+    method      public float GetAnxiety()
+    method      public void SetAnxiety(float value)
+    method      public bool IsBankrupt()
+    method      public void SetMinimumBid(decimal minBid)
+    method      public decimal GetMinimumBid()
+    method      public decimal GetCash()
+    method      public void SetCash(decimal newCash)
+    method      public List<FixedCost> FixedCosts {get;set;} = new()
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public Inventory GetInventory()
+    method      public void SetInventory(Inventory newInventory)
+    method      public List<Recipe> Recipes{get; private set;} = new()
+    method      public void AddRecipe(Recipe recipe)
+    method      public void RemoveRecipe(Recipe recipe)
+    method      public void MakeRecipe(ActionContext context)
+    method      public void ExpireGoods(int period)
+    method      public iStrategy GetStrategy()
+    method      public void SetStrategy(iStrategy strategy)
+    method      public List<Goal> Goals {get;set;} = new()
+    method      public void AddGoal(Goal goal)
+    method      public void CompleteGoal(Goal goal)
+    method      public void CheckCompanyGoals()
+    method      public decimal GetAggressionLevel()
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+    method      public void PerformStrategy(int period)
+    method      public void BuyGood(Good good, int quantity,decimal price,int period=0)
+    method      internal bool HasMoney(decimal money_needed)
+    method      internal bool HasGood(Good good, int quantity)
+    method      public void SellGood(Good good, int quantity, decimal price,int period=0)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public void SubtractFixedCostsForPeriod(int period)
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public LemonadeStandResultObject SubmitBidAskSpreadToMarket(ActionContext context)
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+
+━━━ ..//EconAgent/EconAgentBuilder.cs
+  class class EconAgentBuilder
+  : EconAgent
+  modifiers: public
+    method      public EconAgentBuilder(T agent)
+    method      public static EconAgentBuilder<T> Create()
+    method      public T Build()
+    method      public EconAgentBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
+    method      public EconAgentBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)
+    method      public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
+    method      public EconAgentBuilder<T> WithInitialCashFromTemplate()
+    method      public EconAgentBuilder<T> WithActionsPerTurn(int actionsPerTurn)
+    method      public EconAgentBuilder<T> Named(string name)
+    method      public EconAgentBuilder<T> AtLevel(AgentLevelEnum companyLevel)
+    method      public EconAgentBuilder<T> WithPopulation(int population)
+    method      public EconAgentBuilder<T> WithAnxiety(float anxiety)
+    method      public EconAgentBuilder<T> WithEnnui(float ennui)
+    method      public EconAgentBuilder<T> Demanding(Dictionary<Good, DemandData> demands)
+    method      public EconAgentBuilder<T> WithGoal(Goal goal)
+    method      public EconAgentBuilder<T> WithInventory(Inventory inventory)
+    method      public EconAgentBuilder<T> AssumingNewGoodsCost(decimal value)
+    method      public static EconAgentBuilder<T> For<T>()
+    method      public static EconAgentBuilder<EconAgent> ForBaseAgent()
+    method      public static EconAgentBuilder<T> FromTemplate<T> (T existingTemplate)
+    method      public static EconAgentBuilder<EconAgent> Wrap(EconAgent existingTemplate)
+
+━━━ ..//EconAgent/EconAgentBuilder.cs
+  class class EconAgentBuilder
+  modifiers: public static
+    method      public static EconAgentBuilder<T> For<T>()
+    method      public static EconAgentBuilder<EconAgent> ForBaseAgent()
+    method      public static EconAgentBuilder<T> FromTemplate<T> (T existingTemplate)
+    method      public static EconAgentBuilder<EconAgent> Wrap(EconAgent existingTemplate)
+
+━━━ ..//EconAgent/InsufficientFundsException.cs
+  class class InsufficientFundsException
+  : Exception
+  modifiers: public
+    method      public InsufficientFundsException(string message)
+
+━━━ ..//EconAgent/InventoryException.cs
+  class class InventoryException
+  : Exception
+  modifiers: public
+    method      public InventoryException(string message)
+
+━━━ ..//EconAgent/PopulationAgent.cs
+  class class PopulationAgent
+  : EconAgent
+  modifiers: public
+    method      public bool IsMaxEnnui()
+    method      public static EconAgentBuilder<PopulationAgent> Create()
+    method      public void Consume()
+
+━━━ ..//EconAgent/PopulationAgent.cs
+  class class PopulationAgentBuilder
+  modifiers: public static
+    method      public static EconAgentBuilder<PopulationAgent> Create()
+    method      public void Consume()
+
+━━━ ..//EconAgent/SupplierAgent.cs
+  class class SupplierAgent
+  : EconAgent, iSupplier
+  modifiers: public
+    method      public HashSet<Good> GetSuppliedGoods()
+    method      public void InitializeRarityQuantities(int common, int uncommon, int rare, int veryRare)
+    method      public LemonadeStandResultObject ReplenishSupplies()
+    method      public LemonadeStandResultObject SupplyGoods()
+    method      public LemonadeStandResultObject SeedSuppliedGoods(List<Good> initialGoods)
+    method      public static EconAgentBuilder<SupplierAgent> Create()
+
+━━━ ..//EconAgent/SupplierAgent.cs
+  class class SupplierAgentBuilder
+  modifiers: public static
+    method      public static EconAgentBuilder<SupplierAgent> Create()
+
+━━━ ..//EconAgent/iEconAgent.cs
+  interface interface iEconAgent
+  modifiers: public
+
+━━━ ..//EntityStrategies/BasicGrowthStrategy.cs
+  class class BasicGrowthStrategy
+  : iStrategy
+  modifiers: public
+    method      public decimal GetAggressionLevel()
+    method      public void GenerateGoals(iEconAgent company)
+    method      public void PerformStrategy(ActionContext context)
+    method      public void PerformStrategy(iEconAgent company)
+    method      public LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel)
+    method      public LemonadeStandResultObject PublishBidAskSpreadsToMarket(iEconAgent company)
+
+━━━ ..//EntityStrategies/BidAskSpread.cs
+  struct struct BidAskSpread
+  modifiers: public
+    method      public BidAskSpread(decimal bid, decimal ask, float goodQuality, float allocation)
+
+━━━ ..//EntityStrategies/LemonadeSellerStrategy.cs
+  class class LemonadeSellerStrategy
+  : iStrategy
+  modifiers: public
+    method      public decimal GetAggressionLevel()
+    method      public LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel)
+    method      public void GenerateGoals(iEconAgent company)
+    method      public void PerformStrategy(ActionContext context)
+    method      public void PerformStrategy(iEconAgent company)
+    method      public LemonadeStandResultObject PublishBidAskSpreadsToMarket(iEconAgent company)
+
+━━━ ..//EntityStrategies/ReduceEnnuiStrategy.cs
+  class class ReduceEnnuiStrategy
+  : iStrategy
+  modifiers: public
+    method      public decimal GetAggressionLevel()
+    method      public LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel)
+    method      public void GenerateGoals(iEconAgent company)
+    method      public void AddGoal(Goal goal, iEconAgent company)
+    method      public void RemoveGoals(string goalName, iEconAgent company)
+    method      public void PerformStrategy(iEconAgent company)
+    method      internal IEnumerable<ActionContext> CreateBuys(EconAgent company)
+    method      public Dictionary<Good, BidAskSpread> GetBidAskSpreads()
+    method      internal Dictionary<Good,BidAskSpread> GenerateBidAskSpreads(iEconAgent company)
+    method      public void AddOrReplaceBidAskSpread(Good good, BidAskSpread bidAskSpread)
+    method      public BidAskSpread? GetBidAskSpreadForGood(Good good)
+    method      public void PerformStrategy(ActionContext context)
+
+━━━ ..//EntityStrategies/StrategyBuilder.cs
+  class class StrategyBuilder
+  : iStrategy, new()
+  modifiers: public
+    method      public StrategyBuilder(T strategy)
+    method      public StrategyBuilder()
+    method      public T Build()
+    method      public StrategyBuilder<T> WithAggressionLevel(decimal aggressionLevel)
+    method      public static StrategyBuilder<T> For <T>()
+
+━━━ ..//EntityStrategies/StrategyBuilder.cs
+  class class StrategyBuilder
+  modifiers: public static
+    method      public static StrategyBuilder<T> For <T>()
+
+━━━ ..//EntityStrategies/iStrategy.cs
+  interface interface iStrategy
+  modifiers: public
+    method      public void PerformStrategy(ActionContext context)
+    method      public void PerformStrategy(iEconAgent company)
+    method      public static decimal GetCostAnchoredBid(Good good, EconAgent company)
+    method      public static int GetQuantityDemandedAtState(Good good, EconAgent company, Dictionary<ElasticDemandComponentEnum, float> stateChanges)
+
+━━━ ..//ErrorHandling/LemonadeStandResultObject.cs
+  class class LemonadeStandResultObject
+  modifiers: public
+    method      public static LemonadeStandResultObject Success(object extraData=null)
+    method      public static LemonadeStandResultObject Failure(ResultTypeEnum resultType, string message)
+    method      public static LemonadeStandResultObject Failure(string message)
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public static bool operator == (LemonadeStandResultObject left, LemonadeStandResultObject right)
+    method      public static bool operator != (LemonadeStandResultObject left, LemonadeStandResultObject right)
+    method      public override int GetHashCode()
+
+━━━ ..//ErrorHandling/ResultTypeEnum.cs
+  enum enum ResultTypeEnum
+  modifiers: public
+
+━━━ ..//Events/ActiveMarketEvent.cs
+  class class ActiveMarketEvent
+  modifiers: public sealed
+    method      public readonly List<MarketEffectSO> ExtraEffects = new()
+    method      public ActiveMarketEvent(MarketEventSO template, int periodStart,int duration)
+    method      public bool IsExpired(int currentPeriod)
+    method      public void Extend(int extraPeriods)
+    method      public void AddEffect(MarketEffectSO effect)
+
+━━━ ..//Events/ChangeAnxietyEffect.cs
+  class class ChangeAnxietyEffect
+  : MarketEffectSO
+  modifiers: public
+    method      public ChangeAnxietyEffect(float anxietyChangePercentage)
+    method      public void ChangeEffectMultiplier(float multiplier)
+    method      public override void Apply(Market market,ActiveMarketEvent activeMarketEvent)
+
+━━━ ..//Events/ChangePopulationEffect.cs
+  class class ChangePopulationEffect
+  : MarketEffectSO
+  modifiers: public
+    method      public override void Apply(Market market,ActiveMarketEvent activeMarketEvent)
+    method      public ChangePopulationEffect(float populationChangePercentage)
+    method      public void ChangeEffectMultiplier(float multiplier)
+
+━━━ ..//Events/DefaultMarketEventManager.cs
+  class class DefaultMarketEventManager
+  : iMarketEventManager, iMarketAware
+  modifiers: public
+    method      public void AddPotentialMarketEvent(MarketEventSO potentialEvent)
+    method      public List<ActiveMarketEvent> GetActiveMarketEvents()
+    method      public List<(MarketEventSO Event, int PeriodStart, int periodEnd)
+    method      public void ResolveMarketEvents()
+    method      public void RollForEvents()
+    method      public void RemovePotentialMarketEvent(MarketEventSO potentialEvent)
+    method      public void SetMarket(Market market)
+
+━━━ ..//Events/EventCard.cs
+  class class EventCard
+  : MonoBehaviour
+  modifiers: public
+    method      public void Display (MarketEventSO so)
+
+━━━ ..//Events/MarketEffectSO.cs
+  class class MarketEffectSO
+  : ScriptableObject, iMarketEffect
+  modifiers: public abstract
+    method      public abstract void Apply(Market marke,ActiveMarketEvent activeMarketEvent)
+    method      public MarketEventSO GetParentEvent()
+    method      public void SetParentEvent(MarketEventSO marketEvent)
+
+━━━ ..//Events/MarketEventSO.cs
+  class class MarketEventSO
+  : ScriptableObject, iMarketEvent,iTaggable
+  modifiers: public
+    method      public IEnumerable<iMarketEffect> GetEffects()
+    method      public void AddEffect(MarketEffectSO effect)
+    method      public List<string> GetTags()
+    method      public void AddTag(string tag)
+    method      public void RemoveTag(string tag)
+    method      public bool HasTag(string tag)
+    method      public bool IsExpiredAt(int startPeriod, int currentPeriod)
+    method      public int GetDuration()
+    method      public void SetDuration(int duration)
+    method      public float GetProbabilityOf()
+    method      public void Invoke(Market market,ActiveMarketEvent activeEvent)
+    method      public void Initialize(string eventName, string eventDescription, float eventChance, int eventDuration)
+
+━━━ ..//Events/ModifyDurationEffect.cs
+  class class ModifyDurationEffect
+  : iMarketEffect
+  modifiers: public
+    method      public void Apply(Market market,ActiveMarketEvent activeMarketEvent)
+
+━━━ ..//Events/ModifyMonsterEffect.cs
+  class class ModifyMonsterEffect
+  : MarketEffectSO
+  modifiers: public
+    method      public override void Apply(Market market,ActiveMarketEvent activeMarketEvent)
+    method      public void Initialize( int newDuration, float populationReductionMultiplier)
+
+━━━ ..//Events/TurnPhase.cs
+  enum enum TurnPhase
+  modifiers: public
+
+━━━ ..//Events/iMarketEffect.cs
+  interface interface iMarketEffect
+  modifiers: public
+    method      public void Apply(Market market,ActiveMarketEvent activeMarketEvent)
+
+━━━ ..//Events/iMarketEvent.cs
+  interface interface iMarketEvent
+  : iTaggable
+  modifiers: public
+    method      public float GetProbabilityOf()
+    method      public int GetDuration()
+    method      public IEnumerable<iMarketEffect> GetEffects()
+    method      public void SetDuration(int duration)
+    method      public bool IsExpiredAt(int startingPeriod,int currentPeriod)
+    method      public void Invoke(Market market,ActiveMarketEvent activeEvent)
+
+━━━ ..//Events/iMarketEventManager.cs
+  interface interface iMarketEventManager
+  modifiers: public
+    method      public List<ActiveMarketEvent> GetActiveMarketEvents()
+    method      public List<(MarketEventSO Event, int PeriodStart, int periodEnd)
+
+━━━ ..//FixedCosts/BasicFixedCostStrategy.cs
+  class class BasicFixedCostStrategy
+  : iFixedCostStrategy
+  modifiers: public
+    method      public decimal CalculateFixedCosts(List<FixedCost> fixedCosts, int period)
+
+━━━ ..//FixedCosts/FixedCost.cs
+  class class FixedCost
+  modifiers: public
+
+━━━ ..//FixedCosts/FixedCostEnum.cs
+  enum enum FixedCostEnum
+  modifiers: public
+
+━━━ ..//FixedCosts/iFixedCostStrategy.cs
+  interface interface iFixedCostStrategy
+  modifiers: public
+
+━━━ ..//GameManager/GameManager.cs
+  class class GameManager
+  : MonoBehaviour
+  modifiers: public
+    method      public TextMeshProUGUI GetTypeWrittenText()
+    method      public void StartTurn()
+    method      public void EndTurn()
+    method      public void TriggerEvent(string eventName)
+    method      public void EndGame(string message)
+
+━━━ ..//GameRoot/EventBus.cs
+  class class publishes
+    method      public SubscriptionToken Subscribe<T>(Action<T> handler, bool replaySticky = true)
+    method      internal void Unsubscribe(SubscriptionToken token)
+    method      public void Publish<T> (T evt, bool makeSticky=false)
+    method      public void DrainQueue(int maxPerFrame = 100)
+    method      public bool TryGetSticky<T> (out T value)
+    method      internal SubscriptionToken(EventBus bus, Type eventType, int id)
+    method      public void Dispose()
+    method      internal void Invalidate()
+
+━━━ ..//GameRoot/EventBus.cs
+  class class EventBus
+  modifiers: public sealed
+    method      public SubscriptionToken Subscribe<T>(Action<T> handler, bool replaySticky = true)
+    method      internal void Unsubscribe(SubscriptionToken token)
+    method      public void Publish<T> (T evt, bool makeSticky=false)
+    method      public void DrainQueue(int maxPerFrame = 100)
+    method      public bool TryGetSticky<T> (out T value)
+    method      internal SubscriptionToken(EventBus bus, Type eventType, int id)
+    method      public void Dispose()
+    method      internal void Invalidate()
+
+━━━ ..//GameRoot/EventBus.cs
+  struct struct SubscriptionToken
+  : IDisposable
+  modifiers: public
+    method      internal SubscriptionToken(EventBus bus, Type eventType, int id)
+    method      public void Dispose()
+    method      internal void Invalidate()
+
+━━━ ..//GameRoot/Events.cs
+  struct struct EconomyCoreReady
+  modifiers: public
+    method      public EconomyCoreReady (TheEconomy economy)
+    method      public RequestLoadScene(string sceneName)
+
+━━━ ..//GameRoot/Events.cs
+  struct struct RequestLoadScene
+  modifiers: public
+    method      public RequestLoadScene(string sceneName)
+
+━━━ ..//GameRoot/GameRoot.cs
+  class class GameRoot
+  : MonoBehaviour
+  modifiers: public
+    method      public void CreateMarketEvents()
+
+━━━ ..//GameRoot/Scenes.cs
+  class class Scenes
+  modifiers: public static
+
+━━━ ..//Goals/Goal.cs
+  class class Goal
+  modifiers: public
+    method      public Dictionary<string,object> OriginalValues {get;private set;} = new ()
+    method      public Goal(string name, string description, Func<iEconAgent, bool> isGoalMet,Action<EconAgent,Goal> initializeGoal=null)
+    method      public Goal()
+    method      public T GetOriginalValue<T>(string key)
+    method      public void SetOriginalValue(string key, object value)
+    method      public void Initialize(EconAgent company)
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+    method      public static Goal Named(this Goal goal,string name)
+    method      public static Goal DescribedAs(this Goal goal, string description)
+    method      public static Goal WithGoalEvaluator(this Goal goal, Func<iEconAgent, bool> goalEvaluator)
+    method      public static Goal WithGoalInitializer(this Goal goal, Action<EconAgent,Goal> goalInitializer)
+    method      public static Goal Affecting(this Goal goal, MetricEnum metric)
+    method      public static Goal WithGoalValue(this Goal goal, float value)
+
+━━━ ..//Goals/Goal.cs
+  class class GoalBuilder
+  modifiers: public static
+    method      public static Goal Named(this Goal goal,string name)
+    method      public static Goal DescribedAs(this Goal goal, string description)
+    method      public static Goal WithGoalEvaluator(this Goal goal, Func<iEconAgent, bool> goalEvaluator)
+    method      public static Goal WithGoalInitializer(this Goal goal, Action<EconAgent,Goal> goalInitializer)
+    method      public static Goal Affecting(this Goal goal, MetricEnum metric)
+    method      public static Goal WithGoalValue(this Goal goal, float value)
+
+━━━ ..//Goals/MetricEnum.cs
+  enum enum MetricEnum
+  modifiers: public
+
+━━━ ..//Goods/Good.cs
+  class class Good
+  : ScriptableObject
+  modifiers: public
+    method      public decimal GetCostOfGood(Recipe recipe)
+    method      public Dictionary<ElasticityTypeEnum, float> Elasticities = new()
+    method      public void AddElasticity(ElasticityTypeEnum key, float value)
+    method      public void SetExpiry(int periods)
+    method      public List<MetricEnum> AffectsMetrics()
+    method      public ReductionResult ReducesMetric(MetricEnum metric)
+    method      public bool HasEffectOn(MetricEnum metric)
+    method      public void AddEffect(GoodEffect effect)
+    method      public void RemoveEffect(GoodEffect effect)
+    method      public void ApplyEffects(PopulationAgent company, float percentageOfEffectToApply=1f)
+    method      public PriceBand Get_price_band()
+    method      public decimal GetPrice()
+    method      internal void SetPrice(decimal new_price)
+    method      public RarityEnum GetRarity()
+    method      public void SetRarity(RarityEnum rarity)
+    method      public decimal Get_price_increment_rate()
+    method      public void Add_substitute_good(Good good)
+    method      public override bool Equals(object obj)
+    method      public override int GetHashCode()
+    method      public override string ToString()
+    method      public PriceBand(decimal lower_bound=0, decimal upper_bound=0)
+    method      public ReductionResult(bool isReducing, float reductionAmount)
+    method      public float By()
+
+━━━ ..//Goods/Good.cs
+  enum enum RarityEnum
+  modifiers: public
+    method      public PriceBand(decimal lower_bound=0, decimal upper_bound=0)
+    method      public ReductionResult(bool isReducing, float reductionAmount)
+    method      public float By()
+
+━━━ ..//Goods/Good.cs
+  class class PriceBand
+  modifiers: public
+    method      public PriceBand(decimal lower_bound=0, decimal upper_bound=0)
+    method      public ReductionResult(bool isReducing, float reductionAmount)
+    method      public float By()
+
+━━━ ..//Goods/Good.cs
+  class class ReductionResult
+  modifiers: public
+    method      public ReductionResult(bool isReducing, float reductionAmount)
+    method      public float By()
+
+━━━ ..//Goods/GoodBuilder.cs
+  class class GoodBuilder
+  modifiers: public
+    method      public GoodBuilder()
+    method      public GoodBuilder Named(string name)
+    method      public GoodBuilder WithRarity(RarityEnum rarity)
+    method      public GoodBuilder WithExpiryAfter(int periods)
+    method      public GoodBuilder Costing(decimal cost)
+    method      public GoodBuilder WhichIsProducedGood()
+    method      public GoodBuilder WithElasticity(ElasticityTypeEnum key, float value)
+    method      public Good Build()
+
+━━━ ..//Goods/GoodEffect.cs
+  class class GoodEffect
+  modifiers: public
+    method      public void Apply(PopulationAgent company,float percentageToApply=1f)
+    method      public static GoodEffect Create()
+    method      public static GoodEffect Named(this GoodEffect effect, string name)
+    method      public static GoodEffect DescribedAs(this GoodEffect effect, string description)
+    method      public static GoodEffect Affecting(this GoodEffect effect, MetricEnum metric)
+    method      public static GoodEffect WithEffect(this GoodEffect effect, MetricModifier<PopulationAgent> func)
+    method      public static GoodEffect WithEffectMagnitude(this GoodEffect effect, float magnitude)
+
+━━━ ..//Goods/GoodEffect.cs
+  class class GoodEffectBuilder
+  modifiers: public static
+    method      public static GoodEffect Create()
+    method      public static GoodEffect Named(this GoodEffect effect, string name)
+    method      public static GoodEffect DescribedAs(this GoodEffect effect, string description)
+    method      public static GoodEffect Affecting(this GoodEffect effect, MetricEnum metric)
+    method      public static GoodEffect WithEffect(this GoodEffect effect, MetricModifier<PopulationAgent> func)
+    method      public static GoodEffect WithEffectMagnitude(this GoodEffect effect, float magnitude)
+
+━━━ ..//Goods/GoodIconMapping.cs
+  class class GoodIconMapping
+  : ScriptableObject
+  modifiers: public
+    method      public Sprite GetSpriteForGood(string goodName)
+    method      public bool HasMapping(string goodName)
+
+━━━ ..//Goods/GoodIconMapping.cs
+  struct struct GoodSpritePair
+  modifiers: public
+    method      public Sprite GetSpriteForGood(string goodName)
+    method      public bool HasMapping(string goodName)
+
+━━━ ..//Goods/Recipe.cs
+  class class Recipe
+  : ScriptableObject
+  modifiers: public
+    method      public Good GetProduct()
+    method      public bool CanRecipeBeMadeFrom(List<InventoryEntry> entries)
+    method      public Recipe(string RecipeName, Good product, List<Ingredient> ingredients)
+    method      public List<string> GetIngredientNames()
+    method      public List<Ingredient> GetIngredients()
+    method      public List<Ingredient> Get_recipe()
+    method      public int Get_max_quantity(List<InventoryEntry> stock)
+    method      public (Good, int)
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+    method      public decimal GetCostPerUnit(Inventory inventory)
+    method      public decimal GetPerceivedCostPerUnit(Dictionary<Good, decimal> asks=null)
+    method      public Ingredient(Good good, int quantity_needed)
+    method      public RecipeException(string message)
+
+━━━ ..//Goods/Recipe.cs
+  class class Ingredient
+  modifiers: public
+    method      public Ingredient(Good good, int quantity_needed)
+    method      public RecipeException(string message)
+
+━━━ ..//Goods/Recipe.cs
+  class class RecipeException
+  : Exception
+  modifiers: public
+    method      public RecipeException(string message)
+
+━━━ ..//Goods/Recipe.cs
+  struct struct SerializableIngredient
+  modifiers: public
+
+━━━ ..//Goods/iPriceSetter.cs
+  interface interface iPriceSetter
+  modifiers: public
+
+━━━ ..//History/PopulationHistory.cs
+  class class PopulationHistory
+  : iHistorical
+  modifiers: public
+
+━━━ ..//History/iHistorical.cs
+  interface interface iHistorical
+  modifiers: public
+
+━━━ ..//Inventory/Inventory.cs
+  class class Inventory
+  modifiers: public
+    method      public void Clear()
+    method      public List<InventoryEntry> GetInventoryEntries()
+    method      public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)
+    method      public InventoryEntry AddGood(InventoryEntry entry)
+    method      public void RemoveGood(Good good, int quantity, decimal price)
+    method      public List<InventoryEntry> Generate_goods_to_remove(Good good, int quantity, decimal price)
+    method      public int TryConsumeGood(string goodName, int quantity)
+    method      public void Consume_for_recipe(Recipe recipe, int quantity)
+    method      public void ExpireGoods(int period)
+
+━━━ ..//Inventory/InventoryEntry.cs
+  class class InventoryEntry
+  modifiers: public
+    method      public Recipe GetRecipe()
+    method      public void SetRecipe(Recipe recipe)
+    method      public InventoryEntry(Good good, int quantity, decimal acquisition_price, int period)
+    method      public void SetPrice(decimal price)
+    method      public override string ToString()
+
+━━━ ..//Loggers/TradeLoggerV1.cs
+  class class TradeLoggerV1
+  : ITradeLogger
+  modifiers: public
+    method      public Dictionary<Guid, List<Execution>> GetAllTransactions(List<Market> markets, int period)
+    method      public int GetTradeCount()
+    method      public void LogTrade(Order trade)
+    method      public void SaveDailySummary(List<Order> trade_queue)
+
+━━━ ..//Map/MapTile.cs
+  class class Maptile
+  modifiers: public
+    method      public (int x, int y)
+
+━━━ ..//Map/MarketFeatureSprite.cs
+  class class MarketFeatureSprite
+  : ScriptableObject
+  modifiers: public
+    method      public Sprite GetRandomSprite()
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+
+━━━ ..//Map/MarketFeatureSpriteDatabase.cs
+  class class MarketFeatureSpriteDatabase
+  : ScriptableObject
+  modifiers: public
+    method      public MarketFeatureSprite GetVariant(FeatureNameEnum featureName)
+
+━━━ ..//Map/MarketGrid.cs
+  class class MarketGrid
+  : MonoBehaviour
+  modifiers: public
+    method      public void InitializeGrid()
+    method      public void RegisterFeature(MarketFeature feature)
+    method      public MarketFeature GetFeatureById(Guid id)
+
+━━━ ..//Map/TileTypeEnum.cs
+  enum enum TileTypeEnum
+  modifiers: public
+
+━━━ ..//MarketData/DefaultMarketDataManager.cs
+  class class DefaultMarketDataManager
+  : iMarketDataManager,iMarketAware
+  modifiers: public
+    method      public List<Execution> GetExecutionsInPeriod(int period)
+    method      public List<Order> GetOrdersSubmittedInPeriod(int period)
+    method      public List<(Order Order, int Period)
+    method      public List<MarketData> PublishMarketData()
+    method      public void PublishSpreadToMarket(ActionContext context)
+    method      public void SetMarket(Market market)
+    method      public void LogOrder(Order order, int period)
+    method      public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
+    method      public void RecordTrade(Execution trade)
+
+━━━ ..//MarketData/iMarketDataManager.cs
+  interface interface iMarketDataManager
+  modifiers: public
+
+━━━ ..//MarketParticipants/iMarketParticipant.cs
+  interface interface iMarketParticipant
+  modifiers: public
+
+━━━ ..//Markets/Execution.cs
+  class class Execution
+  modifiers: public
+    method      public Guid TransactionId {get;private set;} = Guid.NewGuid()
+    method      public List<Order> CounterPartyTrades{get; private set;} = new List<Order>()
+    method      public Execution(Order recordedTrade, int period)
+    method      public void AddCounterPartyTrade(Order counterPartyTrade)
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+    method      public override string ToString()
+
+━━━ ..//Markets/Execution.cs
+  enum enum TradeType
+  modifiers: public
+
+━━━ ..//Markets/FeatureNameEnum.cs
+  enum enum FeatureNameEnum
+  modifiers: public
+
+━━━ ..//Markets/FulfillmentInfo.cs
+  class class FulfillmentInfo
+  modifiers: public
+    method      public float FulfillmentRate=> TotalDemand==0?0:100*(TotalSupply / (float)
+    method      public float SupplyFulfillmentRate=> TotalSupply==0?0:100*(FilledSupply / (float)
+    method      public float DemandFulfillmentRate=> TotalDemand==0?0:100*(FilledDemand / (float)
+    method      public float SupplyExcessRate=> SupplyExcess==0?0:100*(SupplyExcess / (float)
+    method      public float DemandExcessRate=> DemandExcess==0?0:100*(DemandExcess / (float)
+    method      public FulfillmentInfo(Good good, int totalDemand, int totalSupply, int filledSupply, int filledDemand)
+
+━━━ ..//Markets/FulfillmentInfoExtensions.cs
+  class class FulfillmentInfoExtensions
+  modifiers: public static
+    method      public static float FulfillmentRateFor(this List<FulfillmentInfo> fulfillmentInfoList,Good good)
+
+━━━ ..//Markets/InteractionManagers/DefaultMarketInteractionManager.cs
+  class class DefaultMarketInteractionManager
+  : InteractionManagerBase
+  modifiers: public
+    method      public override void MarketsProvideLiquidityOfLastResort()
+
+━━━ ..//Markets/InteractionManagers/Episode1InteractionManager.cs
+  class class Episode1InteractionManager
+  : InteractionManagerBase
+  modifiers: public
+    method      public override void MarketsProvideLiquidityOfLastResort()
+
+━━━ ..//Markets/InteractionManagers/InteractionManagerBase.cs
+  class class InteractionManagerBase
+  : iMarketInteractionManager
+  modifiers: public abstract
+    method      public virtual void EvaluateParticipantCollapse(EconAgent company)
+    method      public abstract void MarketsProvideLiquidityOfLastResort()
+    method      public virtual void PopulationsAct(int period)
+    method      public virtual LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    method      public virtual LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public virtual void RegisterMarketParticipant(EconAgent marketParticipant)
+    method      public virtual LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
+    method      public void SetMarket(Market market)
+    method      public virtual void UpdateCompanyStatuses(int period)
+
+━━━ ..//Markets/Market.cs
+  class class Market
+  : ScriptableObject, iEconAgent
+  modifiers: public
+    method      public List<MarketFeature> MarketFeatures = new()
+    method      public List<MarketFeature> GetMarketFeatures()
+    method      public (int x, int y)
+    method      public int GetWidth()
+    method      public int GetHeight()
+    method      public List<MarketData> MarketData { get; } = new()
+    method      public Dictionary<Good, DemandData> GetDemandForPeriod()
+    method      public DemandData GetDemandFor(Good good)
+    method      public IEnumerable<(Good good, decimal Bid, decimal Ask)
+    method      public decimal GetPerceivedCostOfGood(Good good)
+    method      internal LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1)
+    method      public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticityType)
+    method      public int GetMarketDemandForGood(string goodName)
+    method      public void SetMarketDemandForGood(Good good, DemandData demandData)
+    method      public void InitializeDemandForSpecificGood(Good good, int initialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
+    method      public List<EconAgent> GetMarketParticipants()
+    method      public void RegisterMarketParticipant(EconAgent marketParticipant)
+    method      public LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
+    method      public float GetMarketInstability()
+    method      public LemonadeStandResultObject SetMarketInstability(float newInstability)
+    method      public float GetPopulationEnnui()
+    method      public string GetEnnuiLevel()
+    method      public int GetPopulation()
+    method      public List<PopulationHistory> GetPopulationHistory()
+    method      public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationAgent marketParticipant)
+    method      public float GetPopulationGrowthRate()
+    method      public float GetPopulationHappiness()
+    method      public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)
+    method      public LemonadeStandResultObject RecordDemographicSnapshot(TurnPhase phase)
+    method      public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent)
+    method      public void RaiseOrderFulfilledEvent(OrderFulfilledEvent orderFulfilledEvent)
+    method      public iStrategy GetStrategy()
+    method      public void SetStrategy(iStrategy strategy)
+    method      public List<ActiveMarketEvent> GetActiveMarketEvents()
+    method      public List<(MarketEventSO Event, int PeriodStart, int periodEnd)
+    method      public void AddPotentialMarketEvent(MarketEventSO marketEvent)
+    method      public void RemovePotentialMarketEvent(MarketEventSO marketEvent)
+    method      public void ResolveMarketEvents()
+    method      public void RollForEvents()
+    method      public void FireEvent(MarketEventSO e)
+    method      public void AddPriceModifier(iPriceModifier priceModifier)
+    method      public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
+    method      public void RecordTrade(Execution trade)
+    method      public List<Order> GetOrdersSubmittedInPeriod(int period)
+    method      public void LogOrder(Order order, int period)
+    method      public List<(Order Order, int Period)
+    method      public List<Execution> GetExecutionsInPeriod(int period)
+    method      public decimal GetCash()
+    method      public void SetCash(decimal new_cash)
+    method      public Inventory GetInventory()
+    method      public List<Order> GetOrdersSentToMarket()
+    method      public List<Order> GetOrdersSentToMarketByCompany(EconAgent company)
+    method      public List<Recipe> GetRecipes()
+    method      public Dictionary<Good, DemandData> GetPopulationDemand()
+    method      public List<iPriceModifier> GetPriceModifiers()
+    method      public static Market Create()
+    method      public static readonly StarterMarketInitializer starterMarketInitializer = new()
+    method      public static Market CreateMarket(string companyName)
+    method      public static Market CreateStarterMarket(string companyName, iDemandStrategy demandStrategy)
+    method      public void SetDemographicManager(iDemographicManager demographicManager)
+    method      public void SetMarketEventManager(iMarketEventManager manager)
+    method      public void SetFeatureManager(iFeatureManager featureManager)
+    method      public void SetMarketDataManager(iMarketDataManager marketDataManager)
+    method      public void SetMarketInteractionManager(iMarketInteractionManager manager)
+    method      public void SetPriceManager(iPriceManager priceManager)
+    method      public void SetSupplyProvider(iSupplyHelper supplyProvider)
+    method      public void SetTradeProcessor(iTradeProcessor tradeProcessor)
+    method      public void SetTransactionManager(iTransactionManager transactionManager)
+    method      public void SetMarketDataService(iMarketDataService marketDataService)
+    method      public void SetDemandStrategy(iDemandStrategy demandStrategy)
+    method      public void SetDemandManager(iDemandManager manager)
+    method      public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
+    method      public List<Order> ProcessCompanyOrders()
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    method      internal void UpdateCompanyStatuses(int period)
+    method      internal void ConsumeGoods()
+    method      public void ExpireGoods(int period)
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public float GetPopulationPercentageChangeInPeriod()
+    method      public void AddRecipe(Recipe recipe)
+    method      public void RemoveRecipe(Recipe recipe)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public int GetTotalBoughtByMarket(int tradingPeriod, Good good)
+    method      public int GetTotalSoldByMarket(int tradingPeriod, Good good)
+    method      internal void UpdatePrices()
+    method      public void CalculateNewBidAskSpreadForMarket()
+    method      public decimal GetMarketCostForGood(Market market, Good good)
+    method      public Dictionary<Good, decimal> GetAverageMarketPrices()
+    method      public List<MarketData> PublishMarketData()
+    method      public void PublishSpreadToMarket(ActionContext context)
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public void StartTradingPeriod()
+    method      public void UnleashMarketForces(int period)
+    method      public override string ToString()
+    method      public override bool Equals(object obj)
+    method      public override int GetHashCode()
+    method      public void CompleteGoal(Goal goal)
+    method      public void CheckCompanyGoals()
+    method      public decimal GetAggressionLevel()
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+
+━━━ ..//Markets/Market.cs
+  class 
+    method      public static Market Create()
+    method      public static readonly StarterMarketInitializer starterMarketInitializer = new()
+    method      public static Market CreateMarket(string companyName)
+    method      public static Market CreateStarterMarket(string companyName, iDemandStrategy demandStrategy)
+    method      public void SetDemographicManager(iDemographicManager demographicManager)
+    method      public void SetMarketEventManager(iMarketEventManager manager)
+    method      public void SetFeatureManager(iFeatureManager featureManager)
+    method      public void SetMarketDataManager(iMarketDataManager marketDataManager)
+    method      public void SetMarketInteractionManager(iMarketInteractionManager manager)
+    method      public void SetPriceManager(iPriceManager priceManager)
+    method      public void SetSupplyProvider(iSupplyHelper supplyProvider)
+    method      public void SetTradeProcessor(iTradeProcessor tradeProcessor)
+    method      public void SetTransactionManager(iTransactionManager transactionManager)
+    method      public void SetMarketDataService(iMarketDataService marketDataService)
+    method      public void SetDemandStrategy(iDemandStrategy demandStrategy)
+    method      public void SetDemandManager(iDemandManager manager)
+    method      public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
+    method      public List<Order> ProcessCompanyOrders()
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    method      internal void UpdateCompanyStatuses(int period)
+    method      internal void ConsumeGoods()
+    method      public void ExpireGoods(int period)
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public float GetPopulationPercentageChangeInPeriod()
+    method      public void AddRecipe(Recipe recipe)
+    method      public void RemoveRecipe(Recipe recipe)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public int GetTotalBoughtByMarket(int tradingPeriod, Good good)
+    method      public int GetTotalSoldByMarket(int tradingPeriod, Good good)
+    method      internal void UpdatePrices()
+    method      public void CalculateNewBidAskSpreadForMarket()
+    method      public decimal GetMarketCostForGood(Market market, Good good)
+    method      public Dictionary<Good, decimal> GetAverageMarketPrices()
+    method      public List<MarketData> PublishMarketData()
+    method      public void PublishSpreadToMarket(ActionContext context)
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public void StartTradingPeriod()
+    method      public void UnleashMarketForces(int period)
+    method      public override string ToString()
+    method      public override bool Equals(object obj)
+    method      public override int GetHashCode()
+    method      public void CompleteGoal(Goal goal)
+    method      public void CheckCompanyGoals()
+    method      public decimal GetAggressionLevel()
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+
+━━━ ..//Markets/Market.cs
+  class class Factory
+  modifiers: public static
+    method      public static readonly StarterMarketInitializer starterMarketInitializer = new()
+    method      public static Market CreateMarket(string companyName)
+    method      public static Market CreateStarterMarket(string companyName, iDemandStrategy demandStrategy)
+    method      public void SetDemographicManager(iDemographicManager demographicManager)
+    method      public void SetMarketEventManager(iMarketEventManager manager)
+    method      public void SetFeatureManager(iFeatureManager featureManager)
+    method      public void SetMarketDataManager(iMarketDataManager marketDataManager)
+    method      public void SetMarketInteractionManager(iMarketInteractionManager manager)
+    method      public void SetPriceManager(iPriceManager priceManager)
+    method      public void SetSupplyProvider(iSupplyHelper supplyProvider)
+    method      public void SetTradeProcessor(iTradeProcessor tradeProcessor)
+    method      public void SetTransactionManager(iTransactionManager transactionManager)
+    method      public void SetMarketDataService(iMarketDataService marketDataService)
+    method      public void SetDemandStrategy(iDemandStrategy demandStrategy)
+    method      public void SetDemandManager(iDemandManager manager)
+    method      public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
+    method      public List<Order> ProcessCompanyOrders()
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    method      internal void UpdateCompanyStatuses(int period)
+    method      internal void ConsumeGoods()
+    method      public void ExpireGoods(int period)
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public float GetPopulationPercentageChangeInPeriod()
+    method      public void AddRecipe(Recipe recipe)
+    method      public void RemoveRecipe(Recipe recipe)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public int GetTotalBoughtByMarket(int tradingPeriod, Good good)
+    method      public int GetTotalSoldByMarket(int tradingPeriod, Good good)
+    method      internal void UpdatePrices()
+    method      public void CalculateNewBidAskSpreadForMarket()
+    method      public decimal GetMarketCostForGood(Market market, Good good)
+    method      public Dictionary<Good, decimal> GetAverageMarketPrices()
+    method      public List<MarketData> PublishMarketData()
+    method      public void PublishSpreadToMarket(ActionContext context)
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public void StartTradingPeriod()
+    method      public void UnleashMarketForces(int period)
+    method      public override string ToString()
+    method      public override bool Equals(object obj)
+    method      public override int GetHashCode()
+    method      public void CompleteGoal(Goal goal)
+    method      public void CheckCompanyGoals()
+    method      public decimal GetAggressionLevel()
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+
+━━━ ..//Markets/Market.cs
+  class 
+  : class
+  modifiers: private
+    method      public void SetDemographicManager(iDemographicManager demographicManager)
+    method      public void SetMarketEventManager(iMarketEventManager manager)
+    method      public void SetFeatureManager(iFeatureManager featureManager)
+    method      public void SetMarketDataManager(iMarketDataManager marketDataManager)
+    method      public void SetMarketInteractionManager(iMarketInteractionManager manager)
+    method      public void SetPriceManager(iPriceManager priceManager)
+    method      public void SetSupplyProvider(iSupplyHelper supplyProvider)
+    method      public void SetTradeProcessor(iTradeProcessor tradeProcessor)
+    method      public void SetTransactionManager(iTransactionManager transactionManager)
+    method      public void SetMarketDataService(iMarketDataService marketDataService)
+    method      public void SetDemandStrategy(iDemandStrategy demandStrategy)
+    method      public void SetDemandManager(iDemandManager manager)
+    method      public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
+    method      public List<Order> ProcessCompanyOrders()
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public LemonadeStandResultObject QueueMarketOrder(ActionContext context)
+    method      internal void UpdateCompanyStatuses(int period)
+    method      internal void ConsumeGoods()
+    method      public void ExpireGoods(int period)
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public float GetPopulationPercentageChangeInPeriod()
+    method      public void AddRecipe(Recipe recipe)
+    method      public void RemoveRecipe(Recipe recipe)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public int GetTotalBoughtByMarket(int tradingPeriod, Good good)
+    method      public int GetTotalSoldByMarket(int tradingPeriod, Good good)
+    method      internal void UpdatePrices()
+    method      public void CalculateNewBidAskSpreadForMarket()
+    method      public decimal GetMarketCostForGood(Market market, Good good)
+    method      public Dictionary<Good, decimal> GetAverageMarketPrices()
+    method      public List<MarketData> PublishMarketData()
+    method      public void PublishSpreadToMarket(ActionContext context)
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public void StartTradingPeriod()
+    method      public void UnleashMarketForces(int period)
+    method      public override string ToString()
+    method      public override bool Equals(object obj)
+    method      public override int GetHashCode()
+    method      public void CompleteGoal(Goal goal)
+    method      public void CheckCompanyGoals()
+    method      public decimal GetAggressionLevel()
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+
+━━━ ..//Markets/MarketBuilder.cs
+  class class MarketBuilder
+  modifiers: public static
+    method      public static Market WithCash(this Market market, decimal cash)
+    method      public static Market WithDemandStrategy(this Market market, iDemandStrategy strategy)
+    method      public static Market WithDemandManager(this Market market, iDemandManager manager)
+    method      public static Market WithDataService(this Market market, iMarketDataService dataService)
+    method      public static Market WithDemographicManager(this Market market, iDemographicManager demographicManager)
+    method      public static Market WithMarketEventManager(this Market market, iMarketEventManager manager = null)
+    method      public static Market WithMarketInteractionManager(this Market market, iMarketInteractionManager manager = null)
+    method      public static Market WithPriceManager(this Market market, iPriceManager priceManager)
+    method      public static Market WithSupplyProvider(this Market market, iSupplyHelper supplyProvider)
+    method      public static Market WithTradeProcessor(this Market market, iTradeProcessor tradeProcessor)
+    method      public static Market WithTransactionManager(this Market market, iTransactionManager transactionManager)
+    method      public static Market WithOrderFulfilledEvents(this Market market)
+    method      public static Market WithMarketDataManager(this Market market, iMarketDataManager marketDataManager)
+    method      public static Market WithPriceModifier(this Market market, iPriceModifier priceModifier)
+    method      public static Market WithMarketStrategy(this Market market, iStrategy strategy)
+    method      public static Market WithLevel(this Market market, AgentLevelEnum level)
+    method      public static Market Named(this Market market, string name)
+    method      public static Market PopulatedWith(this Market market, List<PopulationAgent> marketParticipants)
+    method      public static Market InitializedWith(this Market market, iMarketInitializer initializer)
+    method      public static Market EnsureDefaults(this Market market)
+
+━━━ ..//Markets/MarketData.cs
+  class class MarketData
+  modifiers: public
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+
+━━━ ..//Markets/MarketFeature.cs
+  class class MarketFeature
+  modifiers: public
+    method      public Guid Id{get; private set;}=Guid.NewGuid()
+    method      public (int x, int y)
+    method      public List<int> Location= new()
+    method      public int GetSpace()
+    method      public MarketFeature(FeatureNameEnum name, (int x, int y)
+    method      public Sprite GetRandomSprite()
+
+━━━ ..//Markets/MarketManager.cs
+  class class MarketManager
+  : MonoBehaviour
+  modifiers: public
+
+━━━ ..//Markets/MarketObserver.cs
+  class class is
+
+━━━ ..//Markets/MarketObserver.cs
+  class class MarketObserver
+  modifiers: public static
+
+━━━ ..//Markets/PriorityEnum.cs
+  enum enum PriorityEnum
+  modifiers: public
+
+━━━ ..//Markets/StarterMarketInitializer.cs
+  class class StarterMarketInitializer
+  : iMarketInitializer
+  modifiers: public
+    method      public void InitializeMarket(Market market)
+
+━━━ ..//Markets/iFeatureManager.cs
+  interface interface iFeatureManager
+  modifiers: public
+    method      public LemonadeStandResultObject AddFeature(MarketFeature feature, Market market)
+    method      public LemonadeStandResultObject RemoveFeature(MarketFeature feature, Market market)
+    method      public static List<MarketFeature> GetFeatures(Market market)
+    method      public static int GetFreeSpace(Market market)
+    method      public LemonadeStandResultObject PlaceInitialFeatures(Market market)
+
+━━━ ..//Markets/iMarketAware.cs
+  interface interface iMarketAware
+  modifiers: public
+
+━━━ ..//Markets/iMarketInitializer.cs
+  interface interface iMarketInitializer
+  modifiers: public
+
+━━━ ..//Markets/iMarketInteractionManager.cs
+  interface interface iMarketInteractionManager
+  : iMarketAware
+  modifiers: public
+    method      public LemonadeStandResultObject RemoveMarketParticipant(EconAgent company)
+
+━━━ ..//Menus/MainMenuController.cs
+  class class MainMenuController
+  : MonoBehaviour
+  modifiers: public
+
+━━━ ..//Orders/Order.cs
+  class class Order
+  modifiers: public
+    method      public Guid Id {get;private set;} = Guid.NewGuid()
+    method      public LemonadeStandResultObject AddExecution(Execution execution)
+    method      public List<Execution> GetExecutions()
+    method      public bool IsBuy()
+    method      public bool IsSell()
+    method      public LemonadeStandResultObject IsOrderValid()
+    method      public Order(iEconAgent buyer, iEconAgent seller, Good good, int quantity, decimal price)
+    method      public override string ToString()
+    method      public override bool Equals(object other)
+    method      public override int GetHashCode()
+
+━━━ ..//Orders/OrderFulfilledEvent.cs
+  class class OrderFulfilledEvent
+  modifiers: public
+    method      public float FillPercentage => (float)
+
+━━━ ..//Persistence/MarketDataService.cs
+  class class MarketDataService
+  : iMarketDataService
+  modifiers: public
+    method      public MarketDataService(iDataHandler<PopulationHistory> populationHistoryDataHandler)
+    method      public List<PopulationHistory> GetPopulationHistory(Guid marketId)
+
+━━━ ..//Persistence/iDataHandler.cs
+  interface interface iDataHandler
+  modifiers: public
+
+━━━ ..//Persistence/iMarketDataService.cs
+  interface interface iMarketDataService
+  modifiers: public
+
+━━━ ..//PlaceHolderObjects/DummyCompany.cs
+  class class DummyCompany
+  : iEconAgent
+  modifiers: public
+    method      public Inventory Inventory{get; private set;} = new Inventory()
+    method      public DummyCompany()
+    method      public decimal GetCash()
+    method      public List<FixedCost> FixedCosts { get => throw new System.NotImplementedException()
+    method      public iFixedCostStrategy FixedCostStrategy { get => throw new System.NotImplementedException()
+    method      public List<Goal> Goals { get => throw new System.NotImplementedException()
+    method      public int CurrentPeriod { get => throw new System.NotImplementedException()
+    method      public int StartingPeriod { get => throw new System.NotImplementedException()
+    method      public void BuyGood(Good good, int quantity, decimal price, int period)
+    method      public decimal CalculateFixedCostsForPeriod(int period)
+    method      public void CheckCompanyGoals()
+    method      public void CompleteGoal(Goal goal)
+    method      public void ExpireGoods(int period)
+    method      public Inventory GetInventory()
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public void SellGood(Good good, int quantity, decimal price, int period)
+    method      public void UpdateCurrentPeriod(int period)
+    method      public void SetCash(decimal newCash)
+    method      public void SetStrategy(iStrategy strategy)
+    method      public iStrategy GetStrategy()
+    method      public DemandData GetDemandFor(Good good)
+    method      public void SetAggressionLevel(decimal aggressionLevel)
+    method      public decimal GetAggressionLevel()
+
+━━━ ..//PriceManagers/DefaultPriceManager.cs
+  class class DefaultPriceManager
+  : iPriceManager, iPriceSetter,iMarketAware
+  modifiers: public
+    method      public decimal GetMarketCostForGood(Good good)
+    method      public void CalculateNewBidAskSpreadForMarket()
+    method      public void UpdatePricesForMarket()
+    method      public void SetPrice (Good good, decimal new_price)
+    method      public void SetMarket(Market market)
+    method      public Dictionary<Good, decimal> GetAverageMarketPrices()
+
+━━━ ..//PriceManagers/iPriceManager.cs
+  interface interface iPriceManager
+  modifiers: public
+
+━━━ ..//PriceModifiers/SupplyDemandModifier.cs
+  class class SupplyDemandModifier
+  : iPriceModifier
+  modifiers: public
+    method      public decimal Apply(decimal base_price, Good good, Market market)
+
+━━━ ..//PriceModifiers/iPriceModifier.cs
+  interface interface iPriceModifier
+  modifiers: public
+
+━━━ ..//Sandbox/ActionExecutor.cs
+  class class ActionExecutor (Sandbox)
+  modifiers: public
+    method      public ActionExecutor(List<Good> goods, Recipe recipe, List<EconAgent> companiesList, Market market)
+    method      public void PerformRandomAction(int cycle)
+
+━━━ ..//Sandbox/CompanyDisplayInfo.cs
+  class class dedicated (Sandbox)
+    method      public CompanyDisplayInfo(EconAgent company, List<Good> availableGoods)
+    method      public decimal Cash => company.GetCash()
+    method      public string GetFormattedInfo()
+    method      public string GetSimpleInfo()
+
+━━━ ..//Sandbox/CompanyDisplayInfo.cs
+  class class CompanyDisplayInfo (Sandbox)
+  modifiers: public
+    method      public CompanyDisplayInfo(EconAgent company, List<Good> availableGoods)
+    method      public decimal Cash => company.GetCash()
+    method      public string GetFormattedInfo()
+    method      public string GetSimpleInfo()
+
+━━━ ..//Sandbox/CompanyFactory.cs
+  class class CompanyFactory (Sandbox)
+  modifiers: public
+    method      public CompanyFactory(List<Good> goods, GameObject companyPrefab, GoodIconMapping iconMapping, GameObject moneyIndicatorPrefab, Market market)
+    method      public List<EconAgent> CreateTestCompanies(TheEconomy economy)
+    method      public void DestroyAllCompanyPrefabs()
+    method      public List<EconAgent> GetCompanies()
+
+━━━ ..//Sandbox/CompanyView.cs
+  class class CompanyView (Sandbox)
+  : MonoBehaviour
+  modifiers: public
+    method      public void Init(EconAgent econAgent, List<Good> goods, GoodIconMapping mapping, GameObject moneyIndicator)
+
+━━━ ..//Sandbox/EconomyInitializer.cs
+  class class EconomyInitializer (Sandbox)
+  modifiers: public
+    method      public TheEconomy InitializeEconomy()
+    method      public TheEconomy GetEconomy()
+
+━━━ ..//Sandbox/EntityFactory.cs
+  class class EntityFactory (Sandbox)
+  modifiers: public
+    method      public void CreateGoodsAndRecipes()
+    method      public List<Good> GetTestGoods()
+    method      public Recipe GetLemonadeRecipe()
+    method      public Good GetLemon()
+    method      public Good GetWater()
+    method      public Good GetSugar()
+    method      public Good GetLemonade()
+
+━━━ ..//Sandbox/InventoryItemUI.cs
+  class class InventoryItemUI
+  : MonoBehaviour
+  modifiers: public
+    method      public void SetItem(Sprite icon, int count)
+
+━━━ ..//Sandbox/InventoryPanelUI.cs
+  class class InventoryPanelUI
+  : MonoBehaviour
+  modifiers: public
+    method      public void ShowInventory(Dictionary<Sprite, int> inventory)
+
+━━━ ..//Sandbox/MarketInitializer.cs
+  class class MarketInitializer (Sandbox)
+  modifiers: public
+    method      public MarketInitializer(List<Good> goods, TheEconomy economy)
+    method      public Market InitializeMarket()
+    method      public Market GetMarket()
+
+━━━ ..//Sandbox/PopulationDisplayInfo.cs
+  class class dedicated (Sandbox)
+    method      public PopulationDisplayInfo(PopulationAgent population, List<Good> availableGoods)
+    method      public string GetFormattedInfo()
+    method      public string GetSimpleInfo()
+
+━━━ ..//Sandbox/PopulationDisplayInfo.cs
+  class class PopulationDisplayInfo (Sandbox)
+  modifiers: public
+    method      public PopulationDisplayInfo(PopulationAgent population, List<Good> availableGoods)
+    method      public string GetFormattedInfo()
+    method      public string GetSimpleInfo()
+
+━━━ ..//Sandbox/PopulationView.cs
+  class class PopulationView
+  : MonoBehaviour
+  modifiers: public
+    method      public void Init(PopulationAgent agent, List<Good> goods, GoodIconMapping mapping)
+
+━━━ ..//Sandbox/Simulation.cs
+  class class Simulation
+  : MonoBehaviour
+  modifiers: public
+    method      public void ResetSimulation()
+    method      public void TogglePause()
+    method      public bool IsPaused()
+
+━━━ ..//Sandbox/SimulationConfiguration.cs
+  class class SimulationConfiguration (Sandbox)
+  : MonoBehaviour
+  modifiers: public
+
+━━━ ..//Sandbox/SimulationReporter.cs
+  class class SimulationReporter (Sandbox)
+  modifiers: public
+    method      public SimulationReporter(List<Good> goods, List<EconAgent> companiesList, Market market)
+    method      public void GenerateSummary(int totalNumberOfCycles, int tradesPerCycle)
+
+━━━ ..//Sandbox/SimulationReporter.cs
+  class  (Sandbox)
+
+━━━ ..//Scenes/SplashScreen/TextBoxAnimator.cs
+  class class TextBoxAnimator
+  : MonoBehaviour
+  modifiers: public
+    method      public void TriggerAnimation(string triggerName)
+
+━━━ ..//Scenes/SplashScreen/TypeWriter.cs
+  class class TypeWriter
+  : MonoBehaviour
+  modifiers: public
+    method      public static readonly List<string> splashMessage = new()
+    method      public void StopTyping()
+    method      public void Initialize(TextMeshProUGUI textbox,AudioSource audioSource, AudioClip soundClip)
+    method      public IEnumerator TypeText(List<string> TextToType)
+
+━━━ ..//Scenes/TestScene/Scripts/BuildingClickDetector.cs
+  class class BuildingClickDetector
+  : MonoBehaviour
+  modifiers: public
+
+━━━ ..//Scenes/TestScene/Scripts/ExitButtonHandler.cs
+  class class ExitButtonHandler
+  : MonoBehaviour
+  modifiers: public
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/OrderPanelHandler.cs
+  class class OrderPanelHandler
+  : MonoBehaviour
+  modifiers: public
+    method      public void Start()
+    method      public void FindPlayer()
+    method      public void SubmitOrder()
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/OrderSummaryPopupHandler.cs
+  class class OrderSummaryPopupHandler
+  : MonoBehaviour
+  modifiers: public
+    method      public void ShowOrderSummary(Market market)
+    method      public void CloseOrderSummary()
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/TextBasedGameManager.cs
+  class class TextBasedGameManager
+  : MonoBehaviour
+  modifiers: public
+    method      public TextMeshProUGUI GetTypeWrittenText()
+    method      public void StartNewGame()
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/TextBasedStoryHandler.cs
+  class class TextBasedStoryHandler
+  : MonoBehaviour
+  modifiers: public
+    method      public void LogMessage(string message)
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/TextBasedStoryHandler.cs
+  enum enum MenuStateEnum
+  modifiers: internal
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/UIHandlerScript.cs
+  class class UIHandlerScript
+  : MonoBehaviour
+  modifiers: public
+
+━━━ ..//Scenes/TextBasedLemonadeStand/Scripts/ViewModel/OrderSummaryLineItem.cs
+  class class OrderSummaryLineItem
+  modifiers: public
+    method      public override string ToString()
+
+━━━ ..//Supply/DefaultSupplyHelper.cs
+  class class DefaultSupplyHelper
+  : iSupplyHelper
+  modifiers: public
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public void Initialize(Market market)
+    method      public void SetMarket(Market market)
+
+━━━ ..//Supply/iSupplier.cs
+  interface interface iSupplier
+  modifiers: public
+    method      public void InitializeRarityQuantities(int common, int uncommon, int rare, int veryRare)
+
+━━━ ..//Supply/iSupplyHelper.cs
+  interface interface iSupplyHelper
+  : iMarketAware
+  modifiers: public
+    method      public void Initialize(Market market)
+    method      public List<(Good Good,int Quantity, decimal Price)
+
+━━━ ..//Tags/TagIncompatibilities.cs
+  class class TagIncompatibilities
+  modifiers: public static
+    method      public static readonly Dictionary<string, HashSet<string>> Incompatibilities = new()
+
+━━━ ..//Tags/iTaggable.cs
+  interface interface iTaggable
+  modifiers: public
+    method      public List<string> GetTags()
+    method      public void AddTag(string tag)
+    method      public void RemoveTag(string tag)
+    method      public bool HasTag(string tag)
+    method      public static bool IsCompatibleWith(this iTaggable self, iTaggable other)
+
+━━━ ..//Tags/iTaggable.cs
+  class class iTaggableExtensions
+  modifiers: public static
+    method      public static bool IsCompatibleWith(this iTaggable self, iTaggable other)
+
+━━━ ..//Tests/EditMode/BankruptcyTests.cs
+  class class BankruptcyTests
+  modifiers: public
+    method      public void Setup()
+    method      public void CompanyWithoutCashGoesBankrupt()
+    method      public void CompanyGoesBankruptWhenItCannotPayFixedCosts()
+    method      public void ACompanyGoingBankruptShouldBeRemovedFromItsMarket()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/BasicConsumptionManagerTests.cs
+  class class BasicConsumptionManagerTests
+  modifiers: public
+    method      public void SetUp()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/BasicDemandStrategyTests.cs
+  class class BasicDemandStrategyTests
+  modifiers: public
+    method      public void Setup ()
+    method      public void TearDown()
+    method      public void GetTotalBoughtByPopulationReturnsOnlyMarketBuys()
+    method      public void CalculateDemandForPeriodReturnsBaseMarketDemandWhenNoOrdersExist()
+    method      public void CalculateDemandForPeriodReturnsBaseMarketDemandPlusOrdersWhenOrdersExist()
+    method      public void CalculateDemandForPeriodCountsOnlyOrdersIfNoMarketDemandExists()
+    method      public void CalculateSupplyForPeriodReturnsTotalQuantityOfAllFilledTrades()
+
+━━━ ..//Tests/EditMode/BasicFixedCostsTests.cs
+  class class BasicFixedCostsTests
+  modifiers: public
+    method      public void CalcFixedCostsForPeriodSumsAllValidCosts()
+    method      public void WhenCalculatingForPeriod2FixedCostsShouldIgnoreCostsWithFrequency2()
+    method      public void WhenCalculatingForPeriod2FixedCostsShouldIgnoreCostsAcquiredInPeriod2()
+    method      public void FixedCostsWithInvalidFrequencyShouldThrowException()
+    method      public void IfMultipleFixedCostsExistAcquiredInMultiplePeriodsOnlySumValidCosts()
+    method      public void FixedCostsForFreq2AcquiredOnP1IsNotIncludedInP4()
+    method      public void IfFixedCostsAreEmptyReturnZero()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests.cs
+  class class tests
+  modifiers:  partial
+    method      public void SetUp()
+    method      public void ProcessCompanyOrdersIgnoresOrdersWhereSellerIsMarket()
+    method      public void PCO_PerfectMatch_OneGood()
+    method      public void PCO_TwoBuyers_NoFill_NoException()
+    method      public void PCO_Mismatch_NoFill_NoException()
+    method      public void PCO_PerfectMatch_TwoGoods()
+    method      public void PCO_ThreeBuyersTwoSellersTwoGoods_allFill()
+    method      public void PCO_2Companies2Buy2SellAllPartial()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests.cs
+  class class BasicTradeProcessorTests
+  modifiers: public partial
+    method      public void SetUp()
+    method      public void ProcessCompanyOrdersIgnoresOrdersWhereSellerIsMarket()
+    method      public void PCO_PerfectMatch_OneGood()
+    method      public void PCO_TwoBuyers_NoFill_NoException()
+    method      public void PCO_Mismatch_NoFill_NoException()
+    method      public void PCO_PerfectMatch_TwoGoods()
+    method      public void PCO_ThreeBuyersTwoSellersTwoGoods_allFill()
+    method      public void PCO_2Companies2Buy2SellAllPartial()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests2.cs
+  class class BasicTradeProcessorTests
+  modifiers: public partial
+    method      public void IfOnlyTwoOrdersExistBuyOrderIsPrimary_MatchedOrders()
+    method      public void IfOnlySellOrderExistsItIsPrimary()
+    method      public void BuyOrderWithGreatestQuantityIsPrimary()
+    method      public void SellOrderWithGreatestQuantityIsPrimaryIfNoBuyOrdersExist()
+    method      public void BuyOrdersAreStillPrimaryEvenWithNoSeller()
+    method      public void SellOrdersArePrimaryEvenWithNoBuyerIfTheyreAlone()
+    method      public void FullyFilledOrdersCannotBePrimary()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests3.cs
+  class class BasicTradeProcessorTests
+  modifiers: public partial
+    method      public void EBTFG_NoBuyersNoSellersNoExceptions()
+    method      public void EBTFG_NoMatchingOrdersNoFillsNoExceptions()
+    method      public void EBTFG_NullBuyerAndSellerNoFills()
+    method      public void EBTFG_NoBuyersNoFills()
+    method      public void EBTFG_NoSellersNoFills()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests4.cs
+  class class BasicTradeProcessorTests
+  modifiers: public partial
+    method      public void FindCounterPartiesForOrderReturnsSellOrderIfBuyOrderIsPrimary_OneCounterParty()
+    method      public void FindCounterPartiesForOrderReturnsSellOrderIfBuyOrderIsPrimary_TwoCounterParties()
+    method      public void FindCounterPartiesForOrderReturnsEmptySetWhenOnlySellOrdersExist()
+    method      public void FindCounterPartiesForOrderReturnsEmptyWhenOnlyBuyersExist()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests5.cs
+  class class exercises
+  modifiers:  partial
+    method      public void EBTG_OneBuyerOneSeller_BothExecutionsRecorded()
+    method      public void EBTG_OneBuyerMultSellerBothSellersFill_4ExecutionsRecorded()
+    method      public void EBTFG_OneBuyerMultSellerOneSellerFills()
+
+━━━ ..//Tests/EditMode/BasicTradeProcessorTests5.cs
+  class class BasicTradeProcessorTests
+  modifiers: public partial
+    method      public void EBTG_OneBuyerOneSeller_BothExecutionsRecorded()
+    method      public void EBTG_OneBuyerMultSellerBothSellersFill_4ExecutionsRecorded()
+    method      public void EBTFG_OneBuyerMultSellerOneSellerFills()
+
+━━━ ..//Tests/EditMode/BasicTransactionManagerTests.cs
+  class class BasicTransactionManagerTests
+  modifiers: public
+    method      public void Setup()
+    method      public void ValidateTransactionShouldReturnSelfTradeWhenCompanySubmitsTwoIdenticalTrades()
+    method      public void ValidateTransactionShouldReturnSelfTradeWhenCompanyTriesToTradeWithItself()
+    method      public void ValidateTransactionReturnsSuccessForValidOrderPair()
+    method      public void ValidateTransactionReturnsInsufficientFundsWhenBuyerDoesNotHaveEnoughCash()
+    method      public void ValidateTransactionReturnsInsufficientGoodsWhenSellerDoesNotHaveEnoughGoods()
+    method      public void ForFullyFilledTradesProcessTransactionShouldReturnSuccess()
+    method      public void FullyFilledTradesTransferCashAndGoodsCorrectly()
+    method      public void PartiallyFilledTradesTransferCashAndGoodsCorrectly()
+    method      public void ProcessTransactionRecordsTwoCounterPartiesWhenTwoCounterPartiesArePresent()
+    method      public void ProcessMarketTransactionShouldReturnSuccessForValidOrderPair()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/BidCreationTests_ReduceEnnuiStrategy.cs
+  class class BidCreationTests_ReduceEnnuiStrategy
+  modifiers: public
+    method      public void Setup()
+    method      public void NoMarketPricesDefaultBid()
+    method      public void NoMarketPricesDefaultBidMultiplierPassed()
+    method      public void NoProductsMatchingGoalReturnsEmptySet()
+    method      public void GetPerceivedCostOfGoodReturnsMarketIgnorantAssumedCOGNoRecipes()
+    method      public void GetPerceivedCostOfGoodReturnsCostOfRecipePresent_NoMarketPrices()
+    method      public void GetPerceivedCostOfGoodReturnsCostOfRecipePresent_MarketPricesPassed()
+    method      public void GetPerceivedCostOfGoodReturnsRecipeCostFromIStrategy()
+    method      public void CalculateBidPerCapitaReturnsNaiveBidWhenNoPricesExist()
+    method      public void CalculateBidPerCapitaReturnsPerceivedCostOfGoodsWhenPricesExist()
+    method      public void DemandExistsNoRecipesBuysStillCreated()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/BuilderTests.cs
+  class class BuilderTests
+  modifiers: public
+    method      public void MarketBuilderWithDemandStrategyShouldSetDemandStrategy()
+    method      public void CompanyNamedShouldSetName()
+    method      public void UsingTheBuilderToBuildPopulationCompanyShouldReturnPopulationCompany()
+
+━━━ ..//Tests/EditMode/CompanyOrderValidationTests.cs
+  class class CompanyOrderValidationTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void CompanyQueueOrderReturnsFailureIfOrderWouldResultInNegativeCashBalance()
+
+━━━ ..//Tests/EditMode/CompanyTests.cs
+  class class CompanyTests
+  modifiers: public
+    method      public void Setup()
+    method      public void Set_initial_cash_sets_cash_to_10000_for_beginner()
+    method      public void BuyGoodRemovesCashFromBuyer()
+    method      public void Buy_good_when_buyer_has_enough_cash_adds_good_to_inventory()
+    method      public void Buy_good_when_buyer_doesnt_have_enough_cash_throws_exception()
+    method      public void Sell_good_when_seller_has_good_in_inventory_adds_cash_to_seller()
+    method      public void Sell_good_throws_exception_when_not_enough_quantity()
+    method      public void QueueTradeReturnsFailureWhenActionContextDoesNotContainTrade()
+    method      public void QO_RejectsOrdersWithNegativePrice()
+    method      public void QO_RejectsOrdersWithZeroQuantity()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/Defaults_DemandManagerTests.cs
+  class class Defaults_DemandManagerTests
+  modifiers: public
+    method      public void DemandManagerDefaultCreated()
+    method      public void CreateStarterMarketHasDefaultDemandManager()
+
+━━━ ..//Tests/EditMode/DemandAndElasticityTests.cs
+  class class DemandAndElasticityTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void ElasticDemandComponentsWithZeroElasticityDoNotChangeDemand()
+    method      public void IfFactorWithElasticityOneIncreases10Percent_ThenDemandDecreases10Percent()
+    method      public void FactorOfElasticityPointFiveIncreases10Percent_ThenDemandDecreases5Percent()
+    method      public void FactorOfElasticityPointFiveDecreases10Percent_ThenDemandIncreases5Percent()
+    method      public void FactorOfElasticityOnePointFiveIncreases10Percent_ThenDemandDecreases15Percent()
+    method      public void ElasticityPushesAdjustmentBeyondMax_OnlyMaxReturned()
+    method      public void UnboundedComponentWith100ElasticityAndDoubledFactorIncreasesDemand100X()
+    method      public void AtBlackSwanLevelsOfChangeDemandCollapsesToZero()
+    method      public void AtBlackSwanLevelsOfChangeDemandGoesToVerticalLevel()
+    method      public void GoodWithMaxDemandAdjustMentSetOnlyReducesDemandByMaxAdjustMent()
+    method      public void GoodWithMaxDemandAdjustMentNotMetSetsNormalAdjustment()
+    method      public void GoodWithMinDemandAdjustMentSetDecreasesDemandAtLeastByMinAdjustMent()
+    method      public void GoodWithMinDemandAdjustMentNotMetSetsNormalAdjustment()
+    method      public void IfBothBlackSwanToZeroAndVerticalMet_ThenZeroTakesPrecedence()
+    method      public void VeblenGoodSetsDemandToMaxAtBlackSwanLevelOfIncreaseInFactor()
+    method      public void VeblenGoodSetsDemandToZeroAtBlackSwanLevelOfDecreaseInFactor()
+
+━━━ ..//Tests/EditMode/DemandElasticityTests.cs
+  class class DemandElasticityTests
+  modifiers: public
+    method      public void Setup ()
+    method      public void DemandInelasticGoodsDoNotChangeDemandRegardlessOfPrice()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/DemographicPropertyBagTests.cs
+  class class DemographicPropertyBagTests
+  modifiers: public
+    method      public void AsPercentageReturnsNoMantissa()
+    method      public void AsMoneyReturnsTwoDecimalPoints()
+
+━━━ ..//Tests/EditMode/DemographicsTests.cs
+  class class DemographicsTests
+  modifiers: public
+    method      public void PopulationShouldComeFromPopulationCompany()
+
+━━━ ..//Tests/EditMode/EnnuiTests.cs
+  class class EnnuiTests
+  modifiers: public
+    method      public void Setup()
+    method      public void PopulationsThatMaxOutOnEnnuiCollapse()
+    method      public void RE_CalculateBidPerCapitaGeneratesBid()
+    method      public void SuperiorGoodGetsHigherAllocation()
+    method      public void GenerateBidAskSpreadsAllocationSumsToOneIfThereIsOnlyOneGood()
+    method      public void GenerateBidAskSpreadsAllocationSumsToOneIfThereAreMultipleGoods()
+    method      public void CreateBuysReturnsBuysThatDoNotExceedCash()
+    method      public void PerformStrategySubmitsOrdersToMarket()
+
+━━━ ..//Tests/EditMode/ExtensionTests.cs
+  class class ExtensionTests
+  modifiers: public
+    method      public void TestShuffle()
+
+━━━ ..//Tests/EditMode/FillsAndPartialFillsTests.cs
+  class class FillsAndPartialFillsTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TestThatOrdersAreNotFilledIfThereIsNoCounterParty()
+    method      public void TestThatOrderFullyFillsIfCounterPartyMatchesQuantity()
+    method      public void TestThatMarketPartiallyFillsOrderIfBuyingCompanyDoesntWantEntireQuantity()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/GameOfLifeTest.cs
+  class class GameOfLifeTest
+  modifiers: public
+    method      public void SetUp()
+    method      public void SimulateRandom()
+    method      public void Teardown()
+
+━━━ ..//Tests/EditMode/GoalTests.cs
+  class class GoalTests
+  modifiers: public
+    method      public void GenerateGoals_creates_double_cash_goal_for_company_with_BasicGrowthStrategy()
+    method      public void GenerateGoals_creates_ten_lemonade_goal_for_company_with_BasicGrowthStrategy()
+    method      public void GenerateGoalsCreatesReduceEnnuiGoalForReduceEnnuiStrategy()
+    method      public void IfPopulationCompanyAchievesNoEnnuiGoal_IsMetReturnsTrue()
+
+━━━ ..//Tests/EditMode/GoodTests.cs
+  class class GoodTests
+  modifiers: public
+    method      public void SetUp()
+    method      public void Creating_good_generates_price_based_on_price_band()
+    method      public void Creating_good_generates_price_thresholds_based_on_rarity()
+    method      public void Creating_good_generates_price_increment_rates_based_on_rarity()
+    method      public void ApplyingEnnuiReducingGoodEffectReducesEnnui()
+    method      public void GetCostOfGoodReturnsCostOfRecipe()
+
+━━━ ..//Tests/EditMode/IntegrationTests.cs
+  class class IntegrationTests
+  modifiers: public
+    method      public void SetUp()
+    method      public void MarketRecordsBothSidesOfTrade()
+    method      public void MarketDoesNotAllowQueueingDuplicateTrades()
+    method      public void EndTradingPeriodIncrementsPeriod()
+    method      public void EndTradingPeriodIncrementsMarketPeriod()
+    method      public void EndTradingPeriodIncrementsCompanyPeriod()
+    method      public void UnleashMarketForcesCausesLocalAgentsToAct_CalledFromMarket()
+    method      public void UnleashMarketForcesCausesLocalAgentsToAct_CalledFromEconomy()
+    method      public void EndTradingPeriodProcessesNonMarketTradesQueuedInTheMarket()
+    method      public void EndTradingPeriodSendsTradesThatMarketHasQueuedWhenTwoMarketsArePresent()
+    method      public void CompaniesCannotQueueTradesToThemselves()
+    method      public void IfTradeInvolvesMarketThenTheSubmittingCompanyIsTheMarket()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/InventoryEntryTests.cs
+  class class InventoryEntryTests
+  modifiers: public
+    method      public void SetRecipeReturnsNullIfGoodIsNotProducedGood()
+    method      public void CannotSetRecipeIfGoodIsNotProducedGood()
+    method      public void SetRecipeSetsRecipeIfGoodIsProducedGood()
+
+━━━ ..//Tests/EditMode/InventoryTests.cs
+  class class InventoryTests
+  modifiers: public
+    method      public void Setup()
+    method      public void Single_items_can_be_added()
+    method      public void If_good_with_same_price_already_exists_adds_quantity()
+    method      public void If_inventory_entries_is_not_empty_and_no_matching_good_at_that_price_is_found_adds_new_entry()
+    method      public void If_enough_goods_are_available_at_price_return_valid_entry()
+    method      public void If_not_enough_goods_are_available_at_price_return_all_available()
+    method      public void If_not_enough_goods_are_available_at_price_return_all_available_and_most_profitable()
+    method      public void If_no_profitable_goods_are_available_return_empty_list()
+    method      public void If_no_goods_are_available_at_price_do_nothing()
+    method      public void Sell_goods_removes_goods_from_inventory_price_matches_stock_exactly()
+    method      public void Sell_goods_removes_goods_from_inventory_takes_from_multiple_stocks()
+    method      public void Consume_for_recipe_consumes_ingredients_in_inventory()
+    method      public void TryConsumeGood_returns_0_if_good_is_available_at_specified_quantity()
+    method      public void TryConsumeGood_returns_remaining_quantity_if_good_is_not_available_at_specified_quantity()
+    method      public void GetInventoryEntryByGood_returns_correct_entry_if_only_one_entry_for_good_exists()
+    method      public void Perishable_goods_are_removed_from_inventory_after_expiry()
+
+━━━ ..//Tests/EditMode/LinearDemandStrategyTests.cs
+  class class LinearDemandStrategyTests
+  modifiers: public partial
+    method      public void SetUp()
+    method      public void ADBE_IfElasticityDNEDoNotAdjustDemand()
+    method      public void ADBE_IfSaturationElasticityIsOneDemandShouldIncrease()
+    method      public void ADBE_IfSaturationElasticityIsPointFiveDemandShouldIncrease()
+    method      public void ADBE_IfSaturationElasticityIsOneDemandShouldDisappear()
+    method      public void ADFP_DemandIncreasesBySeventyPercentWhenPopulationDoubles()
+    method      public void ADFP_DemandDecreasesByThirtyPercentWhenPopulationHalves()
+    method      public void SaturatedGoodElasticityOneDemandUnchanged()
+    method      public void UndersuppliedGoodElasticityOneDemandDoubles()
+    method      public void OverSuppliedDemandFalls()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/LinearDemandStrategyTests2.cs
+  class class LinearDemandStrategyTests
+  modifiers: public partial
+    method      public void ADIP_SaturatedGoodElasticityOneDemandUnchanged()
+    method      public void ADIP_UndersuppliedGoodElasticityOneDemandDoubles()
+
+━━━ ..//Tests/EditMode/LinearDemandStrategyTests3.cs
+  class class LinearDemandStrategyTests
+  modifiers: public partial
+    method      public void UMF_DemandStableWhenDemandIsFulfilled()
+
+━━━ ..//Tests/EditMode/MarketEventManagerTests.cs
+  class class MarketEventManagerTests
+  modifiers: public
+    method      public void MarketEventManagerDefaultCreated()
+    method      public void CreateStarterMarketHasDefaultEventManager()
+
+━━━ ..//Tests/EditMode/MarketEventTests.cs
+  class class MarketEventTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void MaraudersAttackNeighbourhoodReducesPopulation()
+    method      public void IfEventStillActiveReapplyEffect()
+    method      public void MarketEventCanBeAddedToActiveEventWithoutMarketEffect()
+    method      public void MarketEventExpiresAfterDuration()
+    method      public void CannotAddADuplicateOfACurrentlyActiveEvent()
+    method      public void CanAddADifferentEventEvenWithActiveEvents()
+    method      public void MaraudersAttackNeighbourhoodReducesPopulationFromMarket()
+    method      public void MarketEventsAreRecordedInMarketEventHistory()
+    method      public void IncompatibleEffectsCannotOccurTogether()
+    method      public void MarketEventCanModifyAnotherEvent()
+    method      public void EnsureThatEffectsWithModifyMonsterEffectAreAppliedOnlyIfThereIsMoreThanOneMonsterPresent()
+    method      public void EffectsThatHaveBeenModifiedRevertToOriginalEffectsWhenEffectEnds()
+    method      public void AnxietyInducingEventAffectsAllActors()
+
+━━━ ..//Tests/EditMode/MarketObserverTests.cs
+  class class includes
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void CFR_EmptyDemandAndSupply_ReturnsEmptyList()
+    method      public void CFR_EqualDemandAndSupply_ReturnsFulfillmentInfoWith1()
+    method      public void CFR_ZeroDemandAndPositiveSupply_ReturnsFulfillmentInfoWith0()
+    method      public void CFR_PositiveDemandAndZeroSupply_ReturnsFulfillmentInfoWith0()
+    method      public void CFR_PositiveDemandAndSupply_ReturnsFulfillmentInfoWith50()
+    method      public void CFR_ZeroDemandAndSupply_ReturnsFulfillmentInfoWith0()
+    method      public void DemandFulfillmentRate_PositiveDemandAndSupply_Returns50()
+    method      public void SupplyFulfilmentRate_Demand2Supply1_returns100()
+    method      public void CFR_DemandFulfillmentRate_Demand2Supply1_Returns50()
+    method      public void CFR_SupplyExcessRate_Demand1Supply3_Returns100()
+    method      public void FIE_ZeroDemandAndPositiveSupply_ReturnsFulfillmentInfoWith0()
+
+━━━ ..//Tests/EditMode/MarketObserverTests.cs
+  class class MarketObserverTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void CFR_EmptyDemandAndSupply_ReturnsEmptyList()
+    method      public void CFR_EqualDemandAndSupply_ReturnsFulfillmentInfoWith1()
+    method      public void CFR_ZeroDemandAndPositiveSupply_ReturnsFulfillmentInfoWith0()
+    method      public void CFR_PositiveDemandAndZeroSupply_ReturnsFulfillmentInfoWith0()
+    method      public void CFR_PositiveDemandAndSupply_ReturnsFulfillmentInfoWith50()
+    method      public void CFR_ZeroDemandAndSupply_ReturnsFulfillmentInfoWith0()
+    method      public void DemandFulfillmentRate_PositiveDemandAndSupply_Returns50()
+    method      public void SupplyFulfilmentRate_Demand2Supply1_returns100()
+    method      public void CFR_DemandFulfillmentRate_Demand2Supply1_Returns50()
+    method      public void CFR_SupplyExcessRate_Demand1Supply3_Returns100()
+    method      public void FIE_ZeroDemandAndPositiveSupply_ReturnsFulfillmentInfoWith0()
+
+━━━ ..//Tests/EditMode/MarketStatusTests.cs
+  class class MarketStatusTests
+  modifiers: public
+    method      public void Setup ()
+    method      public void GetOrdersExecutedInPeriodReturnsAllExecutedOrders()
+    method      public void GetOrdersExecutedInPeriodOnlyReturnsTradesForTheCurrentPeriod()
+    method      public void PeriodsWithNoCounterPartiesRecordNoTrades()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/MarketTests.cs
+  class class MarketTests
+  modifiers: public partial
+    method      public void SetUp()
+    method      public void When_an_economy_is_created_it_should_have_a_market()
+    method      public void PerceivedCostShouldBeAverageOfCosts()
+    method      public void PerishableGoodsShouldExpire()
+    method      public void NonPerishableGoodsShouldNotExpire()
+    method      public void OnlyPerishableGoodsAtTheirExpiryPeriodShouldExpire()
+    method      public void TheSameGoodBoughtAtDifferentTimesExpiresAtDifferentPeriods()
+    method      public void Companies_cannot_make_goods_without_a_recipe()
+    method      public void PublishMarketDataShouldAddOnePercentToPrice()
+    method      public void PublishSpreadToMarket_should_update_existing_MarketData_if_spread_exists()
+    method      public void PublishSpreadToMarketReturnsErrorIfActionContextIsIncomplete()
+    method      public void ACompanyCannotBuyGoodsWithInsufficientCash()
+    method      public void CompaniesCanBuyGoodsFromEachOtherViaMatchingQueuedOrders()
+    method      public void ACompanyCannotSellAGoodIfItHasInsufficientInventory()
+    method      public void MarketsShouldIgnoreTradesWhereMarketIsTheBuyerWhenCallingProcessCompanyOrders()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/MarketTests_Convenience.cs
+  class class MarketTests
+  modifiers: public partial
+    method      public void GetOrdersSentToMarketByCompanyReturnsOnlyCompanyAOrdersWhenPassed()
+
+━━━ ..//Tests/EditMode/Mocks/MockDemographicManager.cs
+  class class MockDemographicManager
+  : iDemographicManager
+  modifiers: public
+    method      public float GetMarketInstability()
+    method      public int GetPopulation()
+    method      public float GetPopulationEnnui()
+    method      public float GetPopulationGrowthRate(int startingPeriod, int endingPeriod)
+    method      public float GetPopulationHappiness()
+    method      public List<PopulationHistory> GetPopulationHistory(Guid marketid)
+    method      public LemonadeStandResultObject RecordDemographicSnapshot(Guid marketId, int period,TurnPhase phase)
+    method      public LemonadeStandResultObject SetMarketInstability(float newInstability)
+    method      public LemonadeStandResultObject SetPopulation(int newPopulation, PopulationAgent marketParticipant)
+    method      public void SetPopulationHistory(IEnumerable<PopulationHistory> populationHistory)
+    method      public LemonadeStandResultObject SetPopulationHappiness(float newHappiness)
+    method      public iDemographicManager SetPopulationHistoryHandler(iDataHandler<PopulationHistory> handler)
+    method      public void SetMarket(Market market)
+
+━━━ ..//Tests/EditMode/Mocks/MockLogger.cs
+  class class MockLogger
+  : ITradeLogger
+  modifiers: public
+    method      public int GetTradeCount()
+    method      public void LogTrade(Order trade)
+    method      public void SaveDailySummary(List<Order> trade_queue)
+    method      public Dictionary<Guid, List<Execution>> GetAllTransactions(List<Market> markets,int period)
+
+━━━ ..//Tests/EditMode/Mocks/MockMarketDataService.cs
+  class class MockMarketDataService
+  : iMarketDataService
+  modifiers: public
+    method      public void SetPopulationHistory(IEnumerable<PopulationHistory> populationHistory)
+    method      public List<PopulationHistory> GetPopulationHistory(Guid marketId)
+    method      public List<MarketFeature> GetMarketFeatures(Guid marketId)
+
+━━━ ..//Tests/EditMode/Mocks/MockPopulationHistoryDataHandler.cs
+  class class MockPopulationHistoryDataHandler
+  : iDataHandler<PopulationHistory>
+  modifiers: public
+    method      public void Add(PopulationHistory item)
+    method      public void Delete(int id)
+    method      public PopulationHistory Load(string path)
+    method      public IEnumerable<PopulationHistory> LoadHistorical(Func<PopulationHistory, bool> predicate)
+    method      public void SetPopulationHistory(List<PopulationHistory> populationHistory)
+    method      public void Save(PopulationHistory data)
+
+━━━ ..//Tests/EditMode/Mocks/MockSupplyProvider.cs
+  class class MockSupplyProvider
+  : iSupplyHelper
+  modifiers: public
+    method      public void Initialize(Market market)
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public List<(Good Good, int Quantity, decimal Price)
+    method      public void AddSupply(Good good, int quantity, decimal price)
+    method      public LemonadeStandResultObject SupplyGoods()
+    method      public void SetMarket(Market market)
+
+━━━ ..//Tests/EditMode/PopulationTests.cs
+  class class PopulationTests
+  modifiers: public
+    method      public void SetUp()
+    method      public void TearDown()
+    method      public void PopulationCompany_Consume_RemovesItemsFromInventory()
+    method      public void PopulationCompany_ConsumeScalesWithPopulation()
+    method      public void GetPerceivedCostOfGoodReturnsZeroIfNoRecipesPresentForProducedGood()
+    method      public void TestThatGoodEffectsAreAppliedByMarkets()
+    method      public void ConsumingFewerGoodsThanIdealHasReducedEffect()
+
+━━━ ..//Tests/EditMode/RecipeTests.cs
+  class class RecipeTests
+  modifiers: public
+    method      public void SetUp()
+    method      public void Get_Ingredients_returns_list_of_ingredients()
+    method      public void Get_max_quantity_returns_goods_based_on_smallest_ingredient_available()
+    method      public void Make_recipe_throws_Recipe_Exception_if_not_enough_stock()
+    method      public void Make_recipe_consume_stock_and_return_product_and_quantity()
+    method      public void Get_recipe_returns_list_of_ingredients_and_quantity_needed()
+    method      public void Recipe_can_be_made_if_ingredients_span_two_inventory_entries()
+    method      public void GetCostPerUnit_returns_average_cost_of_ingredients()
+    method      public void MakingRecipeCreatesAProducedGood()
+    method      public void MakingRecipeSetsRecipeOnProducedInventoryEntry()
+    method      public void MakingRecipeUpdatesAcquisitionCostToCostOfIngredients()
+
+━━━ ..//Tests/EditMode/RecordingDemographicHistoryTests.cs
+  class class RecordingDemographicHistoryTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void PopulationHistoryRetrievedFromRepositoryWhenSetViaDataHandler()
+    method      public void StartTradingPeriodAddsRowToPopulationHistory()
+    method      public void UnleashMarketForcesCapturesChangeInPopulation()
+    method      public void MultiplePeriodsRecordDistinctSnapshots()
+
+━━━ ..//Tests/EditMode/RecordingExecutions.cs
+  class class RecordingExecutions
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void ProcessCompanyOrdersRecordsExecutionsInOrders_1P1CP()
+    method      public void ProcessCompanyOrdersRecordsExecutionsInOrders_1P2CP()
+    method      public void FulfillDemandRecordsExecutionsInOrders_1P1CP()
+    method      public void MarketExecutionsContainsPartyAndCounterParty_OnePair()
+    method      public void OneBuyerTwoSellersFullyFilled()
+    method      public void OneTradeMarketBuyerCounterparty()
+    method      public void BigSell2CompanyCounterParty1MarketCounterparty()
+
+━━━ ..//Tests/EditMode/RefactorOutFulfillDemand.cs
+  class class RefactorOutFulfillDemand
+  modifiers: public
+    method      public void SetUp()
+    method      public void TearDown()
+    method      public void TestThatMarketsNoLongerNeedConsumptionManagerToFulfillDemand()
+    method      public void TestThatTheEconomyCanHandleMarketsWithoutConsumptionManager()
+
+━━━ ..//Tests/EditMode/SupplierAgentTests.cs
+  class class SupplierAgentTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void SeedSuppliedGoodsAddsGoodsToBeSupplied()
+    method      public void ReplenishSuppliesAddsGoodsToInventoryBasedOnRarityDictionary()
+    method      public void SupplyGoodsCreatesOrders()
+
+━━━ ..//Tests/EditMode/SupplyAndDemandTests.cs
+  class class SupplyAndDemandTests
+  modifiers: public
+    method      public void Setup()
+    method      public void TearDown()
+    method      public void WhenMaxDemandIsZeroNoOrdersAreProcessed()
+    method      public void TwoOrdersFillWhenLessThanMaxDemandedQuantity()
+    method      public void PopulationFillsOrderWithLowestPriceFirst()
+    method      public void PopulationFillsOrderIfNoCounterpartyBuys()
+    method      public void PopulationFillsAllSellOrdersIfBelowMaxDemand()
+    method      public void PopulationOnlyPartiallyFillsWhenSupplyExceedsDemand()
+    method      public void UpdatePricesIncreasesPriceByPriceIncrementRateWhenDemandThresholdIsReached()
+    method      public void IfMarketBuyingInAPeriodExceedsDemandThresholdIncreasePrices()
+    method      public void CalculateFulfillmentRateReturns100WhenDemandIsMet()
+    method      public void CalculateFulfillmentRatesReturnsLessThan1WhenDemandIsNotMet()
+    method      public void UnleashMarketForcesKeepsDemandStableWhenDemandIs60PercentFilled()
+    method      public void UnleashMarketForcesKeepsDemandStableWhenDemandIs100PercentFilled()
+    method      public void UnleashMarketForcesDecreasesDemandWhenSupplyExceedsDemand()
+    method      public void GetTotalBoughtByMarketReturnsZeroWhenNoneOfSoldGoodsIsDemanded()
+
+━━━ ..//Tests/EditMode/SupplyTests.cs
+  class class SupplyTests
+  modifiers: public
+    method      public void Setup()
+    method      public void Company1Submits1000UnitSellOrder_ExpectSupply1000Units()
+    method      public void Company1Submits1000UnitBuyOrder_ExpectSupply0Units()
+    method      public void Company1Submits1000UnitSellOrder_ExpectSupply1000Units_FromMarket()
+    method      public void TearDown()
+
+━━━ ..//Tests/EditMode/TestHelpers.cs
+  class class TestHelpers
+  modifiers: public
+    method      public string ListToString(List<InventoryEntry> inventory)
+    method      public static ActionContext CreateActionContext(Order order, Market market,int period,List<Order> counterPartyOrders = null)
+    method      public TestComparer(params string[]exceptions)
+    method      public bool Equals(T x, T y)
+    method      public int GetHashCode(T obj)
+    method      public bool ListsAreEquivalent (IEnumerable<T> Expected, IEnumerable<T> Actual,IEqualityComparer<T> comparer)
+
+━━━ ..//Tests/EditMode/TestHelpers.cs
+  class class TestComparer
+  : IEqualityComparer<T>
+  modifiers: public
+    method      public TestComparer(params string[]exceptions)
+    method      public bool Equals(T x, T y)
+    method      public int GetHashCode(T obj)
+    method      public bool ListsAreEquivalent (IEnumerable<T> Expected, IEnumerable<T> Actual,IEqualityComparer<T> comparer)
+
+━━━ ..//Tests/EditMode/TheEconomyTests.cs
+  class class TheEconomyTests
+  modifiers: public
+    method      public void SetUp()
+    method      public void Make_sure_the_first_market_exists_in_TheEconomy_with_proper_params()
+    method      public void The_initial_market_should_be_instantiated_as_a_market()
+    method      public void WhenTheEconomyInitializesGoodsAreCreatedInInitialMarket()
+    method      public void Register_Company_adds_company_to_companies_list_if_no_companies_are_registered()
+    method      public void Register_Company_does_not_add_company_to_companies_list_if_company_already_registered()
+    method      public void CreateInitialGoodsCreates1to1000GoodsIfRarityIsCommon()
+    method      public void TearDown()
+
+━━━ ..//The Economy/TheEconomy.cs
+  class class TheEconomy
+  : MonoBehaviour
+  modifiers: public
+    method      public List<Good> goods = new()
+    method      public Dictionary<Guid,List<Execution>> GetAllTransactions(int period)
+    method      public List<iEconAgent> EconomicAgents = new()
+    method      public void Initialize(ITradeLogger trade_logger)
+    method      public Market GetMarketByName(string marketName)
+    method      public void RemoveMarket(Market market)
+    method      public void ClearEconomy()
+    method      public void StartTradingPeriod()
+    method      public void EndTradingPeriod()
+    method      public void RegisterEconomicAgent(iEconAgent agent)
+    method      public iEconAgent GetGlobalMarket()
+    method      public void CreateInitialGoods(List<Good> goods)
+    method      public void HandleParticipantCollapse(Market market,EconAgent collapsedEntity)
+    method      public void HandleMarketFailure(Market market)
+    method      public void ShowCollapseSummary(EconAgent bankruptAgent)
+    method      public static void SetupForTests(ITradeLogger logger)
+    method      public void InitializeEconomyForGame()
+    method      public TheEconomy_CompanyException(string message)
+
+━━━ ..//The Economy/TheEconomy.cs
+  class class TheEconomy_CompanyException
+  : Exception
+  modifiers: public
+    method      public TheEconomy_CompanyException(string message)
+
+━━━ ..//Trade/ITradeLogger.cs
+  interface interface ITradeLogger
+  modifiers: public
+
+━━━ ..//TradeProcessors/DefaultTradeProcessor.cs
+  class class DefaultTradeProcessor
+  : iTradeProcessor,iMarketAware
+  modifiers: public
+    method      public DefaultTradeProcessor(iTransactionManager manager=null)
+    method      public List<Order> GetOrders()
+    method      public List<Order> GetOrderResults(ActionContext context)
+    method      public List<Order> ProcessCompanyOrders()
+    method      internal List<Order> ExecuteBestTradesForGood(Good good, List<Order> OrdersSentToMarket)
+    method      internal Order GeneratePrimaryOrder(Good good)
+    method      internal LemonadeStandResultObject FindCounterPartiesForOrder(Market market,Good good)
+    method      internal bool IsValidCounterParty(Order order, Order primaryOrder)
+    method      public LemonadeStandResultObject QueueOrder(ActionContext context)
+    method      public void SetMarket(Market market)
+
+━━━ ..//TradeProcessors/LessaizfairePrioritizer.cs
+  class class LessaizfairePrioritizer
+  : iOrderPrioritizer
+  modifiers: public
+    method      public List<Order> Filter(List<Order> Orders)
+
+━━━ ..//TradeProcessors/LowPricePrioritizer.cs
+  class class LowPricePrioritizer
+  : iOrderPrioritizer
+  modifiers: public
+    method      public List<Order> Filter(List<Order> Orders)
+
+━━━ ..//TradeProcessors/RandomPrioritizer.cs
+  class class RandomPrioritizer
+  : iOrderPrioritizer
+  modifiers: public
+    method      public List<Order> Filter(List<Order> orders)
+
+━━━ ..//TradeProcessors/iOrderPrioritizer.cs
+  interface interface iOrderPrioritizer
+  modifiers: public
+
+━━━ ..//TradeProcessors/iTradeProcessor.cs
+  interface interface iTradeProcessor
+  modifiers: public
+
+━━━ ..//TradeProcessors/iTradeProcessor.cs
+  interface interface that
+
+━━━ ..//Transactions/DefaultTransactionManager.cs
+  class class DefaultTransactionManager
+  : iTransactionManager,iMarketAware
+  modifiers: public
+    method      internal bool HasGood(Good good, Inventory inventory)
+    method      public LemonadeStandResultObject ProcessTransaction(ActionContext context)
+    method      public LemonadeStandResultObject ProcessMarketTransaction(ActionContext context)
+    method      internal LemonadeStandResultObject ProcessPairedOrders(ActionContext context)
+    method      internal LemonadeStandResultObject ProcessTransactionPair(Order primaryOrder, Order counterPartyOrder,int period)
+    method      internal LemonadeStandResultObject ValidateTransaction(Order primaryOrder, Order counterPartyOrder,decimal costOfThisLeg)
+    method      internal static LemonadeStandResultObject RecordOrder(Order orderToRecord, Market marketToRecordIn, int tradingPeriod)
+    method      public void SetMarket(Market market)
+
+━━━ ..//Transactions/iTransactionManager.cs
+  interface interface iTransactionManager
+  modifiers: public
+    method      public LemonadeStandResultObject ProcessTransaction(ActionContext context)
+    method      public LemonadeStandResultObject ProcessMarketTransaction(ActionContext context)
+
+Done. 241 classes processed.
