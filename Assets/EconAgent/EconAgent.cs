@@ -204,7 +204,6 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
             Recipes.Remove(recipe);
         }
     }
-    public void Add_recipe(Recipe recipe) => Recipes.Add(recipe);
      public void MakeRecipe(ActionContext context)
     {
         var recipe = context.Recipe;
