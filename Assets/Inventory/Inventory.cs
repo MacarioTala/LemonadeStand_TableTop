@@ -1,19 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using UnityEngine;
 public class Inventory
 {
-    private readonly List<InventoryEntry> inventory_items = new(); 
+    private readonly List<InventoryEntry> inventoryEntries = new(); 
 
     public void Clear()
     {
-        inventory_items.Clear();
+        inventoryEntries.Clear();
     }
-    public List<InventoryEntry> GetInventoryEntries() => inventory_items;
+    public List<InventoryEntry> GetInventoryEntries() => inventoryEntries;
+
+    public List<InventoryEntry> GetAvailableInventory() => GetInventoryEntries().Where(x=>x.RemainingDelay==0).ToList();
 
     public List<InventoryEntry> GetInventoryEntriesByGood(string goodName)
     {
-        var items = inventory_items.Where(x => x.good.GoodName == goodName)
+        var items = inventoryEntries.Where(x => x.good.GoodName == goodName)
                               .OrderBy(x => x.Cost)
                               .ToList();
         if (items.Count == 0)
@@ -24,13 +27,13 @@ public class Inventory
     }
     public InventoryEntry AddGood(InventoryEntry entry)
     {
-        var existingGoodAtPriceAndExpiry = inventory_items.Find(item=> item.good.GoodName == entry.good.GoodName 
+        var existingGoodAtPriceAndExpiry = inventoryEntries.Find(item=> item.good.GoodName == entry.good.GoodName 
                                             && item.Cost == entry.Cost
                                             && item.PeriodAcquired == entry.PeriodAcquired
                                             );
         if(existingGoodAtPriceAndExpiry == null)
         {
-            inventory_items.Add(entry);
+            inventoryEntries.Add(entry);
         }
         else
         {
@@ -46,7 +49,7 @@ public class Inventory
     } 
     public List<InventoryEntry> Generate_goods_to_remove(Good good, int quantity, decimal price)
     {
-        var eligible_goods = inventory_items
+        var eligible_goods = inventoryEntries
             .Where(item=> item.good == good && item.Cost <= price)
             .OrderBy(item=> item.Cost)
             .ToList();
@@ -104,24 +107,44 @@ public class Inventory
         }
         foreach(var entry in entries_to_remove)
         {
-            inventory_items.Remove(entry);
+            inventoryEntries.Remove(entry);
         }
         return remaining_quantity;
     }
     
-    public void Consume_for_recipe(Recipe recipe, int quantity)
+    public void ConsumeForRecipe(Recipe recipe, int quantity)
     {
-        //Assumes quantity that is passed in is valid. Maybe need a token system to check if quantity is valid
-        var ingredients = recipe.Get_recipe();
+        var ingredients = recipe.GetRequiredIngredientsForRecipe();
+        
+
         foreach(var ingredient in ingredients)
         {
-            var quantity_to_remove = ingredient.Quantity_needed * quantity;
-            var inventory_entry = inventory_items.Find(x=> x.good.GoodName == ingredient.Good.GoodName);
-            inventory_entry.quantity -= quantity_to_remove;
+            var remainingQuantityToRemove = ingredient.Quantity_needed * quantity;
 
-            if(inventory_entry.quantity == 0)
+            var availableEntries = GetAvailableInventory()
+                                    .Where(x=>x.good.GoodName == ingredient.Good.GoodName)
+                                    .OrderBy(x=>x.Cost)
+                                    .ToList();
+                                    
+            foreach(var entry in availableEntries)
             {
-                inventory_items.Remove(inventory_entry);
+                if(remainingQuantityToRemove <= 0)
+                    break;
+                
+                var quantityToRemove = Math.Min(entry.quantity,remainingQuantityToRemove);
+
+                entry.quantity -= quantityToRemove;
+                remainingQuantityToRemove -= quantityToRemove;
+
+                if(entry.quantity == 0)
+                {
+                    inventoryEntries.Remove(entry);
+                }
+            }
+
+            if(remainingQuantityToRemove >0)
+            {
+                throw new InventoryException($"Failed to consume enough {ingredient.Good.GoodName} for recipe: {recipe.RecipeName}");
             }
 
         }
@@ -132,19 +155,26 @@ public class Inventory
         {
             if(entry.quantity == 0)
             {
-                var item_to_remove = inventory_items.Find(item=> item.good == entry.good && item.Cost == entry.Cost);
-                inventory_items.Remove(item_to_remove);
+                var item_to_remove = inventoryEntries.Find(item=> item.good == entry.good && item.Cost == entry.Cost);
+                inventoryEntries.Remove(item_to_remove);
             }
         }
     }
 
     public void ExpireGoods(int period)
     {
-        var expired_goods = inventory_items.Where(item=> item.PeriodAcquired+item.good.ExpiresAfterPeriods <= period).ToList();
+        var expired_goods = inventoryEntries.Where(item=> item.PeriodAcquired+item.good.ExpiresAfterPeriods <= period).ToList();
         foreach(var entry in expired_goods)
         {
-            inventory_items.Remove(entry);
+            inventoryEntries.Remove(entry);
         }
     }
 
+    public void ResolveDeliveries()
+    {
+        foreach(var entry in GetInventoryEntries())
+        {
+            if(entry.RemainingDelay>0) entry.RemainingDelay--;
+        }
+    }
 }

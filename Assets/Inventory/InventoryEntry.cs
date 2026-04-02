@@ -5,6 +5,7 @@ public class InventoryEntry
     public decimal Cost;
     public decimal Price;
     private Recipe recipe;
+    public int RemainingDelay=0;
     public int PeriodAcquired;
     public Recipe GetRecipe()=> good.IsProducedGood?recipe:null;
     public void SetRecipe(Recipe recipe)
@@ -25,6 +26,7 @@ public class InventoryEntry
         this.quantity = quantity;
         Cost = acquisition_price;
         PeriodAcquired = period;
+        RemainingDelay=good.DeliveryDelay;
     }
 
     public void SetPrice(decimal price)

@@ -127,7 +127,7 @@ public class RecipeTests
         };
 
         // Act
-        var actual = basicLemonadeRecipe.Get_recipe()
+        var actual = basicLemonadeRecipe.GetRequiredIngredientsForRecipe()
                                     .Select(ingredient => (ingredient.Good.GoodName, ingredient.Quantity_needed))
                                     .ToList();
 
@@ -269,6 +269,204 @@ public class RecipeTests
         var actual = inventory.GetInventoryEntries().Where(entry => entry.good == lemonade).First().Cost;
         //Assert
         Assert.AreEqual(expected, actual);
-
     }
+
+    [Test]
+public void CompaniesCannotMakeRecipesUsingGoodsWithRemainingDelayGreaterThanZero()
+{
+    // Arrange
+    lemon.DeliveryDelay = 1;
+    sugar.DeliveryDelay = 0;
+    water.DeliveryDelay = 0;
+
+    var company = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
+    company.AddRecipe(basicLemonadeRecipe);
+
+    company.BuyGood(lemon, 10, 3.0m);
+    company.BuyGood(sugar, 10, 3.0m);
+    company.BuyGood(water, 10, 3.0m);
+
+    var context = new ActionContext
+    {
+        Recipe = basicLemonadeRecipe,
+        QuantityToMake = 1,
+        Period = 0
+    };
+
+    System.Exception actual = null;
+
+    // Act
+    try
+    {
+        company.MakeRecipe(context);
+    }
+    catch (System.Exception e)
+    {
+        actual = e;
+    }
+
+    // Assert
+    Assert.That(actual, Is.TypeOf<RecipeException>());
+
+    // Cleanup
+    lemon.DeliveryDelay = 0;
+}
+
+[Test]
+public void ConsumeForRecipeShouldNotDriveInventoryNegativeWhenUsingMultipleCostBases()
+{
+    // Arrange
+    var splitLemon = new GoodBuilder()
+                        .Named("Split Lemon")
+                        .WithRarity(RarityEnum.Common)
+                        .Costing(1.0m)
+                        .WithDeliveryDelay(0)
+                        .Build();
+
+    var sugarNow = new GoodBuilder()
+                        .Named("Sugar Now")
+                        .WithRarity(RarityEnum.Common)
+                        .Costing(1.0m)
+                        .WithDeliveryDelay(0)
+                        .Build();
+
+    var waterNow = new GoodBuilder()
+                        .Named("Water Now")
+                        .WithRarity(RarityEnum.Common)
+                        .Costing(1.0m)
+                        .WithDeliveryDelay(0)
+                        .Build();
+
+    var output = new GoodBuilder()
+                    .Named("Test Lemonade")
+                    .WithRarity(RarityEnum.Uncommon)
+                    .Costing(5.0m)
+                    .WhichIsProducedGood()
+                    .Build();
+
+    var splitBatchRecipe = new Recipe(
+        RecipeName: "Split Batch Lemonade",
+        product: output,
+        ingredients: new List<Ingredient>
+        {
+            new(splitLemon, 9),
+            new(sugarNow, 2),
+            new(waterNow, 7)
+        });
+
+    var company = EconAgentBuilder.ForBaseAgent()
+                    .Named("Company1")
+                    .AtLevel(AgentLevelEnum.Beginner)
+                    .WithInitialCash(1000m)
+                    .Build();
+
+    company.AddRecipe(splitBatchRecipe);
+
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(waterNow, 10, 1.0m, 0));
+
+    var context = new ActionContext
+    {
+        Recipe = splitBatchRecipe,
+        QuantityToMake = 1,
+        Period = 0
+    };
+
+    // Act
+    company.MakeRecipe(context);
+
+    var remainingLemonEntries = company.GetInventory()
+                                       .GetInventoryEntriesByGood(splitLemon.GoodName);
+
+    var actualRemainingLemons = remainingLemonEntries.Sum(x => x.quantity);
+    var actualNegativeEntries = remainingLemonEntries.Count(x => x.quantity < 0);
+
+    // Assert
+    Assert.AreEqual(0, actualRemainingLemons);
+    Assert.AreEqual(0, actualNegativeEntries);
+}
+
+[Test]
+public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
+{
+    // Arrange
+    var splitLemon = new GoodBuilder()
+                        .Named("Split Lemon")
+                        .WithRarity(RarityEnum.Common)
+                        .Costing(1.0m)
+                        .WithDeliveryDelay(0)
+                        .Build();
+
+    var sugarNow = new GoodBuilder()
+                        .Named("Sugar Now")
+                        .WithRarity(RarityEnum.Common)
+                        .Costing(1.0m)
+                        .WithDeliveryDelay(0)
+                        .Build();
+
+    var waterNow = new GoodBuilder()
+                        .Named("Water Now")
+                        .WithRarity(RarityEnum.Common)
+                        .Costing(1.0m)
+                        .WithDeliveryDelay(0)
+                        .Build();
+
+    var output = new GoodBuilder()
+                    .Named("Batch Lemonade")
+                    .WithRarity(RarityEnum.Uncommon)
+                    .Costing(5.0m)
+                    .WhichIsProducedGood()
+                    .Build();
+
+    var batchRecipe = new Recipe(
+        RecipeName: "Big Batch Lemonade",
+        product: output,
+        ingredients: new List<Ingredient>
+        {
+            new(splitLemon, 9),
+            new(sugarNow, 2),
+            new(waterNow, 7)
+        });
+
+    var company = EconAgentBuilder.ForBaseAgent()
+                    .Named("Company1")
+                    .AtLevel(AgentLevelEnum.Beginner)
+                    .WithInitialCash(1000m)
+                    .Build();
+
+    company.AddRecipe(batchRecipe);
+
+    // 18 lemons total across 3 different cost bases = enough for quantity 2
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 9, 3.0m, 0));
+
+    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(waterNow, 20, 1.0m, 0));
+
+    var context = new ActionContext
+    {
+        Recipe = batchRecipe,
+        QuantityToMake = 2,
+        Period = 0
+    };
+
+    // Act
+    company.MakeRecipe(context);
+
+    var producedEntry = company.GetInventory()
+                               .GetInventoryEntriesByGood(output.GoodName)
+                               .FirstOrDefault();
+
+    var remainingLemonQuantity = company.GetInventory()
+                                        .GetInventoryEntriesByGood(splitLemon.GoodName)
+                                        .Sum(x => x.quantity);
+
+    // Assert
+    Assert.IsNotNull(producedEntry);
+    Assert.AreEqual(2, producedEntry.quantity);
+    Assert.AreEqual(0, remainingLemonQuantity);
+}
 }

@@ -246,7 +246,7 @@ public class InventoryTests
         var quantity = 1;
         var expected_inventory = new List<InventoryEntry> { new(lemon, 1, 1.0m,PeriodIsIrrelevant), new(sugar, 8, 1.0m,PeriodIsIrrelevant), new(water, 3, 1.0m,PeriodIsIrrelevant) };
         //act
-        test_inventory.Consume_for_recipe(lemonade_recipe, quantity);
+        test_inventory.ConsumeForRecipe(lemonade_recipe, quantity);
         var actual_inventory = test_inventory.GetInventoryEntries();
         //assert
         if(expected_inventory.Count != actual_inventory.Count)

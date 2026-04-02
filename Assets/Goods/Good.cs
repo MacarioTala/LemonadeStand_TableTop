@@ -13,6 +13,7 @@ public class Good : ScriptableObject
     private decimal _minAskPrice;
     public long ExpiresAfterPeriods;
     public bool IsPerishable=true;
+    public int DeliveryDelay;
 
     public decimal GetCostOfGood(Recipe recipe)
     {
