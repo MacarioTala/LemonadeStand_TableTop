@@ -16,6 +16,11 @@ public class GoodBuilder
         return this;
     }
     
+    public GoodBuilder WithDeliveryDelay (int delay)
+    {
+        goodToReturn.DeliveryDelay = delay;
+        return this;
+    }
     public GoodBuilder WithExpiryAfter(int periods)
     {
         goodToReturn.SetExpiry(periods);

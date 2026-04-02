@@ -30,7 +30,7 @@ public class Recipe : ScriptableObject
     
     public List<Ingredient> GetIngredients() => ingredients;
 
-    public List<Ingredient> Get_recipe() => ingredients;
+    public List<Ingredient> GetRequiredIngredientsForRecipe() => ingredients;
 
     public int Get_max_quantity(List<InventoryEntry> stock)
     {
@@ -43,7 +43,7 @@ public class Recipe : ScriptableObject
 
     public (Good, int) Make_recipe(int quantity, Inventory inventory)
     {
-        var stock = inventory.GetInventoryEntries()
+        var stock = inventory.GetAvailableInventory()
                  .Where(entry => GetIngredientNames().Contains(entry.good.GoodName))
                  .ToList();
 
@@ -53,7 +53,7 @@ public class Recipe : ScriptableObject
         }
         else
         {
-            inventory.Consume_for_recipe(this, quantity);
+            inventory.ConsumeForRecipe(this, quantity);
             product.IsProducedGood = true;
             return (product, quantity);
         }

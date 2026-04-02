@@ -403,5 +403,11 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         return false;
     }
     public override int GetHashCode() => Name.GetHashCode();
-#endregion
+
+    public void ResolveDeliveries()
+    {
+        if(inventory.GetInventoryEntries().Count>0)
+            inventory.ResolveDeliveries();
+    }
+    #endregion
 }

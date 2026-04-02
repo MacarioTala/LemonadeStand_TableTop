@@ -38,6 +38,9 @@ public class Market : ScriptableObject, iEconAgent
     private decimal cash = 0;
     private readonly Inventory _inventory = new();
     private readonly List<Recipe> _recipes = new();
+    private int minMarketDelay=0; // minimum amount of time that goods get delivered in this market
+    public int GetMinMarketDeliveryDelay()=>minMarketDelay;
+    public void SetMinMarketDeliveryDelay(int delay)=> minMarketDelay = delay;
 
     //Graphics and Market Features
     public List<MarketFeature> MarketFeatures = new();
@@ -404,12 +407,23 @@ public class Market : ScriptableObject, iEconAgent
         _marketInteractionManager.MarketsProvideLiquidityOfLastResort();
     }
 
+    private void ResolveDeliveries()
+    {
+        foreach(var marketParticipant in _marketParticipants)
+        {
+            marketParticipant.ResolveDeliveries();
+        }
+        
+    }
+
     public void UnleashMarketForces(int period)
     {
+        ResolveDeliveries();
         UpdateFulfillmentRates(period);
         UpdatePrices();
         DemandStrategy.AdjustDemandInPeriod(this);
         ConsumeGoods();
+        ExpireGoods(period);
         UpdateCompanyStatuses(period);
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
