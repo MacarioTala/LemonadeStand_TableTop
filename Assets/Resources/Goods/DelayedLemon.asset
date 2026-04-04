@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b833e4e5645045f7acafd0c9b10b948, type: 3}
-  m_Name: Water
+  m_Name: DelayedLemon
   m_EditorClassIdentifier: GameAssembly::Good
-  GoodName: Water
+  GoodName: Delayed Lemon
   GoodSprite: {fileID: 0}
-  ExpiresAfterPeriods: 9999
+  ExpiresAfterPeriods: 5
   IsPerishable: 1
-  DeliveryDelay: 0
+  DeliveryDelay: 5
   PriceBand:
-    minCentsForInspector: 100
-    maxCentsForInspector: 300
-  _rarity: 0
+    minCentsForInspector: 0
+    maxCentsForInspector: 100
+  _rarity: 2
   IsProducedGood: 0
   price_increase_threshold: 0
   price_decrease_threshold: 0

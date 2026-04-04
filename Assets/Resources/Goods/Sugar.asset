@@ -13,5 +13,14 @@ MonoBehaviour:
   m_Name: Sugar
   m_EditorClassIdentifier: GameAssembly::Good
   GoodName: Sugar
+  GoodSprite: {fileID: 0}
+  ExpiresAfterPeriods: 3
+  IsPerishable: 1
+  DeliveryDelay: 0
+  PriceBand:
+    minCentsForInspector: 100
+    maxCentsForInspector: 300
+  _rarity: 0
+  IsProducedGood: 0
   price_increase_threshold: 0
   price_decrease_threshold: 0

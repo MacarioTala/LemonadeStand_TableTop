@@ -55,7 +55,6 @@ public interface iStrategy
         //      but now it might be ok to use it to come up with the initial bid
         //      where the only state change is price (from perceived cost of good to current cost )
 
-        return demandToReturn;
     }
     #endregion
 }

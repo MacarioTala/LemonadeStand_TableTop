@@ -72,16 +72,6 @@ public class GameManager : MonoBehaviour
         return typeWrittenText;
     }
 
-    private void ShowSplashScreen()
-    {
-        splashAnimation.SetActive(true);
-        mainMenu.SetActive(false);
-        gameScreen.SetActive(false);
-
-        StartCoroutine(TransitionToMainMenu());
-    }
-
-
     [SerializeField] private TextMeshProUGUI cursor;
     private bool isCursorVisible = true;
     [SerializeField] private float blinkSpeed = 0.5f;

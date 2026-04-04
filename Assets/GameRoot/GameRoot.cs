@@ -77,24 +77,11 @@ public class GameRoot : MonoBehaviour
         var period = EconomyInstance.tradingPeriod;
         var inventory = initialMarket.GetInventory();
 
-        var Lemon = goods.FirstOrDefault(x=>x.GoodName == "Lemon");
-        Lemon.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
-        Lemon.SetExpiry(5);
+        foreach(var good in goods)
+            inventory.AddGood(new InventoryEntry(good,1000,good.GetPrice(),period));
 
-        var Sugar = goods.FirstOrDefault(x=>x.GoodName == "Sugar");
-        Sugar.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
-        Sugar.SetExpiry(5);
-
-        var Water = goods.FirstOrDefault(x=>x.GoodName == "Water");
-        Water.SetPrice((decimal)UnityEngine.Random.Range(1.0f, 3.0f));
-        Water.SetExpiry(int.MaxValue);
-
-        var lemonEntry = inventory.AddGood(new InventoryEntry(Lemon, 1000, Lemon.GetPrice(), period));
-        lemonEntry.SetPrice(Lemon.GetPrice());
-        var sugarEntry = inventory.AddGood(new InventoryEntry(Sugar, 1000, Sugar.GetPrice(), period));
-        sugarEntry.SetPrice(Sugar.GetPrice());
-        var waterEntry = inventory.AddGood(new InventoryEntry(Water, 1000, Water.GetPrice(), period));
-        waterEntry.SetPrice(Water.GetPrice());
+        foreach(var item in inventory.GetInventoryEntries())
+            item.CalculatePriceFromBand();
     }
 
     private void LoadRecipes()

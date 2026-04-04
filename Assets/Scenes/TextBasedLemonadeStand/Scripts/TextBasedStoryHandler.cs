@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
 using UnityEngine.EventSystems;
 using System.Linq;
 
@@ -228,15 +227,22 @@ public class TextBasedStoryHandler : MonoBehaviour
     private void DisplayInventory()
     {
         ClearUISelection();
-        var inventory = PlayerCompany.GetInventory().GetInventoryEntries();
+        var inventory = PlayerCompany.GetInventory().GetAvailableInventory();
         LogMessage("Inventory:");
         foreach (var item in inventory)
-        {
-            LogMessage($"Item: {item.good} Quantity: {item.quantity} Acquired at: {item.Cost}");
-        }
+            LogMessage($"{item.good} Quantity: {item.quantity} Acquired at: {item.Cost}");
+        
+        var orderedSupplies = PlayerCompany.GetInventory()
+                                           .GetInventoryEntries()
+                                           .Where(x=>x.RemainingDelay>0);
+
+        LogMessage("\nThe following goods are yet to arrive:");
+        foreach(var item in orderedSupplies)
+            LogMessage($"{item.good} Quantity: {item.quantity} Acquired at: {item.Cost} Arriving in {item.RemainingDelay}");
+    
         if(PlayerCompany.Recipes.Count()>0)
         {
-            LogMessage("You have a recipe for: " + PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade"));
+            LogMessage("\n\nYou have a recipe for: " + PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade"));
         }
         else
             LogMessage("You have not discovered any recipes");

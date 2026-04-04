@@ -1,9 +1,12 @@
+using System;
+
 public class InventoryEntry
 {
     public Good good;
     public int quantity;
     public decimal Cost;
-    public decimal Price;
+    private decimal price;
+    public decimal Price {get =>Math.Round(price,3,MidpointRounding.AwayFromZero);}
     private Recipe recipe;
     public int RemainingDelay=0;
     public int PeriodAcquired;
@@ -31,10 +34,16 @@ public class InventoryEntry
 
     public void SetPrice(decimal price)
     {
-        Price = price;
+        this.price = price;
     }
     public override string ToString()
     {
         return $"{good.GoodName} {quantity} units at {Cost} ";
+    }
+
+    public void CalculatePriceFromBand()
+    {
+        var priceBand = good.Get_price_band();
+        SetPrice((decimal)UnityEngine.Random.Range((float)priceBand.Min, (float)priceBand.Max));
     }
 }

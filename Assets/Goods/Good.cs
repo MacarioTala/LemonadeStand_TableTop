@@ -46,7 +46,7 @@ public class Good : ScriptableObject
     }
 
     private decimal price_increment_rate;
-    private PriceBand PriceBand;
+    [SerializeField]private PriceBand PriceBand;
 
     public void SetExpiry(int periods)
         => ExpiresAfterPeriods = periods;
@@ -132,8 +132,8 @@ public class Good : ScriptableObject
     private decimal Generate_initial_price()
     {
         var randomFloat = UnityEngine.Random.value;
-        var price_range = PriceBand.max - PriceBand.min;
-        return PriceBand.min + (decimal)randomFloat * price_range;
+        var price_range = PriceBand.Max - PriceBand.Min;
+        return PriceBand.Min + (decimal)randomFloat * price_range;
     }
 
     public void Add_substitute_good(Good good) => _substitute_goods.Add(good);
@@ -216,14 +216,16 @@ public enum RarityEnum
     Unique
 }
 
-[System.Serializable]
+[Serializable]
 public class PriceBand{
-    public readonly decimal min;
-    public readonly decimal max;
+    public decimal Min=>minCentsForInspector/100m;
+    public decimal Max=>maxCentsForInspector/100m;
+    [SerializeField] private int minCentsForInspector;
+    [SerializeField] private int maxCentsForInspector;
 
-    public PriceBand(decimal lower_bound=0, decimal upper_bound=0){
-        min = lower_bound;
-        max = upper_bound;
+    public PriceBand(decimal lowerBound=0, decimal upperBound=0){
+        minCentsForInspector = (int)(lowerBound*100);
+        maxCentsForInspector = (int)(upperBound*100);
     }
 }
 
