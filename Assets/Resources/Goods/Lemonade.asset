@@ -15,6 +15,11 @@ MonoBehaviour:
   GoodName: Lemonade
   GoodSprite: {fileID: 0}
   ExpiresAfterPeriods: 5
+  IsPerishable: 1
+  DeliveryDelay: 0
+  PriceBand:
+    minCentsForInspector: 100
+    maxCentsForInspector: 300
   _rarity: 1
   IsProducedGood: 1
   price_increase_threshold: 0
