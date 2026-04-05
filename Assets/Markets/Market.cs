@@ -303,8 +303,8 @@ public class Market : ScriptableObject, iEconAgent
     }
     public void ExpireGoods(int period)
     {
-        foreach (var company in _marketParticipants)
-            company.GetInventory().ExpireGoods(period);
+        foreach (var participant in _marketParticipants)
+            participant.ExpireGoods(period);
     }
     #endregion
     #region Fixed costs 

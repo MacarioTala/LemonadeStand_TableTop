@@ -16,7 +16,7 @@ MonoBehaviour:
   GoodSprite: {fileID: 0}
   ExpiresAfterPeriods: 5
   IsPerishable: 1
-  DeliveryDelay: 5
+  DeliveryDelay: 2
   PriceBand:
     minCentsForInspector: 0
     maxCentsForInspector: 100

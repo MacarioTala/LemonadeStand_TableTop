@@ -22,10 +22,10 @@ public class GameRoot : MonoBehaviour
     private void Start()
     {
         Debug.Log ("GameRoot starting. Economy Loaded. Loading Splash");
-        Bus.Publish(new EconomyCoreReady(EconomyInstance),true);
         InitializeEconomy();
         InitializeContent();
         InitializePlayer();
+        Bus.Publish(new EconomyCoreReadyEvent(EconomyInstance),true);
         SceneManager.LoadScene(Scenes.Splash,LoadSceneMode.Single);
     }
 
@@ -41,7 +41,7 @@ public class GameRoot : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         Bus = new EventBus();
-        _loadSubscription = Bus.Subscribe<RequestLoadScene>(handler: req =>
+        _loadSubscription = Bus.Subscribe<RequestLoadSceneEvent>(handler: req =>
         {
             Debug.Log($"Loading scene: {req.SceneName}");
             SceneManager.LoadScene(req.SceneName, LoadSceneMode.Single);
@@ -73,7 +73,7 @@ public class GameRoot : MonoBehaviour
      }
     private void LoadGoods()
     {
-        var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
+         var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
         var period = EconomyInstance.tradingPeriod;
         var inventory = initialMarket.GetInventory();
 

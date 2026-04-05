@@ -225,7 +225,25 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
             throw new RecipeException(e.Message);
         }
     }
-    public void ExpireGoods(int period) => inventory.ExpireGoods(period);
+    public void ExpireGoods(int period)
+    {
+        var entries = inventory.GetInventoryEntries();
+        
+        if(entries == null || entries.Count==0) return;
+
+        var expiringEntries = entries
+                    .Where(x=>x.good.ExpiresAfterPeriods+x.PeriodAcquired <= period)
+                    .ToList();
+
+        inventory.ExpireGoods(period);
+
+        if(expiringEntries.Count> 0 && GameRoot.Instance !=null)
+        {
+            GameRoot.Instance.Bus.Publish(
+                new GoodsExpireEvent(this,expiringEntries,period)
+            );
+        }
+    }
 #endregion    
 #region Goals and strategies
     private iStrategy _companyStrategy = null;
@@ -406,8 +424,23 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 
     public void ResolveDeliveries()
     {
-        if(inventory.GetInventoryEntries().Count>0)
-            inventory.ResolveDeliveries();
+        var entries = inventory.GetInventoryEntries();
+        const int oneTurnToArrive=1;
+
+        if(entries == null || entries.Count==0) return;
+        
+        var arrivingThisTurn = entries
+                            .Where(x=>x.RemainingDelay == oneTurnToArrive)
+                            .ToList();
+
+        inventory.ResolveDeliveries();
+
+        if(arrivingThisTurn.Count> 0 && GameRoot.Instance !=null)
+        {
+            GameRoot.Instance.Bus.Publish(
+                new DeliveriesResolvedEvent(this,arrivingThisTurn,CurrentPeriod)
+            );
+        }
     }
     #endregion
 }

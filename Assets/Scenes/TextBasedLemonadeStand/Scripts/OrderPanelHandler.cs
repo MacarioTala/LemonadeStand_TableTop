@@ -78,13 +78,12 @@ public class OrderPanelHandler : MonoBehaviour
         FindPlayer();
     }
 
-    private void ShowOrderConfirmation()
+    private void ShowOrderConfirmation(string message)
     {
         ArrivingLabel.SetActive(true);
         var arrivingText = ArrivingLabel.GetComponent<TextMeshProUGUI>();
-        arrivingText.text = "Goods are arriving next turn";
         ResetOrderPanel();
-        StartCoroutine(FadeText("Order Queued"));
+        StartCoroutine(FadeText(message));
     }
 
     private void ResetOrderPanel()
@@ -206,13 +205,20 @@ public class OrderPanelHandler : MonoBehaviour
         };
         var result = PlayerCompany.QueueOrder(orderContext);
 
-        if (result == LemonadeStandResultObject.Success())
+        switch (result.Result)
         {
-            ShowOrderConfirmation();
-        }
-        else
-        {
-            Debug.Log(result.Message);
+            case ResultTypeEnum.Success:
+                ShowOrderConfirmation("Order Queued");
+                break;
+            case ResultTypeEnum.InsufficientCash:
+                ShowOrderConfirmation("You don't have enough cash");
+                break;
+            case ResultTypeEnum.InsufficientGoods:
+                ShowOrderConfirmation($"There isn't enough {selectedGood.GoodName}");
+                break;
+            default:
+                Debug.Log(result.Message);
+                break;
         }
     }
 }

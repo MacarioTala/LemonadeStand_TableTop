@@ -117,7 +117,13 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
         counterPartyOrder.Seller.SetCash(counterPartyOrder.Seller.GetCash() + costOfThisLeg);
 
         //Adjust inventories
-        buyerInventory.AddGood(new InventoryEntry(good, quantity, price, period));
+        var adjustedPeriod = period;
+        if(good.DeliveryDelay>0)
+            adjustedPeriod+=good.DeliveryDelay;
+        else
+            adjustedPeriod+=good.DeliveryDelay+1;//Goods should count as being acquired when they arrive, which is always the next turn
+        
+        buyerInventory.AddGood(new InventoryEntry(good, quantity, price, adjustedPeriod));
         sellerInventory.RemoveGood(good, quantity, price);
 
         //Set filled quantity and status

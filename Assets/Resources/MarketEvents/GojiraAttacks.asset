@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::MarketEventSO
   EventName: Gojira Attacks
   EventDescription: Gojira attacks, reducing population by 10%
-  EventChance: 100
+  EventChance: 10
   _eventDuration: 2
   EventSprite: {fileID: -8069170933174370870, guid: 7aac15e502d914efd86dc843772241f6, type: 3}
   FlavourText: '"Sometimes you''re Gojira, sometimes you''re Japan"'

@@ -404,7 +404,10 @@ public partial class MarketTests
         TestMarket.ProcessCompanyOrders();
         var actualCompany1Cash = Company1.GetCash();
         var actualCompany2Cash = Company2.GetCash();
-        var actualCompany1SugarQuantity = Company1.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar && x.Cost==2.0m).quantity;
+        var actualCompany1SugarQuantity = Company1
+                                            .GetInventory()
+                                            .GetInventoryEntries()
+                                            .Sum(x => x.good == sugar ? x.quantity :0);
         var actualCompany2SugarQuantity = Company2.GetInventory().GetInventoryEntries().FirstOrDefault(x => x.good == sugar).quantity;
         // Assert
         Assert.AreEqual(expectedCompany1Cash, actualCompany1Cash);
