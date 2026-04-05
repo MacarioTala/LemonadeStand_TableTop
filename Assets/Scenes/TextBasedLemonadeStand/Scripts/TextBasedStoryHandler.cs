@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -26,6 +27,10 @@ public class TextBasedStoryHandler : MonoBehaviour
     private bool areEventsSubscribed =false;
     private bool isSceneRunning =false;
     private bool areButtonsWired=false;
+#region Subscriptions
+private SubscriptionToken deliveriesResolvedSubscription;
+private SubscriptionToken goodsExpiredSubscription;
+#endregion
     
 #region Game Variables
     private EconAgent PlayerCompany=null;
@@ -124,11 +129,49 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         if(areEventsSubscribed) return;
         TheEconomyInstance.OnMarketEventFired += OnMarketEvent;
+
+        if(GameRoot.Instance!=null && GameRoot.Instance.Bus !=null)
+        {
+            deliveriesResolvedSubscription = GameRoot.Instance.Bus
+                    .Subscribe<DeliveriesResolvedEvent>(OnDeliveriesResolved, replaySticky:false);
+            
+            goodsExpiredSubscription = GameRoot.Instance.Bus
+                    .Subscribe<GoodsExpireEvent>(OnGoodsExpire, replaySticky:false);
+        }
+
         areEventsSubscribed = true;
     }
-
     #region Events
-    
+    private void OnDeliveriesResolved(DeliveriesResolvedEvent evt)
+    {
+        if(evt.Agent == null || evt.ArrivingItems == null || evt.ArrivingItems.Count==0)
+            return;
+        
+        if(PlayerCompany == null || !evt.Agent.Equals(PlayerCompany))
+            return;
+
+        UpdateOrderPanelArrivingText("Goods have arrived");
+    }
+
+    private void OnGoodsExpire(GoodsExpireEvent evt)
+    {
+        if(evt.Agent == null || evt.ExpiringItems==null||evt.ExpiringItems.Count==0)
+            return;
+        
+        if(PlayerCompany == null || !evt.Agent.Equals(PlayerCompany))
+            return;
+        
+        LogMessage("!!Goods have expired!!");
+        LogMessage("The following goods have expired");
+        foreach(var item in evt.ExpiringItems)
+            {
+                var s = string.Empty;
+                if(item.quantity>1)
+                    s="s";
+                LogMessage($"\n{item.quantity} {item.good.name}{s}");
+            }
+    }
+
     private void OnMarketEvent(Market market, MarketEventSO so)
     {
         if(newsfeedController!=null)
@@ -136,7 +179,7 @@ public class TextBasedStoryHandler : MonoBehaviour
         else
             Debug.LogWarning("NewsfeedController missing, did you wire this in the inspector?");
     }
-
+    
     #endregion
     private void WireUpButtons()
     {
@@ -151,8 +194,11 @@ public class TextBasedStoryHandler : MonoBehaviour
     {
         if(!isSceneOnly)
         {
+            ClearTextScroll();
+            DisplayChoices();
+            UpdateOrderPanelArrivingText(string.Empty);
+            UpdateOrderSummaryArrivingText(string.Empty);
             TheEconomyInstance.StartTradingPeriod();
-            UpdateOrderPanelArrivingText("Goods have arrived");
             TheEconomyInstance.EndTradingPeriod();
             PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
         }
@@ -336,6 +382,12 @@ public class TextBasedStoryHandler : MonoBehaviour
                 TheEconomyInstance.OnMarketEventFired -= OnMarketEvent;
                 areEventsSubscribed = false;
             }
+        
+        if(deliveriesResolvedSubscription.IsValid)
+            deliveriesResolvedSubscription.Dispose();
+        
+        if(goodsExpiredSubscription.IsValid)
+            goodsExpiredSubscription.Dispose();
     }
     #endregion
 }

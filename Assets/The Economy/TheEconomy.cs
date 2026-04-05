@@ -238,6 +238,9 @@ public class TheEconomy : MonoBehaviour
                 .WithPriceModifier(new SupplyDemandModifier())
                 .WithOrderFulfilledEvents()
                 .EnsureDefaults();
+            
+            market.CurrentPeriod=0;
+            market.StartingPeriod=0;
 
             RegisterEconomicAgent(market);
             InitialMarket = market;

@@ -92,7 +92,7 @@ public class TextBasedGameManager : MonoBehaviour
         if(IsSceneOnly)
             Debug.Log("Running in Scene-only mode");
         else
-            GameRoot.Instance.Bus.Publish(new RequestLoadScene(gameSceneName));
+            GameRoot.Instance.Bus.Publish(new RequestLoadSceneEvent(gameSceneName));
     }
 #endregion
 
