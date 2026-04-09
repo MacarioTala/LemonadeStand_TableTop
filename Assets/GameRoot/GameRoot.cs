@@ -143,7 +143,7 @@ private void SpawnAgentFromTemplate(EconAgent firm)
     {
         var instance = ScriptableObject.Instantiate(firm);
         EconAgentBuilder.Wrap(instance)
-                        .Named($"{firm.Name}_{Guid.NewGuid().ToString("N")[..6]}")
+                        .Named($"{CompanyNameGenerator.GenerateName()}_{Guid.NewGuid().ToString("N")[..6]}")
                         .WithInitialCashFromTemplate()
                         .Build();
         initialMarket.RegisterMarketParticipant(instance);

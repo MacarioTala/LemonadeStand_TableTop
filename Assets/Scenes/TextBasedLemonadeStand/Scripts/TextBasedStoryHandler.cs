@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -17,8 +18,11 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] private int numberOfNPCFirms;
     [SerializeField] TextMeshProUGUI OrderPanelArrivingText;
     [SerializeField] TextMeshProUGUI SummaryPanelText;
+    [SerializeField] TextMeshProUGUI SaleSignMaxCupsLabel;
+    [SerializeField] TMP_InputField SaleSignCupsToSell;
+    [SerializeField] TMP_InputField SaleSignLemonadePriceField;
     [SerializeField] NewsfeedController newsfeedController;
-    readonly Recipe BasicLemonadeRecipe=null;
+    Recipe BasicLemonadeRecipe=null;
     private const string InitialMarketName = "Episode 1 Market";
     public static TextBasedStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
@@ -36,7 +40,6 @@ private SubscriptionToken goodsExpiredSubscription;
     private EconAgent PlayerCompany=null;
     private bool isWaitingForPlayerInput = false;
     private Market initialMarket;
-    
     private MenuStateEnum CurrentMenuState = MenuStateEnum.Splash;
 #endregion
     private void Awake()
@@ -46,6 +49,24 @@ private SubscriptionToken goodsExpiredSubscription;
         {
             Destroy(gameObject);
             return;
+        }
+        SaleSignCupsToSell.onValueChanged.AddListener(OnCupsChanged);
+    }
+
+    private void OnCupsChanged(string input)
+    {
+        if(string.IsNullOrWhiteSpace(input)) return;
+
+        if(!int.TryParse(input,out var value))
+        {
+            SaleSignCupsToSell.text = "0";
+            return;
+        }
+        var max = GetMaxCups();
+
+        if (value > max)
+        {
+            SaleSignCupsToSell.text = max.ToString();
         }
     }
 
@@ -104,6 +125,7 @@ private SubscriptionToken goodsExpiredSubscription;
             LogMessage("Scene-only mode: Backend disabled");
             return;
         }
+        UpdateMaxLemonade();
         UpdateOrderPanelArrivingText(string.Empty);
         UpdateOrderSummaryArrivingText(string.Empty);
         StartCoroutine(StartGameLoop());
@@ -214,9 +236,6 @@ private SubscriptionToken goodsExpiredSubscription;
             case 'C':
                 DisplayInventory();
                 break;
-            case 'S':
-                SetLemonadePrice();
-                break;
             case 'N':
                 CheckNews();
                 break;
@@ -247,7 +266,6 @@ private SubscriptionToken goodsExpiredSubscription;
         LogMessage("What would you like to do?");
         LogMessage("(C)heck Inventory");
         LogMessage("(M)ake Lemonade from recipe");
-        LogMessage("(S)et Lemonade Price");
         LogMessage("Check (N)ews");
         LogMessage("\n");
     }
@@ -301,7 +319,10 @@ private SubscriptionToken goodsExpiredSubscription;
             LogMessage("You have no recipes!");
         }
         {
-            var maxQuantity = BasicLemonadeRecipe.Get_max_quantity(PlayerCompany.GetInventory().GetInventoryEntries());
+            BasicLemonadeRecipe = PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade");
+            var maxQuantity = BasicLemonadeRecipe.Get_max_quantity(PlayerCompany
+                                    .GetInventory()
+                                    .GetInventoryEntries());
 
             if(BasicLemonadeRecipe.CanRecipeBeMadeFrom(PlayerCompany.GetInventory().GetInventoryEntries()))
             {
@@ -313,6 +334,7 @@ private SubscriptionToken goodsExpiredSubscription;
                 };
                 PlayerCompany.MakeRecipe(context);
                 LogMessage("Made "+maxQuantity+" units of: "+BasicLemonadeRecipe.GetProduct());
+                UpdateMaxLemonade();
             }
             else
             {
@@ -320,17 +342,14 @@ private SubscriptionToken goodsExpiredSubscription;
             }
         }
     }
-     private void SetLemonadePrice()
-    {
-        ClearUISelection();
-        LogMessage("Cannot set Lemonade Price yet");
-    }
     #endregion
 
     private void UpdateOrderPanelArrivingText(string message)
         => OrderPanelArrivingText.text = message;
     private void UpdateOrderSummaryArrivingText(string message)
         => SummaryPanelText.text = message;
+    private void UpdateMaxCupsText(string message)
+        => SaleSignMaxCupsLabel.text = message;
 
    
 
@@ -339,6 +358,17 @@ private SubscriptionToken goodsExpiredSubscription;
     {
         if(textScroll!=null) textScroll.text = "";
     }
+
+    private int GetMaxCups()
+    {
+        var maxcups = PlayerCompany?
+                        .GetInventory()?
+                        .GetInventoryEntries()
+                        .Where(x=>x.good.GoodName == "Lemonade")
+                        ?.Count()??0;
+        return maxcups;
+    }
+
     public void LogMessage(string message)
     {
         if (textScroll != null)
@@ -367,6 +397,11 @@ private SubscriptionToken goodsExpiredSubscription;
         LogMessage("Let's find out!");
         yield return _waitForSeconds1;
         DisplayChoices();
+    }
+    private void UpdateMaxLemonade()
+    {
+        var maxcups = GetMaxCups();
+        UpdateMaxCupsText(maxcups.ToString());
     }
     #endregion
     #region Unity Stuff
@@ -400,5 +435,6 @@ internal enum MenuStateEnum
     CheckNews,
     OrderSupplies,
     SetPrice,
+    SetQuantity,
 
 }
