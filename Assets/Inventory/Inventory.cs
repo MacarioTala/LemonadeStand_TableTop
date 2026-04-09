@@ -10,7 +10,7 @@ public class Inventory
     {
         inventoryEntries.Clear();
     }
-    public List<InventoryEntry> GetInventoryEntries() => inventoryEntries;
+    public List<InventoryEntry> GetInventoryEntries() => inventoryEntries ?? Enumerable.Empty<InventoryEntry>().ToList();
 
     public List<InventoryEntry> GetAvailableInventory() => GetInventoryEntries().Where(x=>x.RemainingDelay==0).ToList();
 
