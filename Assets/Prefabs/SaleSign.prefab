@@ -852,6 +852,7 @@ GameObject:
   - component: {fileID: 633224953014056098}
   - component: {fileID: 2966691363780572978}
   - component: {fileID: 596256227810068212}
+  - component: {fileID: 8068139507098723978}
   m_Layer: 0
   m_Name: SaleSign
   m_TagString: Untagged
@@ -931,6 +932,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8652f1f5ea0448496f07660ab49711, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameAssembly::SaleSignController
+--- !u!114 &8068139507098723978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4076442854277248427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9cfb5df36e4d491b8cb43e0bfd457c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameAssembly::DraggablePanelComponent
 --- !u!1 &6013838322073915964
 GameObject:
   m_ObjectHideFlags: 0

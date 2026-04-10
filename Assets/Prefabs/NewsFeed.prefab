@@ -251,9 +251,12 @@ MonoBehaviour:
   StaticOverlay: {fileID: 9017915780266887758}
   NewsFeed: {fileID: 3371945255117729049}
   EventSplash: {fileID: 0}
+  CloseButton: {fileID: 0}
+  EventCard: {fileID: 0}
   WinkDuration: 0.2
   holdDuration: 2
   Screen: {fileID: 7239515749554712825}
+  NewsFeedObject: {fileID: 8660997700810879881}
 --- !u!1 &7707775780061673249
 GameObject:
   m_ObjectHideFlags: 0

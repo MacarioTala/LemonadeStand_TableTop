@@ -4,12 +4,9 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
-using System;
-using System.Collections.Generic;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
-    private static readonly WaitForSeconds _waitForSeconds1 = new(1);
     [SerializeField] private TextMeshProUGUI textScroll;
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button EndTurnButton;
@@ -22,25 +19,25 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] TMP_InputField SaleSignCupsToSell;
     [SerializeField] TMP_InputField SaleSignLemonadePriceField;
     [SerializeField] NewsfeedController newsfeedController;
-    Recipe BasicLemonadeRecipe=null;
     private const string InitialMarketName = "Episode 1 Market";
     public static TextBasedStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
 
-    private bool isSceneOnly = true;
-    private bool areEventsSubscribed =false;
-    private bool isSceneRunning =false;
-    private bool areButtonsWired=false;
+#region Temporary
+    private int lemonadeMadeThisTurn; //TODO: move this to EconAgent eventually
+#endregion
+
 #region Subscriptions
 private SubscriptionToken deliveriesResolvedSubscription;
 private SubscriptionToken goodsExpiredSubscription;
 #endregion
     
 #region Game Variables
+    private bool isPeriodStart=false;
     private EconAgent PlayerCompany=null;
-    private bool isWaitingForPlayerInput = false;
     private Market initialMarket;
-    private MenuStateEnum CurrentMenuState = MenuStateEnum.Splash;
+    private UIStateEnum CurrentUIState = UIStateEnum.Idle;
+    private bool areEventsSubscribed =false;
 #endregion
     private void Awake()
     {
@@ -50,9 +47,91 @@ private SubscriptionToken goodsExpiredSubscription;
             Destroy(gameObject);
             return;
         }
-        SaleSignCupsToSell.onValueChanged.AddListener(OnCupsChanged);
     }
 
+    private void Start()
+    {
+        StartTextBasedGame();
+    }
+
+    private void Update()
+    {
+        //return if player is entering text
+        if(IsPlayerTyping()) return;
+        
+        switch(CurrentUIState)
+        {
+            case UIStateEnum.MainMenu:
+                HandleMainMenu();
+                break;
+            case UIStateEnum.Reading:
+                if(Input.GetKeyDown(KeyCode.Space))
+                    CurrentUIState=UIStateEnum.Idle;
+                else if(Input.GetKeyDown(KeyCode.Escape))
+                    ShowMainMenu();
+                break;
+        }
+    }
+ 
+    private void ClearUISelection()
+    {
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    private void StartTextBasedGame()
+    {
+        if (IsSceneOnly())
+        {
+            ClearTextScroll();
+            LogMessage("Scene-only mode: Backend disabled");
+            return;
+        }
+        Initialize();
+        UpdateMaxLemonade();
+        UpdateOrderPanelArrivingText(string.Empty);
+        UpdateOrderSummaryArrivingText(string.Empty);
+        StartCoroutine(PlayIntro());
+    }
+
+    private void Initialize()
+    {
+        if(GameRoot.Instance == null)
+        {
+            Debug.LogWarning("Gameroot is missing. Playing scene in scene-only mode.");
+            return;
+        }
+        else
+        {
+            TheEconomyInstance = GameRoot.Instance.EconomyInstance;
+            initialMarket = TheEconomyInstance.GetMarketByName(InitialMarketName);
+            PlayerCompany = initialMarket.GetMarketParticipants()
+                        .FirstOrDefault(x=>x.IsPlayer);
+            newsfeedController.SetHasNews(false);
+            PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
+            SubscribeToEvents();
+        }
+    }
+
+    private void SubscribeToEvents()
+    {
+        if(areEventsSubscribed) return;
+        TheEconomyInstance.OnMarketEventFired += OnMarketEventFired;
+
+        if(GameRoot.Instance!=null && GameRoot.Instance.Bus !=null)
+        {
+            deliveriesResolvedSubscription = GameRoot.Instance.Bus
+                    .Subscribe<DeliveriesResolvedEvent>(OnDeliveriesResolved, replaySticky:false);
+            
+            goodsExpiredSubscription = GameRoot.Instance.Bus
+                    .Subscribe<GoodsExpireEvent>(OnGoodsExpire, replaySticky:false);
+            SaleSignCupsToSell.onValueChanged.AddListener(OnCupsChanged);
+            EndTurnButton.onClick.AddListener(EndTurn);
+        }
+
+        areEventsSubscribed = true;
+    }
+    #region Handlers
     private void OnCupsChanged(string input)
     {
         if(string.IsNullOrWhiteSpace(input)) return;
@@ -69,107 +148,12 @@ private SubscriptionToken goodsExpiredSubscription;
             SaleSignCupsToSell.text = max.ToString();
         }
     }
-
-    private void Start()
-    {
-        CheckForBackEnd();
-        if(!isSceneOnly)
-        {
-            initialMarket = TheEconomyInstance.GetMarketByName(InitialMarketName);
-            PlayerCompany = initialMarket.GetMarketParticipants()
-                            .FirstOrDefault(x=>x.IsPlayer);
-        }
-        StartTextBasedGame();
-    }
-
-    private void CheckForBackEnd()
-    {
-        if(GameRoot.Instance==null) isSceneOnly=true;
-        else
-            {
-                TheEconomyInstance=GameRoot.Instance.EconomyInstance;
-                isSceneOnly = false;
-            }
-    }
-
-    private void Update()
-    {
-        if(!isWaitingForPlayerInput) return;
-
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            ClearUISelection();
-            isWaitingForPlayerInput = false;
-            ClearTextScroll();
-            DisplayChoices();
-        }
-
-        if(CurrentMenuState==MenuStateEnum.MainMenu) ChoicesMainMenu();
-    }
- 
-    private void ClearUISelection()
-    {
-        if (EventSystem.current != null)
-            EventSystem.current.SetSelectedGameObject(null);
-    }
-
-    private void StartTextBasedGame()
-    {
-        if(isSceneRunning) return;
-        isSceneRunning = true;
-        Initialize();
-        WireUpButtons();
-
-        if (isSceneOnly)
-        {
-            LogMessage("Scene-only mode: Backend disabled");
-            return;
-        }
-        UpdateMaxLemonade();
-        UpdateOrderPanelArrivingText(string.Empty);
-        UpdateOrderSummaryArrivingText(string.Empty);
-        StartCoroutine(StartGameLoop());
-    }
-
-    private void Initialize()
-    {
-        if(GameRoot.Instance == null)
-        {
-            Debug.LogWarning("Gameroot is missing. Playing scene in scene-only mode.");
-            return;
-        }
-        else
-        {
-            isSceneOnly = false;
-            TheEconomyInstance = GameRoot.Instance.EconomyInstance;
-            PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
-            SubscribeToEvents();
-        }
-    }
-
-    private void SubscribeToEvents()
-    {
-        if(areEventsSubscribed) return;
-        TheEconomyInstance.OnMarketEventFired += OnMarketEvent;
-
-        if(GameRoot.Instance!=null && GameRoot.Instance.Bus !=null)
-        {
-            deliveriesResolvedSubscription = GameRoot.Instance.Bus
-                    .Subscribe<DeliveriesResolvedEvent>(OnDeliveriesResolved, replaySticky:false);
-            
-            goodsExpiredSubscription = GameRoot.Instance.Bus
-                    .Subscribe<GoodsExpireEvent>(OnGoodsExpire, replaySticky:false);
-        }
-
-        areEventsSubscribed = true;
-    }
-    #region Events
     private void OnDeliveriesResolved(DeliveriesResolvedEvent evt)
     {
         if(evt.Agent == null || evt.ArrivingItems == null || evt.ArrivingItems.Count==0)
             return;
         
-        if(PlayerCompany == null || !evt.Agent.Equals(PlayerCompany))
+        if(PlayerCompany == null || evt.Agent != PlayerCompany)
             return;
 
         UpdateOrderPanelArrivingText("Goods have arrived");
@@ -180,7 +164,7 @@ private SubscriptionToken goodsExpiredSubscription;
         if(evt.Agent == null || evt.ExpiringItems==null||evt.ExpiringItems.Count==0)
             return;
         
-        if(PlayerCompany == null || !evt.Agent.Equals(PlayerCompany))
+        if(PlayerCompany == null || evt.Agent != PlayerCompany)
             return;
         
         LogMessage("!!Goods have expired!!");
@@ -190,47 +174,133 @@ private SubscriptionToken goodsExpiredSubscription;
                 var s = string.Empty;
                 if(item.quantity>1)
                     s="s";
-                LogMessage($"\n{item.quantity} {item.good.name}{s}");
+                LogMessage($"\n{item.quantity} {item.good.name}{s} spoiled overnight");
             }
     }
 
-    private void OnMarketEvent(Market market, MarketEventSO so)
+    private void OnMarketEventFired(Market market, MarketEventSO so)
     {
         if(newsfeedController!=null)
-            newsfeedController.PlayBreakingNews(so);
+            {
+                newsfeedController.PlayBreakingNews(so);
+                newsfeedController.SetHasNews(true);
+            }
         else
             Debug.LogWarning("NewsfeedController missing, did you wire this in the inspector?");
     }
     
     #endregion
-    private void WireUpButtons()
+
+    private IEnumerator ShowTurnSummary()
     {
-        if(areButtonsWired) return;
+        var orders = initialMarket.GetOrdersExecutedInPeriod();
+        var buys = orders
+                    .Where(x=>ReferenceEquals(x.Order.Buyer,PlayerCompany));
         
-        areButtonsWired=true;
-        EndTurnButton.onClick.AddListener(EndTurn);
+        var sales = orders
+                    .Where(x=>ReferenceEquals(x.Order.Seller,PlayerCompany));
 
+        yield return ShowMessageWithWait($"Period {initialMarket.CurrentPeriod} ends",1);
+
+        if(buys.Count()>0)
+        {
+            LogMessage("You bought");
+            foreach(var line in buys)
+            {
+                var s = string.Empty;
+                if(line.Order.Quantity>1) s="s";
+
+                LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
+            }
+        }
+        if(sales.Count()>0)
+        {
+            LogMessage("You sold");
+            foreach(var line in sales)
+            {
+                    var s = string.Empty;
+                    if(line.Order.Quantity>1) s="s";
+
+                    LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
+            }
+        }
+        if(lemonadeMadeThisTurn>0)
+        {
+            LogMessage($"You made {lemonadeMadeThisTurn} cups of Lemonade.");
+        }
+
+        LogMessage("You lock up and go home");
     }
+    private void StartTurn()
+    {
+        isPeriodStart = true;
+        ClearTextScroll();
 
+        lemonadeMadeThisTurn = 0;
+        UpdateMaxLemonade();
+        UpdateOrderPanelArrivingText(string.Empty);
+        UpdateOrderSummaryArrivingText(string.Empty);
+        ShowMainMenu();
+    }
     private void EndTurn()
     {
-        if(!isSceneOnly)
-        {
-            ClearTextScroll();
-            DisplayChoices();
-            UpdateOrderPanelArrivingText(string.Empty);
-            UpdateOrderSummaryArrivingText(string.Empty);
-            TheEconomyInstance.StartTradingPeriod();
-            TheEconomyInstance.EndTradingPeriod();
-            PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
-        }
+        if(IsSceneOnly()) return;
+
+        StartCoroutine(EndTurnFlow());
         Debug.Log("End Turn");
     }
-   
-#region Menu stuff
-    private void ChooseFromMainMenu(char choice)
+
+    private IEnumerator EndTurnFlow()
     {
+        CurrentUIState = UIStateEnum.Reading;
+        ClearUISelection();
         ClearTextScroll();
+
+        ProcessPlayerActions();
+
+        TheEconomyInstance.ResolveTurn();
+
+        yield return ShowMessageWithWait("The day passes.", 1);
+
+        PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
+
+        yield return ShowTurnSummary();
+        LogMessage("Hit <Space> to continue");
+        yield return WaitForContinue();
+
+        StartTurn();
+    }
+
+    private void ProcessPlayerActions()
+    {
+        /// other player actions here
+        SellLemonade();
+    }
+
+    private void SellLemonade()
+    {
+        var cupsToSell = GetCupsToSell();
+        if(cupsToSell <=0) return;
+
+        var lemonadeEntry = PlayerCompany.GetInventory().GetInventoryEntries().FirstOrDefault(x=>x.good.GoodName=="Lemonade");
+        if(lemonadeEntry == null) return;
+
+        var lemonade = lemonadeEntry.good;
+        var price = GetLemonadePrice();
+        var sellOrder = new Order(null,PlayerCompany,lemonade,cupsToSell,price);
+        var context = new ActionContextBuilder()
+                    .ForMarket(initialMarket)
+                    .ForPeriod(initialMarket.CurrentPeriod)
+                    .WithTrade(sellOrder)
+                    .Build();
+        PlayerCompany.QueueOrder(context);
+    }
+
+    #region Menu stuff
+    private void ChooseFromMainMenu(char choice)
+    {   
+        ClearTextScroll();
+
         switch (choice)
         {
             case 'C':
@@ -244,36 +314,43 @@ private SubscriptionToken goodsExpiredSubscription;
                 break;
             default:
                 LogMessage("Invalid choice. Please choose again.");
-                DisplayChoices();
+                ShowMainMenu();
                 break;
         }
-        isWaitingForPlayerInput = true;
-        LogMessage("Press <space> to continue.");
+        LogMessage("\nPress <esc> to continue.");
     }
-    private void ChoicesMainMenu()
+    private void HandleMainMenu()
     {
         if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
-        if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
         if (Input.GetKeyDown(KeyCode.N)) ChooseFromMainMenu('N');
         if (Input.GetKeyDown(KeyCode.M)) ChooseFromMainMenu('M');
     }
 
-    private void DisplayChoices()
+    private void ShowMainMenu()
     {
+        CurrentUIState = UIStateEnum.MainMenu;
+        
         ClearUISelection();
-        isWaitingForPlayerInput = true;
-        CurrentMenuState = MenuStateEnum.MainMenu;
+        ClearTextScroll();
+        
+        LogMessage($"--- It is period {initialMarket.CurrentPeriod} ---");
+        if(isPeriodStart) LogMessage($"You flip the sign open");
+        
         LogMessage("What would you like to do?");
-        LogMessage("(C)heck Inventory");
-        LogMessage("(M)ake Lemonade from recipe");
+        LogMessage("(C)heck your supplies");
+        LogMessage("(M)ake lemonade from recipe");
         LogMessage("Check (N)ews");
         LogMessage("\n");
+
+        isPeriodStart = false;
     }
 #endregion
 
 #region Game Choices
     private void CheckNews()
     {
+        CurrentUIState = UIStateEnum.Reading;
+
         ClearUISelection();
         LogMessage($"It is Period : {TheEconomyInstance.tradingPeriod}.");
         LogMessage($"You have {PlayerCompany.GetCash()} credits.");
@@ -290,55 +367,85 @@ private SubscriptionToken goodsExpiredSubscription;
     }
     private void DisplayInventory()
     {
+        CurrentUIState = UIStateEnum.Reading;
+
         ClearUISelection();
         var inventory = PlayerCompany.GetInventory().GetAvailableInventory();
-        LogMessage("Inventory:");
-        foreach (var item in inventory)
-            LogMessage($"{item.good} Quantity: {item.quantity} Acquired at: {item.Cost}");
-        
+        LogMessage("You open the fridge, you see:");
+        if(inventory.Count>0)
+        {
+            foreach (var item in inventory)
+            {
+                var s = string.Empty;
+                if(item.quantity>1)
+                    s="s";
+                LogMessage($"{item.quantity} {item.good} {s} you bought for {item.Cost}");
+            }
+        }
+        else
+        {
+            LogMessage("... an empty fridge");
+        }
+
         var orderedSupplies = PlayerCompany.GetInventory()
                                            .GetInventoryEntries()
                                            .Where(x=>x.RemainingDelay>0);
 
-        LogMessage("\nThe following goods are yet to arrive:");
-        foreach(var item in orderedSupplies)
-            LogMessage($"{item.good} Quantity: {item.quantity} Acquired at: {item.Cost} Arriving in {item.RemainingDelay}");
-    
+        if(orderedSupplies.Count()>0)
+        {
+            LogMessage("\nYou're still waiting for the following goods:");
+            foreach(var item in orderedSupplies)
+                LogMessage($"{item.good} Quantity: {item.quantity} Acquired at: {item.Cost} Arriving in {item.RemainingDelay}");
+        }
+
         if(PlayerCompany.Recipes.Count()>0)
         {
-            LogMessage("\n\nYou have a recipe for: " + PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade"));
+            LogMessage("\nYou have recipes for: ");
+            foreach(var recipe in PlayerCompany.Recipes)
+                LogMessage($"- {recipe.RecipeName}");
         }
         else
             LogMessage("You have not discovered any recipes");
     }
     private void MakeLemonade()
     {
+        CurrentUIState = UIStateEnum.Reading;
         ClearUISelection();
         if(PlayerCompany.Recipes.Count==0)
         {
             LogMessage("You have no recipes!");
         }
+        else
+        //Basic Lemonade for now
         {
-            BasicLemonadeRecipe = PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade");
-            var maxQuantity = BasicLemonadeRecipe.Get_max_quantity(PlayerCompany
-                                    .GetInventory()
-                                    .GetInventoryEntries());
-
-            if(BasicLemonadeRecipe.CanRecipeBeMadeFrom(PlayerCompany.GetInventory().GetInventoryEntries()))
+            var BasicLemonadeRecipe = PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade");
+            if(BasicLemonadeRecipe)
             {
-                var context = new ActionContext()
+                var maxQuantity = BasicLemonadeRecipe.Get_max_quantity(PlayerCompany
+                                        .GetInventory()
+                                        .GetInventoryEntries());
+
+                if(BasicLemonadeRecipe.CanRecipeBeMadeFrom(PlayerCompany.GetInventory().GetInventoryEntries()))
                 {
-                    RecipeMaker=PlayerCompany,
-                    Recipe=BasicLemonadeRecipe,
-                    QuantityToMake=maxQuantity
-                };
-                PlayerCompany.MakeRecipe(context);
-                LogMessage("Made "+maxQuantity+" units of: "+BasicLemonadeRecipe.GetProduct());
-                UpdateMaxLemonade();
+                    var context = new ActionContext()
+                    {
+                        RecipeMaker=PlayerCompany,
+                        Recipe=BasicLemonadeRecipe,
+                        QuantityToMake=maxQuantity
+                    };
+                    PlayerCompany.MakeRecipe(context);
+                    LogMessage("You made "+maxQuantity+" units of: "+BasicLemonadeRecipe.GetProduct());
+                    UpdateMaxLemonade();
+                    lemonadeMadeThisTurn = maxQuantity;
+                }
+                else
+                {
+                    LogMessage("You don't have enough ingredients to make:"+BasicLemonadeRecipe.GetProduct());
+                }
             }
             else
             {
-                LogMessage("Insufficient ingredients to make:"+BasicLemonadeRecipe.name);
+                LogMessage("You don't know how to make Basic Lemonade yet. Check the cupboard?");
             }
         }
     }
@@ -354,21 +461,42 @@ private SubscriptionToken goodsExpiredSubscription;
    
 
 #region helpers
+    private bool IsSceneOnly()
+    {
+        if(GameRoot.Instance==null) 
+            return true;
+        else
+            return false;
+    }
     private void ClearTextScroll()
     {
         if(textScroll!=null) textScroll.text = "";
     }
-
+    private int GetCupsToSell()
+    {
+        int.TryParse(SaleSignCupsToSell.text, out var cups);
+        return cups;
+    }
+    private decimal GetLemonadePrice()
+    {
+        decimal.TryParse(SaleSignLemonadePriceField.text, out var price);
+        return price;
+    }
     private int GetMaxCups()
     {
         var maxcups = PlayerCompany?
                         .GetInventory()?
                         .GetInventoryEntries()
                         .Where(x=>x.good.GoodName == "Lemonade")
-                        ?.Count()??0;
+                        .Sum(x=>x.quantity)??0;
         return maxcups;
     }
 
+    private bool IsPlayerTyping()
+    {
+        var selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+        return selected != null && selected.GetComponent<TMP_InputField>() !=null;
+    }
     public void LogMessage(string message)
     {
         if (textScroll != null)
@@ -387,22 +515,40 @@ private SubscriptionToken goodsExpiredSubscription;
             Debug.Log("GameLogTMP is not assigned in the inspector.");
         }
     }
-    private IEnumerator StartGameLoop()
-    {
-        textScroll.text = "";
-        LogMessage("Welcome to Lemonade Stand!");
-        yield return _waitForSeconds1;
-        LogMessage("Can you save Capitalism?");
-        yield return _waitForSeconds1;
+    
+    private IEnumerator PlayIntro()
+    {   
+        CurrentUIState=UIStateEnum.Reading;
+        ClearTextScroll();
+        yield return ShowMessageWithWait("Welcome to Lemonade Stand!",1);
+        yield return ShowMessageWithWait("Can you save Capitalism?",1);
         LogMessage("Let's find out!");
-        yield return _waitForSeconds1;
-        DisplayChoices();
+        LogMessage($"Hit <Space> to continue");
+        yield return WaitForContinue();
+
+        CurrentUIState = UIStateEnum.Idle;
+
+        StartTurn();
+    }
+
+    private IEnumerator ShowMessageWithWait(string message,int waitForSeconds)
+    {
+        LogMessage(message);
+        yield return new WaitForSeconds(waitForSeconds);
     }
     private void UpdateMaxLemonade()
     {
         var maxcups = GetMaxCups();
         UpdateMaxCupsText(maxcups.ToString());
     }
+
+    private IEnumerator WaitForContinue()
+    {
+        CurrentUIState = UIStateEnum.Reading;
+        while(CurrentUIState == UIStateEnum.Reading)
+            yield return null;
+    }
+
     #endregion
     #region Unity Stuff
     private void OnDisable()
@@ -414,7 +560,7 @@ private SubscriptionToken goodsExpiredSubscription;
     {
         if (areEventsSubscribed && TheEconomyInstance != null)
             {
-                TheEconomyInstance.OnMarketEventFired -= OnMarketEvent;
+                TheEconomyInstance.OnMarketEventFired -= OnMarketEventFired;
                 areEventsSubscribed = false;
             }
         
@@ -427,14 +573,9 @@ private SubscriptionToken goodsExpiredSubscription;
     #endregion
 }
 
-internal enum MenuStateEnum
+internal enum UIStateEnum
 {
-    Splash = 0,
+    Idle = 0,
     MainMenu,
-    CheckInventory,
-    CheckNews,
-    OrderSupplies,
-    SetPrice,
-    SetQuantity,
-
+    Reading
 }

@@ -87,8 +87,8 @@ public class Order
     public override int GetHashCode()
     {
         return SubmittingCompany.GetHashCode() 
-                ^ Buyer.GetHashCode() 
-                ^ Seller.GetHashCode() 
+                ^ (Buyer?.GetHashCode()??0)
+                ^ (Seller?.GetHashCode()??0)
                 ^ Good.GetHashCode() 
                 ^ Quantity.GetHashCode() 
                 ^ Price.GetHashCode();
