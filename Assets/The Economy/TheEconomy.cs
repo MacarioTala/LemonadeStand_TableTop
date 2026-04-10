@@ -104,6 +104,19 @@ public class TheEconomy : MonoBehaviour
 
         _trade_logger?.SaveDailySummary(executedTrades);
     }
+    /// <summary>
+    /// Note: ResolveTurn should be used from TextBasedStoryHandler.
+    /// The current flow is:
+    /// 1. Player acts
+    /// 2. The trading day resolves
+    /// The split phase is still required for the unit tests
+    /// It also allows us to split the resolution into two, add interrupts, etc. in the future
+    /// </summary>
+    public void ResolveTurn()
+    {
+        StartTradingPeriod();
+        EndTradingPeriod();
+    }
 
     public void RegisterEconomicAgent(iEconAgent agent)
     {

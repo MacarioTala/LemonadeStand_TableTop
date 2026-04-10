@@ -17,6 +17,7 @@ public class NewsfeedController : MonoBehaviour
     [SerializeField] private float WinkDuration =.2f;
     [SerializeField] private float holdDuration = 2f;
     [SerializeField] private Image Screen;
+    [SerializeField] private Button NewsFeedObject;
 
     private MarketEventSO ActiveEvent;
 
@@ -40,6 +41,7 @@ public class NewsfeedController : MonoBehaviour
 
     private void CloseEventSplash()
     {
+        SetHasNews(false);
         EventSplash.SetActive(false);
     }
 
@@ -111,6 +113,11 @@ public class NewsfeedController : MonoBehaviour
 
         NewsImage.sprite = newsAnchor;
     }
+    public void SetHasNews(bool hasNews)
+    {
+        NewsFeedObject.interactable = hasNews;
+    }
+
     private IEnumerator WinkOn()
     {
         var elapsed = 0f;

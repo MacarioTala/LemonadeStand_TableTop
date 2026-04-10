@@ -5,13 +5,11 @@ public class TextBasedGameManager : MonoBehaviour
 {
  #region Serialized Fields
     [SerializeField] private GameObject SplashCanvas;
-    [SerializeField] private float splashDuration = 3f;
     [SerializeField] private GameObject splashTypewriterPrefab;
     [SerializeField] private AudioSource splashScreenAudioSource;
     [SerializeField] private AudioClip splashScreenSoundClip;
     [SerializeField] private TextMeshProUGUI typeWrittenText;
     [SerializeField] private TextMeshProUGUI cursor;
-    [SerializeField] private float blinkSpeed = 0.5f;
     private readonly string gameSceneName = Scenes.ZorkView;
 #endregion
     public static TextBasedGameManager Instance { get; private set; }
