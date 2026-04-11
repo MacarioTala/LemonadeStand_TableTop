@@ -13,6 +13,8 @@ public class PopulationAgent : EconAgent
     private float _ennui;
 
     public bool IsMaxEnnui() => _ennui == 100;
+
+    public Income Income;
     public float Ennui
     {
         get => _ennui;
@@ -130,6 +132,19 @@ public class PopulationAgent : EconAgent
 
         demand.ElasticDemandComponents.Add(component);
         return LemonadeStandResultObject.Success();
+    }
+    #endregion
+    #region Income
+    public int GetIncomeInCentsForPeriod(int period)
+    {
+        if(period==0)
+            return Income.IncomeInCents;
+        else
+            return period%Income.FrequencyInPeriods==0?Income.IncomeInCents:0;
+    }
+    public void SetIncome(Income income)
+    {
+        Income = income;
     }
     #endregion
 }

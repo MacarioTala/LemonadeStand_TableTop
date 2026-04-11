@@ -4,6 +4,7 @@ using System.Linq;
 
 public class LemonadeSellerStrategy : iStrategy
 {
+    EconAgent Actor;
     private decimal _aggressionLevel = 0.8m;
     
     public decimal GetAggressionLevel() => _aggressionLevel;
@@ -152,5 +153,10 @@ public class LemonadeSellerStrategy : iStrategy
     {
         // Not implementing bid/ask spreads for this simple strategy
         return LemonadeStandResultObject.Success();
+    }
+
+    public void SetEconAgent(EconAgent agent)
+    {
+        Actor = agent;
     }
 }

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Tests")]
 public class ReduceEnnuiStrategy : iStrategy
 {
+    EconAgent Actor;
     //Manifestation of preferences
     readonly Dictionary<Good,BidAskSpread> _bidAskSpreads = new();
     decimal _aggressionLevel = 0.2m;
@@ -237,5 +238,10 @@ public class ReduceEnnuiStrategy : iStrategy
     public void PerformStrategy(ActionContext context)
     {
         throw new NotImplementedException();
+    }
+
+    public void SetEconAgent(EconAgent agent)
+    {
+        Actor = agent;
     }
 }
