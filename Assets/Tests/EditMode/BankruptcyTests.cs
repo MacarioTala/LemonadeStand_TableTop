@@ -44,7 +44,11 @@ public class BankruptcyTests
         };
         ((MockMarketDataService)TestMarketDataService).SetPopulationHistory(populationHistory);
 
-        Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner, null, TestFixedCostStrategy);
+        Company1 = EconAgentBuilder.For<EconAgent>()
+                                .Named("Company 1")
+                                .AtLevel(AgentLevelEnum.Beginner)
+                                .WithFixedCostStrategy(TestFixedCostStrategy)
+                                .Build();
         TestMarket.RegisterMarketParticipant(Company1);
     }
 
@@ -71,14 +75,13 @@ public class BankruptcyTests
         const int tradingCycles=2;
         Company1.SetCash(1000);
  
-        var rent = new FixedCost
-        {
-            Description = "Rent",
-            FixedCostType = FixedCostEnum.Rent,
-            Amount = 1000,
-            Frequency = 1,
-            PeriodAcquired = 0
-        };
+        var rentTemplate = ScriptableObject.CreateInstance<FixedCostTemplate>();
+        
+            rentTemplate.Description = "Rent";
+            rentTemplate.FixedCostType = FixedCostEnum.Rent;
+            rentTemplate.Amount = 1000;
+            rentTemplate.Frequency = 1;
+        var rent = new FixedCostInstance(rentTemplate,0);
         Company1.FixedCosts.Add(rent);
         var expected = true;
         //Act

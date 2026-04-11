@@ -142,7 +142,7 @@ public class Market : ScriptableObject, iEconAgent
     }
 #endregion
     #region Pricing
-    public List<FixedCost> FixedCosts { get; set; }
+    public List<FixedCostInstance> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy { get; set; }
     private readonly List<iPriceModifier> _priceModifiers = new();
     public List<iPriceModifier> PriceModifiers { get => _priceModifiers; }

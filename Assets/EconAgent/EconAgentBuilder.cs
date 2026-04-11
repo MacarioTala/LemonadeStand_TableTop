@@ -13,6 +13,7 @@ public class EconAgentBuilder<T> where T : EconAgent
     public EconAgentBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
     {
         agentToReturn.FixedCostStrategy = fixedCostStrategy;
+        agentToReturn.FixedCostStrategy.SetEconAgent(agentToReturn);
         return this;
     }
     public EconAgentBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)

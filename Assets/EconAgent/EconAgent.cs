@@ -13,7 +13,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         set => _agentName = value;
     }
     public AgentLevelEnum agentLevel;
-    public bool IsPlayer { get; set; } = false;
+    public bool IsPlayer = false;
     private Market marketCompanyIsIn;
     public Market GetMarket() => marketCompanyIsIn;
     public LemonadeStandResultObject SetMarket(Market market) {
@@ -150,8 +150,25 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     public decimal GetMinimumBid() => minimumBid;
     public decimal GetCash() => cash;
     public void SetCash(decimal newCash) => cash = newCash;
+    public IEnumerable<FixedCostLedgerEntry> FixedCostLedger=> fixedCostLedger;
+    private readonly List<FixedCostLedgerEntry> fixedCostLedger=new();
 
-    public List<FixedCost> FixedCosts {get;set;} = new();
+    public void LogFixedCostPayment(FixedCostInstance cost, int period)
+    {
+        fixedCostLedger.Add(new FixedCostLedgerEntry(cost,period));
+    }
+    public List<FixedCostInstance> FixedCosts {get;set;} = new();
+    public void AddFixedCostInPeriod(FixedCostTemplate template,int period)
+    {
+        FixedCosts.Add(new FixedCostInstance(template,period));
+    }
+    public void LoadFixedCostsFromTemplates(IEnumerable<FixedCostTemplate> templates,int period)
+    {
+        foreach(var template in templates)
+        {
+            AddFixedCostInPeriod(template,period);
+        }
+    }
     private void SetInitialCash()
         {
             switch(agentLevel)
@@ -210,7 +227,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         var quantity = context.QuantityToMake;
         if(!Recipes.Contains(recipe))
         {
-            throw new RecipeException("Recipe for "+recipe.ToString()+" not found in company's recipe book");
+            throw new RecipeException($"Recipe for{recipe} not found in {Name}'s recipe book");
         }
         try
         {
@@ -288,7 +305,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         }
         else
         {
-            Debug.LogWarning("Company strategy not set for " + Name);
+            Debug.LogWarning("Strategy not set for " + Name);
         }
     }
 #endregion 
@@ -336,7 +353,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         }
         else
         {
-            throw new InventoryException("Company does not have enough of the good to sell");
+            throw new InventoryException($"{Name} does not have enough of the good to sell");
         }
     }
 #endregion
@@ -350,7 +367,10 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     #endregion
     #region Market Actions
 
-    public void SubtractFixedCostsForPeriod(int period) => SetCash(cash - CalculateFixedCostsForPeriod(period));
+    public void SubtractFixedCostsForPeriod(int period) 
+        {
+            SetCash(cash - CalculateFixedCostsForPeriod(period));
+        }
    
     private LemonadeStandResultObject IsValidOrder(ActionContext context)
     {

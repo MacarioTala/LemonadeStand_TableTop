@@ -193,16 +193,25 @@ private SubscriptionToken goodsExpiredSubscription;
 
     private IEnumerator ShowTurnSummary()
     {
-        var orders = initialMarket.GetOrdersExecutedInPeriod();
+        var summaryPeriod = initialMarket.CurrentPeriod==0?0:initialMarket.CurrentPeriod -1;
+
+        var orders = initialMarket.GetOrdersExecutedInPeriod(summaryPeriod);
         var buys = orders
-                    .Where(x=>ReferenceEquals(x.Order.Buyer,PlayerCompany));
+                    .Where(x=>ReferenceEquals(x.Order.Buyer,PlayerCompany))
+                    .ToList();
         
         var sales = orders
-                    .Where(x=>ReferenceEquals(x.Order.Seller,PlayerCompany));
+                    .Where(x=>ReferenceEquals(x.Order.Seller,PlayerCompany))
+                    .ToList();
+        
+        var fixedCostsPaidThisPeriod = PlayerCompany
+                                     .FixedCostLedger
+                                     .Where(x=>x.Period==summaryPeriod)
+                                     .ToList();
 
-        yield return ShowMessageWithWait($"Period {initialMarket.CurrentPeriod} ends",1);
+        yield return ShowMessageWithWait($"Summary for period {summaryPeriod} ",1);
 
-        if(buys.Count()>0)
+        if(buys.Count>0)
         {
             LogMessage("You bought");
             foreach(var line in buys)
@@ -213,7 +222,11 @@ private SubscriptionToken goodsExpiredSubscription;
                 LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
             }
         }
-        if(sales.Count()>0)
+        if(lemonadeMadeThisTurn>0)
+        {
+            LogMessage($"You made {lemonadeMadeThisTurn} cups of Lemonade.");
+        }
+        if(sales.Count>0)
         {
             LogMessage("You sold");
             foreach(var line in sales)
@@ -224,9 +237,14 @@ private SubscriptionToken goodsExpiredSubscription;
                     LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
             }
         }
-        if(lemonadeMadeThisTurn>0)
+       
+        if(fixedCostsPaidThisPeriod.Count>0)
         {
-            LogMessage($"You made {lemonadeMadeThisTurn} cups of Lemonade.");
+            LogMessage($"You watch tokens disappear. You have: {PlayerCompany.GetCash():N2}");
+            foreach(var fixedCost in fixedCostsPaidThisPeriod)
+            {
+                LogMessage(fixedCost.FixedCost.GetDescription());
+            }
         }
 
         LogMessage("You lock up and go home");
@@ -258,9 +276,9 @@ private SubscriptionToken goodsExpiredSubscription;
 
         ProcessPlayerActions();
 
+        yield return ShowMessageWithWait($"The day passes. Period {initialMarket.CurrentPeriod} ends", 1);
+        
         TheEconomyInstance.ResolveTurn();
-
-        yield return ShowMessageWithWait("The day passes.", 1);
 
         PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
 
