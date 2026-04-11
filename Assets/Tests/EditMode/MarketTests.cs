@@ -292,7 +292,7 @@ public partial class MarketTests
        company.BuyGood(lemon, 10,3.0m);
        company.BuyGood(sugar, 10,3.0m);
        company.BuyGood(water, 10,3.0m);
-       var expectedText = "not found in company's recipe book";
+       var expectedText = $"not found in {company.Name}'s recipe book";
        System.Exception actual=null;
        var context = new ActionContext{Recipe = lemonade_recipe, QuantityToMake = 1};
        // Act

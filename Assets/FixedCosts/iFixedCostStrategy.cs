@@ -2,5 +2,6 @@ using System.Collections.Generic;
 
 public interface iFixedCostStrategy
 {
-    decimal CalculateFixedCosts(List<FixedCost> fixedCosts, int period);
+    decimal CalculateFixedCosts(List<FixedCostInstance> fixedCosts, int period);
+    void SetEconAgent(EconAgent agent);
 }

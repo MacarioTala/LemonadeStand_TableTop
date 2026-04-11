@@ -24,7 +24,7 @@ public class DummyCompany : iEconAgent
         return InfiniteCash;
     }
 
-    public List<FixedCost> FixedCosts { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public List<FixedCostInstance> FixedCosts { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public iFixedCostStrategy FixedCostStrategy { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public List<Goal> Goals { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public int CurrentPeriod { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }

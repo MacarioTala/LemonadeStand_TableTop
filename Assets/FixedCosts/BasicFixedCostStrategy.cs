@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 public class BasicFixedCostStrategy : iFixedCostStrategy
 {
-    public decimal CalculateFixedCosts(List<FixedCost> fixedCosts, int period)
+    EconAgent econAgent;
+    public decimal CalculateFixedCosts(List<FixedCostInstance> fixedCosts, int period)
     {
        decimal total = 0;
         if(fixedCosts == null|| fixedCosts.Count == 0)
@@ -12,15 +13,22 @@ public class BasicFixedCostStrategy : iFixedCostStrategy
         }
         foreach (var cost in fixedCosts)
         {
-            if(cost.Frequency <1)
+            if(cost.Template.Frequency <1)
             {
                 throw new ArgumentException("Frequency of fixed cost must be greater than 0");
             }
-            if (((period - cost.PeriodAcquired)%cost.Frequency == 0) && period > cost.PeriodAcquired)
+            var periodsCostHasBeenActive = period - cost.PeriodAcquired;
+            if ((periodsCostHasBeenActive%cost.Template.Frequency == 0) && period > cost.PeriodAcquired)
             {
-                total += cost.Amount;
+                total += cost.Template.Amount;
+                econAgent.LogFixedCostPayment(cost,period);
             }
         }
         return total;
+    }
+
+    public void SetEconAgent(EconAgent agent)
+    {
+        econAgent = agent;
     }
 }

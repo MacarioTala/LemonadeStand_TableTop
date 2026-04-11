@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,7 @@ public class GameRoot : MonoBehaviour
     private const string InitialMarketName = "Episode 1 Market";
     private Market initialMarket = null;
     private EconAgent PlayerCompany=null;
+    private IEnumerable<FixedCostTemplate> fixedCostTemplates;
 
     private void Start()
     {
@@ -25,7 +27,7 @@ public class GameRoot : MonoBehaviour
         InitializeEconomy();
         InitializeContent();
         InitializePlayer();
-        Bus.Publish(new EconomyCoreReadyEvent(EconomyInstance),true);
+          Bus.Publish(new EconomyCoreReadyEvent(EconomyInstance),true);
         SceneManager.LoadScene(Scenes.Splash,LoadSceneMode.Single);
     }
 
@@ -68,12 +70,17 @@ public class GameRoot : MonoBehaviour
         initialMarket.WithTradeProcessor(new DefaultTradeProcessor());
         LoadGoods();
         LoadRecipes();
+        LoadFixedCosts();
         CreateNpcs();
         CreateMarketEvents();
      }
+    private void LoadFixedCosts()
+    {
+        fixedCostTemplates = Resources.LoadAll<FixedCostTemplate>("FixedCosts");
+    }
     private void LoadGoods()
     {
-         var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
+        var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
         var period = EconomyInstance.tradingPeriod;
         var inventory = initialMarket.GetInventory();
 
@@ -96,10 +103,9 @@ public class GameRoot : MonoBehaviour
                             .FirstOrDefault(x=>x.IsPlayer);
         if(existingPlayer == null)
         {
-            PlayerCompany= EconAgent.Factory.Create("Player1",AgentLevelEnum.Beginner);
-            PlayerCompany.IsPlayer= true;
-            initialMarket.RegisterMarketParticipant(PlayerCompany);
-        }
+            var playerTemplate = Resources.Load<EconAgent>("EconAgents/Player/Player");
+            PlayerCompany = SpawnAgentFromTemplate(playerTemplate);
+         }
         else 
         PlayerCompany = existingPlayer;
         
@@ -139,15 +145,27 @@ public class GameRoot : MonoBehaviour
 
 #endregion
 #region Helpers
-private void SpawnAgentFromTemplate(EconAgent firm)
+private EconAgent SpawnAgentFromTemplate(EconAgent firm)
     {
+        string agentName;
+        if (firm.IsPlayer)
+            agentName = firm.Name;
+        else
+            agentName = $"{CompanyNameGenerator.GenerateName()}_{Guid.NewGuid().ToString("N")[..6]}";
+
+        var fixedCostStrategy = new BasicFixedCostStrategy();
         var instance = ScriptableObject.Instantiate(firm);
         EconAgentBuilder.Wrap(instance)
-                        .Named($"{CompanyNameGenerator.GenerateName()}_{Guid.NewGuid().ToString("N")[..6]}")
+                        .Named(agentName)
                         .WithInitialCashFromTemplate()
+                        .WithFixedCostStrategy(fixedCostStrategy)
                         .Build();
+        
+        instance.LoadFixedCostsFromTemplates(fixedCostTemplates ?? Enumerable.Empty<FixedCostTemplate>(),initialMarket.CurrentPeriod);
+
         initialMarket.RegisterMarketParticipant(instance);
-    }
+        return instance;
+      }
 #endregion
     void OnDestroy()
     {
