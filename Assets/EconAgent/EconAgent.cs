@@ -280,7 +280,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     {
         Debug.Log("Goal Completed: "+goal);
     }
-    public void CheckCompanyGoals()
+    public void CheckAgentGoals()
     {
         foreach (var goal in Goals)
         {
@@ -297,7 +297,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     {
         agentStrategy.SetAggressionLevel(aggressionLevel);
     }
-    public void PerformStrategy(int period)
+    public void PerformStrategy()
     {
         if (agentStrategy != null)
         {

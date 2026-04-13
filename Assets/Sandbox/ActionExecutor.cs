@@ -31,7 +31,7 @@ namespace Sandbox
                 {
                     try
                     {
-                        company.PerformStrategy(cycle);
+                        company.PerformStrategy();
                     }
                     catch (System.Exception e)
                     {

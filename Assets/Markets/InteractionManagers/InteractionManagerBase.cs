@@ -34,7 +34,7 @@ public abstract class InteractionManagerBase : iMarketInteractionManager
         }
         foreach (var participant in marketParticipants)
         {
-            participant.PerformStrategy(period);
+            participant.PerformStrategy();
         }
     }
 

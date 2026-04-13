@@ -24,7 +24,7 @@ public interface iEconAgent
 
     #region Goals and strategies
     List<Goal> Goals{get;set;}
-        void CheckCompanyGoals();
+        void CheckAgentGoals();
         void CompleteGoal(Goal goal);
     decimal GetAggressionLevel();
     void SetAggressionLevel(decimal aggressionLevel);

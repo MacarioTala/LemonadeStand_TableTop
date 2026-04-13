@@ -287,7 +287,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
         var affectsEnnui = Lemonade.HasEffectOn(MetricEnum.Ennui);
 
         //Act
-        TestPopulation.PerformStrategy(populationMarket.CurrentPeriod);
+        TestPopulation.PerformStrategy();
         var ordersPostStrategy = TestMarket.GetOrdersSentToMarketByCompany(TestPopulation);
 
         //Assert
@@ -316,7 +316,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
         TestPopulation.InitializeDemandBasedOnPopulation(Lemonade, 1f);
 
         //Act
-        TestPopulation.PerformStrategy(populationMarket.CurrentPeriod);
+        TestPopulation.PerformStrategy();
         var ordersPostStrategy = TestMarket.GetOrdersSentToMarketByCompany(TestPopulation);
         var actualBid = ordersPostStrategy.FirstOrDefault()?.Price;
         var actualQty = ordersPostStrategy.FirstOrDefault()?.Quantity;

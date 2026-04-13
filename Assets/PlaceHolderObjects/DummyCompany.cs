@@ -40,7 +40,7 @@ public class DummyCompany : iEconAgent
         throw new System.NotImplementedException();
     }
 
-    public void CheckCompanyGoals()
+    public void CheckAgentGoals()
     {
         throw new System.NotImplementedException();
     }
