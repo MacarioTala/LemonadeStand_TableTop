@@ -129,6 +129,11 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         return null;
     }
     
+    public int GetQuantityDemandedFor(Good good)
+    {
+        return _demand.TryGetValue(good, out var d)? d.GetDemand():0;
+    }
+
     public void SetDemand(Good good, DemandData demandData)
     {
         _demand[good] = demandData;

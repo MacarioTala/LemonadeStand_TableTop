@@ -1,38 +1,26 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 public class DefaultDemandManager : iDemandManager,iMarketAware
 {
     Market marketBeingManaged;
-    private readonly Dictionary<Good, DemandData> _marketDemand = new();
+    
+    private IEnumerable<PopulationAgent> demandersInMarket 
+            => marketBeingManaged.GetMarketParticipants()
+            .OfType<PopulationAgent>()
+            .Where(x=>!x.IsPlayer);
 
     public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket()
     {
-         var spreads = new List<(Good good, decimal Bid, decimal Ask)>();
-        if (marketBeingManaged.MarketData == null)
-        {
-            return Enumerable.Empty<(Good, decimal, decimal)>();
-        }
-        else
-        {
-            spreads = marketBeingManaged.MarketData
-                .Select(x => (x.Good, x.Bid, x.Ask)).ToList();
-        }
-        return spreads;
+        return marketBeingManaged.MarketData == null? Enumerable.Empty<(Good, decimal, decimal)>()
+            : marketBeingManaged.MarketData.Select(x => (x.Good, x.Bid, x.Ask));
     }
 
-    public DemandData GetDemandFor(Good good)
+    public int GetMarketDemandForGood(Good good)
     {
-        throw new NotImplementedException("Might need to  implement this as a list of DemandData instead.");
+        return demandersInMarket
+                .Sum(x=>x.GetQuantityDemandedFor(good));
     }
-    public int GetMarketDemandForGood(string goodName)
-    {
-        var good = _marketDemand.Keys.FirstOrDefault(x => x.GoodName == goodName);
-        return _marketDemand[good].CurrentDemand;
-    }
-    public void SetMarketDemandForGood(Good good, DemandData demandData)
-        => _marketDemand[good] = demandData;
 
     public decimal GetPerceivedCostOfGood(Good good)
     {
@@ -91,14 +79,6 @@ public class DefaultDemandManager : iDemandManager,iMarketAware
         return LemonadeStandResultObject.Success();
     }
 
-    public void InitializeDemandForSpecificGood(Good good, int InitialDemand, int minDemand = 0, int maxDemand = 10000, float curvature = 1)
-    {
-        #pragma warning disable CS0618 // Type or member is obsolete
-        //TODO: Remove this in a future refactor.
-        marketBeingManaged.DemandStrategy.InitializeDemandForSpecificGood(marketBeingManaged, good, InitialDemand, minDemand, maxDemand, curvature);
-        #pragma warning restore CS0618 // Type or member is obsolete
-    }
-
     public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity)
     {
         if (!good.Elasticities.TryGetValue(elasticity, out float elasticityValue))
@@ -106,5 +86,10 @@ public class DefaultDemandManager : iDemandManager,iMarketAware
             return LemonadeStandResultObject.Failure(ResultTypeEnum.ElasticityNotFound, "");
         }
         return LemonadeStandResultObject.Success(extraData: elasticityValue);
+    }
+
+    public DemandData GetDemandFor(Good good)
+    {
+        throw new System.NotImplementedException();
     }
 }

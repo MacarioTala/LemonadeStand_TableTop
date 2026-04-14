@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,9 +5,7 @@ public interface iDemandStrategy
 {
     public const int MinDemand = 0;
     public const int MaxDemand = 10000;
-    LemonadeStandResultObject AdjustDemandInPeriod(Market market);
-    [Obsolete("refactor this out. Demand is now driven by population and not the market.")]
-    void InitializeDemandForSpecificGood(Market market, Good good, int initialDemand, int minDemand = MinDemand, int maxDemand = MaxDemand, float curvature = 1f);
+    
     void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent);
 #region Default Implementations
     

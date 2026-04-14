@@ -91,7 +91,6 @@ public class GameOfLifeTest
        
        foreach (var good in TestGoods)
         {
-            LemonadeMarket.InitializeDemandForSpecificGood(good, Random.Range(100, 1000));
             LemonadeMarket.GetInventory().AddGood(new InventoryEntry(good,10000,.5m,0));
         }
     }

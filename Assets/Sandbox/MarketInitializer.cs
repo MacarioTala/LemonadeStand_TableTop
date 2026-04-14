@@ -23,7 +23,7 @@ namespace Sandbox
             // Initialize the market with goods and demand
             foreach (var good in testGoods)
             {
-                lemonadeMarket.InitializeDemandForSpecificGood(good, Random.Range(100, 1000));
+                //lemonadeMarket.InitializeDemandForSpecificGood(good, Random.Range(100, 1000));
                 lemonadeMarket.GetInventory().AddGood(new InventoryEntry(good, 10000, 0.5m, 0));
             }
             

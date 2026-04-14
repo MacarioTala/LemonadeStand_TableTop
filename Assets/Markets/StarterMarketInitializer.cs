@@ -54,6 +54,5 @@ public class StarterMarketInitializer : iMarketInitializer
         //This is a placeholder and will be replaced with a more sophisticated system
         var lemonade = Good.CreateInstance("Lemonade", new PriceBand(8.0m, 13.0m), RarityEnum.Uncommon);
         lemonade.IsProducedGood = true;
-        market.InitializeDemandForSpecificGood(lemonade, 1000);
     }
 }

@@ -36,7 +36,7 @@ public class TheEconomyTests
         test_goods.Add(sugar);
 
         //make the market demand a thousand lemons
-        testInitialMarket.InitializeDemandForSpecificGood(lemon, 1000);
+
     }
 #region  Initialization tests
   [Test]

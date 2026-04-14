@@ -54,33 +54,6 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
         return ask;
     }
 
-    public void InitializeDemandForSpecificGood(Market market,Good good,int initialDemand, int minDemand=GlobalMinDemand, int maxDemand=GlobalMaxDemand,float curvature=1f)
-    {
-        decimal ask;
-        bool hasCostForGood = CalculateAskForProducedGood(market,good) > 0;
-        var marketDemand = market.GetPopulationDemand();
-        if(good.IsProducedGood && hasCostForGood)
-        {
-            ask=CalculateAskForProducedGood(market,good);
-        }
-        else
-        {
-            ask = good.GetPrice();
-        }
-
-        if(marketDemand.ContainsKey(good)) marketDemand.Remove(good);
-    
-        var demandData = new DemandData
-                        { 
-                            CurrentDemand = initialDemand,
-                            FulfilmentRate = 0f,
-                            MinDemand = minDemand,
-                            MaxDemand = maxDemand,
-                            Ask = ask
-                        };
-        marketDemand.Add(good, demandData);
-    }
-
     public void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent)
     {
         var good = orderFulfilledEvent.Good;
@@ -124,13 +97,6 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
      private static float GetElasticity (Market market, Good good, ElasticityTypeEnum elasticity)
     {
-        var marketDemand = market.GetPopulationDemand();
-
-        if (!marketDemand.ContainsKey(good))
-        {
-            market.InitializeDemandForSpecificGood(good, 0);
-        }
-
         var doesElasticityExist = market.GetEffectiveElasticityForGood(good, elasticity);
         if (!doesElasticityExist.Equals(LemonadeStandResultObject.Success()))
         {

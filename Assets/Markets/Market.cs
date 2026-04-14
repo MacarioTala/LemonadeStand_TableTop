@@ -69,11 +69,8 @@ public class Market : ScriptableObject, iEconAgent
 
     public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticityType)
         => _demandManager.GetEffectiveElasticityForGood(good, elasticityType);
-    public int GetMarketDemandForGood(string goodName) => _demandManager.GetMarketDemandForGood(goodName);
-    public void SetMarketDemandForGood(Good good, DemandData demandData) => _demandManager.SetMarketDemandForGood(good, demandData);
+    public int GetMarketDemandForGood(Good good) => _demandManager.GetMarketDemandForGood(good);
 
-    public void InitializeDemandForSpecificGood(Good good, int initialDemand, int minDemand = iDemandStrategy.MinDemand, int maxDemand = iDemandStrategy.MaxDemand, float curvature = 1f)
-        => _demandManager.InitializeDemandForSpecificGood(good, initialDemand, minDemand, maxDemand, curvature);
     #endregion
     //Econ Agents
     private readonly List<EconAgent> _marketParticipants = new();
@@ -421,7 +418,6 @@ public class Market : ScriptableObject, iEconAgent
         ResolveDeliveries();
         UpdateFulfillmentRates(period);
         UpdatePrices();
-        DemandStrategy.AdjustDemandInPeriod(this);
         ConsumeGoods();
         ExpireGoods(period);
         UpdateCompanyStatuses(period);

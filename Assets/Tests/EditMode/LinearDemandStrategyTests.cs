@@ -133,7 +133,6 @@ public partial class LinearDemandStrategyTests
         var maxDemand = 750;
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = maxDemand };
         TestPopulation.SetDemand(Lemonade, demandForLemonade);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 500);
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, .5f);
         var dummyMetric = 1;
 
@@ -244,7 +243,6 @@ public partial class LinearDemandStrategyTests
     {
         //Arrange
         Company1.GetInventory().AddGood(new(Lemonade, 100,10m,0));
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, 100);
             var marketDemand = TestMarket.GetPopulationDemand();
             var lemonadeDemand = marketDemand[Lemonade];
 
@@ -276,9 +274,6 @@ public partial class LinearDemandStrategyTests
         const int initialDemand = 100;
         Company1.GetInventory().AddGood(new(Lemonade, 200,10m,0));
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
-            var marketDemand = TestMarket.GetPopulationDemand();
-            var lemonadeDemand = marketDemand[Lemonade];
         
         var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,200,1)
                     {
