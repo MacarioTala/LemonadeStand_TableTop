@@ -35,7 +35,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     {
         Name = companyName;
         agentLevel = company_level;
-        _companyStrategy = strategy;
+        agentStrategy = strategy;
 
         //setup
         if(initialCash==0) 
@@ -263,9 +263,9 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     }
 #endregion    
 #region Goals and strategies
-    private iStrategy _companyStrategy = null;
-    public iStrategy GetStrategy() => _companyStrategy;
-    public void SetStrategy(iStrategy strategy) => _companyStrategy = strategy;
+    private iStrategy agentStrategy = null;
+    public iStrategy GetStrategy() => agentStrategy;
+    public void SetStrategy(iStrategy strategy) => agentStrategy = strategy;
     
     public List<Goal> Goals {get;set;} = new();
 
@@ -280,7 +280,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     {
         Debug.Log("Goal Completed: "+goal);
     }
-    public void CheckCompanyGoals()
+    public void CheckAgentGoals()
     {
         foreach (var goal in Goals)
         {
@@ -292,16 +292,16 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         }
 
     }
-    public decimal GetAggressionLevel() => _companyStrategy.GetAggressionLevel();
+    public decimal GetAggressionLevel() => agentStrategy.GetAggressionLevel();
     public void SetAggressionLevel(decimal aggressionLevel)
     {
-        _companyStrategy.SetAggressionLevel(aggressionLevel);
+        agentStrategy.SetAggressionLevel(aggressionLevel);
     }
-    public void PerformStrategy(int period)
+    public void PerformStrategy()
     {
-        if (_companyStrategy != null)
+        if (agentStrategy != null)
         {
-            _companyStrategy.PerformStrategy(this);
+            agentStrategy.PerformStrategy(this);
         }
         else
         {

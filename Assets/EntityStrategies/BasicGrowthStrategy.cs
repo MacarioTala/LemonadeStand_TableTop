@@ -3,6 +3,7 @@ using System.Linq;
 
 public class BasicGrowthStrategy : iStrategy
 {
+    EconAgent Actor;
     //Manifestation of preferences
     decimal _aggressionLevel = 0.2m;
     public decimal GetAggressionLevel() => _aggressionLevel;
@@ -69,5 +70,10 @@ public class BasicGrowthStrategy : iStrategy
     public LemonadeStandResultObject PublishBidAskSpreadsToMarket(iEconAgent company)
     {
         throw new System.NotImplementedException();
+    }
+
+    public void SetEconAgent(EconAgent agent)
+    {
+        Actor = agent;
     }
 }

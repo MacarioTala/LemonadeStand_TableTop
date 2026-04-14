@@ -25,6 +25,7 @@ public abstract class InteractionManagerBase : iMarketInteractionManager
     {
         var marketParticipants = _market.GetMarketParticipants()
                                 .OfType<PopulationAgent>()
+                                .Where(x=>!x.IsPlayer)
                                 .ToList();
 
         if (marketParticipants.Count() == 0)
@@ -33,7 +34,7 @@ public abstract class InteractionManagerBase : iMarketInteractionManager
         }
         foreach (var participant in marketParticipants)
         {
-            participant.PerformStrategy(period);
+            participant.PerformStrategy();
         }
     }
 

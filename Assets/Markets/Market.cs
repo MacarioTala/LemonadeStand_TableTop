@@ -448,7 +448,7 @@ public class Market : ScriptableObject, iEconAgent
     /// For markets not to be iCompanies
     public void CompleteGoal(Goal goal)
         => throw new NotImplementedException();
-    public void CheckCompanyGoals()
+    public void CheckAgentGoals()
         => throw new NotImplementedException();
     public decimal GetAggressionLevel()
         =>throw new NotImplementedException();

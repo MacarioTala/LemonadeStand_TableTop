@@ -8,6 +8,7 @@ public interface iStrategy
     LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel);
     public void PerformStrategy(ActionContext context);
     public void PerformStrategy(iEconAgent company);
+    void SetEconAgent(EconAgent agent);
 
     #region Default implementations
     /// <summary>
@@ -57,5 +58,6 @@ public interface iStrategy
 
     }
     #endregion
+    
 }
     

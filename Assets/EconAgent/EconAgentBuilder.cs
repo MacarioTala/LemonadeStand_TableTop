@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EconAgentBuilder<T> where T : EconAgent
 {
-    private readonly T agentToReturn;
+    internal readonly T agentToReturn;
 
     public EconAgentBuilder(T agent) => agentToReturn = agent;
     public static EconAgentBuilder<T> Create() => new(ScriptableObject.CreateInstance<T>());
@@ -19,6 +19,7 @@ public class EconAgentBuilder<T> where T : EconAgent
     public EconAgentBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)
     {
         agentToReturn.SetStrategy(behaviourStrategy);
+        behaviourStrategy.SetEconAgent(agentToReturn);
         return this;
     }
     public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
@@ -126,4 +127,14 @@ public static class EconAgentBuilder
 
     public static EconAgentBuilder<EconAgent> Wrap(EconAgent existingTemplate)
         => new(existingTemplate);
+}
+
+public static class PopulationBuilderExtensions
+{
+    public static EconAgentBuilder<T> WithIncome<T>(this EconAgentBuilder<T> builder,Income income) 
+        where T: PopulationAgent
+    {
+        builder.agentToReturn.SetIncome(income);
+        return builder;
+    }
 }
