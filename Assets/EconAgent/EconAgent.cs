@@ -99,9 +99,11 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     }
     #endregion
 #region Perception
-    public decimal GetPerceivedCostOfGood(Good good, Dictionary<Good, decimal> prices)
+    public List<KnownPrice> KnownPrices=new();
+    public decimal GetPerceivedCostOfGood(Good good, List<KnownPrice> prices=null)
     {
         var minimumBid = GetMarketIgnorantAssumedCOG();
+        prices??= KnownPrices;
         var perceivedCost = Recipes.Where(x => x.GetProduct().Equals(good))
                                 .Select(r => r.GetPerceivedCostPerUnit(prices))
                                 .DefaultIfEmpty(minimumBid)

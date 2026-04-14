@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public interface iStrategy
 {
     void GenerateGoals(iEconAgent company);
+    List<ActionContext> GetQueuedActions();
     decimal GetAggressionLevel();//Aggression level is a number from 0 to 1 determining how much 'extra' a population is willing to pay for the good
     LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel);
     public void PerformStrategy(ActionContext context);

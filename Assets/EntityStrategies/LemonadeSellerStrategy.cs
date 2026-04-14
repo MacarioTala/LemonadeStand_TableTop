@@ -119,10 +119,11 @@ public class LemonadeSellerStrategy : iStrategy
         var marketPrices = market.GetAverageMarketPrices();
         decimal sellPrice;
         
-        if (marketPrices.TryGetValue(lemonade, out decimal marketPrice) && marketPrice > 0)
+        var lemonadePrice = marketPrices.Where(x=>x.Good==lemonade).Average(x=>x.Price);
+        if (lemonadePrice > 0)
         {
             // Sell at market price or slightly below to be competitive
-            sellPrice = marketPrice * 0.95m;
+            sellPrice = lemonadePrice * 0.95m;
         }
         else
         {
@@ -158,5 +159,10 @@ public class LemonadeSellerStrategy : iStrategy
     public void SetEconAgent(EconAgent agent)
     {
         Actor = agent;
+    }
+
+    public List<ActionContext> GetQueuedActions()
+    {
+        throw new NotImplementedException();
     }
 }

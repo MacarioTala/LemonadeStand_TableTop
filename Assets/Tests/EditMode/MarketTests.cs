@@ -156,11 +156,11 @@ public partial class MarketTests
             Bid = sugar.GetPrice(),
             Ask = sugar.GetPrice()
         });
-        var asks = new Dictionary<Good, decimal>
+        var asks = new List<KnownPrice>()
         {
-            { lemon, lemon.GetPrice() },
-            { water, water.GetPrice() },
-            { sugar, sugar.GetPrice() }
+            new (){ Good=lemon, Price=lemon.GetPrice() },
+            new (){ Good=water, Price=water.GetPrice() },
+            new (){  Good=sugar, Price=sugar.GetPrice() }
         };
         var recipe1 = new Recipe("Recipe 1", lemonade, new List<Ingredient> { new(lemon, 1), new(water, 1), new(sugar, 1) });
         var recipe2 = new Recipe("Recipe 2", lemonade, new List<Ingredient> { new(lemon, 2), new(water, 2), new(sugar, 3) });

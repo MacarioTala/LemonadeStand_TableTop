@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.YamlDotNet.Serialization;
 
 public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
 {
@@ -55,14 +56,19 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
 
     public void SetMarket(Market market)=>_market = market;
 
-    public Dictionary<Good, decimal> GetAverageMarketPrices()
+    public List<KnownPrice> GetAverageMarketPrices()
     {
          var averagePrices = _market.MarketData
                             .GroupBy(x => x.Good)
-                            .ToDictionary(
-                                group => group.Key,
-                                group => group.Average(x => x.Ask)
-                            );
+                            .Select(
+                                y=> new KnownPrice
+                                {
+                                    Good = y.Key,
+                                    Price = y.Average(x=>x.Ask)
+                                }
+                            )
+                            .ToList();
+        
         return averagePrices;
     }
 }
