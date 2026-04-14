@@ -97,26 +97,25 @@ public class Recipe : ScriptableObject
         return Math.Round(cost_per_good.Sum(entry => entry.Value), 2);
     }
 
-    public decimal GetPerceivedCostPerUnit(Dictionary<Good, decimal> asks=null)
+    public decimal GetPerceivedCostPerUnit(List<KnownPrice> prices)
     {
-        decimal totalCost = 0;
-        if (asks is null)
-        {
-            asks = new();
-            foreach (var ingredient in ingredients)
-            {
-                asks.Add(ingredient.Good, ingredient.Good.GetPrice());
-            }
-        }
+        //Changed prices to required -- when would anyone ever know how to price something if they
+        //didn't know the prices of the ingredients?
+        decimal totalCost = 0m;
+        
+        if(ingredients.Any(x=> !prices.Any(y=>y.Good == x.Good)))
+            return totalCost;
+
         foreach (var ingredient in ingredients)
             {
-                if (asks.TryGetValue(ingredient.Good, out var askPrice))
-                {
-                    totalCost += askPrice * ingredient.Quantity_needed;
-                }
-                //what about if no price exists for the ingredient?
+                var averagePrice = prices
+                        .Where(x=>x.Good == ingredient.Good)
+                        .Average(x=> x.Price);
+
+                
+                totalCost += averagePrice *ingredient.Quantity_needed;
             }
-        return Math.Round(totalCost, 2);
+        return totalCost;
     }
     #region Unity Stuff
     void OnEnable()

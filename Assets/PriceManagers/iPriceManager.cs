@@ -4,7 +4,7 @@ public interface iPriceManager
 {
     void CalculateNewBidAskSpreadForMarket();
     decimal GetMarketCostForGood(Good good);
-    Dictionary<Good, decimal> GetAverageMarketPrices();
+    List<KnownPrice> GetAverageMarketPrices();
     void UpdatePricesForMarket();
     
 }

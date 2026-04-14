@@ -37,8 +37,13 @@ public class DefaultDemandManager : iDemandManager,iMarketAware
     public decimal GetPerceivedCostOfGood(Good good)
     {
         var asks = marketBeingManaged.MarketData
-                    .GroupBy(x => x.Good)
-                    .ToDictionary(g => g.Key, g => g.Average(x => x.Ask));
+                    .GroupBy(x => x.Good)                    
+                    .Select(g=> new KnownPrice
+                    {
+                        Good = g.Key,
+                        Price = g.Average(x=>x.Ask)
+                    })
+                    .ToList();
 
         var perceivedCost = marketBeingManaged.GetMarketParticipants()
                     .Where(x => x is not PopulationAgent)

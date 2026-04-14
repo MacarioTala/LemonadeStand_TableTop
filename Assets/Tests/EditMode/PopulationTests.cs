@@ -171,12 +171,12 @@ public class PopulationTests
                     .Named("Fruit Punch")
                     .WhichIsProducedGood()
                     .Build();
-        var prices = new Dictionary<Good, decimal>()
+        var prices = new List<KnownPrice>()
                         {
-                            { apple,2m },
-                            { water,1m },
-                            { sugar,1m },
-                            { lemon,2m }
+                            new(){Good=apple,Price=2m },
+                            new(){Good=water,Price=1m },
+                            new(){Good=sugar,Price=1m },
+                            new(){Good=lemon,Price=2m }
                         };
         // Act
         var actual = TestPopulation.GetPerceivedCostOfGood(fruitPunch, prices);

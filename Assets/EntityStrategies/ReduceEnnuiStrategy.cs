@@ -244,4 +244,9 @@ public class ReduceEnnuiStrategy : iStrategy
     {
         Actor = agent;
     }
+
+    public List<ActionContext> GetQueuedActions()
+    {
+        throw new NotImplementedException();
+    }
 }

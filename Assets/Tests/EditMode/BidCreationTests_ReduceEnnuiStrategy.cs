@@ -152,11 +152,11 @@ public class BidCreationTests_ReduceEnnuiStrategy
     }
 
     [Test]
-    public void GetPerceivedCostOfGoodReturnsCostOfRecipePresent_NoMarketPrices()
+    public void GetPerceivedCostOfGoodReturnsZero_NoMarketPrices()
     {
         //Arrange
         TestPopulation.AddRecipe(LemonadeRecipe);
-        var expected = LemonadeRecipe.GetCostPerUnit(null);
+        var expected = 0;
 
         //Act
         var actual = TestPopulation.GetPerceivedCostOfGood(Lemonade, null);
@@ -173,11 +173,11 @@ public class BidCreationTests_ReduceEnnuiStrategy
     {
         //Arrange
         TestPopulation.AddRecipe(LemonadeRecipe);
-        var prices = new Dictionary<Good,decimal>
+        var prices = new List<KnownPrice>()
                         {
-                            { Lemon,.3m },
-                            { Water,.1m },
-                            { Sugar,.2m }
+                            new() { Good= Lemon,Price=.3m },
+                            new() { Good=Water,Price=.1m },
+                            new() { Good=Sugar,Price=.2m }
                         };
         var expected = LemonadeRecipe.GetPerceivedCostPerUnit(prices);
 
@@ -197,11 +197,11 @@ public class BidCreationTests_ReduceEnnuiStrategy
         TestPopulation.AddRecipe(LemonadeRecipe);
         var company1 = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
 
-        var prices = new Dictionary<Good, decimal>
+        var prices = new List<KnownPrice>()
                         {
-                            { Lemon,.3m },
-                            { Water,.1m },
-                            { Sugar,.2m }
+                            new(){ Good=Lemon,Price=.3m },
+                            new(){ Good=Water,Price=.1m },
+                            new(){ Good=Sugar,Price=.2m }
                         };
         TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Lemon, Ask = .3m});
         TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Water, Ask = .1m });

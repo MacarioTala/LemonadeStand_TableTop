@@ -379,7 +379,7 @@ public class Market : ScriptableObject, iEconAgent
     public decimal GetMarketCostForGood(Market market, Good good)
         => _priceManager.GetMarketCostForGood(good);
 
-    public Dictionary<Good, decimal> GetAverageMarketPrices()
+    public List<KnownPrice> GetAverageMarketPrices()
         => _priceManager.GetAverageMarketPrices();
     #endregion
 
