@@ -357,7 +357,6 @@ public class SupplyAndDemandTests
     {
         //Assert
         //Make a market that demands lemons
-        TestMarket.InitializeDemandForSpecificGood(lemon, 1000, 0, 1000, .8f);
 
         var expectedLemonDemand = 1000;
         var sellingCompany = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
@@ -388,7 +387,6 @@ public class SupplyAndDemandTests
 
         TestMarket.SetCash(1000000);
         var initialLemonadeDemand = 1000;
-        TestMarket.InitializeDemandForSpecificGood(lemonade, initialLemonadeDemand);
         var expectedLemonadeDemand = initialLemonadeDemand;
         var sellingCompany = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(sellingCompany);

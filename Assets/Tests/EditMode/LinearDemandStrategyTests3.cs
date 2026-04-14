@@ -15,7 +15,6 @@ public partial class LinearDemandStrategyTests
         //Arrange
         var initialDemand = 100;
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, .7f);
-        TestMarket.InitializeDemandForSpecificGood(Lemonade, initialDemand);
         TestMarket.SetMarketInstability(.1f);
 
         var expectedLowerBound = initialDemand;

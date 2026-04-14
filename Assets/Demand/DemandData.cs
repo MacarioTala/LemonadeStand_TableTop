@@ -42,6 +42,11 @@ public class DemandData
         return CurrentDemand;
     }
 
+    public int GetDemand()
+    { 
+        return GetRequisiteDemand();
+        //add other demand here later
+    }
     public int GetRequisiteDemand()
     {
         return MinDemand;

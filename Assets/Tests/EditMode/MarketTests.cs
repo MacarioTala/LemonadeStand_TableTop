@@ -90,7 +90,6 @@ public partial class MarketTests
     {
         test_initial_market = Market.Factory.CreateStarterMarket(companyName: "The First Market", 
                                                     demandStrategy: TestDemandStrategy);
-        test_initial_market.InitializeDemandForSpecificGood(lemon, 1000);
     }
 
     private void SetupGoodsAndRecipes()

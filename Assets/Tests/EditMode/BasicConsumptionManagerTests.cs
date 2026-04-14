@@ -53,7 +53,6 @@ public class BasicConsumptionManagerTests
                             .WithDataService(TestMarketDataService)
                             .WithSupplyProvider(TestSupplyProvider)
                             .WithDemographicManager(TestDemographicManager);
-        TestMarket.InitializeDemandForSpecificGood(lemonade, 1000);
 
         Company1 = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
         Company2 = EconAgent.Factory.Create("Company2", AgentLevelEnum.Beginner);
