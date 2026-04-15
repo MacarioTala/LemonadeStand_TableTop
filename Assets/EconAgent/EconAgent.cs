@@ -16,6 +16,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     public bool IsPlayer = false;
     private Market marketCompanyIsIn;
     public Market GetMarket() => marketCompanyIsIn;
+    
     public LemonadeStandResultObject SetMarket(Market market) {
          if(marketCompanyIsIn != null)
          {
@@ -70,6 +71,10 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     }
     
 #endregion
+#region Fields created specifically to be inspector- and author-friendly
+public StrategyFactory BehaviourStrategyAsset;
+[SerializeField]private List<DemandEntry> demandEntries=new();
+#endregion
 #region Action Economy
     private List<AllowedAction> allowedActions = new();
     private int actionsPerCycle;
@@ -116,18 +121,10 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     public decimal GetMarketIgnorantAssumedCOG() => marketIgnorantAssumedCOG;
     public void SetMarketIgnorantAssumedCOG(decimal value) => marketIgnorantAssumedCOG = value;
     private readonly Dictionary<Good, DemandData> _demand = new();
-    public Dictionary<Good, DemandData> GetDemand()
-    {
-        return _demand;
-    }
+    public IReadOnlyDictionary<Good, DemandData> GetDemand()=> _demand;
+    
     public DemandData GetDemandFor(Good good)
-    {
-        if (_demand.TryGetValue(good, out var demandData))
-        {
-            return demandData;
-        }
-        return null;
-    }
+        =>  good !=null && _demand.TryGetValue(good, out var demandData)? demandData:null;
     
     public int GetQuantityDemandedFor(Good good)
     {
@@ -136,7 +133,8 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 
     public void SetDemand(Good good, DemandData demandData)
     {
-        _demand[good] = demandData;
+        if(good == null || demandData ==null) return;
+            _demand[good] = demandData;
     }
 
 
@@ -272,7 +270,17 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 #region Goals and strategies
     private iStrategy agentStrategy = null;
     public iStrategy GetStrategy() => agentStrategy;
-    public void SetStrategy(iStrategy strategy) => agentStrategy = strategy;
+    public void SetStrategy(iStrategy strategy=null) 
+    {    
+        agentStrategy = strategy;
+        //If BehaviourStrategy is set in the Inspector , it won't be null
+        if(BehaviourStrategyAsset != null)
+            {
+                agentStrategy = BehaviourStrategyAsset.Instantiate();
+                agentStrategy.SetEconAgent(this);
+            }
+        
+     }
     
     public List<Goal> Goals {get;set;} = new();
 
@@ -372,7 +380,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         CurrentPeriod = period;
     }
     #endregion
-    #region Market Actions
+#region Market Actions
 
     public void SubtractFixedCostsForPeriod(int period) 
         {
@@ -436,7 +444,30 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         return LemonadeStandResultObject.Success();
     }
     #endregion
-#region Overrides
+#region Unity ScriptableObject Methods
+private void OnEnable()
+{
+    RebuildDemandDictionary();    
+}
+private void OnValidate()
+{
+    RebuildDemandDictionary();
+}
+    #endregion
+#region Helpers
+private void RebuildDemandDictionary()
+{
+    _demand.Clear();
+    foreach(var entry in demandEntries)
+        {
+            if(entry.Good == null||entry.DemandData==null)
+                continue;
+            
+            _demand[entry.Good] = entry.DemandData.ToDemandData();
+        }    
+}
+#endregion
+    #region Overrides
     public override string ToString() => Name;
 
     public override bool Equals(object other)

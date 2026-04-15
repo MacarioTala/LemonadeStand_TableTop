@@ -11,7 +11,7 @@ public class AddNewCompetitiveCompanyEffect : MarketEffectSO
     {
         var company = EconAgentBuilder
                     .ForBaseAgent()
-                    .Named(CompanyNameGenerator.GenerateName())
+                    .Named(NameGenerator.GenerateCompanyName())
                     .AtLevel(Level)
                     .WithInitialCash(InitialCashInCents*100)
                     .Build();

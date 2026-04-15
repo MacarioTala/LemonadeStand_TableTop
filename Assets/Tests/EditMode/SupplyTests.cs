@@ -10,7 +10,6 @@ public class SupplyTests
     Good Lemon;
     Good Lemonade;
     Market TestMarket;
-    int Period;
 
     EconAgent Company1;
     EconAgent Company2;
@@ -36,8 +35,6 @@ public class SupplyTests
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
-
-        Period=0;
 
         Lemon = Good.CreateInstance("Lemon", PriceBand1, RarityEnum.Common);
         Lemonade = Good.CreateInstance("Lemonade", PriceBand2, RarityEnum.Uncommon);

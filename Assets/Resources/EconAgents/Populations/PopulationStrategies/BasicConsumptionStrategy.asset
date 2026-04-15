@@ -9,11 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0563e727a0b24827bb9845c5ef3f34f, type: 3}
-  m_Name: Rent
-  m_EditorClassIdentifier: GameAssembly::FixedCost
-  Name: Rent
-  Description: Rent is {0} every {1} periods
-  FixedCostType: 0
-  AmountInCents: 100
-  Frequency: 2
+  m_Script: {fileID: 11500000, guid: 7a100f9009fed40ec83cff01ee5f1666, type: 3}
+  m_Name: BasicConsumptionStrategy
+  m_EditorClassIdentifier: GameAssembly::BasicConsumptioStrategyWrapper
