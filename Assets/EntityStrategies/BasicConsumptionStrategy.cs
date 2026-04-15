@@ -3,7 +3,7 @@ using System.Collections.Generic;
 public class BasicConsumptionStrategy : iStrategy
 {
     EconAgent Actor;
-    List<ActionContext> actions=new();
+    readonly List<ActionContext> actions=new();
 
     public List<ActionContext> GetQueuedActions()=> actions;
     public void GenerateGoals(iEconAgent company)

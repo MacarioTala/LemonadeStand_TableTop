@@ -14,5 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::PopulationAgent
   _agentName: RegularPopulation
   agentLevel: 0
+  IsPlayer: 0
+  BehaviourStrategyAsset: {fileID: 11400000, guid: fc08a3d5c39804893840d1aa5ba33e8f, type: 2}
+  demandEntries:
+  - Good: {fileID: 11400000, guid: 989f09048e4c94bd5a2bb02c9943c270, type: 2}
+    DemandData:
+      askInCents: 0
+      currentDemand: 0
+      initialDemand: 0
+      initialPriceInCents: 0
+      fulfilmentRate: 0
+      minDemand: 0
+      maxDemand: 0
+      consumptionRate: 1
   InitialCashInCents: 1000000
   _population: 100
+  Income:
+    IncomeInCents: 0
+    FrequencyInPeriods: 0

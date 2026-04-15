@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-
+[Serializable]
 public class DemandData
 {
     public decimal Ask { get; set; }

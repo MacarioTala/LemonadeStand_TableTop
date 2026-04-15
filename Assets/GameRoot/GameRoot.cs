@@ -143,18 +143,21 @@ public class GameRoot : MonoBehaviour
         }
     }
 
+
 #endregion
 #region Helpers
-private EconAgent SpawnAgentFromTemplate(EconAgent firm)
+private EconAgent SpawnAgentFromTemplate(EconAgent agent)
     {
         string agentName;
-        if (firm.IsPlayer)
-            agentName = firm.Name;
+        if (agent.IsPlayer)
+            agentName = agent.Name;
+        else if (agent is PopulationAgent)
+            agentName = $"{NameGenerator.GeneratePopulationName()}";
         else
-            agentName = $"{CompanyNameGenerator.GenerateName()}_{Guid.NewGuid().ToString("N")[..6]}";
+            agentName = $"{NameGenerator.GenerateCompanyName()}_{Guid.NewGuid().ToString("N")[..6]}";
 
         var fixedCostStrategy = new BasicFixedCostStrategy();
-        var instance = ScriptableObject.Instantiate(firm);
+        var instance = ScriptableObject.Instantiate(agent);
         EconAgentBuilder.Wrap(instance)
                         .Named(agentName)
                         .WithInitialCashFromTemplate()
@@ -163,7 +166,10 @@ private EconAgent SpawnAgentFromTemplate(EconAgent firm)
         
         instance.LoadFixedCostsFromTemplates(fixedCostTemplates ?? Enumerable.Empty<FixedCostTemplate>(),initialMarket.CurrentPeriod);
 
-        initialMarket.RegisterMarketParticipant(instance);
+        if(instance is PopulationAgent)
+            instance.SetStrategy();
+
+         initialMarket.RegisterMarketParticipant(instance);
         return instance;
       }
 #endregion

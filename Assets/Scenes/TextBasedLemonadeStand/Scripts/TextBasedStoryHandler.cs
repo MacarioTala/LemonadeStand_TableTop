@@ -11,7 +11,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Button EndTurnButton;
     [SerializeField] private TextMeshProUGUI PeriodText;
-    [SerializeField] private int numberOfPopulations;
+    [SerializeField] private int numberOfPopulations; 
     [SerializeField] private int numberOfNPCFirms;
     [SerializeField] TextMeshProUGUI OrderPanelArrivingText;
     [SerializeField] TextMeshProUGUI SummaryPanelText;
@@ -219,7 +219,7 @@ private SubscriptionToken goodsExpiredSubscription;
                 var s = string.Empty;
                 if(line.Order.Quantity>1) s="s";
 
-                LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
+                LogMessage($"{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
             }
         }
         if(lemonadeMadeThisTurn>0)
