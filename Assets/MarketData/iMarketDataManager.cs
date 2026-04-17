@@ -9,6 +9,6 @@ public interface iMarketDataManager
     List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods);
     void LogOrder(Order order, int period);
     LemonadeStandResultObject RecordOrderInPeriod(Order order, int period);
-    void RecordTrade(Execution trade);
+    void RecordExecution(Execution execution);
     
 }

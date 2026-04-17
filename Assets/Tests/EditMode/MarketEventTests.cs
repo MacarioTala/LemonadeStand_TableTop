@@ -22,8 +22,6 @@ public class MarketEventTests
 
     iSupplyHelper TestSupplyProvider;
 
-    int Period;
-
     MarketEventSO MaraudersAttack;
     MarketEventSO GodzillaAttack;
 
@@ -36,7 +34,6 @@ public class MarketEventTests
     [SetUp]
     public void Setup()
     {
-        Period = 0;
         Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Uncommon);
         Lemonade.IsProducedGood = true;
 

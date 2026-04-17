@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using static TestHelpers;
 
 public partial class BasicTradeProcessorTests
@@ -29,7 +30,8 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = company2SellsRLToCompany1ByCompany2;
         // Act
-        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade).ExtraData as List<Order>)?.FirstOrDefault();
+        TestTradeProcessor.TryGetCounterPartiesForOrder(TestMarket,company1BuysRLFromCompany2ByCompany1,out var result);
+        var actual = result.FirstOrDefault();
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -52,7 +54,8 @@ public partial class BasicTradeProcessorTests
 
         var expected = 2;
         // Act
-        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade).ExtraData as List<Order>)?.Count;
+        TestTradeProcessor.TryGetCounterPartiesForOrder(TestMarket,company1BuysRLFromAnyoneByCompany1,out var result);
+        var actual = result.Count;
         // Assert
         Assert.AreEqual(expected, actual,$"Expected {expected} counterparties, but found {actual}");
     }
@@ -78,10 +81,10 @@ public partial class BasicTradeProcessorTests
             Period = Period
         };
         Company2.QueueOrder(Company2Context);
-        var expected = 0;
+        var expected = new List<Order>();
         // Act
-        var actual=(TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade)
-                        .ExtraData as List<Order>)?.Count??0;
+        TestTradeProcessor.TryGetCounterPartiesForOrder(TestMarket,company1SellRLToAny,out var actual);
+
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -106,8 +109,7 @@ public partial class BasicTradeProcessorTests
         Company2.QueueOrder(Company2Context);
         var expected = 0;
         // Act
-        var actual = (TestTradeProcessor.FindCounterPartiesForOrder(TestMarket,RadioactiveLemonade)
-                        .ExtraData as List<Order>)?.Count??0;
+        TestTradeProcessor.TryGetCounterPartiesForOrder(TestMarket,company1BuysRLFromAny,out var actual);
         // Assert
         Assert.AreEqual(expected, actual);
     }

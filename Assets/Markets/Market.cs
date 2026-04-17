@@ -154,8 +154,8 @@ public class Market : ScriptableObject, iEconAgent
     #region Reporting
     public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
         => _marketDataManager.RecordOrderInPeriod(order, period);
-    public void RecordTrade(Execution trade)
-        => _marketDataManager.RecordTrade(trade);
+    public void RecordExecution(Execution trade)
+        => _marketDataManager.RecordExecution(trade);
     
     public List<Order> GetOrdersSubmittedInPeriod(int period)
         => _marketDataManager.GetOrdersSubmittedInPeriod(period);
@@ -319,6 +319,13 @@ public class Market : ScriptableObject, iEconAgent
     }
     #endregion
     #region History
+    readonly List<HistoricalRecord> MarketJournal=new();
+    public IEnumerable<HistoricalRecord> GetHistoricalRecordsInPeriod(int? period=null)
+    {
+        period??=CurrentPeriod;
+        return MarketJournal.Where(x=>x.CreatedInPeriod==period);
+    }
+    public void LogHistoricalRecord(HistoricalRecord record) => MarketJournal.Add(record);
     public float GetPopulationPercentageChangeInPeriod()
     {
         return MathHelper.GetMetricPercentageChangeInPeriod(

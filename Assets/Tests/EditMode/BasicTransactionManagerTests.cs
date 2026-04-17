@@ -59,7 +59,7 @@ public class BasicTransactionManagerTests
         var costOfThisLeg = 1m;
 
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade, "Company cannot trade with itself");
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -78,7 +78,7 @@ public class BasicTransactionManagerTests
         var costOfThisLeg = 1m;
 
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade, "Company cannot trade with itself");
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         //Act
         var actual = transactionManager.ValidateTransaction(order, order, costOfThisLeg);
         //Assert
@@ -101,7 +101,7 @@ public class BasicTransactionManagerTests
         };
         var costOfThisLeg = 1m;
         var expected = LemonadeStandResultObject.Success();
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -123,7 +123,7 @@ public class BasicTransactionManagerTests
         };
         var costOfThisLeg = 1m;
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientCash, "");
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert
@@ -145,7 +145,7 @@ public class BasicTransactionManagerTests
         };
         var costOfThisLeg = 1m;
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientGoods, "Seller does not have enough goods to complete the transaction");
-        var transactionManager = new DefaultTransactionManager();
+        var transactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         //Act
         var actual = transactionManager.ValidateTransaction(order, counterPartyOrder, costOfThisLeg);
         //Assert

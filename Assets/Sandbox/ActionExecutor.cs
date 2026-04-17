@@ -71,19 +71,19 @@ namespace Sandbox
             
             // Create orders with proper submitting companies
             Order trade;
-            if (buyer != lemonadeMarket)
-            {
-                // Company is buying from market or another company
-                trade = new Order(buyer, seller, goodToBuy, quantity, price);
-                trade.SubmittingCompany = buyer;
-            }
-            else
+            if (buyer.Equals(lemonadeMarket))
             {
                 // Market is buying (this shouldn't happen in our current setup)
                 trade = new Order(buyer, seller, goodToBuy, quantity, price);
                 trade.SubmittingCompany = seller;
             }
-            
+            else
+            {
+                // Company is buying from market or another company
+                trade = new Order(buyer, seller, goodToBuy, quantity, price);
+                trade.SubmittingCompany = buyer;
+            }
+
             var context = new ActionContext { 
                 TradeToSubmit = trade, 
                 MarketToSubmitTo = lemonadeMarket, 

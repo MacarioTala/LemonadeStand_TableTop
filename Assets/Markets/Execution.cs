@@ -13,12 +13,6 @@ public class Execution
     public TradeType TradeType;
     public decimal Price;
 
-    public Execution(Order recordedTrade, int period)
-    {
-        RecordedTrade = recordedTrade;
-        Period = period;
-    }
-
     public Execution(   Order order, 
                         iEconAgent buyer, 
                         iEconAgent seller, 
@@ -69,6 +63,7 @@ public class Execution
         return $"Executed: {actor} {action} {quantity} of {RecordedTrade.Good} in Period: {Period}";
     }
 }
+
 public enum TradeType
 {
     Buy,

@@ -289,7 +289,7 @@ public class RecordingExecutions
         Assert.AreEqual(expectedExecutionCount,actualExecutions.Count);
         Assert.IsTrue(ExecutionComparer.ListsAreEquivalent(expectedExecutions, actualExecutions,ExecutionComparer));
     }
-    [TestCase(TestName = "Company1 sells 4000 Lemonade, Company2 buys 10, Company 3 buys 10, population buys 2216. Expected executions: 6")]
+    [TestCase(TestName = "Company1 sells 4000 Lemonade, Company2 buys 10, Company 3 buys 10, population buys 1108. Expected executions: 6")]
     public void BigSell2CompanyCounterParty1MarketCounterparty()
     {
         var company1Quantity = 4000;
@@ -301,8 +301,12 @@ public class RecordingExecutions
         //Arrange
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, company1Quantity, company1Ask, Period));
 
-        var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
-        Company3.SetCash(1000);
+        var Company3 = EconAgentBuilder.For<EconAgent>()
+                        .Named("Company 3")
+                        .AtLevel(AgentLevelEnum.Beginner)
+                        .WithInitialCash(1000)
+                        .Build();
+    
         var Company1SellsToAnyone = new Order(null,Company1, Lemonade, company1Quantity, company1Ask);
         var Company2BuysFromAnyone = new Order(Company2, null, Lemonade, company2Quantity, company1Ask);
         var Company3BuysFromAnyone = new Order(Company3, null, Lemonade, company3Quantity, company1Ask);

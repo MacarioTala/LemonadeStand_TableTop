@@ -13,8 +13,6 @@ public class DemandElasticityTests
     EconAgent Company2;
     PopulationAgent TestPopulation;
     iStrategy TestReduceEnnuiStrategy;
-
-    int Period = 0;
     Good lemon;
     Good water;
     Good sugar;
