@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class PopulationAgent : EconAgent
 {
+    #region Inspector Friendly Fields
+    
+    #endregion
 
     #region Demographics
     [SerializeField]

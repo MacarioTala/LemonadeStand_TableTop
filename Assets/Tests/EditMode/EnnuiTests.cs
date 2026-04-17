@@ -10,7 +10,6 @@ public class EnnuiTests
 {
    Good Lemonade;
    Goal ReduceEnnuiGoal;
-   int Period = 0;
 
    Market TestMarket;
    iDemandStrategy TestDemandStrategy;

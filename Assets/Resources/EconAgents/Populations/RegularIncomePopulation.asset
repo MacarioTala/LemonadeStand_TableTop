@@ -24,9 +24,10 @@ MonoBehaviour:
       initialDemand: 0
       initialPriceInCents: 0
       fulfilmentRate: 0
-      minDemand: 0
+      minDemand: 100
       maxDemand: 0
       consumptionRate: 1
+  marketIgnorantAssumedCogInCents: 500
   InitialCashInCents: 1000000
   _population: 100
   Income:

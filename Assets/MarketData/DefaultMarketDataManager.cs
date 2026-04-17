@@ -80,8 +80,8 @@ public class DefaultMarketDataManager : iMarketDataManager,iMarketAware
         return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, "Order already recorded");
     }
 
-    public void RecordTrade(Execution trade)
+    public void RecordExecution(Execution execution)
     {
-        if (!_executedTradesInPeriod.Contains(trade)) _executedTradesInPeriod.Add(trade);
+        if (!_executedTradesInPeriod.Contains(execution)) _executedTradesInPeriod.Add(execution);
     }
 }

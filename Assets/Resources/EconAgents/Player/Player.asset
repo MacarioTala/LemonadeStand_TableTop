@@ -17,4 +17,5 @@ MonoBehaviour:
   IsPlayer: 1
   BehaviourStrategyAsset: {fileID: 0}
   demandEntries: []
+  marketIgnorantAssumedCogInCents: 0
   InitialCashInCents: 100000

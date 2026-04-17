@@ -99,12 +99,12 @@ namespace Sandbox
             bool isBuyOrder = false;
             
             // Check primary order
-            if (orderFulfilledEvent.PrimaryOrder.Buyer == company)
+            if (orderFulfilledEvent.PrimaryOrder.Buyer.Equals(company))
             {
                 isCompanyInvolved = true;
                 isBuyOrder = true;
             }
-            else if (orderFulfilledEvent.PrimaryOrder.Seller == company)
+            else if (orderFulfilledEvent.PrimaryOrder.Seller.Equals(company))
             {
                 isCompanyInvolved = true;
                 isBuyOrder = false;
@@ -115,13 +115,13 @@ namespace Sandbox
             {
                 foreach (var counterPartyOrder in orderFulfilledEvent.CounterPartyOrders)
                 {
-                    if (counterPartyOrder.Buyer == company)
+                    if (counterPartyOrder.Buyer.Equals(company))
                     {
                         isCompanyInvolved = true;
                         isBuyOrder = true;
                         break;
                     }
-                    else if (counterPartyOrder.Seller == company)
+                    else if (counterPartyOrder.Seller.Equals(company))
                     {
                         isCompanyInvolved = true;
                         isBuyOrder = false;

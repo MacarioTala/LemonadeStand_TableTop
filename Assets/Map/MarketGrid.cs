@@ -20,7 +20,6 @@ public class MarketGrid : MonoBehaviour
     {
         GridWidth = market.GetWidth();
         GridHeight = market.GetHeight();
-        GenerateGrid();
     }
 
     public void RegisterFeature(MarketFeature feature)
@@ -36,19 +35,4 @@ public class MarketGrid : MonoBehaviour
     {
         return featureDictionary.TryGetValue(id, out var feature) ? feature : null;
     }
-    
-
-    private void GenerateGrid()
-    {
-      grid = new GameObject[GridWidth, GridHeight];
-
-        for (int x = 0; x < GridWidth; x++)
-        {
-            for (int y = 0; y < GridHeight; y++)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-}
 }

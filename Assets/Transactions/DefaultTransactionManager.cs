@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using static HistoricalRecordHelper;
 
 public class DefaultTransactionManager : iTransactionManager,iMarketAware
 {
@@ -75,7 +76,7 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
             if (!processTransactionResult.Equals(LemonadeStandResultObject.Success()))
             {
                 primaryOrder.OrderStatus = processTransactionResult;
-                break;
+                return primaryOrder.OrderStatus;
             }
             _counterPartyOrdersToRecord.Add(counterPartyOrder);
             //Record CounterParty Order
@@ -90,9 +91,11 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
 
     internal LemonadeStandResultObject ProcessTransactionPair(Order primaryOrder, Order counterPartyOrder,int period)
     {
-        var buyer= primaryOrder.Buyer;
-        var seller = counterPartyOrder.Seller;
+        // var buyer= primaryOrder.Buyer;
+        // var seller = counterPartyOrder.Seller;
 
+        var buyer = primaryOrder.Buyer ?? counterPartyOrder.Buyer;
+        var seller = counterPartyOrder.Seller??primaryOrder.Seller;
         var good = primaryOrder.Good;
         var price = counterPartyOrder.Price;
 
@@ -113,8 +116,8 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
         }
         
         //Adjust cash balances
-        primaryOrder.Buyer.SetCash(primaryOrder.Buyer.GetCash() - costOfThisLeg);
-        counterPartyOrder.Seller.SetCash(counterPartyOrder.Seller.GetCash() + costOfThisLeg);
+        buyer.SetCash(buyer.GetCash() - costOfThisLeg);
+        seller.SetCash(seller.GetCash() + costOfThisLeg);
 
         //Adjust inventories
         var adjustedPeriod = period;
@@ -156,6 +159,13 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
                                                     ,period      : period
                                                 );
         counterPartyOrder.AddExecution(counterPartyExecution);
+        //Log to journal
+        var primaryRecord = CreateLocalHistoricalRecord(_market,primaryOrder);
+        JournalSuccessEntry(_market,primaryOrder,primaryRecord);
+        var counterPartyRecord = CreateLocalHistoricalRecord(_market,counterPartyOrder);
+        JournalSuccessEntry(_market,counterPartyOrder,counterPartyRecord);
+        
+
         //raise event
          _market.RaiseOrderFulfilledEvent(
             new OrderFulfilledEvent
@@ -163,7 +173,7 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
                 Good = primaryOrder.Good,
                 FulfilledQuantity = primaryOrder.FilledQuantity,
                 OriginalQuantity = primaryOrder.Quantity,
-                FillPrice = primaryOrder.Price,
+                FillPrice = price,
                 OrderMarket = _market,
                 Period = _market.CurrentPeriod,
                 PrimaryOrder = primaryOrder,
@@ -176,9 +186,11 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
 
     internal LemonadeStandResultObject ValidateTransaction(Order primaryOrder, Order counterPartyOrder,decimal costOfThisLeg)
     {
-        var buyer= primaryOrder.Buyer;
-        var seller = counterPartyOrder.Seller;
+        var buyer= primaryOrder.Buyer??counterPartyOrder.Buyer;
+        var seller = counterPartyOrder.Seller??primaryOrder.Seller;
+
         var sellerInventory = seller.GetInventory();
+        var record = CreateLocalHistoricalRecord(_market,primaryOrder);
 
         //Validate transaction
         if (
@@ -187,21 +199,28 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
             (buyer == seller)
             )
         {
-            primaryOrder.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade,"Company cannot trade with itself");
+            var msg = "Company cannot trade with itself";
+            primaryOrder.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.SelfTrade,msg);
+            JournalRejectEntry(_market,primaryOrder,record,msg,ResultTypeEnum.SelfTrade);
             return primaryOrder.OrderStatus;
         }
 
         if (buyer.GetCash() < costOfThisLeg)
         {
+            var msg = "Buyer does not have enough cash to complete the transaction";
             primaryOrder.OrderStatus = LemonadeStandResultObject.Failure
-                (ResultTypeEnum.InsufficientCash,"Buyer does not have enough cash to complete the transaction");
+                (ResultTypeEnum.InsufficientCash,msg);
+            JournalRejectEntry(_market,primaryOrder,record,ResultTypeEnum.InsufficientCash.ToString(),ResultTypeEnum.InsufficientCash);
             return primaryOrder.OrderStatus;
         }
 
         if (!HasGood(counterPartyOrder.Good, sellerInventory))
         {
+            var msg = $"Seller must have at least 1 quantity of {counterPartyOrder.Good} to trade";
+            record = CreateLocalHistoricalRecord(_market,counterPartyOrder);
             counterPartyOrder.OrderStatus = LemonadeStandResultObject.Failure
-                (ResultTypeEnum.InsufficientGoods,$"Seller must have at least 1 quantity of {counterPartyOrder.Good} to trade");
+                (ResultTypeEnum.InsufficientGoods,msg);
+            JournalRejectEntry(_market,counterPartyOrder,record,msg,ResultTypeEnum.InsufficientGoods);
             return counterPartyOrder.OrderStatus;
         }
 
@@ -242,13 +261,13 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
            }
            executedOrder.AddCounterPartyTrade(counterPartyOrder);
        }
-       marketToRecordIn.RecordTrade(executedOrder);
+       marketToRecordIn.RecordExecution(executedOrder);
        //Record CounterParty Orders as their own Market Trades
        foreach (var order in counterPartyOrders)
         {
             var counterPartyExecution = new Execution(order, order.Buyer,order.Seller,order.FilledQuantity,order.Price, tradingPeriod);
             counterPartyExecution.AddCounterPartyTrade(orderToRecord);
-            marketToRecordIn.RecordTrade(counterPartyExecution);
+            marketToRecordIn.RecordExecution(counterPartyExecution);
         }
     }
 

@@ -74,6 +74,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 #region Fields created specifically to be inspector- and author-friendly
 public StrategyFactory BehaviourStrategyAsset;
 [SerializeField]private List<DemandEntry> demandEntries=new();
+[SerializeField] private int marketIgnorantAssumedCogInCents;
 #endregion
 #region Action Economy
     private List<AllowedAction> allowedActions = new();
@@ -448,6 +449,7 @@ public StrategyFactory BehaviourStrategyAsset;
 private void OnEnable()
 {
     RebuildDemandDictionary();    
+    marketIgnorantAssumedCOG=marketIgnorantAssumedCogInCents/100m;
 }
 private void OnValidate()
 {

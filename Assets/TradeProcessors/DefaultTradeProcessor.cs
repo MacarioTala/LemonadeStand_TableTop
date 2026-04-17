@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using static HistoricalRecordHelper;
 
 public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
 {
@@ -16,6 +17,9 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
         _transactionManager = manager;
     }
     public List<Order> GetOrders()=>_tradesSentToTheMarket;
+    private bool BuyOrdersExistInMarket() => _tradesSentToTheMarket.Any(x => x.Buyer!=null);
+    private bool SellOrdersExistInMarket() =>_tradesSentToTheMarket.Any(x => x.Seller!=null);
+
     public List<Order> GetOrderResults(ActionContext context)
     {
         return _tradesSentToTheMarket
@@ -40,6 +44,7 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
     internal List<Order> ExecuteBestTradesForGood(Good good, List<Order> OrdersSentToMarket)
     {
         List<Order> executedOrders = new();
+        
         var relevantOrders = OrdersSentToMarket.Where(x => x.Good.Equals(good)
                                                )
                                                .ToList();
@@ -47,49 +52,84 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
         {
             var prioritizedOrders = prioritizer.Filter(relevantOrders);
             
-            for (var i =0; i< prioritizedOrders.Count;i++)
+            while(prioritizedOrders.Any())
             {
-                if(prioritizedOrders.Count == 1)
-                {
-                    prioritizedOrders[i].OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
+                var order = prioritizedOrders.FirstOrDefault(x=> !x.IsFullyFilled);
+                if(order is null)
                     break;
-                } 
-                var order = prioritizedOrders[i];
 
-                if (order.IsFullyFilled) 
+                var record = CreateLocalHistoricalRecord(_market,order);
+
+                if(HandleSingleOrder(prioritizedOrders,order,record))
+                    break;
+                
+                if (!TryGetCounterPartiesForOrder(_market,order, out var counterPartyOrders))
                 {
-                    prioritizedOrders.RemoveAt(i); 
-                    i--;
+                    HandleNoCounterParty(order,record);
+                    prioritizedOrders.Remove(order);
                     continue;
                 }
-                
-                if (FindCounterPartiesForOrder(_market,good).ExtraData is not List<Order> counterPartyOrders)
-                {
-                    order.OrderStatus = LemonadeStandResultObject.Failure(ResultTypeEnum.NoMatchingCounterParties, "No matching counterparty found");
-                }
-                else
-                {
-                   var transactionResult = _transactionManager.ProcessTransaction(
-                        new ActionContext
-                        {
-                            PrimaryOrder = order,
-                            CounterPartyOrders = counterPartyOrders,
-                            MarketToSubmitTo = _market,
-                            Period = _market.CurrentPeriod
-                        }
-                    );
-                    if(!transactionResult.Result.Equals(LemonadeStandResultObject.Success().Result))
-                        order.OrderStatus = transactionResult;
-                      
-                    executedOrders.Add(order);
-                    prioritizedOrders.RemoveAt(i);
-                    i--;
-                }
+
+                HandleTransaction(order, counterPartyOrders,executedOrders,prioritizedOrders);
             }
         }
         return executedOrders;
     }
+    void HandleTransaction(
+        Order order, 
+        List<Order> counterPartyOrders, 
+        List<Order> executedOrders, 
+        List<Order> prioritizedOrders)
+        //ref int i)
+    {
+        var transactionResult = _transactionManager
+                    .ProcessTransaction(
+                                        new ActionContext
+                                        {
+                                            PrimaryOrder = order,
+                                            CounterPartyOrders = counterPartyOrders,
+                                            MarketToSubmitTo = _market,
+                                            Period = _market.CurrentPeriod
+                                        }
+                                        );     
+        if(!transactionResult.Result.Equals(LemonadeStandResultObject.Success().Result))
+        {
+            order.OrderStatus = transactionResult;
+            prioritizedOrders.Remove(order);
+            return;
+        }
 
+        executedOrders.Add(order);
+        prioritizedOrders.RemoveAll(x=>x.IsFullyFilled);
+
+    }
+
+    public LemonadeStandResultObject QueueOrder(ActionContext context)
+    {
+        var record = CreateLocalHistoricalRecord(_market,context.TradeToSubmit);
+
+        if (_tradesSentToTheMarket.Contains(context.TradeToSubmit))
+        {
+            var message = "Order already exists in the queue";
+            record.Message = message;
+            record.Result = OrderResultEnum.Rejected;
+            _market.LogHistoricalRecord(record);
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, message);
+        }
+        _tradesSentToTheMarket.Add(context.TradeToSubmit);
+        record.Result = OrderResultEnum.Submitted;
+        _market.LogHistoricalRecord(record);
+        return LemonadeStandResultObject.Success();
+    }
+
+    public void SetMarket(Market market)
+    {
+        _market = market;
+        if (market.TransactionManager is not null) _transactionManager = market.TransactionManager;
+    }
+
+    #region Helpers
+   
     internal Order GeneratePrimaryOrder(Good good)
     {
         var buyOrders = _market.GetOrdersSentToMarket()
@@ -115,36 +155,21 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
                             .ToList();
         return sellOrders.Any() ? sellOrders.First() : null;
     }
-
-    private bool SellOrdersExistInMarket()
+    bool HandleSingleOrder(List<Order> prioritizedOrders,Order order, HistoricalRecord record)
     {
-        var sellOrdersExist = _tradesSentToTheMarket.Any(x => x.Seller!=null);
-        return sellOrdersExist;
+        if(prioritizedOrders.Count != 1)
+        {
+            return false;
+        }
+        JournalRejectEntry(_market,order,record,ResultTypeEnum.NoMatchingCounterParties.ToString(),ResultTypeEnum.NoMatchingCounterParties);
+        return true;
     }
-    private bool BuyOrdersExistInMarket()
+    void HandleNoCounterParty(Order order,HistoricalRecord record)
     {
-        var buyOrdersExist = _tradesSentToTheMarket.Any(x => x.Buyer!=null);
-        return buyOrdersExist;
+        JournalRejectEntry(_market,order,record,ResultTypeEnum.NoMatchingCounterParties.ToString(),ResultTypeEnum.NoMatchingCounterParties);
     }
-
-    internal LemonadeStandResultObject FindCounterPartiesForOrder(Market market,Good good)
-    {
-        var primaryOrder = GeneratePrimaryOrder(good);
-        var counterPartiesForOrder = market.GetOrdersSentToMarket()
-                                    .Where (x=>IsValidCounterParty(x, primaryOrder)
-                                    && x.Good.Equals(primaryOrder.Good))
-                                    .OrderBy(x=>x.Buyer != null? -x.Price:x.Price)
-                                    .ToList();
-
-        if (!counterPartiesForOrder.Any()) 
-           return LemonadeStandResultObject.Failure(
-                            ResultTypeEnum.NoMatchingCounterParties
-                            , "No matching counterparties found");
-                                    
-        return LemonadeStandResultObject.Success(counterPartiesForOrder);
-    }
-
-    internal bool IsValidCounterParty(Order order, Order primaryOrder)
+    
+     internal bool IsValidCounterParty(Order order, Order primaryOrder)
     {
         //Goods must match
         if(!order.Good.Equals(primaryOrder.Good)) return false;
@@ -162,16 +187,16 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
         var orderIsABuyPrimaryIsSell=order.Buyer is not null
                                     &&
                                     primaryOrder.Seller is not null;
-        var orderIsASellPrimaryIsSell=order.Seller is not null
+        var orderIsASellOrPrimaryIsSell=order.Seller is not null
                                     || primaryOrder.Seller is not null;
-        var orderIsABuyPrimaryIsBuy=order.Buyer is not null
+        var orderIsABuyOrPrimaryIsBuy=order.Buyer is not null
                                     || primaryOrder.Buyer is not null;
         var buyOrdersExistInMarket = BuyOrdersExistInMarket();
         var sellOrdersExistInMarket = SellOrdersExistInMarket();
         
         //If only buys or sells exist, there is no counterparty
-        if(orderIsASellPrimaryIsSell && !buyOrdersExistInMarket) return false;
-        if(orderIsABuyPrimaryIsBuy && !sellOrdersExistInMarket) return false;
+        if(orderIsASellOrPrimaryIsSell && !buyOrdersExistInMarket) return false;
+        if(orderIsABuyOrPrimaryIsBuy && !sellOrdersExistInMarket) return false;
 
         //Valid counterparty for buy order is a sell order
         //in a market where buy orders exist
@@ -185,19 +210,26 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
 
         return isCounterPartyForBuy || isCounterPartyForSell;
     }
-    public LemonadeStandResultObject QueueOrder(ActionContext context)
-    {
-        if(_tradesSentToTheMarket.Contains(context.TradeToSubmit))
-            {
-                return LemonadeStandResultObject.Failure(ResultTypeEnum.DuplicateOrder, "Order already exists in the queue");
-            }
-        _tradesSentToTheMarket.Add(context.TradeToSubmit);
-        return LemonadeStandResultObject.Success();
-    }
 
-    public void SetMarket(Market market)
+    internal bool TryGetCounterPartiesForOrder(Market market,Order primaryOrder, out List<Order> counterPartyOrders)
     {
-        _market = market;
-        if (market.TransactionManager is not null) _transactionManager = market.TransactionManager;
+        counterPartyOrders = market.GetOrdersSentToMarket()
+                                    .Where (x=>IsValidCounterParty(x, primaryOrder)
+                                    && x.Good.Equals(primaryOrder.Good))
+                                    .OrderBy(x=>x.Buyer != null? -x.Price:x.Price)
+                                    .ToList();
+
+        return counterPartyOrders.Any();
     }
+    bool TryRemoveIfFullyFilled(List<Order> prioritizedOrders,Order order, ref int i)
+    {
+        if(order.IsFullyFilled)
+            {
+                prioritizedOrders.RemoveAt(i);
+                i--;
+                return true;
+            }
+        return false; 
+    }
+    #endregion
 }
