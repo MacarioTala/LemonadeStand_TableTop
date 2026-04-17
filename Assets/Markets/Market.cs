@@ -279,8 +279,6 @@ public class Market : ScriptableObject, iEconAgent
     #endregion
 
     #region Company Interactions
-    public LemonadeStandResultObject ProcessMarketOrder(ActionContext context)
-        => _transactionManager.ProcessMarketTransaction(context);
     public List<Order> ProcessCompanyOrders() => _tradeProcessor.ProcessCompanyOrders();
     public LemonadeStandResultObject QueueOrder(ActionContext context)
         => _marketInteractionManager.QueueOrder(context);
