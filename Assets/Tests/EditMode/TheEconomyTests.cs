@@ -99,7 +99,7 @@ public class TheEconomyTests
         testEconomy.RegisterEconomicAgent(company2);
         var expected = 1;
         // Act
-        var actual=testEconomy.EconomicAgents.Where(x=>x is not Market).Count();
+        var actual=testEconomy.EconomicAgents.Count(x=>x is not Market);
         // Assert
         Assert.AreEqual(expected, actual);
     }

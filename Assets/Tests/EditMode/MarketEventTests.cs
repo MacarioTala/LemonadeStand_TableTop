@@ -112,6 +112,7 @@ public class MarketEventTests
         var expectedPopulation = 90;
         var testPopulation = EconAgentBuilder.For<PopulationAgent>()
             .WithPopulation(initialPopulation)
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
@@ -136,6 +137,7 @@ public class MarketEventTests
             .WithInitialCash(1000)
             .WithPopulation(initialPopulation)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
@@ -161,6 +163,7 @@ public class MarketEventTests
         var testPopulation = EconAgentBuilder.For<PopulationAgent>()
             .WithPopulation(initialPopulation)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
@@ -191,6 +194,7 @@ public class MarketEventTests
             .WithInitialCash(1000)
             .WithPopulation(initialPopulation)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
@@ -252,6 +256,7 @@ public class MarketEventTests
         var testPopulation = EconAgentBuilder.For<PopulationAgent>()
             .WithPopulation(initialPopulation)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
@@ -428,6 +433,7 @@ public class MarketEventTests
         const float initialAnxiety = 30;
         const float expectedAnxiety = 45;
         var company3 = EconAgentBuilder.ForBaseAgent()
+            .Named("Random Econ Agent")
             .WithAnxiety(initialAnxiety)
             .Build();
 

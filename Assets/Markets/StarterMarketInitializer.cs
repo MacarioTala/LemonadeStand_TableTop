@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class StarterMarketInitializer : iMarketInitializer
 {
@@ -20,11 +21,14 @@ public class StarterMarketInitializer : iMarketInitializer
         _inventory.AddGood(new InventoryEntry(Lemon, 10000, 2.0m, 0));
         _inventory.AddGood(new InventoryEntry(Sugar, 10000, 1.5m, 0));
         _inventory.AddGood(new InventoryEntry(Water, 10000, .75m, 0));
-        var LemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
-                                        product: Lemonade,
-                                        ingredients: new List<Ingredient> { new(Lemon, 9),
-                                                                           new(Sugar, 2),
-                                                                           new(Water, 7) });
+        var LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        LemonadeRecipe.Initialize("Basic Lemonade",
+                                  Lemonade,
+                                  new(){ new(Lemon, 9),
+                                         new(Sugar, 2),
+                                         new(Water, 7)
+                                  }
+        );
         market.AddRecipe(LemonadeRecipe);
     }
 

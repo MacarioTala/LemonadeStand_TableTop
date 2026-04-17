@@ -32,7 +32,8 @@ public class InventoryEntryTests
                                                     period: 0);
         TestGood.IsProducedGood = false;
 
-        Recipe TestRecipe = new(RecipeName: "Test Recipe", 
+        Recipe TestRecipe = ScriptableObject.CreateInstance<Recipe>();
+        TestRecipe.Initialize(recipeName: "Test Recipe", 
                                 product: TestGood, 
                                 ingredients: new List<Ingredient>());
         // Act
@@ -49,7 +50,8 @@ public class InventoryEntryTests
                                                     acquisition_price: 1.0m, 
                                                     period: 0);
         TestGood.IsProducedGood = true;
-        Recipe TestRecipe = new(RecipeName: "Test Good", 
+        Recipe TestRecipe = ScriptableObject.CreateInstance<Recipe>();
+        TestRecipe.Initialize(recipeName: "Test Good", 
                                 product:TestGood, 
                                 ingredients: new List<Ingredient>());
         var expected = TestRecipe;
