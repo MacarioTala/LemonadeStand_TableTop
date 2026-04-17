@@ -24,9 +24,10 @@ public class ChangePopulationEffect : MarketEffectSO
     }
 
     public ChangePopulationEffect(float populationChangePercentage)
-    {
-        PopulationChangePercentage = populationChangePercentage;
-    }
+        =>  PopulationChangePercentage = populationChangePercentage;
+    
+    public void SetPopulationChangePercentage(float populationChangePercentage)
+        => PopulationChangePercentage=populationChangePercentage;
 
     public void ChangeEffectMultiplier(float multiplier)
     {

@@ -123,7 +123,8 @@ public class GoodTests
             .WithRarity(RarityEnum.Very_Rare)
             .Build();
         enhancedlemonade.IsProducedGood = true;
-        var enhancedLemonadeRecipe = new Recipe(RecipeName: "Enhanced Lemonade",
+        var enhancedLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>(); 
+        enhancedLemonadeRecipe.Initialize(recipeName: "Enhanced Lemonade",
                                      product: enhancedlemonade, 
                                      ingredients: new List<Ingredient> { new(Lemon, 9), 
                                                                         new(Sugar, 2), 

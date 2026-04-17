@@ -79,6 +79,8 @@ public class Market : ScriptableObject, iEconAgent
         => _marketInteractionManager.RegisterMarketParticipant(marketParticipant);
     public LemonadeStandResultObject RemoveMarketParticipant(EconAgent marketParticipant)
         => _marketInteractionManager.RemoveMarketParticipant(marketParticipant);
+    
+    
 
     #region Demographics
     public float GetMarketInstability() => _demographicManager.GetMarketInstability();

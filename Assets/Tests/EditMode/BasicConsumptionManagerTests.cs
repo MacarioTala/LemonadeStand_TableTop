@@ -66,7 +66,7 @@ public class BasicConsumptionManagerTests
         sugar = Good.CreateInstance("Sugar", band1, RarityEnum.Common);
         lemon = Good.CreateInstance("Lemon", band2, RarityEnum.Common);
         lemonade = Good.CreateInstance("Lemonade", band3, RarityEnum.Uncommon);
-        lemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
+        lemonadeRecipe = new Recipe(recipeName: "Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 

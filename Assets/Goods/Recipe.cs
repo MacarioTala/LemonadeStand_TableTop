@@ -7,10 +7,10 @@ using UnityEngine;
 public class Recipe : ScriptableObject
 {
     public string RecipeName;
-    private List<Ingredient> ingredients=new();
+    private List<Ingredient> _ingredients=new();
     [SerializeField]
-    private Good product;
-    public Good GetProduct() => product;
+    private Good _product;
+    public Good GetProduct() => _product;
     [SerializeField]
     private List<SerializableIngredient> SerializableIngredients=new();
 
@@ -18,22 +18,33 @@ public class Recipe : ScriptableObject
     {
         return Get_max_quantity(entries)>0;
     }
-    public Recipe(string RecipeName, Good product, List<Ingredient> ingredients)
+    public Recipe(string recipeName, Good product, List<Ingredient> ingredients)
     {
-        this.RecipeName = RecipeName;
-        this.product = product;
-        this.ingredients = ingredients;
+        RecipeName = recipeName;
+        _product = product;
+        _ingredients = ingredients;
+    }
+
+    public Recipe()
+    {
+    }
+
+    public void Initialize(string recipeName, Good product, List<Ingredient> ingredients)
+    {
+        RecipeName = recipeName;
+        _product = product;
+        _ingredients = ingredients;
     }
     public List<string> GetIngredientNames()
-        =>ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
+        =>_ingredients.Select(ingredient => ingredient.Good.GoodName).ToList();
     
-    public List<Ingredient> GetIngredients() => ingredients;
+    public List<Ingredient> GetIngredients() => _ingredients;
 
-    public List<Ingredient> GetRequiredIngredientsForRecipe() => ingredients;
+    public List<Ingredient> GetRequiredIngredientsForRecipe() => _ingredients;
 
     public int Get_max_quantity(List<InventoryEntry> stock)
     {
-        var max_units_per_ingredient = ingredients.Select(ingredient => stock
+        var max_units_per_ingredient = _ingredients.Select(ingredient => stock
                                                   .Where(entry => entry.good == ingredient.Good)
                                                   .Sum(entry => entry.quantity) / ingredient.Quantity_needed)
                                                   .ToList();
@@ -48,13 +59,13 @@ public class Recipe : ScriptableObject
 
         if (quantity > Get_max_quantity(stock))
         {
-            throw new RecipeException("Not enough ingredients to make " + quantity + " " + product.GoodName);
+            throw new RecipeException("Not enough ingredients to make " + quantity + " " + _product.GoodName);
         }
         else
         {
             inventory.ConsumeForRecipe(this, quantity);
-            product.IsProducedGood = true;
-            return (product, quantity);
+            _product.IsProducedGood = true;
+            return (_product, quantity);
         }
     }
     public override string ToString() => RecipeName;
@@ -77,13 +88,13 @@ public class Recipe : ScriptableObject
         if (inventory is null)
         {
             inventory = new();
-            foreach (var ingredient in ingredients)
+            foreach (var ingredient in _ingredients)
             {
                 inventory.AddGood(new(ingredient.Good, 1, ingredient.Good.GetPrice(), 0));
             }
         }
         
-        foreach (var ingredient in ingredients)
+        foreach (var ingredient in _ingredients)
         {
             var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.GoodName);
             var costForThisIngredient = inventoryEntries.Sum(entry => entry.Cost * entry.quantity);
@@ -102,10 +113,10 @@ public class Recipe : ScriptableObject
         //didn't know the prices of the ingredients?
         decimal totalCost = 0m;
         
-        if(ingredients.Any(x=> !prices.Any(y=>y.Good == x.Good)))
+        if(_ingredients.Any(x=> !prices.Any(y=>y.Good == x.Good)))
             return totalCost;
 
-        foreach (var ingredient in ingredients)
+        foreach (var ingredient in _ingredients)
             {
                 var averagePrice = prices
                         .Where(x=>x.Good == ingredient.Good)
@@ -119,13 +130,13 @@ public class Recipe : ScriptableObject
     #region Unity Stuff
     void OnEnable()
     {
-        ingredients??=new List<Ingredient>();
-        ingredients.Clear();
+        _ingredients??=new List<Ingredient>();
+        _ingredients.Clear();
         if( SerializableIngredients == null) return;
         foreach(var si in SerializableIngredients)
         {
             if(Equals(si.Good,null)) continue;
-            ingredients.Add(new Ingredient(si.Good,si.QuantityNeeded));
+            _ingredients.Add(new Ingredient(si.Good,si.QuantityNeeded));
         }
     }
     #endregion

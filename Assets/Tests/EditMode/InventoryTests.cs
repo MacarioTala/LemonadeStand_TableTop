@@ -240,7 +240,8 @@ public class InventoryTests
         test_inventory.AddGood(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
         
-        var lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
+        var lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
+        lemonade_recipe.Initialize(recipeName: "Basic Lemonade",
                                          product: lemonade, 
                                         ingredients: new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 1;

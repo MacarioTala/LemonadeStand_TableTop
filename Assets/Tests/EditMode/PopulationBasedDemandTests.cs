@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEditor.VersionControl;
+using UnityEngine;
 
 [TestFixture]
 public class PopulationBasedDemandTests
@@ -38,7 +39,8 @@ public class PopulationBasedDemandTests
                 .Costing(1m)
                 .Build();
         
-        LemonadeRecipe = new Recipe("Ordinary Lemonade" , Lemonade , new List<Ingredient>{ new (Lemon,1), new (Water,3), new (Sugar,1) } );
+        LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        LemonadeRecipe.Initialize("Ordinary Lemonade" , Lemonade , new List<Ingredient>{ new (Lemon,1), new (Water,3), new (Sugar,1) } );
     }
 
     [Test]

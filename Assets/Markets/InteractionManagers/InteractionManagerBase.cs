@@ -30,7 +30,7 @@ public abstract class InteractionManagerBase : iMarketInteractionManager
 
         if (marketParticipants.Count() == 0)
         {
-            Debug.LogWarning($"No local agents found in Market {_market.Name}");
+            Debug.Log($"Market {_market.Name} has no populations");
         }
         foreach (var participant in marketParticipants)
         {

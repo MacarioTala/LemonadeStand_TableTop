@@ -91,6 +91,7 @@ public class RecordingDemographicHistoryTests
         var testPopulation = EconAgentBuilder.For<PopulationAgent>()
             .WithPopulation(1000)
             .WithFixedCostStrategy(TestFixedCostStrategy)
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Named("Test Population")
             .Build();
         TestMarket.RegisterMarketParticipant(testPopulation);
@@ -120,6 +121,7 @@ public class RecordingDemographicHistoryTests
             .WithFixedCostStrategy(populationFixedCostStrategy)
             .Named("People in the Market")
             .WithInitialCash(100)
+            .WithBehaviourStrategy(new BasicConsumptionStrategy())
             .Build();
         TestMarket.RegisterMarketParticipant(peopleInTheMarket);
         var MaraudersAttack = ScriptableObject.CreateInstance<MarketEventSO>();
@@ -127,7 +129,8 @@ public class RecordingDemographicHistoryTests
                                     "Marauders attack the market",
                                     100f,
                                     1);
-        var populationChangeEffect = new ChangePopulationEffect(-10f);
+        var populationChangeEffect = ScriptableObject.CreateInstance<ChangePopulationEffect>();
+            populationChangeEffect.SetPopulationChangePercentage(-10f);
         MaraudersAttack.AddEffect(populationChangeEffect);
 
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
@@ -162,6 +165,7 @@ public void MultiplePeriodsRecordDistinctSnapshots()
     var testPopulation = EconAgentBuilder.For<PopulationAgent>()
         .WithPopulation(1000)
         .WithFixedCostStrategy(TestFixedCostStrategy)
+        .WithBehaviourStrategy(new BasicConsumptionStrategy())
         .Named("Test Population")
         .Build();
     TestMarket.RegisterMarketParticipant(testPopulation);

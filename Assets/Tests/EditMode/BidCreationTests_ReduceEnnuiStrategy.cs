@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using UnityEngine;
 
 [TestFixture]
 public class BidCreationTests_ReduceEnnuiStrategy
@@ -51,7 +52,8 @@ public class BidCreationTests_ReduceEnnuiStrategy
                 .Costing(.2m)
                 .Build();
 
-        LemonadeRecipe = new Recipe("Ordinary Lemonade"
+        LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        LemonadeRecipe.Initialize("Ordinary Lemonade"
                                     , Lemonade
                                     , new List<Ingredient>{
                                         new (Lemon,1),

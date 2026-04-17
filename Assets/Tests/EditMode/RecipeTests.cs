@@ -40,7 +40,8 @@ public class RecipeTests
         var lemonade_ingredients = new List<Ingredient> { new(lemon, 9),
                                                           new(sugar, 2), 
                                                           new(water, 7) };
-        basicLemonadeRecipe = new Recipe(RecipeName:"Basic Lemonade",
+        basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        basicLemonadeRecipe.Initialize("Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: lemonade_ingredients);
     }
@@ -79,7 +80,8 @@ public class RecipeTests
         test_inventory.AddGood(inventory_entry2);
         test_inventory.AddGood(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
-        var lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
+        var lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
+        lemonade_recipe.Initialize(recipeName: "Basic Lemonade",
                                          product: lemonade, 
                                          ingredients: new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 2;
@@ -100,7 +102,8 @@ public class RecipeTests
         test_inventory.AddGood(inventory_entry2);
         test_inventory.AddGood(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
-        var lemonade_recipe = new Recipe(RecipeName:"Basic Lemonade",
+        var lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
+        lemonade_recipe.Initialize(recipeName:"Basic Lemonade",
                                          product: lemonade, 
                                          ingredients:new List<Ingredient> { new(lemon, 9), new(sugar, 2), new(water, 7) });
         var quantity = 1;
@@ -151,7 +154,8 @@ public class RecipeTests
         inventory.AddGood(sugarInventoryEntry);
         inventory.AddGood(waterInventoryEntry);
         inventory.AddGood(secondLemonInventoryEntry);
-        basicLemonadeRecipe = new Recipe(RecipeName:"Basic Lemonade",
+        basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        basicLemonadeRecipe.Initialize(recipeName:"Basic Lemonade",
                                     product: lemonade, 
                                     ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
@@ -191,7 +195,8 @@ public class RecipeTests
         inventory.AddGood(lemonInventoryEntry);
         inventory.AddGood(sugarInventoryEntry);
         inventory.AddGood(waterInventoryEntry);
-        basicLemonadeRecipe = new Recipe(RecipeName: "Basic Lemonade",
+        basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        basicLemonadeRecipe.Initialize(recipeName: "Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
@@ -219,7 +224,8 @@ public class RecipeTests
         inventory.AddGood(lemonInventoryEntry);
         inventory.AddGood(sugarInventoryEntry);
         inventory.AddGood(waterInventoryEntry);
-        basicLemonadeRecipe = new Recipe("Basic Lemonade",
+        basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>(); 
+        basicLemonadeRecipe.Initialize("Basic Lemonade",
                                     product: lemonade, 
                                     ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
@@ -252,7 +258,8 @@ public class RecipeTests
         inventory.AddGood(lemonInventoryEntry);
         inventory.AddGood(sugarInventoryEntry);
         inventory.AddGood(waterInventoryEntry);
-        basicLemonadeRecipe = new Recipe("Basic Lemonade",
+        basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        basicLemonadeRecipe.Initialize("Basic Lemonade",
                                     product: lemonade, 
                                     ingredients: new List<Ingredient> { new(lemon, 5), 
                                                                         new(sugar, 2), 
@@ -344,8 +351,9 @@ public void ConsumeForRecipeShouldNotDriveInventoryNegativeWhenUsingMultipleCost
                     .WhichIsProducedGood()
                     .Build();
 
-    var splitBatchRecipe = new Recipe(
-        RecipeName: "Split Batch Lemonade",
+    var splitBatchRecipe = ScriptableObject.CreateInstance<Recipe>();
+    splitBatchRecipe.Initialize(
+        recipeName: "Split Batch Lemonade",
         product: output,
         ingredients: new List<Ingredient>
         {
@@ -420,8 +428,8 @@ public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
                     .WhichIsProducedGood()
                     .Build();
 
-    var batchRecipe = new Recipe(
-        RecipeName: "Big Batch Lemonade",
+    var batchRecipe = ScriptableObject.CreateInstance<Recipe>();
+        batchRecipe.Initialize(recipeName: "Big Batch Lemonade",
         product: output,
         ingredients: new List<Ingredient>
         {

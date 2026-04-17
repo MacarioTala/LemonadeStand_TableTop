@@ -5,7 +5,6 @@ using NUnit.Framework;
 [TestFixture]
 public class SupplierAgentTests
 {
-    TheEconomy TestEconomy;
     Good Water;
     Good Lemon;
     Good Uranium;

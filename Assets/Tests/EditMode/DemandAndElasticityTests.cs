@@ -69,7 +69,8 @@ public class DemandAndElasticityTests
             new(Water, 3),
         };
 
-        LemonadeRecipe = new Recipe("Lemonade", Lemonade, ingredients);
+        LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
+        LemonadeRecipe.Initialize("Lemonade", Lemonade, ingredients);
 
         testPopulationStrategy = StrategyBuilder.For<ReduceEnnuiStrategy>()
                     .WithAggressionLevel(0.9m)

@@ -99,7 +99,8 @@ public partial class MarketTests
         sugar = Good.CreateInstance("Sugar", band1, RarityEnum.Common);
         lemonade = Good.CreateInstance("Lemonade", band2, RarityEnum.Uncommon);
         lemonade.IsProducedGood = true;
-        lemonade_recipe = new Recipe(RecipeName: "Basic Lemonade",
+        lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
+        lemonade_recipe.Initialize( "Basic Lemonade",
                                      product: lemonade, 
                                      ingredients: new List<Ingredient> { new(lemon, 9), 
                                                                         new(sugar, 2), 
@@ -161,8 +162,10 @@ public partial class MarketTests
             new (){ Good=water, Price=water.GetPrice() },
             new (){  Good=sugar, Price=sugar.GetPrice() }
         };
-        var recipe1 = new Recipe("Recipe 1", lemonade, new List<Ingredient> { new(lemon, 1), new(water, 1), new(sugar, 1) });
-        var recipe2 = new Recipe("Recipe 2", lemonade, new List<Ingredient> { new(lemon, 2), new(water, 2), new(sugar, 3) });
+        var recipe1 = ScriptableObject.CreateInstance<Recipe>(); 
+            recipe1.Initialize("Recipe 1", lemonade, new List<Ingredient> { new(lemon, 1), new(water, 1), new(sugar, 1) });
+        var recipe2 = ScriptableObject.CreateInstance<Recipe>();
+            recipe2.Initialize("Recipe 2", lemonade, new List<Ingredient> { new(lemon, 2), new(water, 2), new(sugar, 3) });
         var recipe1Cost = recipe1.GetPerceivedCostPerUnit(asks);
         var recipe2Cost = recipe2.GetPerceivedCostPerUnit(asks);
         var expected = (recipe1Cost + recipe2Cost) / 2;
