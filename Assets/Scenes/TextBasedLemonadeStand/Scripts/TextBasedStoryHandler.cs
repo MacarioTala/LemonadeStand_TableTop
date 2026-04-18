@@ -23,8 +23,10 @@ public class TextBasedStoryHandler : MonoBehaviour
     public static TextBasedStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
 
-#region Temporary
-    private int lemonadeMadeThisTurn; //TODO: move this to EconAgent eventually
+#region Turn Variables
+    private int _lemonadeMadeThisTurn; //TODO: move this to EconAgent eventually
+    private int _cupsToSell;
+    private bool _goodsSpoiled;
 #endregion
 
 #region Subscriptions
@@ -134,19 +136,22 @@ private SubscriptionToken goodsExpiredSubscription;
     #region Handlers
     private void OnCupsChanged(string input)
     {
-        if(string.IsNullOrWhiteSpace(input)) return;
+        var max = GetMaxCups();
 
         if(!int.TryParse(input,out var value))
         {
-            SaleSignCupsToSell.text = "0";
-            return;
+            value = 0;
         }
-        var max = GetMaxCups();
+        
+        value = Mathf.Clamp(value,0,max);
+        _cupsToSell = value;
 
-        if (value > max)
+        var stringifiedValue = value.ToString();
+        if (SaleSignCupsToSell.text != stringifiedValue)
         {
-            SaleSignCupsToSell.text = max.ToString();
+            SaleSignCupsToSell.SetTextWithoutNotify(stringifiedValue);
         }
+        
     }
     private void OnDeliveriesResolved(DeliveriesResolvedEvent evt)
     {
@@ -167,15 +172,17 @@ private SubscriptionToken goodsExpiredSubscription;
         if(PlayerCompany == null || evt.Agent != PlayerCompany)
             return;
         
-        LogMessage("!!Goods have expired!!");
-        LogMessage("The following goods have expired");
+        LogMessage("The fridge smells funny");
+        LogMessage("You see that");
         foreach(var item in evt.ExpiringItems)
             {
                 var s = string.Empty;
                 if(item.quantity>1)
                     s="s";
                 LogMessage($"\n{item.quantity} {item.good.name}{s} spoiled overnight");
+                LogMessage("\n");
             }
+        _goodsSpoiled = true;
     }
 
     private void OnMarketEventFired(Market market, MarketEventSO so)
@@ -195,12 +202,14 @@ private SubscriptionToken goodsExpiredSubscription;
     {
         var summaryPeriod = initialMarket.CurrentPeriod==0?0:initialMarket.CurrentPeriod -1;
 
-        var orders = initialMarket.GetOrdersExecutedInPeriod(summaryPeriod);
-        var buys = orders
+        var orders = initialMarket.GetHistoricalRecordsInPeriod(summaryPeriod);
+        var executions = initialMarket.GetOrdersExecutedInPeriod(summaryPeriod);
+        var buys = executions
                     .Where(x=>ReferenceEquals(x.Order.Buyer,PlayerCompany))
                     .ToList();
         
-        var sales = orders
+        var salesAttempts = orders.Where(x=>x.OriginalOrderSnapshot.SellerName==PlayerCompany.Name).ToList();
+        var sales = executions
                     .Where(x=>ReferenceEquals(x.Order.Seller,PlayerCompany))
                     .ToList();
         
@@ -208,7 +217,7 @@ private SubscriptionToken goodsExpiredSubscription;
                                      .FixedCostLedger
                                      .Where(x=>x.Period==summaryPeriod)
                                      .ToList();
-
+        
         yield return ShowMessageWithWait($"Summary for period {summaryPeriod} ",1);
 
         if(buys.Count>0)
@@ -222,21 +231,32 @@ private SubscriptionToken goodsExpiredSubscription;
                 LogMessage($"{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
             }
         }
-        if(lemonadeMadeThisTurn>0)
+        if(_lemonadeMadeThisTurn>0)
         {
-            LogMessage($"You made {lemonadeMadeThisTurn} cups of Lemonade.");
+            LogMessage($"You made {_lemonadeMadeThisTurn} cups of Lemonade.");
         }
+
+        if(orders.Any())
+        {
+            //LogMessage($"You tried to sell {SaleSignCupsToSell.text} cups at {SaleSignLemonadePriceField.text}");
+            foreach(var order in orders.Where(x=>x.OriginalOrderSnapshot.SellerName==PlayerCompany.Name))
+                LogMessage(order.Message);
+        }
+
         if(sales.Count>0)
         {
             LogMessage("You sold");
             foreach(var line in sales)
             {
                     var s = string.Empty;
-                    if(line.Order.Quantity>1) s="s";
+                    if(line.Order.Quantity>1) s="cups";
 
-                    LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName}{s}");
+                    LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName} {s} at {line.Order.Price}");
             }
         }
+
+        if(_goodsSpoiled)
+            LogMessage("\nSome goods spoiled");
        
         if(fixedCostsPaidThisPeriod.Count>0)
         {
@@ -254,7 +274,7 @@ private SubscriptionToken goodsExpiredSubscription;
         isPeriodStart = true;
         ClearTextScroll();
 
-        lemonadeMadeThisTurn = 0;
+        _lemonadeMadeThisTurn = 0;
         UpdateMaxLemonade();
         UpdateOrderPanelArrivingText(string.Empty);
         UpdateOrderSummaryArrivingText(string.Empty);
@@ -286,6 +306,8 @@ private SubscriptionToken goodsExpiredSubscription;
         LogMessage("Hit <Space> to continue");
         yield return WaitForContinue();
 
+        ClearSaleSign();
+        ResetTurnVariables();
         StartTurn();
     }
 
@@ -297,7 +319,7 @@ private SubscriptionToken goodsExpiredSubscription;
 
     private void SellLemonade()
     {
-        var cupsToSell = GetCupsToSell();
+        var cupsToSell = _cupsToSell;
         if(cupsToSell <=0) return;
 
         var lemonadeEntry = PlayerCompany.GetInventory().GetInventoryEntries().FirstOrDefault(x=>x.good.GoodName=="Lemonade");
@@ -392,12 +414,23 @@ private SubscriptionToken goodsExpiredSubscription;
         LogMessage("You open the fridge, you see:");
         if(inventory.Count>0)
         {
-            foreach (var item in inventory)
+            foreach (var item in inventory.Where(x=>!x.good.IsProducedGood))
             {
                 var s = string.Empty;
                 if(item.quantity>1)
                     s="s";
                 LogMessage($"{item.quantity} {item.good} {s} you bought for {item.Cost}");
+            }
+            if(inventory.Any(x=>x.good.IsProducedGood))
+            {
+                LogMessage("..and");
+                foreach (var item in inventory.Where(x=>x.good.IsProducedGood))
+                {
+                    var s = string.Empty;
+                    if(item.quantity>1)
+                        s="s";
+                    LogMessage($"{item.quantity} {item.good} {s} you made at {item.Cost} per {item.good}");
+                }
             }
         }
         else
@@ -454,7 +487,7 @@ private SubscriptionToken goodsExpiredSubscription;
                     PlayerCompany.MakeRecipe(context);
                     LogMessage("You made "+maxQuantity+" units of: "+BasicLemonadeRecipe.GetProduct());
                     UpdateMaxLemonade();
-                    lemonadeMadeThisTurn = maxQuantity;
+                    _lemonadeMadeThisTurn = maxQuantity;
                 }
                 else
                 {
@@ -490,11 +523,13 @@ private SubscriptionToken goodsExpiredSubscription;
     {
         if(textScroll!=null) textScroll.text = "";
     }
-    private int GetCupsToSell()
+    private void ClearSaleSign()
     {
-        int.TryParse(SaleSignCupsToSell.text, out var cups);
-        return cups;
+        const string zero="0";
+        SaleSignLemonadePriceField.SetTextWithoutNotify(zero);
+        SaleSignCupsToSell.SetTextWithoutNotify(zero);
     }
+
     private decimal GetLemonadePrice()
     {
         decimal.TryParse(SaleSignLemonadePriceField.text, out var price);
@@ -547,6 +582,13 @@ private SubscriptionToken goodsExpiredSubscription;
         CurrentUIState = UIStateEnum.Idle;
 
         StartTurn();
+    }
+
+    public void ResetTurnVariables()
+    {
+        _lemonadeMadeThisTurn=0;
+        _cupsToSell=0;
+        _goodsSpoiled = false;
     }
 
     private IEnumerator ShowMessageWithWait(string message,int waitForSeconds)
