@@ -57,6 +57,7 @@ public class BasicConsumptionStrategy : iStrategy
                 var marketOrderContext = new ActionContextBuilder()
                                         .WithAction(ActionEnum.QueueTradeBuy)
                                         .WithTrade(marketOrder)
+                                        .ForMarket(Actor.GetMarket())
                                         .Build();
                 actions.Add(marketOrderContext);
             }

@@ -156,9 +156,9 @@ RectTransform:
   - {fileID: 851550598}
   - {fileID: 1471910629}
   - {fileID: 1647543050}
-  - {fileID: 1030463054}
   - {fileID: 1596919220}
   - {fileID: 2020394389144462156}
+  - {fileID: 1030463054}
   m_Father: {fileID: 247810150}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -316,7 +316,7 @@ GameObject:
   - component: {fileID: 68478521}
   - component: {fileID: 68478520}
   - component: {fileID: 68478522}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CardTextBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -520,9 +520,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1556442285928526558, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2249828458221920169, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2599810046502283364, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2849390905385233682, guid: 966b03cf322594546b64f118b60090ba, type: 3}
       propertyPath: m_Name
       value: CloseButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 2849390905385233682, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3038138190335956509, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424791849260414715, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6119289787517805137, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6768502330730654592, guid: 966b03cf322594546b64f118b60090ba, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8244647797165233836, guid: 966b03cf322594546b64f118b60090ba, type: 3}
       propertyPath: m_fontColor.b
@@ -813,7 +845,7 @@ GameObject:
   - component: {fileID: 486535270}
   - component: {fileID: 486535272}
   - component: {fileID: 486535271}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LeftShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -887,7 +919,7 @@ GameObject:
   m_Component:
   - component: {fileID: 497732542}
   - component: {fileID: 497732544}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ClickBlocker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1163,7 +1195,7 @@ GameObject:
   - component: {fileID: 681159961}
   - component: {fileID: 681159963}
   - component: {fileID: 681159962}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EventTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1300,7 +1332,7 @@ GameObject:
   - component: {fileID: 683661764}
   - component: {fileID: 683661766}
   - component: {fileID: 683661765}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Studio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1678,7 +1710,7 @@ GameObject:
   - component: {fileID: 948724614}
   - component: {fileID: 948724616}
   - component: {fileID: 948724615}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HighlightBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1788,7 +1820,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1030463054}
   - component: {fileID: 1030463055}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EventSplash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1834,7 +1866,7 @@ GameObject:
   - component: {fileID: 1158996952}
   - component: {fileID: 1158996954}
   - component: {fileID: 1158996953}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FlavourText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1982,7 +2014,7 @@ GameObject:
   - component: {fileID: 1183650374}
   - component: {fileID: 1183650376}
   - component: {fileID: 1183650375}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TitleBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2178,7 +2210,7 @@ GameObject:
   - component: {fileID: 1546538750}
   - component: {fileID: 1546538752}
   - component: {fileID: 1546538751}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EventText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2539,7 +2571,7 @@ GameObject:
   - component: {fileID: 1968875383}
   - component: {fileID: 1968875380}
   - component: {fileID: 1968875384}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: NewsAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2880,7 +2912,7 @@ GameObject:
   - component: {fileID: 2107748795}
   - component: {fileID: 2107748794}
   - component: {fileID: 2107748796}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EventCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}

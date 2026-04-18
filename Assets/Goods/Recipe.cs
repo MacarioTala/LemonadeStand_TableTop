@@ -51,7 +51,7 @@ public class Recipe : ScriptableObject
         return max_units_per_ingredient.Min();
     }
 
-    public (Good, int) Make_recipe(int quantity, Inventory inventory)
+    public (Good, int) MakeRecipe(int quantity, Inventory inventory)
     {
         var stock = inventory.GetAvailableInventory()
                  .Where(entry => GetIngredientNames().Contains(entry.good.GoodName))

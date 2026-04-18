@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BasicLemonadeRecipe
   m_EditorClassIdentifier: GameAssembly::Recipe
   RecipeName: Basic Lemonade
-  product: {fileID: 11400000, guid: 989f09048e4c94bd5a2bb02c9943c270, type: 2}
+  _product: {fileID: 11400000, guid: 989f09048e4c94bd5a2bb02c9943c270, type: 2}
   SerializableIngredients:
   - Good: {fileID: 11400000, guid: 00c68f188b3f343daaeb419ae5db5006, type: 2}
     QuantityNeeded: 1

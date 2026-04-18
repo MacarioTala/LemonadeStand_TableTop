@@ -87,7 +87,7 @@ public class RecipeTests
         var quantity = 2;
         //act
         //assert   
-        Assert.Throws<RecipeException>(() => lemonade_recipe.Make_recipe(quantity, test_inventory));
+        Assert.Throws<RecipeException>(() => lemonade_recipe.MakeRecipe(quantity, test_inventory));
     }
 
     [Test]
@@ -111,7 +111,7 @@ public class RecipeTests
         var expected_remaining_sugar = 8;
         var expected_remaining_water = 3;
         //act
-        var actual = lemonade_recipe.Make_recipe(quantity, test_inventory);
+        var actual = lemonade_recipe.MakeRecipe(quantity, test_inventory);
         //assert
         Assert.AreEqual((lemonade, quantity), actual);
         Assert.AreEqual(expected_remaining_lemons, test_inventory.GetInventoryEntries().Where(entry => entry.good == lemon).First().quantity);
@@ -162,7 +162,7 @@ public class RecipeTests
                                                                         new(water, 7) });
         var expected = (lemonade, 1);
         // Act
-        var actual = basicLemonadeRecipe.Make_recipe(1, inventory);
+        var actual = basicLemonadeRecipe.MakeRecipe(1, inventory);
         // Assert
         Assert.AreEqual(expected, actual);
     }
@@ -203,7 +203,7 @@ public class RecipeTests
                                                                         new(water, 7) });
         var expected = true;
         //Act
-        basicLemonadeRecipe.Make_recipe(1, inventory);
+        basicLemonadeRecipe.MakeRecipe(1, inventory);
         var actual = lemonade.IsProducedGood;
         //Assert
         Assert.AreEqual(expected, actual);

@@ -19,7 +19,7 @@ public class InventoryEntry
         }
         else
         {
-            throw new System.Exception("This good is not a produced good");
+            throw new Exception("This good is not a produced good");
         }
     }
     

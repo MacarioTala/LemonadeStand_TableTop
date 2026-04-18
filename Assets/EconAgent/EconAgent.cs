@@ -237,9 +237,9 @@ public StrategyFactory BehaviourStrategyAsset;
         }
         try
         {
-            var totalCost = recipe.GetCostPerUnit(inventory)*quantity;
-            var (product, product_quantity) = recipe.Make_recipe(quantity, inventory);
-            var inventoryEntryToAdd=new InventoryEntry(product, product_quantity, totalCost,context.Period);
+            var cost = recipe.GetCostPerUnit(inventory);
+            var (product, product_quantity) = recipe.MakeRecipe(quantity, inventory);
+            var inventoryEntryToAdd=new InventoryEntry(product, product_quantity, cost,context.Period);
             inventoryEntryToAdd.SetRecipe(recipe);
             inventory.AddGood(inventoryEntryToAdd);
         }
