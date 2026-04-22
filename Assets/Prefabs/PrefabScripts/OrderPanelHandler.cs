@@ -65,13 +65,16 @@ public class OrderPanelHandler : MonoBehaviour
         OrderButton.onClick.AddListener(SubmitOrder);
         if(!isSceneOnly)
         {
-            MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
+            RefreshMarketInventory();
 
-            if(MarketInventoryEntries.Count>0)
+            if (MarketInventoryEntries.Count > 0)
                 ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
         }
         InitializeOrderDropDown();
     }
+
+   
+
     private void WireUpBackend()
     {
         TheEconomyInstance = GameRoot.Instance.EconomyInstance;
@@ -89,8 +92,17 @@ public class OrderPanelHandler : MonoBehaviour
     private void ResetOrderPanel()
     {
         QuantityInput.GetComponent<TMP_InputField>().text = 0.ToString();
-        orderPanelDropdown.value = 0;
-        ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
+
+        if (MarketInventoryEntries == null || MarketInventoryEntries.Count == 0)
+        {
+            ValueLabel.text = "0";
+            TotalLabel.GetComponent<TextMeshProUGUI>().text = "0";
+            return;
+        }
+
+        orderPanelDropdown.SetValueWithoutNotify(0);
+        orderPanelDropdown.RefreshShownValue();
+        HandleOrderSelection(0);
     }
 
     private IEnumerator FadeText(string message)
@@ -132,16 +144,38 @@ public class OrderPanelHandler : MonoBehaviour
     {
         orderPanelDropdown.onValueChanged.AddListener(HandleOrderSelection);
         orderPanelDropdown.ClearOptions();
-        List<TMP_Dropdown.OptionData> options = new();
-        if(!isSceneOnly)
+        
+        if(isSceneOnly) return;
+        
+        RefreshOrderDropDown();
+    }
+
+    public void RefreshOrderDropDown()
+    {
+        if(isSceneOnly) return;
+        RefreshMarketInventory();
+
+        var previousIndex = orderPanelDropdown.value;
+
+        var options = MarketInventoryEntries
+                    .Select(x=> new TMP_Dropdown.OptionData(x.good.GoodName))
+                    .ToList();
+
+        orderPanelDropdown.ClearOptions();
+        orderPanelDropdown.AddOptions(options);
+
+        if(options.Count == 0)
         {
-            foreach (var entry in MarketInventoryEntries)
-            {
-                options.Add(new TMP_Dropdown.OptionData(entry.good.GoodName));
-            }
-            orderPanelDropdown.AddOptions(options);
-            orderPanelDropdown.RefreshShownValue();
+            ValueLabel.text ="0";
+            TotalLabel.GetComponent<TextMeshProUGUI>().text = "0";
+            return;
         }
+        var clampedIndex = Mathf.Clamp(previousIndex,0,options.Count -1);
+
+        orderPanelDropdown.SetValueWithoutNotify(clampedIndex);
+        orderPanelDropdown.RefreshShownValue();
+
+        HandleOrderSelection(clampedIndex);
     }
 
     private void HandleOrderSelection(int selectedIndex)
@@ -221,4 +255,10 @@ public class OrderPanelHandler : MonoBehaviour
                 break;
         }
     }
+    #region Helpers
+     private void RefreshMarketInventory()
+    {
+        MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
+    }
+    #endregion
 }

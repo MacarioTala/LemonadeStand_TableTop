@@ -10,6 +10,11 @@ public static class MathHelper
         if (targetValue <= 0) targetValue = 0.01f;
         return (float)(Math.Log(targetValue / initialValue) / Math.Log(1 - rate));
     }
+    public static bool IsCoinFlipHeads()
+    {
+        var rnd = new Random();
+        return rnd.Next(0,1)==0;
+    }
     public static float GetSingleCoeffientCubicOutput(float ratio, float coefficient)
     {
         /// <summary>

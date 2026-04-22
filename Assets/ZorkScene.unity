@@ -996,6 +996,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
+      propertyPath: orderPanelHandler
+      value: 
+      objectReference: {fileID: 851550600}
+    - target: {fileID: 2859873045662400171, guid: 951b4e15c6a734cbda42c970d72adb37, type: 3}
       propertyPath: SaleSignCupsToSell
       value: 
       objectReference: {fileID: 4906734663030859678}
@@ -1674,6 +1678,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &851550600 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2611795528220140047, guid: 655721b0239944b2ba964598988e2dd4, type: 3}
+  m_PrefabInstance: {fileID: 851550597}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 617933445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b028aea8adfb549d88ed966434374bfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &851550605

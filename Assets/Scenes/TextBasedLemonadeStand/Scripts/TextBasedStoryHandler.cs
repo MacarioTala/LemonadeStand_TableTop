@@ -19,6 +19,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     [SerializeField] TMP_InputField SaleSignCupsToSell;
     [SerializeField] TMP_InputField SaleSignLemonadePriceField;
     [SerializeField] NewsfeedController newsfeedController;
+    [SerializeField] OrderPanelHandler orderPanelHandler;
     private const string InitialMarketName = "Episode 1 Market";
     public static TextBasedStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
@@ -273,8 +274,9 @@ private SubscriptionToken goodsExpiredSubscription;
     {
         isPeriodStart = true;
         ClearTextScroll();
-
+        orderPanelHandler.RefreshOrderDropDown();
         _lemonadeMadeThisTurn = 0;
+        
         UpdateMaxLemonade();
         UpdateOrderPanelArrivingText(string.Empty);
         UpdateOrderSummaryArrivingText(string.Empty);

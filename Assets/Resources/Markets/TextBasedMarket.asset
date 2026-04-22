@@ -16,4 +16,12 @@ MonoBehaviour:
   _companyName: Episode 1 Market
   company_level: 3
   InitialCashInCents: 1000000
+  priceStability:
+  - Good: {fileID: 11400000, guid: 00c68f188b3f343daaeb419ae5db5006, type: 2}
+    Flex: 0.1
+  - Good: {fileID: 11400000, guid: 9e561dabd80ec4a7d91f481948d05510, type: 2}
+    Flex: 0.1
+  - Good: {fileID: 11400000, guid: d2a1784592a9c4715a6592128dc80ed0, type: 2}
+    Flex: 0.1
+  pricesFluctuateEvery: 1
   _demandStrategy: {fileID: 11400000, guid: 602599ce4ef314835aa3df168bf31309, type: 2}

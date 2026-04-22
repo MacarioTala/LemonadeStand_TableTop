@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting.YamlDotNet.Serialization;
 
 public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
 {
@@ -48,6 +47,21 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
             }
             return price;
         }
+
+    public void CyclePrices()
+    {
+        if(!_market.ShouldPricesCycleThisPeriod()) return;
+        var stabilityDictionary = _market.GetPriceStability().ToDictionary(x=> x.Good, x=> x.Flex);
+        var inventory = _market.GetInventory().GetInventoryEntries();
+        foreach(var entry in inventory)
+        {
+            if(!stabilityDictionary.TryGetValue(entry.good, out var flex)) continue;
+            
+            var direction = MathHelper.IsCoinFlipHeads()?1:-1;
+            var delta = direction*entry.Price*(decimal)flex;
+            entry.SetPrice(entry.Price+delta);
+        }
+    }
 
      public void SetPrice (Good good, decimal new_price)
         {

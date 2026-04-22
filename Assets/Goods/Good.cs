@@ -8,12 +8,15 @@ public class Good : ScriptableObject
 {
     public string GoodName;
     public Sprite GoodSprite;
-
     private decimal _price;
     private decimal _minAskPrice;
     public long ExpiresAfterPeriods;
     public bool IsPerishable=true;
     public int DeliveryDelay;
+    private decimal price_increment_rate;
+    [SerializeField]private PriceBand PriceBand;
+    public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
+    public int price_decrease_threshold; //ibid
 
     public decimal GetCostOfGood(Recipe recipe)
     {
@@ -45,16 +48,12 @@ public class Good : ScriptableObject
         }
     }
 
-    private decimal price_increment_rate;
-    [SerializeField]private PriceBand PriceBand;
 
     public void SetExpiry(int periods)
         => ExpiresAfterPeriods = periods;
     [SerializeField]private RarityEnum _rarity;
 
     public bool IsProducedGood;
-    public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
-    public int price_decrease_threshold; //ibid
 
     [SerializeField] private readonly List<Good> _substitute_goods = new();
     #region Effects
