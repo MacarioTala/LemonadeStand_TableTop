@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class DefaultDemographicManager : iDemographicManager,iMarketAware
 {
@@ -109,6 +110,11 @@ public class DefaultDemographicManager : iDemographicManager,iMarketAware
     //Privates
     private void SavePopulationHistory(Guid marketId, int period, TurnPhase phase)
     {
+        if(_populationHistoryHandler == null)
+        {
+            Debug.Log("PopulationHistoryHandler not set.");
+            return;
+        }
         var population = GetPopulation();
         var currentPopulationHistory = new PopulationHistory()
         {

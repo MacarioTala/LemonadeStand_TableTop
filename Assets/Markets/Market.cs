@@ -141,6 +141,21 @@ public class Market : ScriptableObject, iEconAgent
     }
 #endregion
     #region Pricing
+    [SerializeField] List<PriceStabilityEntry> priceStability=new();
+    [SerializeField] int pricesFluctuateEvery;
+    public int GetPricesFluctuateEvery()=> pricesFluctuateEvery;
+    public void SetPricesFluctuateEvery(int value)=>pricesFluctuateEvery=value;
+    public bool ShouldPricesCycleThisPeriod()
+    {   
+        return  CurrentPeriod>0 &&
+                pricesFluctuateEvery>0 &&
+                CurrentPeriod%pricesFluctuateEvery==0;
+    }
+    
+    public IEnumerable<PriceStabilityEntry> GetPriceStability()=>priceStability;
+    public void AddPriceStabilityEntry(PriceStabilityEntry entry)=> priceStability.Add(entry);
+    public void CyclePrices ()
+        => _priceManager.CyclePrices();
     public List<FixedCostInstance> FixedCosts { get; set; }
     public iFixedCostStrategy FixedCostStrategy { get; set; }
     private readonly List<iPriceModifier> _priceModifiers = new();
@@ -374,7 +389,10 @@ public class Market : ScriptableObject, iEconAgent
     
     #region Pricing
     internal void UpdatePrices()
-        => _priceManager.UpdatePricesForMarket();
+    {
+        _priceManager.UpdatePricesForMarket();
+        CyclePrices();
+    }
     public void CalculateNewBidAskSpreadForMarket()
         // Originally, markets acted monolithically, but now various populations
         // can set their own bid/ask spreads. Is this still needed?

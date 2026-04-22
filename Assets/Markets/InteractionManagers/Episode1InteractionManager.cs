@@ -1,5 +1,3 @@
-using Unity.VisualScripting.YamlDotNet.Core;
-
 public class Episode1InteractionManager : InteractionManagerBase
 {
    
