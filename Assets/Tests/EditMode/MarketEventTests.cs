@@ -199,7 +199,7 @@ public class MarketEventTests
             .AtLevel(AgentLevelEnum.Beginner)
             .Build();
         TestMarket.RegisterMarketParticipant(testPopulation);
-        var expectedPopulation = 81;
+        var expectedPopulation = 81;//remove 10% twice
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
 
         //Act
@@ -207,6 +207,7 @@ public class MarketEventTests
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
         TestMarket.StartTradingPeriod();
         TestMarket.UnleashMarketForces(TestMarket.CurrentPeriod);
+        TestMarket.RemovePotentialMarketEvent(MaraudersAttack);//removing event here to prevent re-adding an event that fires 100% of the time
         TestMarket.StartTradingPeriod(); //Period should be 2 here. No additional population reduction.
         var actualPopulation = TestMarket.GetPopulation();
 
@@ -218,13 +219,12 @@ public class MarketEventTests
     public void CannotAddADuplicateOfACurrentlyActiveEvent()
     {
         //Arrange
-        var initialNumberOfActiveEvents = TestMarket.GetActiveMarketEvents().Count;
-        var expectedNumberOfActiveEvents = initialNumberOfActiveEvents + 1;
+        var expectedNumberOfActiveEvents = 1;
         TestMarket.AddPotentialMarketEvent(MaraudersAttack);
+        TestMarket.ResolveMarketEvents();
 
         //Act
-        TestMarket.RollForEvents();
-        TestMarket.RollForEvents(); //try to add it twice
+        TestMarket.AddPotentialMarketEvent(MaraudersAttack);; //try to add it again
         var actualNumberOfActiveEvents = TestMarket.GetActiveMarketEvents()
         .Count(x=>x.EventDefinition.EventName==maraudersAttackName);
 
@@ -235,13 +235,13 @@ public class MarketEventTests
     public void CanAddADifferentEventEvenWithActiveEvents()
     {
         //Arrange
+        TestMarket.AddPotentialMarketEvent(MaraudersAttack);
+        TestMarket.ResolveMarketEvents();
         var expectedNumberOfActiveEvents = 2;
 
         //Act
-        TestMarket.AddPotentialMarketEvent(MaraudersAttack);
-        TestMarket.RollForEvents();
         TestMarket.AddPotentialMarketEvent(GodzillaAttack);
-        TestMarket.RollForEvents();
+        TestMarket.ResolveMarketEvents();
         var actualNumberOfActiveEvents = TestMarket.GetActiveMarketEvents().Count;
         //Assert
         Assert.AreEqual(expectedNumberOfActiveEvents, actualNumberOfActiveEvents);

@@ -59,6 +59,11 @@ public class NewsfeedController : MonoBehaviour
         EventSplash.SetActive(true);
     }
 
+    public void TurnTVOff()
+    {
+        NewsImage.transform.localScale=Vector3.zero;
+        newsbutton.interactable=false;
+    }
     public void PlayBreakingNews(MarketEventSO so)
     {
         ActiveEvent = so;

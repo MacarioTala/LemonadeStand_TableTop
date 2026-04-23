@@ -186,15 +186,19 @@ private SubscriptionToken goodsExpiredSubscription;
         _goodsSpoiled = true;
     }
 
-    private void OnMarketEventFired(Market market, MarketEventSO so)
+    private void OnMarketEventFired(Market market, ActiveMarketEvent evt)
     {
-        if(newsfeedController!=null)
-            {
-                newsfeedController.PlayBreakingNews(so);
-                newsfeedController.SetHasNews(true);
-            }
-        else
+        if(newsfeedController==null)
+        {
             Debug.LogWarning("NewsfeedController missing, did you wire this in the inspector?");
+            return;
+        }
+
+        if(!evt.IsContinuingEvent(market.CurrentPeriod))
+        {
+            newsfeedController.PlayBreakingNews(evt.EventDefinition);
+            newsfeedController.SetHasNews(true);
+        }      
     }
     
     #endregion
@@ -295,6 +299,7 @@ private SubscriptionToken goodsExpiredSubscription;
         CurrentUIState = UIStateEnum.Reading;
         ClearUISelection();
         ClearTextScroll();
+        newsfeedController.TurnTVOff();
 
         ProcessPlayerActions();
 
@@ -530,6 +535,11 @@ private SubscriptionToken goodsExpiredSubscription;
         const string zero="0";
         SaleSignLemonadePriceField.SetTextWithoutNotify(zero);
         SaleSignCupsToSell.SetTextWithoutNotify(zero);
+    }
+
+    private void DeactivateNewsFeed()
+    {
+        
     }
 
     private decimal GetLemonadePrice()

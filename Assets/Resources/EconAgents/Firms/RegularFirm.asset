@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::EconAgent
   _agentName: RegularFirm
   agentLevel: 0
-  InitialCashInCents: 100000
+  IsPlayer: 0
+  BehaviourStrategyAsset: {fileID: 0}
+  demandEntries: []
+  marketIgnorantAssumedCogInCents: 0
+  InitialCashInCents: 10000

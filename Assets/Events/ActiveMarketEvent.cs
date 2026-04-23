@@ -15,6 +15,9 @@ public sealed class ActiveMarketEvent
         PeriodEnd = periodStart+duration;
     }
 
+    public bool IsContinuingEvent(int period)
+        =>period != PeriodStart;
+
     public bool IsExpired(int currentPeriod)
         => currentPeriod >= PeriodEnd;
     

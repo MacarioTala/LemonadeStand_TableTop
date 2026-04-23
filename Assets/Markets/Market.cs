@@ -133,9 +133,8 @@ public class Market : ScriptableObject, iEconAgent
         _marketEventManager.RemovePotentialMarketEvent(marketEvent);
     
     public void ResolveMarketEvents() => _marketEventManager.ResolveMarketEvents();
-    public void RollForEvents() =>_marketEventManager.RollForEvents();
-    public event Action<Market, MarketEventSO> OnMarketEventFired;
-    public void FireEvent(MarketEventSO e)
+    public event Action<Market, ActiveMarketEvent> OnMarketEventFired;
+    public void FireEvent(ActiveMarketEvent e)
     {
         OnMarketEventFired?.Invoke(this,e);
     }
@@ -422,7 +421,6 @@ public class Market : ScriptableObject, iEconAgent
     public void StartTradingPeriod()
     {
         _demographicManager.RecordDemographicSnapshot(MarketId, CurrentPeriod, TurnPhase.Beginning);
-        RollForEvents();
         ResolveMarketEvents();
         //Local Agents
         _marketInteractionManager.PopulationsAct(CurrentPeriod);
