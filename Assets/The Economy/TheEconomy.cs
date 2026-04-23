@@ -134,8 +134,8 @@ public class TheEconomy : MonoBehaviour
         }
     }
 #region Events
-    public event Action<Market,MarketEventSO> OnMarketEventFired;
-    private void HandleMarketEvent(Market market, MarketEventSO e)
+    public event Action<Market,ActiveMarketEvent> OnMarketEventFired;
+    private void HandleMarketEvent(Market market, ActiveMarketEvent e)
     {
         OnMarketEventFired?.Invoke(market,e);
     }

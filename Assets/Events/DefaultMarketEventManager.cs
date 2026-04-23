@@ -10,7 +10,7 @@ public class DefaultMarketEventManager : iMarketEventManager, iMarketAware
 
     public void AddPotentialMarketEvent(MarketEventSO potentialEvent)
     {
-          if (!PotentialMarketEvents.Contains(potentialEvent))
+        if (!PotentialMarketEvents.Contains(potentialEvent))
         {
             PotentialMarketEvents.Add(potentialEvent);
         }
@@ -32,15 +32,18 @@ public class DefaultMarketEventManager : iMarketEventManager, iMarketAware
             _marketEventHistory.Add((marketEvent.EventDefinition, marketEvent.PeriodStart, marketEvent.PeriodEnd));
         }
 
+        //See if any of the current potential events fire
+        RollForEvents();
+
         //Invoke any active events
         foreach (var marketEvent in _activeEvents)
         {
-            _market.FireEvent(marketEvent.EventDefinition);
+            _market.FireEvent(marketEvent);
             marketEvent.EventDefinition.Invoke(_market,marketEvent);
         }
     }
 
-    public void RollForEvents()
+    private void RollForEvents()
     {
         foreach (var marketEvent in PotentialMarketEvents)
         {
