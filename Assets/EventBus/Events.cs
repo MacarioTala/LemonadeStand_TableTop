@@ -37,6 +37,18 @@ public readonly struct GoodsExpireEvent
     public bool HasExpiringItems => ExpiringItems !=null && ExpiringItems.Count>0;
 }
 
+public readonly struct PeriodHappenedEvent
+{
+    public readonly int Period;
+    public PeriodHappenedEvent(int period)=> Period=period;
+}
+
+public readonly struct StoryBeatHappenedEvent
+{
+    public readonly StoryBeat Beat;
+    public StoryBeatHappenedEvent(StoryBeat beat) => Beat = beat;
+}
+
 public readonly struct RequestLoadSceneEvent
 {
     public readonly string SceneName;
