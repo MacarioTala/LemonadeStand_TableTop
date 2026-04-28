@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName ="LemonadeStandAssets/ChangePopulationEffect")]
+[CreateAssetMenu(menuName ="LemonadeStandAssets/EventEffects/ChangePopulationEffect")]
 public class ChangePopulationEffect : MarketEffectSO
 {
     [Tooltip("Population change as a percentage. Use negative values to decrease population.")]

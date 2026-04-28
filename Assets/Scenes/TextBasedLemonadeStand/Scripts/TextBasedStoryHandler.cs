@@ -4,6 +4,8 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System.Collections.Generic;
+using System;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -28,11 +30,15 @@ public class TextBasedStoryHandler : MonoBehaviour
     private int _lemonadeMadeThisTurn; //TODO: move this to EconAgent eventually
     private int _cupsToSell;
     private bool _goodsSpoiled;
+    #endregion
+    #region Story Beats
+    readonly List<StoryBeat> storyBeats=new();
+    public void AddStoryBeat(StoryBeat beat) => storyBeats.Add(beat);
 #endregion
-
 #region Subscriptions
 private SubscriptionToken deliveriesResolvedSubscription;
 private SubscriptionToken goodsExpiredSubscription;
+private SubscriptionToken turnBasedSubscription;
 #endregion
     
 #region Game Variables
@@ -53,9 +59,7 @@ private SubscriptionToken goodsExpiredSubscription;
     }
 
     private void Start()
-    {
-        StartTextBasedGame();
-    }
+        => StartTextBasedGame();
 
     private void Update()
     {
@@ -128,6 +132,10 @@ private SubscriptionToken goodsExpiredSubscription;
             
             goodsExpiredSubscription = GameRoot.Instance.Bus
                     .Subscribe<GoodsExpireEvent>(OnGoodsExpire, replaySticky:false);
+            
+            turnBasedSubscription = GameRoot.Instance.Bus
+                    .Subscribe<StoryBeatHappenedEvent>(OnStoryBeatHappened,false);
+
             SaleSignCupsToSell.onValueChanged.AddListener(OnCupsChanged);
             EndTurnButton.onClick.AddListener(EndTurn);
         }
@@ -200,6 +208,10 @@ private SubscriptionToken goodsExpiredSubscription;
             newsfeedController.SetHasNews(true);
         }      
     }
+
+    private void OnStoryBeatHappened(StoryBeatHappenedEvent evt)
+        =>AddStoryBeat(evt.Beat);
+    
     
     #endregion
 
@@ -279,13 +291,23 @@ private SubscriptionToken goodsExpiredSubscription;
         isPeriodStart = true;
         ClearTextScroll();
         orderPanelHandler.RefreshOrderDropDown();
-        _lemonadeMadeThisTurn = 0;
+
+        GameRoot.Instance.Bus.Publish(new PeriodHappenedEvent(TheEconomyInstance.tradingPeriod),false);
+        PlayStoryBeatsInPeriod();
         
         UpdateMaxLemonade();
         UpdateOrderPanelArrivingText(string.Empty);
         UpdateOrderSummaryArrivingText(string.Empty);
         ShowMainMenu();
     }
+
+    private void PlayStoryBeatsInPeriod()
+    {
+        foreach(var beat in storyBeats)
+            LogMessage(beat.FlavourText);
+        storyBeats.Clear();
+    }
+
     private void EndTurn()
     {
         if(IsSceneOnly()) return;
@@ -378,7 +400,6 @@ private SubscriptionToken goodsExpiredSubscription;
         CurrentUIState = UIStateEnum.MainMenu;
         
         ClearUISelection();
-        ClearTextScroll();
         
         LogMessage($"--- It is period {initialMarket.CurrentPeriod} ---");
         if(isPeriodStart) LogMessage($"You flip the sign open");
@@ -537,11 +558,6 @@ private SubscriptionToken goodsExpiredSubscription;
         SaleSignCupsToSell.SetTextWithoutNotify(zero);
     }
 
-    private void DeactivateNewsFeed()
-    {
-        
-    }
-
     private decimal GetLemonadePrice()
     {
         decimal.TryParse(SaleSignLemonadePriceField.text, out var price);
@@ -641,6 +657,9 @@ private SubscriptionToken goodsExpiredSubscription;
         
         if(goodsExpiredSubscription.IsValid)
             goodsExpiredSubscription.Dispose();
+        
+        if(turnBasedSubscription.IsValid)
+            turnBasedSubscription.Dispose();
     }
     #endregion
 }

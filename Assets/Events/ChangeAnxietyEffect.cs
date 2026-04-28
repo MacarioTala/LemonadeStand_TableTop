@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName ="LemonadeStandAssets/ChangeAnxietyEffect")]
+[CreateAssetMenu(menuName ="LemonadeStandAssets/EventEffects/ChangeAnxietyEffect")]
 public class ChangeAnxietyEffect : MarketEffectSO
 {
     public float AnxietyChangePercentage;

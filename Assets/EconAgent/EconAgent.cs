@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-[CreateAssetMenu(menuName ="LemonadeStandAssets/EconAgent")]
+[CreateAssetMenu(menuName ="LemonadeStandAssets/EconAgents/EconAgent")]
 public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 {
 #region Identity and Initialization

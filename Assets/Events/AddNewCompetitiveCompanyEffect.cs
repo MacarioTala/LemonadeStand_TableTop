@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "LemonadeStandAssets/AddNewCompetitiveCompanyEffect")]
+[CreateAssetMenu(menuName = "LemonadeStandAssets/EventEffects/AddNewCompetitiveCompanyEffect")]
 public class AddNewCompetitiveCompanyEffect : MarketEffectSO
 {
     public string Name;
