@@ -18,8 +18,8 @@ public class StoryOrchestrator : MonoBehaviour
             if(playedBeats.Contains(beat.Id)) continue;
             if(!beat.ShouldPlay(gameState)) continue;
 
-            beat.PlayBeat();
-            GameRoot.Instance.Bus.Publish(new StoryBeatHappenedEvent(beat));
+            var bag = beat.PlayBeat();
+            GameRoot.Instance.Bus.Publish(new StoryBeatHappenedEvent(beat,bag));
             playedBeats.Add(beat.Id);
         }
     }

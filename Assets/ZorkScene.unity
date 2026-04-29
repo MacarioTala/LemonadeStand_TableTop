@@ -260,6 +260,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameAssembly::StoryOrchestrator
   potentialStoryBeats:
   - {fileID: 11400000, guid: 88d4b2e717a8449acbbe8ee229ac8485, type: 2}
+  - {fileID: 11400000, guid: 620e1c964c06741e8bae4b0e99d90268, type: 2}
 --- !u!4 &51884484
 Transform:
   m_ObjectHideFlags: 0

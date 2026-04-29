@@ -46,7 +46,8 @@ public readonly struct PeriodHappenedEvent
 public readonly struct StoryBeatHappenedEvent
 {
     public readonly StoryBeat Beat;
-    public StoryBeatHappenedEvent(StoryBeat beat) => Beat = beat;
+    public readonly BeatPropertyBag Bag;
+    public StoryBeatHappenedEvent(StoryBeat beat,BeatPropertyBag bag) => (Beat,Bag) = (beat,bag);
 }
 
 public readonly struct RequestLoadSceneEvent
