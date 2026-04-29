@@ -13,7 +13,7 @@ public class BasicFixedCostStrategy : iFixedCostStrategy
         }
         foreach (var cost in fixedCosts)
         {
-            if(cost.Template.Frequency <1)
+             if(cost.Template.Frequency <1)
             {
                 throw new ArgumentException("Frequency of fixed cost must be greater than 0");
             }

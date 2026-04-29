@@ -210,8 +210,17 @@ private SubscriptionToken turnBasedSubscription;
     }
 
     private void OnStoryBeatHappened(StoryBeatHappenedEvent evt)
-        =>AddStoryBeat(evt.Beat);
-    
+        {
+            if(evt.Bag.FixedCostAssociatedWithBeat !=null)
+                AddFixedCostsForPlayer(evt.Bag.FixedCostAssociatedWithBeat);
+                
+            AddStoryBeat(evt.Beat);
+        }
+
+    private void AddFixedCostsForPlayer(FixedCostTemplate template)
+    {
+        PlayerCompany.AddFixedCostInPeriod(template,initialMarket.CurrentPeriod);
+    }
     
     #endregion
 

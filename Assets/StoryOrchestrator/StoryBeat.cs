@@ -8,7 +8,15 @@ public abstract class StoryBeat: ScriptableObject
     public string Id=> id;
     public Sprite Image;
     public string FlavourText;
-    public abstract void PlayBeat();
+    
+    [SerializeField]FixedCostTemplate fixedCostAssociatedWithBeat;
+
+    public virtual BeatPropertyBag PlayBeat()
+    {   var bag = new BeatPropertyBag();
+        if(fixedCostAssociatedWithBeat!=null) bag.FixedCostAssociatedWithBeat=fixedCostAssociatedWithBeat;
+
+        return bag;
+    }
     public abstract bool ShouldPlay(GameState state);
     
     #region Unity Overrides
@@ -23,4 +31,9 @@ public abstract class StoryBeat: ScriptableObject
 public struct GameState
 {
     public int Period;
+}
+
+public class BeatPropertyBag
+{
+    public FixedCostTemplate FixedCostAssociatedWithBeat;
 }
