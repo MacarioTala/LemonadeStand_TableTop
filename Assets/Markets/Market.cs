@@ -109,14 +109,16 @@ public class Market : ScriptableObject, iEconAgent
     }
     #endregion
 
+#region EventBus and Handlers
     //Event Handlers
+    //TODO: Refactor this to use the unified bus whenever there's some free time
     public delegate void OrderFulfillmentHandler(OrderFulfilledEvent orderFulfilledEvent);
     public event OrderFulfillmentHandler OrderFulfilled;
     public void RaiseOrderFulfilledEvent(OrderFulfilledEvent orderFulfilledEvent)
     {
         OrderFulfilled?.Invoke(orderFulfilledEvent);
     }
-
+#endregion
     //Goals
     public List<Goal> Goals { get; set; }
     private iStrategy _marketStrategy;

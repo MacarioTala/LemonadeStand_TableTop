@@ -139,11 +139,11 @@ public class IntegrationTests
     public void EndTradingPeriodIncrementsPeriod()
     {
         // Arrange
-        var currentPeriod = TestEconomy.tradingPeriod;
+        var currentPeriod = TestEconomy.TradingPeriod;
         var expected = currentPeriod + 1;
         // Act
         TestEconomy.EndTradingPeriod();
-        var actual = TestEconomy.tradingPeriod;
+        var actual = TestEconomy.TradingPeriod;
         // Assert
         Assert.AreEqual(expected, actual);
     }

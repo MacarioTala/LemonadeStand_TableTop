@@ -9,6 +9,7 @@ public class TheEconomy : MonoBehaviour
 {
     //The Economy is a singleton that manages the market and all companies
     private static TheEconomy _instance;
+    private EventBus Bus;
     public static TheEconomy Instance 
     {
          get
@@ -25,7 +26,7 @@ public class TheEconomy : MonoBehaviour
                 return _instance;
             }
     }
-    public int tradingPeriod = 0;
+    public int TradingPeriod = 0;
 
     //These are the goods, but not the inventory items, that will exist in the market when initialized
     public List<Good> goods = new();
@@ -54,6 +55,7 @@ public class TheEconomy : MonoBehaviour
         }
 
         _trade_logger = trade_logger;
+        CheckForEventBus();
         CreateInitialMarket();
         CreateInitialGoods(goods);
         Debug.Log("Lemonade Stand Economy initialized successfully.");
@@ -75,6 +77,13 @@ public class TheEconomy : MonoBehaviour
         goods.Clear();
     }
 
+    private void CheckForEventBus()
+    {
+        if(GameRoot.Instance!=null) //running headless
+            Bus=GameRoot.Instance.Bus;
+        else
+            Bus=new();
+    }
     private void CreateInitialMarket()
     {
         InitialMarket = Market.Factory.CreateStarterMarket(
@@ -97,15 +106,16 @@ public class TheEconomy : MonoBehaviour
         foreach (Market market in EconomicAgents.OfType<Market>())
         {
             executedTrades = market.ProcessCompanyOrders();
-            market.UnleashMarketForces(tradingPeriod);
+            market.UnleashMarketForces(TradingPeriod);
         };
 
-        tradingPeriod++;
+        TradingPeriod++;
 
         _trade_logger?.SaveDailySummary(executedTrades);
     }
     /// <summary>
     /// Note: ResolveTurn should be used from TextBasedStoryHandler.
+    ///    But can be used for any integration test that tries to mimic entire game turns.
     /// The current flow is:
     /// 1. Player acts
     /// 2. The trading day resolves
@@ -162,7 +172,7 @@ public class TheEconomy : MonoBehaviour
                 RarityEnum.Very_Rare => very_rare_range,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            InitialMarket.GetInventory().AddGood(new InventoryEntry(good, quantity, good.GetPrice(), tradingPeriod));
+            InitialMarket.GetInventory().AddGood(new InventoryEntry(good, quantity, good.GetPrice(), TradingPeriod));
         //in the future, have a concept of rarity driving the initial price
         }
     }
@@ -170,19 +180,25 @@ public class TheEconomy : MonoBehaviour
     {
         Debug.Log($"{collapsedEntity.Name} in {market.Name} has collapsed");
         ShowCollapseSummary(collapsedEntity);
-        market.RemoveMarketParticipant(collapsedEntity);
+        
         if (collapsedEntity.IsPlayer)
         {
-            EndGame();
+            HandlePlayerCollapse(collapsedEntity);
+        }
+        else
+        {
+            market.RemoveMarketParticipant(collapsedEntity);    
         }
     }
-    public void HandleMarketFailure(Market market)
+
+    private void HandlePlayerCollapse(EconAgent agent)
     {
-        throw new NotImplementedException();
+        Bus.Publish(new PlayerBankruptEvent(TradingPeriod,agent),false);
     }
+
     public void ShowCollapseSummary(EconAgent bankruptAgent)
     {
-        Debug.Log($"{bankruptAgent.Name} has collapsed after {tradingPeriod} trading periods");
+        Debug.Log($"{bankruptAgent.Name} has collapsed after {TradingPeriod} trading periods");
     }
 
     public static void SetupForTests(ITradeLogger logger)

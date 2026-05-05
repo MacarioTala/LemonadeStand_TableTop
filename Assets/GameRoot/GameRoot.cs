@@ -81,7 +81,7 @@ public class GameRoot : MonoBehaviour
     private void LoadGoods()
     {
         var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
-        var period = EconomyInstance.tradingPeriod;
+        var period = EconomyInstance.TradingPeriod;
         var inventory = initialMarket.GetInventory();
 
         foreach(var good in goods)

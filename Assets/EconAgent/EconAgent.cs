@@ -19,9 +19,8 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
     
     public LemonadeStandResultObject SetMarket(Market market) {
          if(marketCompanyIsIn != null)
-         {
             return LemonadeStandResultObject.Failure(ResultTypeEnum.MarketAlreadySet, "Market already set");
-         }
+         
          marketCompanyIsIn = market;
          
          return LemonadeStandResultObject.Success();
@@ -32,6 +31,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         return LemonadeStandResultObject.Success();
     }
     protected EconAgent() { }
+    
     internal void Initialize (string companyName, AgentLevelEnum company_level,iStrategy strategy=null)
     {
         Name = companyName;
@@ -146,6 +146,24 @@ public StrategyFactory BehaviourStrategyAsset;
     public void SetAnxiety(float value) => _anxiety = value;
     readonly public DemographicPropertyBag Demographics = new();
 #endregion
+#region EventBus
+EventBus Bus;
+ private void SafePublish<T>(T evt)
+    {
+        if(Bus==null)
+        {
+            Debug.LogWarning("Bus is null, agent not publishing events.");
+            return;
+        }
+        else
+            Bus.Publish(evt);
+    }
+private void SetBus()
+    {
+        if(GameRoot.Instance !=null && GameRoot.Instance.Bus!=null)
+            Bus=GameRoot.Instance.Bus;
+    }
+#endregion
 #region Financials
     public long InitialCashInCents;
     private decimal initialCash => InitialCashInCents/100;
@@ -155,7 +173,15 @@ public StrategyFactory BehaviourStrategyAsset;
     public void SetMinimumBid(decimal minBid) => minimumBid = minBid;
     public decimal GetMinimumBid() => minimumBid;
     public decimal GetCash() => cash;
-    public void SetCash(decimal newCash) => cash = newCash;
+    public void SetCash(decimal newCash)
+    {
+        cash = newCash;
+        if(cash<=0)
+            if(IsPlayer)
+                SafePublish(new PlayerBankruptEvent(CurrentPeriod,this));
+            else
+                SafePublish(new AgentBankruptEvent(CurrentPeriod,this));
+    }
     public IEnumerable<FixedCostLedgerEntry> FixedCostLedger=> fixedCostLedger;
     private readonly List<FixedCostLedgerEntry> fixedCostLedger=new();
 
@@ -446,18 +472,17 @@ public StrategyFactory BehaviourStrategyAsset;
     }
     #endregion
 #region Unity ScriptableObject Methods
-private void OnEnable()
-{
-    RebuildDemandDictionary();    
-    marketIgnorantAssumedCOG=marketIgnorantAssumedCogInCents/100m;
-}
-private void OnValidate()
-{
-    RebuildDemandDictionary();
-}
+    private void OnEnable()
+    {
+        RebuildDemandDictionary();    
+        marketIgnorantAssumedCOG=marketIgnorantAssumedCogInCents/100m;
+    }
+    private void OnValidate() => RebuildDemandDictionary();
+
+    private void Awake() => SetBus();
     #endregion
-#region Helpers
-private void RebuildDemandDictionary()
+    #region Helpers
+    private void RebuildDemandDictionary()
 {
     _demand.Clear();
     foreach(var entry in demandEntries)
@@ -468,6 +493,22 @@ private void RebuildDemandDictionary()
             _demand[entry.Good] = entry.DemandData.ToDemandData();
         }    
 }
+public void ResolveDeliveries()
+    {
+        var entries = inventory.GetInventoryEntries();
+        const int oneTurnToArrive=1;
+
+        if(entries == null || entries.Count==0) return;
+        
+        var arrivingThisTurn = entries
+                            .Where(x=>x.RemainingDelay == oneTurnToArrive)
+                            .ToList();
+
+        inventory.ResolveDeliveries();
+
+        if(arrivingThisTurn.Count> 0)
+            SafePublish(new DeliveriesResolvedEvent(this,arrivingThisTurn,CurrentPeriod));
+    }
 #endregion
     #region Overrides
     public override string ToString() => Name;
@@ -481,26 +522,5 @@ private void RebuildDemandDictionary()
         return false;
     }
     public override int GetHashCode() => Name.GetHashCode();
-
-    public void ResolveDeliveries()
-    {
-        var entries = inventory.GetInventoryEntries();
-        const int oneTurnToArrive=1;
-
-        if(entries == null || entries.Count==0) return;
-        
-        var arrivingThisTurn = entries
-                            .Where(x=>x.RemainingDelay == oneTurnToArrive)
-                            .ToList();
-
-        inventory.ResolveDeliveries();
-
-        if(arrivingThisTurn.Count> 0 && GameRoot.Instance !=null)
-        {
-            GameRoot.Instance.Bus.Publish(
-                new DeliveriesResolvedEvent(this,arrivingThisTurn,CurrentPeriod)
-            );
-        }
-    }
     #endregion
 }
