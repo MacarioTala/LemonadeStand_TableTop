@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         }
 
         TradeLogger = new TradeLoggerV1();
-        Period = TheEconomy.Instance.tradingPeriod;
+        Period = TheEconomy.Instance.TradingPeriod;
         TheEconomy.Instance.Initialize(TradeLogger);
 
         if(splashTypewriterPrefab != null)
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"Ending Turn {Period} ...");
         TheEconomy.Instance.EndTradingPeriod();
-        Period=TheEconomy.Instance.tradingPeriod;
+        Period=TheEconomy.Instance.TradingPeriod;
 
         CheckGameStatus();
         //UI code goes here

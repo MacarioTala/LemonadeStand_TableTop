@@ -61,7 +61,7 @@ public class TextBasedGameManager : MonoBehaviour
                 Debug.LogError("TheEconomyInstance is null on GameRoot. Exiting");
                 return;
             }
-            Period = TheEconomyInstance.tradingPeriod;
+            Period = TheEconomyInstance.TradingPeriod;
         }
 
         Debug.Log("Text Based Game Manager Initialized");

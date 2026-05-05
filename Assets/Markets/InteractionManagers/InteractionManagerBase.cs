@@ -4,17 +4,17 @@ public abstract class InteractionManagerBase : iMarketInteractionManager
 {
     protected Market _market;
 
-    public virtual void EvaluateParticipantCollapse(EconAgent company)
+    public virtual void EvaluateParticipantCollapse(EconAgent agent)
     {
-        if (company.IsBankrupt())
+        if (agent.IsBankrupt())
         {
-            TheEconomy.Instance.HandleParticipantCollapse(_market, company);
+            TheEconomy.Instance.HandleParticipantCollapse(_market, agent);
         }
-        if (company is PopulationAgent populationCompany)
+        if (agent is PopulationAgent populationCompany)
         {
             if (populationCompany.IsMaxEnnui())
             {
-                TheEconomy.Instance.HandleParticipantCollapse(_market, company);
+                TheEconomy.Instance.HandleParticipantCollapse(_market, agent);
             }
         }
     }

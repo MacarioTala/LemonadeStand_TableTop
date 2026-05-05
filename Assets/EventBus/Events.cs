@@ -37,12 +37,26 @@ public readonly struct GoodsExpireEvent
     public bool HasExpiringItems => ExpiringItems !=null && ExpiringItems.Count>0;
 }
 
+public readonly struct AgentBankruptEvent
+{
+    public readonly int Period;
+    public readonly EconAgent Agent;
+
+    public AgentBankruptEvent(int period, EconAgent agent) => (Period,Agent)=(period,agent);
+}
 public readonly struct PeriodHappenedEvent
 {
     public readonly int Period;
     public PeriodHappenedEvent(int period)=> Period=period;
 }
 
+public readonly struct PlayerBankruptEvent
+{
+    public readonly int Period;
+    public readonly EconAgent Player;
+
+    public PlayerBankruptEvent(int period, EconAgent player)=> (Period,Player)=(period,player);
+}
 public readonly struct StoryBeatHappenedEvent
 {
     public readonly StoryBeat Beat;

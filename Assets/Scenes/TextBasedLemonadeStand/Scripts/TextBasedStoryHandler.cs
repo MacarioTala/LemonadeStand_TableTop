@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class TextBasedStoryHandler : MonoBehaviour
 
 #region Turn Variables
     private int _lemonadeMadeThisTurn; //TODO: move this to EconAgent eventually
+    private readonly List<(EconAgent Agent,int Period)> _bankruptcies= new();
     private int _cupsToSell;
     private bool _goodsSpoiled;
     #endregion
@@ -39,6 +41,8 @@ public class TextBasedStoryHandler : MonoBehaviour
 private SubscriptionToken deliveriesResolvedSubscription;
 private SubscriptionToken goodsExpiredSubscription;
 private SubscriptionToken turnBasedSubscription;
+private SubscriptionToken playerBankruptSubscription;
+private SubscriptionToken otherAgentBankruptSubscription;
 #endregion
     
 #region Game Variables
@@ -115,7 +119,7 @@ private SubscriptionToken turnBasedSubscription;
             PlayerCompany = initialMarket.GetMarketParticipants()
                         .FirstOrDefault(x=>x.IsPlayer);
             newsfeedController.SetHasNews(false);
-            PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
+            PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
             SubscribeToEvents();
         }
     }
@@ -136,6 +140,12 @@ private SubscriptionToken turnBasedSubscription;
             turnBasedSubscription = GameRoot.Instance.Bus
                     .Subscribe<StoryBeatHappenedEvent>(OnStoryBeatHappened,false);
 
+            playerBankruptSubscription = GameRoot.Instance.Bus
+                    .Subscribe<PlayerBankruptEvent>(OnPlayerBankrupted,false);
+            
+            otherAgentBankruptSubscription = GameRoot.Instance.Bus
+                    .Subscribe<AgentBankruptEvent>(OnAgentBankrupted,false);
+
             SaleSignCupsToSell.onValueChanged.AddListener(OnCupsChanged);
             EndTurnButton.onClick.AddListener(EndTurn);
         }
@@ -143,6 +153,9 @@ private SubscriptionToken turnBasedSubscription;
         areEventsSubscribed = true;
     }
     #region Handlers
+    private void OnAgentBankrupted(AgentBankruptEvent evt)=>_bankruptcies.Add(new(evt.Agent,evt.Period));
+
+    private void OnPlayerBankrupted(PlayerBankruptEvent evt)=>_bankruptcies.Add(new(evt.Player,evt.Period));
     private void OnCupsChanged(string input)
     {
         var max = GetMaxCups();
@@ -213,7 +226,7 @@ private SubscriptionToken turnBasedSubscription;
         {
             if(evt.Bag.FixedCostAssociatedWithBeat !=null)
                 AddFixedCostsForPlayer(evt.Bag.FixedCostAssociatedWithBeat);
-                
+
             AddStoryBeat(evt.Beat);
         }
 
@@ -243,6 +256,10 @@ private SubscriptionToken turnBasedSubscription;
                                      .FixedCostLedger
                                      .Where(x=>x.Period==summaryPeriod)
                                      .ToList();
+        
+        var bankruptciesThisPeriod = _bankruptcies
+                                        .Where(x=>x.Period==summaryPeriod)
+                                        .ToList();
         
         yield return ShowMessageWithWait($"Summary for period {summaryPeriod} ",1);
 
@@ -293,6 +310,20 @@ private SubscriptionToken turnBasedSubscription;
             }
         }
 
+        if(bankruptciesThisPeriod.Any())
+        {
+            if(bankruptciesThisPeriod.Any(x=>x.Agent.IsPlayer))
+                GameOver();
+            else
+            {
+                LogMessage("The following companies have gone bankrupt:");
+                foreach(var (Agent, Period) in bankruptciesThisPeriod)
+                {
+                    LogMessage(Agent.Name);
+                }
+            }
+        }
+
         LogMessage("You lock up and go home");
     }
     private void StartTurn()
@@ -301,7 +332,7 @@ private SubscriptionToken turnBasedSubscription;
         ClearTextScroll();
         orderPanelHandler.RefreshOrderDropDown();
 
-        GameRoot.Instance.Bus.Publish(new PeriodHappenedEvent(TheEconomyInstance.tradingPeriod),false);
+        GameRoot.Instance.Bus.Publish(new PeriodHappenedEvent(TheEconomyInstance.TradingPeriod),false);
         PlayStoryBeatsInPeriod();
         
         UpdateMaxLemonade();
@@ -338,7 +369,7 @@ private SubscriptionToken turnBasedSubscription;
         
         TheEconomyInstance.ResolveTurn();
 
-        PeriodText.text = TheEconomyInstance.tradingPeriod.ToString();
+        PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
 
         yield return ShowTurnSummary();
         LogMessage("Hit <Space> to continue");
@@ -347,6 +378,12 @@ private SubscriptionToken turnBasedSubscription;
         ClearSaleSign();
         ResetTurnVariables();
         StartTurn();
+    }
+
+    public void GameOver()
+    {
+        LogMessage("Game Over");
+        Quit();
     }
 
     private void ProcessPlayerActions()
@@ -408,6 +445,7 @@ private SubscriptionToken turnBasedSubscription;
     {
         CurrentUIState = UIStateEnum.MainMenu;
         
+        ClearTextScroll();
         ClearUISelection();
         
         LogMessage($"--- It is period {initialMarket.CurrentPeriod} ---");
@@ -429,7 +467,7 @@ private SubscriptionToken turnBasedSubscription;
         CurrentUIState = UIStateEnum.Reading;
 
         ClearUISelection();
-        LogMessage($"It is Period : {TheEconomyInstance.tradingPeriod}.");
+        LogMessage($"It is Period : {TheEconomyInstance.TradingPeriod}.");
         LogMessage($"You have {PlayerCompany.GetCash()} credits.");
         LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
         if(initialMarket.CurrentPeriod !=0)
@@ -621,6 +659,15 @@ private SubscriptionToken turnBasedSubscription;
         StartTurn();
     }
 
+    private void Quit()
+    {
+        #if UNITY_STANDALONE
+            Application.Quit();
+        #endif
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying=false;
+        #endif
+    }
     public void ResetTurnVariables()
     {
         _lemonadeMadeThisTurn=0;
