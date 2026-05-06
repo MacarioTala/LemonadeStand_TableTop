@@ -1,30 +1,17 @@
-# Lemonade Stand: In a world with everything, meaning is the scarcest resource. 
+# Lemonade Stand: It's an unspecified point in the future. Can you recreate capitalism? Do you even want to?
+A 'reverse 4x' where the war room takes a backseat to the boardroom. 
 
-At the turn of the 22nd century, The Cornucoupia Project conquered hunger, ushering in five hundred years of flourishing civilisation that our ancestors called The Lasting Peace. 
+You wake up to a world where modern finance has stopped working. Starting with a Lemonade Stand, you compete with increasingly sophisticated companies in a bid to become the last economic superpower standing. 
 
-We had virtually unlimited energy.
+Will a liquidity crisis foil your expansion plans? Will a giant monster raze the orchards? 
 
-We sent missions to distant stars.
+... Did the giant monster CAUSE the liquidity crisis? 
 
-We had started the long road towards reversing climate change. 
+You'll navigate systemic shocks, liquidity crises, lobby governments, and face the uncomfortable question: 
 
-Everything was now available to everyone, everywhere. 
+"What actually makes money work?"
 
-Life was good. We began to optimise.
-
-We started with war, as it was the most dangerous to the hard fought knowledge we gained. We quickly realised at this point that we needen't have bothered. In a world of plenty, war was absurd. 
-
-One by one, our problems fell. Even pollution only took an afternoon. 
-
-Virtually no one objected to the inexorable march of progress. Our coffers and larders were full, our art, anticipatory -- giving you dreams you didn't even know you wanted. 
-
-Our starships filled the skies, carrying Cornucoupia to distant stars. 
-
-Then, almost imperceptibly, by 2842.... 
-
-(Player wakes up to a sterile office building with the quiet hum of air conditioning. Several others who look just like them are around)
-
-It had been centuries since anyone had wanted anything.
+Featuring a modular economics engine that allows exploration of various economic schools of thought, from the gold standard, to Hayekian markets, and watch them succeed or fail in real time. 
 
 ## Project Overview
 
