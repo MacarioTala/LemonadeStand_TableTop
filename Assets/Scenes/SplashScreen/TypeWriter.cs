@@ -17,16 +17,14 @@ public class TypeWriter : MonoBehaviour
     
     public static readonly List<string> splashMessage = new()
     {
-        " 2142 is when we stopped buying stuff.",
-        " The economic system collapsing under the weight of numbers that were just too big.",
-        " Triple leveraged derivatives that no one understood,",
-        " . . . mortgages on arcologies that changed hands so many times no one knew who owned them.",
-        " And with aging and hunger genetically edited away, we couldn't even die.",
-        " When it was time for the missiles ... ", 
-        " .... we were just too confused to end it all. ",
-        " The world didn't end in a ball of fire.",
-        " We just stopped caring. ",
-        " And that's where you come in."
+        " I apologise for not being here when you woke up, you seemed very tired so I let you sleep. ",
+        " There are 100 tokens in the drawer next to the bed. Your palmprint should open the lemonade stand. ",
+        " In case you've forgotten, it's the stand at the very end of the street. The recipe is taped to the fridge. ", 
+        " Remember, the tiny lizard likes lemons raw, no need to add sugar. ",
+        " -- Agatha, August 22, 2047, 0630 ",
+        " You glance at the clock.", 
+        " January 4, 2347, 0630. ",
+        " There are sounds of activity outside. "
     };
 
     private void Awake()

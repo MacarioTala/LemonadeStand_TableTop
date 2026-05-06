@@ -648,9 +648,9 @@ private SubscriptionToken otherAgentBankruptSubscription;
     {   
         CurrentUIState=UIStateEnum.Reading;
         ClearTextScroll();
-        yield return ShowMessageWithWait("Welcome to Lemonade Stand!",1);
-        yield return ShowMessageWithWait("Can you save Capitalism?",1);
-        LogMessage("Let's find out!");
+        yield return ShowMessageWithWait(" The market is crowded, but you find the lemonade stand. ",1);
+        yield return ShowMessageWithWait(" People glance expectantly as you enter the stand ",1);
+        yield return ShowMessageWithWait(" It is in pristine condition. ",1);
         LogMessage($"Hit <Space> to continue");
         yield return WaitForContinue();
 
