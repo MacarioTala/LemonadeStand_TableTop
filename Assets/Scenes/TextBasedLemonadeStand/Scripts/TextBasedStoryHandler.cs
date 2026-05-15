@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
 using System.Collections.Generic;
-using System;
-using System.Security.Cryptography.X509Certificates;
 
 public class TextBasedStoryHandler : MonoBehaviour
 {
@@ -32,6 +30,7 @@ public class TextBasedStoryHandler : MonoBehaviour
     private readonly List<(EconAgent Agent,int Period)> _bankruptcies= new();
     private int _cupsToSell;
     private bool _goodsSpoiled;
+    [SerializeField]TextMeshProUGUI currentCash;
     #endregion
     #region Story Beats
     readonly List<StoryBeat> storyBeats=new();
@@ -118,6 +117,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
             initialMarket = TheEconomyInstance.GetMarketByName(InitialMarketName);
             PlayerCompany = initialMarket.GetMarketParticipants()
                         .FirstOrDefault(x=>x.IsPlayer);
+            currentCash.text = PlayerCompany.GetCash().ToString();
             newsfeedController.SetHasNews(false);
             PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
             SubscribeToEvents();
@@ -468,7 +468,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
 
         ClearUISelection();
         LogMessage($"It is Period : {TheEconomyInstance.TradingPeriod}.");
-        LogMessage($"You have {PlayerCompany.GetCash()} credits.");
+        LogMessage($"You have {currentCash.text} tokens.");
         LogMessage($"The people in your neighbourhood are {initialMarket.GetEnnuiLevel()}");
         if(initialMarket.CurrentPeriod !=0)
         {
@@ -486,6 +486,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
 
         ClearUISelection();
         var inventory = PlayerCompany.GetInventory().GetAvailableInventory();
+        LogMessage($"You have {currentCash.text} tokens");
         LogMessage("You open the fridge, you see:");
         if(inventory.Count>0)
         {

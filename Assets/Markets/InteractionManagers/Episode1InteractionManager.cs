@@ -15,7 +15,8 @@ public class Episode1InteractionManager : InteractionManagerBase
                     { 
                         TradeToSubmit = sellOrder,
                         MarketToSubmitTo = _market,
-                        Period = _market.CurrentPeriod  
+                        Period = _market.CurrentPeriod,
+                        SubmittingCompany = _market
                     };
             _market.QueueOrder(sellContext);
         }
