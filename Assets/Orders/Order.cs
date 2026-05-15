@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.YamlDotNet.Core;
 
 public class Order
 {
@@ -41,6 +42,16 @@ public class Order
         return LemonadeStandResultObject.Success();
     }
 
+    public bool IsVisibleTo(iEconAgent requester)
+    {
+        if(requester is Market) return true;
+        
+        if(SubmittingCompany is Market) return true;
+
+        if(!Good.IsProducedGood && requester != SubmittingCompany) return true;
+
+        return false;
+    }
     public Order(iEconAgent buyer, iEconAgent seller, Good good, int quantity, decimal price)
     {
         Buyer = buyer;

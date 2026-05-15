@@ -70,6 +70,10 @@ public class Market : ScriptableObject, iEconAgent
     public LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticityType)
         => _demandManager.GetEffectiveElasticityForGood(good, elasticityType);
     public int GetMarketDemandForGood(Good good) => _demandManager.GetMarketDemandForGood(good);
+     public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
+        => DemandStrategy.GetTotalBoughtByPopulation(this, good, tradingPeriod);
+    public int GetTotalSoldByMarket(int tradingPeriod, Good good) //currently public for testing purposes
+        => DemandStrategy.GetTotalSoldByMarket(this, tradingPeriod, good);
 
     #endregion
     //Econ Agents
@@ -169,20 +173,6 @@ public class Market : ScriptableObject, iEconAgent
         }
     }
     #endregion
-    #region Reporting
-    public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
-        => _marketDataManager.RecordOrderInPeriod(order, period);
-    public void RecordExecution(Execution trade)
-        => _marketDataManager.RecordExecution(trade);
-    
-    public List<Order> GetOrdersSubmittedInPeriod(int period)
-        => _marketDataManager.GetOrdersSubmittedInPeriod(period);
-    public void LogOrder(Order order, int period) => _marketDataManager.LogOrder(order, period);
-    public List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods)
-        => _marketDataManager.GetOrdersExecutedInPeriod(periods);
-    public List<Execution> GetExecutionsInPeriod(int period)
-        => _marketDataManager.GetExecutionsInPeriod(period);
-    #endregion
 
     #region Convenience Methods
     public decimal GetCash() => cash;
@@ -253,49 +243,6 @@ public class Market : ScriptableObject, iEconAgent
 
     #endregion
 
-    #region Managers
-    private void SetAndWire<T>(ref T managerFieldToSet, T newValue) where T : class
-    {
-        managerFieldToSet = newValue;
-        if (newValue is iMarketAware aware) aware.SetMarket(this);
-    }
-    private iDemographicManager _demographicManager;
-    public iDemographicManager DemographicManager { get => _demographicManager; }
-    public void SetDemographicManager(iDemographicManager demographicManager) => SetAndWire(ref _demographicManager, demographicManager);
-    private iMarketEventManager _marketEventManager;
-    public iMarketEventManager MarketEventManager{ get => _marketEventManager; }
-    public void SetMarketEventManager(iMarketEventManager manager) => SetAndWire(ref _marketEventManager, manager);
-    private iFeatureManager _featureManager;
-    public void SetFeatureManager(iFeatureManager featureManager) => SetAndWire(ref _featureManager ,featureManager);
-    public iMarketDataManager MarketDataManager{ get=>_marketDataManager; }
-    private iMarketDataManager _marketDataManager;
-    public void SetMarketDataManager(iMarketDataManager marketDataManager) => SetAndWire(ref _marketDataManager,marketDataManager);
-    private iMarketInteractionManager _marketInteractionManager;
-    public iMarketInteractionManager MarketInteractionManager{ get => _marketInteractionManager; }
-    public void SetMarketInteractionManager(iMarketInteractionManager manager) => SetAndWire(ref _marketInteractionManager, manager);
-    private iPriceManager _priceManager;
-    public iPriceManager PriceManager{ get=>_priceManager; }
-    public void SetPriceManager(iPriceManager priceManager) => SetAndWire(ref _priceManager ,priceManager);
-    private iSupplyHelper _supplyProvider;
-    public iSupplyHelper SupplyProvider { get => _supplyProvider; }
-    public void SetSupplyProvider(iSupplyHelper supplyProvider) => SetAndWire(ref _supplyProvider, supplyProvider);
-    private iTradeProcessor _tradeProcessor;
-    public iTradeProcessor TradeProcessor{ get => _tradeProcessor; }
-    public void SetTradeProcessor(iTradeProcessor tradeProcessor) => SetAndWire(ref _tradeProcessor, tradeProcessor);
-    private iTransactionManager _transactionManager;
-    public iTransactionManager TransactionManager { get => _transactionManager; }
-    public void SetTransactionManager(iTransactionManager transactionManager) => SetAndWire(ref _transactionManager,transactionManager);
-    private iMarketDataService _marketDataService;
-    public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
-    [SerializeField] private ScriptableObject _demandStrategy;
-    public iDemandStrategy DemandStrategy { get => _demandStrategy as iDemandStrategy; }
-    public void SetDemandStrategy(iDemandStrategy demandStrategy) 
-        => SetAndWire(ref _demandStrategy , demandStrategy as ScriptableObject); 
-    private iDemandManager _demandManager;
-    public iDemandManager DemandManager{ get => _demandManager; }
-    public void SetDemandManager(iDemandManager manager) => SetAndWire(ref _demandManager ,manager);
-    #endregion
-
     #region Company Interactions
     public List<Order> ProcessCompanyOrders() => _tradeProcessor.ProcessCompanyOrders();
     public LemonadeStandResultObject QueueOrder(ActionContext context)
@@ -306,7 +253,7 @@ public class Market : ScriptableObject, iEconAgent
         => _marketInteractionManager.UpdateCompanyStatuses(period);
     #endregion
 
-    #region Consumption and Demand
+    #region Consumption
     internal void ConsumeGoods()
     {
         foreach (var participant in _marketParticipants.OfType<PopulationAgent>())
@@ -374,20 +321,6 @@ public class Market : ScriptableObject, iEconAgent
         => CurrentPeriod = period;
     
     #endregion
-    #region Buy and sell 
-    public int GetTotalBoughtByMarket(int tradingPeriod, Good good)//Currently public for testing purposes
-        => DemandStrategy.GetTotalBoughtByPopulation(this, good, tradingPeriod);
-    public int GetTotalSoldByMarket(int tradingPeriod, Good good) //currently public for testing purposes
-        => DemandStrategy.GetTotalSoldByMarket(this, tradingPeriod, good);
-    #endregion
-    /// <summary>
-    /// A Market order is an order initiated by the Market
-    /// Use this in order to buy produced goods,
-    /// Have the 'Population' buy goods from the market
-    /// etc.
-    /// </summary>
-    /// <param name="context"></param>
-    
     #region Pricing
     internal void UpdatePrices()
     {
@@ -407,10 +340,37 @@ public class Market : ScriptableObject, iEconAgent
     #endregion
 
     #region Publishing
+    public List<AvailableGood> GetGoodsAvailableInPeriod(iEconAgent requester)
+    {
+        var goodsAvailable = GetOrdersSubmittedInPeriod(CurrentPeriod)
+            .Where(x=>x.IsSell()&& x.IsVisibleTo(requester))
+            .Select(x=> new AvailableGood(
+                         x.SubmittingCompany,
+                         x.Good.GoodName,
+                         x.Quantity,
+                         x.Price))
+            .ToList();
+        return goodsAvailable;
+    }
     public List<MarketData> PublishMarketData()
         => _marketDataManager.PublishMarketData();
     public void PublishSpreadToMarket(ActionContext context)
         => _marketDataManager.PublishSpreadToMarket(context);
+    #endregion
+
+    #region Reporting
+    public LemonadeStandResultObject RecordOrderInPeriod(Order order, int period)
+        => _marketDataManager.RecordOrderInPeriod(order, period);
+    public void RecordExecution(Execution trade)
+        => _marketDataManager.RecordExecution(trade);
+    
+    public List<Order> GetOrdersSubmittedInPeriod(int period)
+        => _marketDataManager.GetOrdersSubmittedInPeriod(period);
+    public void LogOrder(Order order, int period) => _marketDataManager.LogOrder(order, period);
+    public List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods)
+        => _marketDataManager.GetOrdersExecutedInPeriod(periods);
+    public List<Execution> GetExecutionsInPeriod(int period)
+        => _marketDataManager.GetExecutionsInPeriod(period);
     #endregion
 
     #region Supply
@@ -449,6 +409,49 @@ public class Market : ScriptableObject, iEconAgent
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
     }
+    #endregion
+    
+    #region Managers
+    private void SetAndWire<T>(ref T managerFieldToSet, T newValue) where T : class
+    {
+        managerFieldToSet = newValue;
+        if (newValue is iMarketAware aware) aware.SetMarket(this);
+    }
+    private iDemographicManager _demographicManager;
+    public iDemographicManager DemographicManager { get => _demographicManager; }
+    public void SetDemographicManager(iDemographicManager demographicManager) => SetAndWire(ref _demographicManager, demographicManager);
+    private iMarketEventManager _marketEventManager;
+    public iMarketEventManager MarketEventManager{ get => _marketEventManager; }
+    public void SetMarketEventManager(iMarketEventManager manager) => SetAndWire(ref _marketEventManager, manager);
+    private iFeatureManager _featureManager;
+    public void SetFeatureManager(iFeatureManager featureManager) => SetAndWire(ref _featureManager ,featureManager);
+    public iMarketDataManager MarketDataManager{ get=>_marketDataManager; }
+    private iMarketDataManager _marketDataManager;
+    public void SetMarketDataManager(iMarketDataManager marketDataManager) => SetAndWire(ref _marketDataManager,marketDataManager);
+    private iMarketInteractionManager _marketInteractionManager;
+    public iMarketInteractionManager MarketInteractionManager{ get => _marketInteractionManager; }
+    public void SetMarketInteractionManager(iMarketInteractionManager manager) => SetAndWire(ref _marketInteractionManager, manager);
+    private iPriceManager _priceManager;
+    public iPriceManager PriceManager{ get=>_priceManager; }
+    public void SetPriceManager(iPriceManager priceManager) => SetAndWire(ref _priceManager ,priceManager);
+    private iSupplyHelper _supplyProvider;
+    public iSupplyHelper SupplyProvider { get => _supplyProvider; }
+    public void SetSupplyProvider(iSupplyHelper supplyProvider) => SetAndWire(ref _supplyProvider, supplyProvider);
+    private iTradeProcessor _tradeProcessor;
+    public iTradeProcessor TradeProcessor{ get => _tradeProcessor; }
+    public void SetTradeProcessor(iTradeProcessor tradeProcessor) => SetAndWire(ref _tradeProcessor, tradeProcessor);
+    private iTransactionManager _transactionManager;
+    public iTransactionManager TransactionManager { get => _transactionManager; }
+    public void SetTransactionManager(iTransactionManager transactionManager) => SetAndWire(ref _transactionManager,transactionManager);
+    private iMarketDataService _marketDataService;
+    public void SetMarketDataService(iMarketDataService marketDataService) => _marketDataService = marketDataService;
+    [SerializeField] private ScriptableObject _demandStrategy;
+    public iDemandStrategy DemandStrategy { get => _demandStrategy as iDemandStrategy; }
+    public void SetDemandStrategy(iDemandStrategy demandStrategy) 
+        => SetAndWire(ref _demandStrategy , demandStrategy as ScriptableObject); 
+    private iDemandManager _demandManager;
+    public iDemandManager DemandManager{ get => _demandManager; }
+    public void SetDemandManager(iDemandManager manager) => SetAndWire(ref _demandManager ,manager);
     #endregion
     #region Overrides
     public override string ToString()

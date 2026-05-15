@@ -28,11 +28,17 @@ public abstract class StoryBeat: ScriptableObject
     #endregion
 }
 
+/// <summary>
+/// Note: This is for global game state: narration, etc. Query this object to learn what's currently in the story
+/// </summary>
 public struct GameState
 {
     public int Period;
 }
 
+/// <summary>
+/// Certain story beats mutate game state/rules. When you need to pass those mutations, use this object.
+/// </summary>
 public class BeatPropertyBag
 {
     public FixedCostTemplate FixedCostAssociatedWithBeat;

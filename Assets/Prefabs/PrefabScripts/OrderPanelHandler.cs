@@ -20,6 +20,7 @@ public class OrderPanelHandler : MonoBehaviour
     [SerializeField] private GameObject OrderQueuedLabel;
     [SerializeField] private GameObject DetailedOrderPanel;
     [SerializeField] private Button ShowDetailedOrderButton;
+    [SerializeField] TextMeshProUGUI PlayerCash;
     private EconAgent PlayerCompany;
     private Market LocalMarket;
     private List<InventoryEntry> MarketInventoryEntries;
@@ -226,11 +227,12 @@ public class OrderPanelHandler : MonoBehaviour
         var selectedGood = MarketInventoryEntries[orderPanelDropdown.value].good;
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         var totalprice = decimal.Parse(totalText.text);
+        decimal.TryParse(ValueLabel.text, out var unitPrice);
         int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out var quantity);
     
         iEconAgent seller = null; //Market Order
 
-        var order = new Order(PlayerCompany,seller,selectedGood, quantity, totalprice);
+        var order = new Order(PlayerCompany,seller,selectedGood, quantity, unitPrice);
         var orderContext = new ActionContext
         {
             TradeToSubmit = order,
@@ -242,6 +244,7 @@ public class OrderPanelHandler : MonoBehaviour
         switch (result.Result)
         {
             case ResultTypeEnum.Success:
+                AdjustPlayerCash(totalprice);
                 ShowOrderConfirmation("Order Queued");
                 break;
             case ResultTypeEnum.InsufficientCash:
@@ -256,6 +259,12 @@ public class OrderPanelHandler : MonoBehaviour
         }
     }
     #region Helpers
+    private void AdjustPlayerCash(decimal cashAdjustment)
+    {
+        decimal.TryParse(PlayerCash.text,out var currentCash);
+        currentCash -= cashAdjustment;
+        PlayerCash.text = currentCash.ToString();
+    }
      private void RefreshMarketInventory()
     {
         MarketInventoryEntries = LocalMarket.GetInventory().GetInventoryEntries();
