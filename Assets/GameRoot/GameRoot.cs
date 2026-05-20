@@ -172,7 +172,6 @@ private EconAgent SpawnAgentFromTemplate(EconAgent agent)
         if(!instance.IsPlayer)
             {
                 instance.SetStrategy();
-                instance.GetStrategy().Initialize();
             }
 
          
