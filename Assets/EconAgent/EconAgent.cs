@@ -38,8 +38,6 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         agentLevel = company_level;
         agentStrategy = strategy;
 
-        agentStrategy?.Initialize();
-
         //setup
         if(initialCash==0) 
             SetInitialCash();

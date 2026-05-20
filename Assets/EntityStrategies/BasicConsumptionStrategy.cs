@@ -16,11 +16,6 @@ public class BasicConsumptionStrategy : iStrategy
         throw new System.NotImplementedException();
     }
 
-    public void PerformStrategy(ActionContext context)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public void PerformStrategy(iEconAgent company)
     {
         actions.Clear();
@@ -64,10 +59,6 @@ public class BasicConsumptionStrategy : iStrategy
         }
     }
 
-    public void Initialize()
-    {
-        // deliberate no-op
-    }
 
     #endregion
 }

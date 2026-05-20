@@ -30,32 +30,6 @@ public class BasicGrowthStrategy : iStrategy
         company.Goals.Add(tenLemonadeGoal);
     }
 
-    public void PerformStrategy(ActionContext context)
-    {
-        switch(context.Action)
-        {
-            case ActionEnum.QueueTradeBuy:
-                context.TradeToSubmit.Buyer.QueueOrder(context);
-                break;
-
-            case ActionEnum.QueueTradeSell:
-                context.TradeToSubmit.Seller.QueueOrder(context);
-                break;
-
-            case ActionEnum.MakeRecipe:
-                context.RecipeMaker.MakeRecipe(context);
-                break;
-            
-            case ActionEnum.PublishBidAsk:
-                var publisher = (EconAgent)context.SubmittingCompany;
-                publisher.SubmitBidAskSpreadToMarket(context);
-                break;
-
-            default :
-                throw new ContextException("Action not supported");
-        }
-    }
-
     public void PerformStrategy(iEconAgent company)
     {
         throw new System.NotImplementedException();
@@ -82,8 +56,4 @@ public class BasicGrowthStrategy : iStrategy
         throw new System.NotImplementedException();
     }
 
-    public void Initialize()
-    {
-        //Deliberate no-op
-    }
 }

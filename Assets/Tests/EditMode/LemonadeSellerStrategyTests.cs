@@ -60,8 +60,6 @@ public class LemonadeSellerStrategyTests
 
         company.SetMarket(TestMarket);
         company.AddRecipe(lemonadeRecipe);
-
-        strategy.Initialize();
     }
 
     [TearDown]

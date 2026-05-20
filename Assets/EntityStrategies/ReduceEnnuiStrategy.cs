@@ -231,14 +231,7 @@ public class ReduceEnnuiStrategy : iStrategy
         }
         return null;
     }
-
-    
 #endregion
-
-    public void PerformStrategy(ActionContext context)
-    {
-        throw new NotImplementedException();
-    }
 
     public void SetEconAgent(EconAgent agent)
     {
@@ -250,8 +243,4 @@ public class ReduceEnnuiStrategy : iStrategy
         throw new NotImplementedException();
     }
 
-    public void Initialize()
-    {
-        //Deliberate no-op
-    }
 }
