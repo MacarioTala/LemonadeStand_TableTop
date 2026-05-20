@@ -16,7 +16,7 @@ public class Recipe : ScriptableObject
 
     public bool CanRecipeBeMadeFrom(List<InventoryEntry> entries)
     {
-        return Get_max_quantity(entries)>0;
+        return GetMaxQuantityFromInventory(entries)>0;
     }
     public Recipe(string recipeName, Good product, List<Ingredient> ingredients)
     {
@@ -41,14 +41,36 @@ public class Recipe : ScriptableObject
     public List<Ingredient> GetIngredients() => _ingredients;
 
     public List<Ingredient> GetRequiredIngredientsForRecipe() => _ingredients;
-
-    public int Get_max_quantity(List<InventoryEntry> stock)
+    /// <summary>
+    /// Note: This will return a list of goods with zero quantities if budget cannot make even one unit  
+    /// </summary>
+    /// <param name="prices"></param>
+    /// <param name="budget"></param>
+    /// <returns></returns>
+    public List<Ingredient> GetIngredientMaximumsByBudget(Dictionary<Good,decimal> prices, decimal budget)
     {
-        var max_units_per_ingredient = _ingredients.Select(ingredient => stock
+        if(prices.Count==0) return new List<Ingredient>();
+        var pricePerUnit = _ingredients.Sum(x=>x.QuantityNeeded * prices[x.Good]);
+
+        var totalToProduce = (int)(budget/pricePerUnit);
+
+        var returnList = new List<Ingredient>();
+        foreach(var ingredient in _ingredients)
+            returnList.Add(new (
+                                ingredient.Good,
+                                ingredient.QuantityNeeded*totalToProduce
+                                )
+                            );
+
+        return returnList;
+    }
+    public int GetMaxQuantityFromInventory(List<InventoryEntry> stock)
+    {
+        var maxUnitsPerIngredient = _ingredients.Select(ingredient => stock
                                                   .Where(entry => entry.good == ingredient.Good)
-                                                  .Sum(entry => entry.quantity) / ingredient.Quantity_needed)
+                                                  .Sum(entry => entry.quantity) / ingredient.QuantityNeeded)
                                                   .ToList();
-        return max_units_per_ingredient.Min();
+        return maxUnitsPerIngredient.Min();
     }
 
     public (Good, int) MakeRecipe(int quantity, Inventory inventory)
@@ -57,7 +79,7 @@ public class Recipe : ScriptableObject
                  .Where(entry => GetIngredientNames().Contains(entry.good.GoodName))
                  .ToList();
 
-        if (quantity > Get_max_quantity(stock))
+        if (quantity > GetMaxQuantityFromInventory(stock))
         {
             throw new RecipeException("Not enough ingredients to make " + quantity + " " + _product.GoodName);
         }
@@ -99,7 +121,7 @@ public class Recipe : ScriptableObject
             var inventoryEntries = inventory.GetInventoryEntriesByGood(ingredient.Good.GoodName);
             var costForThisIngredient = inventoryEntries.Sum(entry => entry.Cost * entry.quantity);
             var quantityForThisIngredient = inventoryEntries.Sum(entry => entry.quantity);
-            var requiredUnits = ingredient.Quantity_needed;
+            var requiredUnits = ingredient.QuantityNeeded;
 
             var costPerUnit = Math.Round(requiredUnits * (costForThisIngredient / quantityForThisIngredient), 2);
             cost_per_good.Add(ingredient.Good.GoodName, costPerUnit);
@@ -123,7 +145,7 @@ public class Recipe : ScriptableObject
                         .Average(x=> x.Price);
 
                 
-                totalCost += averagePrice *ingredient.Quantity_needed;
+                totalCost += averagePrice *ingredient.QuantityNeeded;
             }
         return totalCost;
     }
@@ -145,12 +167,12 @@ public class Recipe : ScriptableObject
 public class Ingredient
 {
     public readonly Good Good;
-    public readonly int Quantity_needed;
+    public readonly int QuantityNeeded;
     
     public Ingredient(Good good, int quantity_needed)
     {
         Good = good;
-        Quantity_needed = quantity_needed;
+        QuantityNeeded = quantity_needed;
     }
 }
 

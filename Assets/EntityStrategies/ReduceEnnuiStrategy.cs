@@ -249,4 +249,9 @@ public class ReduceEnnuiStrategy : iStrategy
     {
         throw new NotImplementedException();
     }
+
+    public void Initialize()
+    {
+        //Deliberate no-op
+    }
 }

@@ -340,13 +340,14 @@ public class Market : ScriptableObject, iEconAgent
     #endregion
 
     #region Publishing
-    public List<AvailableGood> GetGoodsAvailableInPeriod(iEconAgent requester)
+    public List<AvailableGood> GetGoodsAvailableInPeriod(iEconAgent requester,int? period = null)
     {
-        var goodsAvailable = GetOrdersSubmittedInPeriod(CurrentPeriod)
+        period ??= CurrentPeriod;
+        var goodsAvailable = GetOrdersSubmittedInPeriod(period)
             .Where(x=>x.IsSell()&& x.IsVisibleTo(requester))
             .Select(x=> new AvailableGood(
                          x.SubmittingCompany,
-                         x.Good.GoodName,
+                         x.Good,
                          x.Quantity,
                          x.Price))
             .ToList();
@@ -364,7 +365,7 @@ public class Market : ScriptableObject, iEconAgent
     public void RecordExecution(Execution trade)
         => _marketDataManager.RecordExecution(trade);
     
-    public List<Order> GetOrdersSubmittedInPeriod(int period)
+    public List<Order> GetOrdersSubmittedInPeriod(int? period)
         => _marketDataManager.GetOrdersSubmittedInPeriod(period);
     public void LogOrder(Order order, int period) => _marketDataManager.LogOrder(order, period);
     public List<(Order Order, int Period)> GetOrdersExecutedInPeriod(params int[] periods)
@@ -385,8 +386,8 @@ public class Market : ScriptableObject, iEconAgent
         _demographicManager.RecordDemographicSnapshot(MarketId, CurrentPeriod, TurnPhase.Beginning);
         ResolveMarketEvents();
         //Local Agents
-        _marketInteractionManager.PopulationsAct(CurrentPeriod);
         _marketInteractionManager.MarketsProvideLiquidityOfLastResort();
+        _marketInteractionManager.NPCsAct(CurrentPeriod);
     }
 
     private void ResolveDeliveries()
@@ -400,6 +401,7 @@ public class Market : ScriptableObject, iEconAgent
 
     public void UnleashMarketForces(int period)
     {
+        ProcessCompanyOrders();
         ResolveDeliveries();
         UpdateFulfillmentRates(period);
         UpdatePrices();

@@ -162,14 +162,20 @@ private EconAgent SpawnAgentFromTemplate(EconAgent agent)
                         .Named(agentName)
                         .WithInitialCashFromTemplate()
                         .WithFixedCostStrategy(fixedCostStrategy)
+                        .WithInitialRecipes()
                         .Build();
         
         instance.LoadFixedCostsFromTemplates(fixedCostTemplates ?? Enumerable.Empty<FixedCostTemplate>(),initialMarket.CurrentPeriod);
 
-        if(instance is PopulationAgent)
-            instance.SetStrategy();
+        initialMarket.RegisterMarketParticipant(instance);
+        
+        if(!instance.IsPlayer)
+            {
+                instance.SetStrategy();
+                instance.GetStrategy().Initialize();
+            }
 
-         initialMarket.RegisterMarketParticipant(instance);
+         
         return instance;
       }
 #endregion

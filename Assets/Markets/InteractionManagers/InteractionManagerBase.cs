@@ -21,16 +21,15 @@ public abstract class InteractionManagerBase : iMarketInteractionManager
 
     public abstract void MarketsProvideLiquidityOfLastResort();
     
-    public virtual void PopulationsAct(int period)
+    public virtual void NPCsAct(int period)
     {
         var marketParticipants = _market.GetMarketParticipants()
-                                .OfType<PopulationAgent>()
                                 .Where(x=>!x.IsPlayer)
                                 .ToList();
 
         if (marketParticipants.Count() == 0)
         {
-            Debug.Log($"Market {_market.Name} has no populations");
+            Debug.Log($"Market {_market.Name} has no NPCs");
         }
         foreach (var participant in marketParticipants)
         {

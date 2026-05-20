@@ -27,6 +27,7 @@ desktop.ini
 *.tmp
 *.user
 *.userprefs
+*.lscache
 
 # Unity auto-generated files
 /Packages/manifest.json

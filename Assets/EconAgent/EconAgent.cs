@@ -38,10 +38,12 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         agentLevel = company_level;
         agentStrategy = strategy;
 
+        agentStrategy?.Initialize();
+
         //setup
         if(initialCash==0) 
             SetInitialCash();
-        SetInitialActions();
+        SetInitialActions();  
     }
 
     public static class Factory
@@ -75,6 +77,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
 public StrategyFactory BehaviourStrategyAsset;
 [SerializeField]private List<DemandEntry> demandEntries=new();
 [SerializeField] private int marketIgnorantAssumedCogInCents;
+[SerializeField] private List<Recipe> initialRecipes;
 #endregion
 #region Action Economy
     private List<AllowedAction> allowedActions = new();
@@ -245,6 +248,12 @@ private void SetBus()
         {
             Recipes.Add(recipe);
         }
+    }
+    public void AddInitialRecipes()
+    {
+        if(initialRecipes != null && initialRecipes.Count>0)
+            foreach(var recipe in initialRecipes)
+            AddRecipe(recipe);  
     }
     public void RemoveRecipe(Recipe recipe)
     {

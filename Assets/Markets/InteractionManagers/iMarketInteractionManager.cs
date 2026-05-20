@@ -1,7 +1,7 @@
 public interface iMarketInteractionManager : iMarketAware
 {
     void EvaluateParticipantCollapse(EconAgent company);
-    void PopulationsAct(int period);
+    void NPCsAct(int period);
     void RegisterMarketParticipant(EconAgent marketParticipant);
     public LemonadeStandResultObject RemoveMarketParticipant(EconAgent company);
     LemonadeStandResultObject QueueOrder(ActionContext context);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 [Serializable]
 public class DemandData
 {
@@ -43,6 +44,25 @@ public class DemandData
         return CurrentDemand;
     }
 
+    public int GetAdjustedDemandFor(ElasticDemandComponentEnum component, float stateChange)
+    {
+        var adjustment = ElasticDemandComponents.FirstOrDefault(x=>x.Type==component).GetDemandAdjustment(stateChange,CurrentDemand);
+         // Ensure that the total demand is clamped within the min and max demand limits
+        if (CurrentDemand + adjustment < MinDemand)
+        {
+            CurrentDemand = MinDemand;
+        }
+        else if (CurrentDemand + adjustment > MaxDemand)
+        {
+            CurrentDemand = MaxDemand;
+        }
+        else
+        { 
+            CurrentDemand += adjustment;
+        }
+        return CurrentDemand;
+    }
+    
     public int GetDemand()
     { 
         return GetRequisiteDemand();

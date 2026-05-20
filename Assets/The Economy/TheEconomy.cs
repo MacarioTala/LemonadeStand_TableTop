@@ -33,6 +33,11 @@ public class TheEconomy : MonoBehaviour
     
     internal ITradeLogger _trade_logger;
 
+    /// <summary>
+    /// One row for each Market, represented by Market.Id 
+    /// </summary>
+    /// <param name="period"></param>
+    /// <returns></returns>
     public Dictionary<Guid,List<Execution>> GetAllTransactions(int period) 
     {
         var markets = EconomicAgents.OfType<Market>().ToList();
@@ -101,17 +106,11 @@ public class TheEconomy : MonoBehaviour
     }
     public void EndTradingPeriod()
     {
-        var executedTrades = new List<Order>();
         //Update prices
         foreach (Market market in EconomicAgents.OfType<Market>())
-        {
-            executedTrades = market.ProcessCompanyOrders();
             market.UnleashMarketForces(TradingPeriod);
-        };
 
         TradingPeriod++;
-
-        _trade_logger?.SaveDailySummary(executedTrades);
     }
     /// <summary>
     /// Note: ResolveTurn should be used from TextBasedStoryHandler.
