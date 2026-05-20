@@ -548,7 +548,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
             var BasicLemonadeRecipe = PlayerCompany.Recipes.FirstOrDefault(x=>x.RecipeName=="Basic Lemonade");
             if(BasicLemonadeRecipe)
             {
-                var maxQuantity = BasicLemonadeRecipe.Get_max_quantity(PlayerCompany
+                var maxQuantity = BasicLemonadeRecipe.GetMaxQuantityFromInventory(PlayerCompany
                                         .GetInventory()
                                         .GetInventoryEntries());
 

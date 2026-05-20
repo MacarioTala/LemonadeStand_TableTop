@@ -15,7 +15,7 @@ public class DefaultMarketDataManager : iMarketDataManager,iMarketAware
                           .SelectMany(x => x.Order.GetExecutions()).ToList();
         return executions;
     }
-    public List<Order> GetOrdersSubmittedInPeriod(int period)
+    public List<Order> GetOrdersSubmittedInPeriod(int? period)
     {
         var ordersToReturn = OrdersSubmittedInPeriod
                            .Where(x => x.Period == period)

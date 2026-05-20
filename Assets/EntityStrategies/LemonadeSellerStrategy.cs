@@ -6,7 +6,13 @@ public class LemonadeSellerStrategy : iStrategy
 {
     EconAgent Actor;
     private decimal _aggressionLevel = 0.8m;
+    private Recipe _lemonadeRecipe;
+    private Good _lemonade;
+    private Inventory _inventory;
+    private Market _market;
+    private Dictionary<Good,DemandData> _demand;
     
+    private readonly Dictionary<Good, float> _inflationTolerances = new();
     public decimal GetAggressionLevel() => _aggressionLevel;
     
     public LemonadeStandResultObject SetAggressionLevel(decimal aggressionLevel)
@@ -30,6 +36,18 @@ public class LemonadeSellerStrategy : iStrategy
         company.Goals.Add(salesGoal);
     }
     
+    public void Initialize()
+    {
+        _lemonadeRecipe = Actor.Recipes
+            .FirstOrDefault(r => r.GetProduct().GoodName.Contains("Lemonade", StringComparison.OrdinalIgnoreCase));
+        
+        _inventory = Actor.GetInventory();
+        _market = Actor.GetMarket();
+
+        // Get lemonade good, assuming it exists 
+        _lemonade = Actor.GetInventory().GetInventoryEntries()
+            .FirstOrDefault(entry => entry.good.GoodName.Contains("Lemonade", StringComparison.OrdinalIgnoreCase))?.good;
+    }
     public void PerformStrategy(ActionContext context)
     {
         switch(context.Action)
@@ -60,63 +78,105 @@ public class LemonadeSellerStrategy : iStrategy
         var market = econAgent.GetMarket();
         if (market == null) return;
         
-        // Get lemonade good (assuming it exists in the test goods)
-        var lemonade = econAgent.GetInventory().GetInventoryEntries()
-            .FirstOrDefault(entry => entry.good.GoodName.Contains("Lemonade", StringComparison.OrdinalIgnoreCase))?.good;
         
-        if (lemonade == null)
+        if (_lemonade == null)
         {
             // If no lemonade, try to produce it
-            TryProduceLemonade(econAgent, market);
-            return;
+            TryProduceLemonade(market);
         }
         
         // Check if we have lemonade to sell
         var lemonadeInventory = econAgent.GetInventory().GetInventoryEntries()
-            .FirstOrDefault(entry => entry.good == lemonade);
+            .FirstOrDefault(entry => entry.good == _lemonade);
         
         if (lemonadeInventory != null && lemonadeInventory.quantity > 0)
         {
             // Sell lemonade to the market
-            SellLemonade(econAgent, market, lemonade, lemonadeInventory.quantity);
+            SellLemonade(_lemonade, lemonadeInventory.quantity);
         }
         else
         {
             // No lemonade available, try to produce
-            TryProduceLemonade(econAgent, market);
+            TryProduceLemonade(market);
         }
+
+        //Buy Ingredients
+        BuySupplies();
     }
     
-    private void TryProduceLemonade(EconAgent company, Market market)
+    private void TryProduceLemonade(Market market)
     {
         // Check if company has lemonade recipe
-        var lemonadeRecipe = company.Recipes
-            .FirstOrDefault(r => r.GetProduct().GoodName.Contains("Lemonade", StringComparison.OrdinalIgnoreCase));
-        
-        if (lemonadeRecipe == null) return;
+        if (_lemonadeRecipe == null) return;
         
         // Check if we can produce lemonade
-        var inventory = company.GetInventory().GetInventoryEntries();
-        var maxQuantity = lemonadeRecipe.Get_max_quantity(inventory);
+        var inventoryEntries = _inventory.GetInventoryEntries();
+        var maxQuantity = _lemonadeRecipe.GetMaxQuantityFromInventory(inventoryEntries);
         
         if (maxQuantity > 0)
         {
             // Produce as much as possible
             var context = new ActionContext 
             { 
-                Recipe = lemonadeRecipe, 
+                Recipe = _lemonadeRecipe, 
                 QuantityToMake = maxQuantity, 
-                RecipeMaker = company,
+                RecipeMaker = Actor,
                 Period = market.CurrentPeriod
             };
-            company.MakeRecipe(context);
+            Actor.MakeRecipe(context);
         }
     }
-    
-    private void SellLemonade(EconAgent company, Market market, Good lemonade, int quantity)
+    #region Buy Supplies
+    internal void BuySupplies()//TODO: add asmdef
+    {
+        var cash = Actor.GetCash();
+        var currentPrices = _market.GetGoodsAvailableInPeriod(Actor)
+                    .ToDictionary(x=>x.Good,x=>x.Price);
+        var ingredientsToBuy = _lemonadeRecipe.GetIngredientMaximumsByBudget(currentPrices,cash);
+        
+        foreach(var ingredient in ingredientsToBuy)
+        {
+            var order = new Order(Actor,null,ingredient.Good,ingredient.QuantityNeeded,currentPrices[ingredient.Good]){SubmittingCompany=Actor};
+            var context = new ActionContext
+                    {
+                        TradeToSubmit = order,
+                        MarketToSubmitTo = _market,
+                        Period = _market.CurrentPeriod,
+                        SubmittingCompany = Actor,
+                        Action = ActionEnum.QueueTradeBuy
+                    };
+                    
+            Actor.QueueOrder(context);
+        }
+    }
+    #endregion
+
+    private Dictionary<Good, int> GetDemandedQuantities(Market market, List<AvailableGood> currentPrices, IReadOnlyDictionary<Good, DemandData> demand)
+    {
+        var newDemand = new Dictionary<Good, int>();
+        //Figure out last period's prices
+        var previousPeriodPrices = new List<AvailableGood>();
+        if (market.CurrentPeriod == 0)
+            previousPeriodPrices = market.GetGoodsAvailableInPeriod(Actor);
+        else
+        {
+            previousPeriodPrices = market.GetGoodsAvailableInPeriod(Actor, market.CurrentPeriod - 1);
+            foreach (var availableGood in previousPeriodPrices)
+            {
+                var currentPriceOfGood = currentPrices.FirstOrDefault(x => x.Good == availableGood.Good).Price;
+                float priceDelta = (float)(currentPriceOfGood - availableGood.Price) / (float)availableGood.Price;
+                var demandRow = demand.FirstOrDefault(x => x.Key == availableGood.Good).Value;
+
+                newDemand.Add(availableGood.Good, demandRow.GetAdjustedDemandFor(ElasticDemandComponentEnum.Price, priceDelta));
+            }
+        }
+        return newDemand;
+    }
+
+    private void SellLemonade(Good lemonade, int quantity)
     {
         // Get market price for lemonade
-        var marketPrices = market.GetAverageMarketPrices();
+        var marketPrices = _market.GetAverageMarketPrices();
         decimal sellPrice;
         
         var lemonadePrice = marketPrices.Where(x=>x.Good==lemonade).Average(x=>x.Price);
@@ -133,21 +193,23 @@ public class LemonadeSellerStrategy : iStrategy
         
         // Don't sell everything at once, keep some inventory
         var quantityToSell = Math.Min(quantity, Math.Max(1, quantity / 2));
-        
+
         // Create sell order to market
-        var order = new Order(company, market, lemonade, quantityToSell, sellPrice);
-        order.SubmittingCompany = company;
-        
+        var order = new Order(Actor, _market, lemonade, quantityToSell, sellPrice)
+        {
+            SubmittingCompany = Actor
+        };
+
         var context = new ActionContext
         {
             TradeToSubmit = order,
-            MarketToSubmitTo = market,
-            Period = market.CurrentPeriod,
-            SubmittingCompany = company,
+            MarketToSubmitTo = _market,
+            Period = _market.CurrentPeriod,
+            SubmittingCompany = Actor,
             Action = ActionEnum.QueueTradeSell
         };
         
-        market.QueueOrder(context);
+        Actor.QueueOrder(context);
     }
     
     public LemonadeStandResultObject PublishBidAskSpreadsToMarket(iEconAgent company)

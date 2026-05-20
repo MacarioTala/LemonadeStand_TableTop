@@ -81,4 +81,9 @@ public class BasicGrowthStrategy : iStrategy
     {
         throw new System.NotImplementedException();
     }
+
+    public void Initialize()
+    {
+        //Deliberate no-op
+    }
 }

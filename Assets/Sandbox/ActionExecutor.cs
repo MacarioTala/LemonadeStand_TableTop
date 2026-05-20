@@ -109,7 +109,7 @@ namespace Sandbox
             
             // Check if the company has enough ingredients to make lemonade
             var inventory = company.GetInventory().GetInventoryEntries();
-            var maxQuantity = lemonadeRecipe.Get_max_quantity(inventory);
+            var maxQuantity = lemonadeRecipe.GetMaxQuantityFromInventory(inventory);
             
             if (maxQuantity > 0)
             {

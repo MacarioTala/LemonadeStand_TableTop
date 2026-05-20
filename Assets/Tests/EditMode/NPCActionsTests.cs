@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using Unity.VisualScripting.YamlDotNet.Core;
 using static TestHelpers;
 
 [TestFixture]
-public class TradingTests
+public class NPCActionsTests
 {
     Market TestMarket;
     EconAgent Company1;
@@ -56,8 +55,8 @@ public class TradingTests
         var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7.0m);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company1,"Lemonade",1,6.0m),
-            new (Company2,"Lemonade",1,7.0m)
+            new (Company1,lemonade,1,6.0m),
+            new (Company2,lemonade,1,7.0m)
         };
 
         //Act
@@ -93,9 +92,9 @@ public class TradingTests
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company1,"Lemonade",1,6.0m),
-            new (Company2,"Lemonade",1,7.0m),
-            new (TestMarket,"Lemon",20,2m)
+            new (Company1,lemonade,1,6.0m),
+            new (Company2,lemonade,1,7.0m),
+            new (TestMarket,lemon,20,2m)
         };
 
         //Act
@@ -133,7 +132,7 @@ public class TradingTests
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (TestMarket,"Lemon",20,2m)
+            new (TestMarket,lemon,20,2m)
         };
 
         //Act
@@ -171,8 +170,8 @@ public class TradingTests
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company2,"Lemon",1,1m),
-            new (TestMarket,"Lemon",20,2m)
+            new (Company2,lemon,1,1m),
+            new (TestMarket,lemon,20,2m)
         };
 
         //Act
@@ -213,8 +212,8 @@ public class TradingTests
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company2,"Lemon",1,1m),
-            new (TestMarket,"Lemon",20,2m)
+            new (Company2,lemon,1,1m),
+            new (TestMarket,lemon,20,2m)
         };
 
         //Act

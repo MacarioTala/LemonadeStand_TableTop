@@ -64,5 +64,10 @@ public class BasicConsumptionStrategy : iStrategy
         }
     }
 
+    public void Initialize()
+    {
+        // deliberate no-op
+    }
+
     #endregion
 }

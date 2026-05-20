@@ -118,7 +118,7 @@ public class Inventory
 
         foreach(var ingredient in ingredients)
         {
-            var remainingQuantityToRemove = ingredient.Quantity_needed * quantity;
+            var remainingQuantityToRemove = ingredient.QuantityNeeded * quantity;
 
             var availableEntries = GetAvailableInventory()
                                     .Where(x=>x.good.GoodName == ingredient.Good.GoodName)

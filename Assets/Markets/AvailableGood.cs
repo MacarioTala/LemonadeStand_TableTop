@@ -1,14 +1,14 @@
 public struct AvailableGood
 {
     public iEconAgent Agent;
-    public string GoodName;
+    public Good Good;
     public int Quantity;
     public decimal Price;
 
-    public AvailableGood (iEconAgent agent, string goodName, int quantity, decimal price)
+    public AvailableGood (iEconAgent agent, Good good, int quantity, decimal price)
     {
         Agent = agent;
-        GoodName = goodName;
+        Good = good;
         Quantity = quantity;
         Price = price;
     }

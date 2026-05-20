@@ -10,36 +10,9 @@ public class EconAgentBuilder<T> where T : EconAgent
     public static EconAgentBuilder<T> Create() => new(ScriptableObject.CreateInstance<T>());
     public T Build() => agentToReturn;
 
-    public EconAgentBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
+    public EconAgentBuilder<T> AssumingNewGoodsCost(decimal value)
     {
-        agentToReturn.FixedCostStrategy = fixedCostStrategy;
-        agentToReturn.FixedCostStrategy.SetEconAgent(agentToReturn);
-        return this;
-    }
-    public EconAgentBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)
-    {
-        agentToReturn.SetStrategy(behaviourStrategy);
-        behaviourStrategy.SetEconAgent(agentToReturn);
-        return this;
-    }
-    public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
-    {
-        agentToReturn.SetCash(initialCash);
-        return this;
-    }
-    public EconAgentBuilder<T> WithInitialCashFromTemplate()
-    {
-        agentToReturn.SetCash(agentToReturn.InitialCashInCents/100);
-        return this;
-    }
-    public EconAgentBuilder<T> WithActionsPerTurn(int actionsPerTurn)
-    {
-        agentToReturn.SetActionsPerCycle(actionsPerTurn);
-        return this;
-    }
-    public EconAgentBuilder<T> Named(string name)
-    {
-        agentToReturn.Name = name;
+        agentToReturn.SetMarketIgnorantAssumedCOG(value);
         return this;
     }
 
@@ -48,38 +21,6 @@ public class EconAgentBuilder<T> where T : EconAgent
         agentToReturn.agentLevel = companyLevel;
         return this;
     }
-
-    public EconAgentBuilder<T> WithPopulation(int population)
-    {
-        if (agentToReturn is PopulationAgent populationCompany)
-        {
-            populationCompany.Population = population;
-        }
-        else
-        {
-            Debug.LogError("Company is not a PopulationCompany.");
-        }
-        return this;
-    }
-
-    public EconAgentBuilder<T> WithAnxiety(float anxiety)
-    {
-        agentToReturn.SetAnxiety(anxiety);
-        return this;
-    }
-    public EconAgentBuilder<T> WithEnnui(float ennui)
-    {
-        if (agentToReturn is PopulationAgent populationCompany)
-        {
-            populationCompany.Ennui = ennui;
-        }
-        else
-        {
-            Debug.LogError("Company is not a PopulationCompany.");
-        }
-        return this;
-    }
-
     public EconAgentBuilder<T> Demanding(Dictionary<Good, DemandData> demands)
     {
         if (agentToReturn is PopulationAgent populationAgent)
@@ -95,21 +36,82 @@ public class EconAgentBuilder<T> where T : EconAgent
         }
         return this;
     }
-    public EconAgentBuilder<T> WithGoal(Goal goal)
+    public EconAgentBuilder<T> Named(string name)
+    {
+        agentToReturn.Name = name;
+        return this;
+    }
+    
+    public EconAgentBuilder<T> WithActionsPerTurn(int actionsPerTurn)
+    {
+        agentToReturn.SetActionsPerCycle(actionsPerTurn);
+        return this;
+    }
+    public EconAgentBuilder<T> WithAnxiety(float anxiety)
+    {
+        agentToReturn.SetAnxiety(anxiety);
+        return this;
+    }
+    public EconAgentBuilder<T> WithBehaviourStrategy(iStrategy behaviourStrategy)
+    {
+        agentToReturn.SetStrategy(behaviourStrategy);
+        behaviourStrategy.SetEconAgent(agentToReturn);
+        return this;
+    }
+    public EconAgentBuilder<T> WithEnnui(float ennui)
+    {
+        if (agentToReturn is PopulationAgent populationCompany)
+        {
+            populationCompany.Ennui = ennui;
+        }
+        else
+        {
+            Debug.LogError("Company is not a PopulationCompany.");
+        }
+        return this;
+    }
+    public EconAgentBuilder<T> WithFixedCostStrategy(iFixedCostStrategy fixedCostStrategy)
+    {
+        agentToReturn.FixedCostStrategy = fixedCostStrategy;
+        agentToReturn.FixedCostStrategy.SetEconAgent(agentToReturn);
+        return this;
+    }
+     public EconAgentBuilder<T> WithGoal(Goal goal)
     {
         agentToReturn.AddGoal(goal);
         return this;
     }
-
+    public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
+    {
+        agentToReturn.SetCash(initialCash);
+        return this;
+    }
+    public EconAgentBuilder<T> WithInitialCashFromTemplate()
+    {
+        agentToReturn.SetCash(agentToReturn.InitialCashInCents/100);
+        return this;
+    }
+    public EconAgentBuilder<T> WithInitialRecipes()
+    {
+        agentToReturn.AddInitialRecipes();
+        return this;
+    }
     public EconAgentBuilder<T> WithInventory(Inventory inventory)
     {
         agentToReturn.SetInventory(inventory);
         return this;
     }
 
-    public EconAgentBuilder<T> AssumingNewGoodsCost(decimal value)
+    public EconAgentBuilder<T> WithPopulation(int population)
     {
-        agentToReturn.SetMarketIgnorantAssumedCOG(value);
+        if (agentToReturn is PopulationAgent populationCompany)
+        {
+            populationCompany.Population = population;
+        }
+        else
+        {
+            Debug.LogError("Company is not a PopulationCompany.");
+        }
         return this;
     }
 }

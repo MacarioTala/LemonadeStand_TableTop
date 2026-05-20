@@ -24,7 +24,7 @@ public class Good : ScriptableObject
         {
             // If no minimum ask price is set, calculate it based on the recipe's ingredients
             _minAskPrice = recipe.GetIngredients()
-                .Sum(ingredient => ingredient.Good.GetPrice() * ingredient.Quantity_needed);
+                .Sum(ingredient => ingredient.Good.GetPrice() * ingredient.QuantityNeeded);
             return _minAskPrice;
         }
         return _minAskPrice;

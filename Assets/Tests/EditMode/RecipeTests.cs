@@ -63,7 +63,7 @@ public class RecipeTests
         // Arrange
         var expected = 1;// need 9 lemon, 2 sugar, 7 water, can only make 1 lemonade
         // Act
-        var actual = basicLemonadeRecipe.Get_max_quantity(test_inventory.GetInventoryEntries());
+        var actual = basicLemonadeRecipe.GetMaxQuantityFromInventory(test_inventory.GetInventoryEntries());
         // Assert 
         Assert.AreEqual(expected, actual);
     }
@@ -131,13 +131,13 @@ public class RecipeTests
 
         // Act
         var actual = basicLemonadeRecipe.GetRequiredIngredientsForRecipe()
-                                    .Select(ingredient => (ingredient.Good.GoodName, ingredient.Quantity_needed))
+                                    .Select(ingredient => (ingredient.Good.GoodName, ingredient.QuantityNeeded))
                                     .ToList();
 
         // Assert
         foreach (var (expectedName, expectedQuantity) in expected)
         {
-            var match = actual.FirstOrDefault(a => a.GoodName == expectedName && a.Quantity_needed == expectedQuantity);
+            var match = actual.FirstOrDefault(a => a.GoodName == expectedName && a.QuantityNeeded == expectedQuantity);
             Assert.IsNotNull(match, $"Expected ingredient '{expectedName}' with quantity {expectedQuantity} was not found in the recipe.");
         }
     }
@@ -476,5 +476,119 @@ public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
     Assert.IsNotNull(producedEntry);
     Assert.AreEqual(2, producedEntry.quantity);
     Assert.AreEqual(0, remainingLemonQuantity);
+}
+[Test]
+public void GetIngredientMaximumsByBudget_ReturnsIngredientTotalsForAffordableBudget()
+{
+    // Arrange
+    var prices = new Dictionary<Good, decimal>
+    {
+        { lemon, 3m },
+        { sugar, 2m },
+        { water, 1m }
+    };
+
+    // Cost per lemonade = 9*3 + 2*2 + 7*1 = 38
+    // Budget 76 can make 1 lemonade
+    var expectedLemons = 18;
+    var expectedSugar = 4;
+    var expectedWater = 14;
+
+    // Act
+    var actual = basicLemonadeRecipe.GetIngredientMaximumsByBudget(prices, 76m);
+
+    // Assert
+    Assert.AreEqual(expectedLemons, actual.First(x => x.Good == lemon).QuantityNeeded);
+    Assert.AreEqual(expectedSugar, actual.First(x => x.Good == sugar).QuantityNeeded);
+    Assert.AreEqual(expectedWater, actual.First(x => x.Good == water).QuantityNeeded);
+}
+
+[Test]
+public void GetIngredientMaximumsByBudget_FloorsPartialProduction()
+{
+    // Arrange
+    var prices = new Dictionary<Good, decimal>
+    {
+        { lemon, 3m },
+        { sugar, 2m },
+        { water, 1m }
+    };
+
+    // Cost per lemonade = 38
+    // Budget 75 can only make 1 lemonade
+    var expectedLemons = 9;
+    var expectedSugar = 2;
+    var expectedWater = 7;
+
+    // Act
+    var actual = basicLemonadeRecipe.GetIngredientMaximumsByBudget(prices, 75m);
+
+    // Assert
+    Assert.AreEqual(expectedLemons, actual.First(x => x.Good == lemon).QuantityNeeded);
+    Assert.AreEqual(expectedSugar, actual.First(x => x.Good == sugar).QuantityNeeded);
+    Assert.AreEqual(expectedWater, actual.First(x => x.Good == water).QuantityNeeded);
+}
+
+[Test]
+public void GetIngredientMaximumsByBudget_ReturnsZeroQuantitiesWhenBudgetTooSmall()
+{
+    // Arrange
+    var prices = new Dictionary<Good, decimal>
+    {
+        { lemon, 3m },
+        { sugar, 2m },
+        { water, 1m }
+    };
+
+    // Cost per lemonade = 38
+    // Budget 37 cannot make even 1 lemonade
+
+    // Act
+    var actual = basicLemonadeRecipe.GetIngredientMaximumsByBudget(prices, 37m);
+
+    // Assert
+    Assert.AreEqual(0, actual.First(x => x.Good == lemon).QuantityNeeded);
+    Assert.AreEqual(0, actual.First(x => x.Good == sugar).QuantityNeeded);
+    Assert.AreEqual(0, actual.First(x => x.Good == water).QuantityNeeded);
+}
+[Test]
+public void GetIngredientMaximumsByBudget_UsesDecimalPricesCorrectly()
+{
+    // Arrange
+    var prices = new Dictionary<Good, decimal>
+    {
+        { lemon, 0.5m },
+        { sugar, 0.25m },
+        { water, 0.1m }
+    };
+
+    // Cost per lemonade = 9*.5 + 2*.25 + 7*.1 = 5.7
+    // Budget 11.4 can make 2 lemonade
+    var expectedLemons = 18;
+    var expectedSugar = 4;
+    var expectedWater = 14;
+
+    // Act
+    var actual = basicLemonadeRecipe.GetIngredientMaximumsByBudget(prices, 11.4m);
+
+    // Assert
+    Assert.AreEqual(expectedLemons, actual.First(x => x.Good == lemon).QuantityNeeded);
+    Assert.AreEqual(expectedSugar, actual.First(x => x.Good == sugar).QuantityNeeded);
+    Assert.AreEqual(expectedWater, actual.First(x => x.Good == water).QuantityNeeded);
+}
+[Test]
+public void GetIngredientMaximumsByBudget_ThrowsWhenIngredientPriceIsMissing()
+{
+    // Arrange
+    var prices = new Dictionary<Good, decimal>
+    {
+        { lemon, 3m },
+        { sugar, 2m }
+        // water intentionally missing
+    };
+
+    // Act / Assert
+    Assert.Throws<KeyNotFoundException>(() =>
+        basicLemonadeRecipe.GetIngredientMaximumsByBudget(prices, 100m));
 }
 }
