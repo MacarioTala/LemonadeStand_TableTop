@@ -47,8 +47,7 @@ public class LemonadeSellerStrategy : iStrategy
         }
         
         // Check if we have lemonade to sell
-        var lemonadeInventory = econAgent.GetInventory().GetInventoryEntries()
-            .FirstOrDefault(entry => entry.good == _lemonade);
+        var lemonadeInventory = GetLemonadeEntry(_lemonade);
         
         if (lemonadeInventory != null && lemonadeInventory.quantity > 0)
         {
@@ -91,48 +90,73 @@ public class LemonadeSellerStrategy : iStrategy
     #region Buy Supplies
     internal void BuySupplies()//TODO: add asmdef
     {
-        var cash = Actor.GetCash();
+        var remainingCash = GetSpendableCash();//aggressionLevel is currently a 'risk appetite'. Spend this much of all reserves
         var market = Actor.GetMarket();
         var lemonadeRecipe = GetLemonadeRecipe();
 
         var currentPrices = market.GetGoodsAvailableInPeriod(Actor)
                     .ToDictionary(x=>x.Good,x=>x.Price);
-        var ingredientsToBuy = lemonadeRecipe.GetIngredientMaximumsByBudget(currentPrices,cash);
+        var ingredientsToBuy = lemonadeRecipe.GetIngredientMaximumsByBudget(currentPrices,remainingCash);
         
         foreach(var ingredient in ingredientsToBuy)
         {
-            var order = new Order(Actor,null,ingredient.Good,ingredient.QuantityNeeded,currentPrices[ingredient.Good]){SubmittingCompany=Actor};
-            var context = new ActionContext
-                    {
-                        TradeToSubmit = order,
-                        MarketToSubmitTo = market,
-                        Period = market.CurrentPeriod,
-                        SubmittingCompany = Actor,
-                        Action = ActionEnum.QueueTradeBuy
-                    };
-                    
-            Actor.QueueOrder(context);
+            remainingCash = BuyIngredientAndGiveChange(remainingCash, market, currentPrices, ingredient);
         }
+        StockpileIngredientsWithRemainingCash(remainingCash);
     }
+
     #endregion
 
-    private Dictionary<Good, int> GetDemandedQuantities(Market market, List<AvailableGood> currentPrices, IReadOnlyDictionary<Good, DemandData> demand)
+    private void StockpileIngredientsWithRemainingCash(decimal remainingCash)
     {
-        var newDemand = new Dictionary<Good, int>();
-        //Figure out last period's prices
-        var previousPeriodPrices = new List<AvailableGood>();
-        if (market.CurrentPeriod == 0)
-            previousPeriodPrices = market.GetGoodsAvailableInPeriod(Actor);
-        else
+        var market = Actor.GetMarket();
+        var lemonadeRecipe = GetLemonadeRecipe();
+        var currentPrices = market.GetIngredientBidAskSpreadForPeriod(Actor,market.CurrentPeriod)
+                    .ToDictionary(x=>x.Good,x=>x.Ask);
+        int quantityToBuy = 0;
+        int maxToBuy;
+        //will currently randomly pick from ingredients to stockpile based on cash
+        var currentDemand = Actor.GetDemand();
+        var newDemand = GetNewDemandedQuantities();
+        if(currentDemand.Count()>0)
         {
-            previousPeriodPrices = market.GetGoodsAvailableInPeriod(Actor, market.CurrentPeriod - 1);
+            int randomIndex = UnityEngine.Random.Range(0,currentDemand.Count-1);
+            var randomGoodToBuy = currentDemand.Keys.ElementAt(randomIndex);
+            var maxQuantityBuyable = (int)(remainingCash/currentPrices[randomGoodToBuy]);
+            if(!(newDemand.Count()==0))
+                maxToBuy = newDemand[randomGoodToBuy];
+            else
+                maxToBuy = currentDemand[randomGoodToBuy].CurrentDemand;
+            
+            quantityToBuy = maxQuantityBuyable>maxToBuy?maxToBuy : maxQuantityBuyable;
+
+            if(quantityToBuy>0)
+                BuyIngredientAndGiveChange(remainingCash,market,currentPrices,new Ingredient(randomGoodToBuy,quantityToBuy));
+        }
+    }
+    private Dictionary<Good, int> GetNewDemandedQuantities()
+    {   
+        var market = Actor.GetMarket();
+        var newDemand = new Dictionary<Good, int>();
+        var currentDemand = Actor.GetDemand();
+        var currentPrices = market.GetIngredientBidAskSpreadForPeriod(Actor,market.CurrentPeriod)
+                    .ToDictionary(x=>x.Good,x=>x.Ask);
+        //Figure out last period's prices
+        var previousPeriodPrices = new Dictionary<Good, decimal>();
+        if (market.CurrentPeriod >0)
+        {
+            //TODO: refactor later when we need the strategy to have demand for new goods introduced
+            previousPeriodPrices = market.GetIngredientBidAskSpreadForPeriod(Actor, market.CurrentPeriod - 1)
+                                   .ToDictionary(x=>x.Good,x=>x.Ask);
             foreach (var availableGood in previousPeriodPrices)
             {
-                var currentPriceOfGood = currentPrices.FirstOrDefault(x => x.Good == availableGood.Good).Price;
-                float priceDelta = (float)(currentPriceOfGood - availableGood.Price) / (float)availableGood.Price;
-                var demandRow = demand.FirstOrDefault(x => x.Key == availableGood.Good).Value;
-
-                newDemand.Add(availableGood.Good, demandRow.GetAdjustedDemandFor(ElasticDemandComponentEnum.Price, priceDelta));
+                var currentPriceOfGood = currentPrices.GetValueOrDefault(availableGood.Key);
+                float priceDelta = (float)(currentPriceOfGood - availableGood.Value) / (float)availableGood.Value;
+                if(priceDelta>0)
+                {
+                    if(currentDemand.TryGetValue(availableGood.Key,out var demandRow))
+                    newDemand.Add(availableGood.Key, demandRow.GetAdjustedDemandFor(ElasticDemandComponentEnum.Price, priceDelta));
+                }
             }
         }
         return newDemand;
@@ -144,8 +168,14 @@ public class LemonadeSellerStrategy : iStrategy
         var market = Actor.GetMarket();
         var marketPrices = market.GetAverageMarketPrices();
         decimal sellPrice;
+
+        var costOfLemonade = GetLemonadeEntry(lemonade).Cost;
         
-        var lemonadePrice = marketPrices.Where(x=>x.Good==lemonade).Average(x=>x.Price);
+        var lemonadePrices = marketPrices.Where(x=>x.Good==lemonade); 
+        var lemonadePrice = lemonadePrices
+                           .Any()
+                           ? lemonadePrices.Average(x=>x.Price)
+                           : costOfLemonade;
         if (lemonadePrice > 0)
         {
             // Sell at market price or slightly below to be competitive
@@ -194,12 +224,37 @@ public class LemonadeSellerStrategy : iStrategy
         throw new NotImplementedException();
     }
     #region Helpers
+    private decimal BuyIngredientAndGiveChange(decimal remainingCash, Market market, Dictionary<Good, decimal> currentPrices, Ingredient ingredient)
+    {
+        var amountOfIngredient = ingredient.QuantityNeeded;
+        var costOfIngredient = currentPrices[ingredient.Good];
+        var order = new Order(Actor, null, ingredient.Good, amountOfIngredient, costOfIngredient) { SubmittingCompany = Actor };
+        var context = new ActionContext
+        {
+            TradeToSubmit = order,
+            MarketToSubmitTo = market,
+            Period = market.CurrentPeriod,
+            SubmittingCompany = Actor,
+            Action = ActionEnum.QueueTradeBuy
+        };
+
+        Actor.QueueOrder(context);
+
+        remainingCash -= amountOfIngredient * costOfIngredient;
+        return remainingCash;
+    }
     private Good GetLemonadeGood()
     // Get lemonade good, assuming it exists 
         => Actor.GetInventory().GetInventoryEntries()
             .FirstOrDefault(entry => entry.good.GoodName.Contains("Lemonade", StringComparison.OrdinalIgnoreCase))?.good;
+    private InventoryEntry GetLemonadeEntry(Good _lemonade)
+    => Actor.GetInventory().GetInventoryEntries()
+            .FirstOrDefault(entry => entry.good == _lemonade);
     private Recipe GetLemonadeRecipe()
         => Actor.Recipes
                 .FirstOrDefault(r => r.GetProduct().GoodName.Contains("Lemonade", StringComparison.OrdinalIgnoreCase));
+    private decimal GetSpendableCash()
+        =>(Actor.GetCash()*_aggressionLevel)-Actor.FixedCosts.Sum(x=>x.Template.Amount);
+
     #endregion
 }

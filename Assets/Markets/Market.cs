@@ -372,6 +372,31 @@ public class Market : ScriptableObject, iEconAgent
         => _marketDataManager.GetOrdersExecutedInPeriod(periods);
     public List<Execution> GetExecutionsInPeriod(int period)
         => _marketDataManager.GetExecutionsInPeriod(period);
+    
+    public List<MarketData> GetIngredientBidAskSpreadForPeriod(iEconAgent requester,int? period=null)
+    {
+        // currently takes the mean of the bids and asks
+        // in the future, can be more robust, like letting the EconAgents decide which bid/ask to believe
+        period??=CurrentPeriod;
+        
+        var spreads = GetOrdersSubmittedInPeriod(period)
+                    .Where(x=>!x.Good.IsProducedGood && x.IsVisibleTo(requester))
+                    .GroupBy(x=>x.Good)
+                    .Select(
+                        y=> new MarketData
+                        {
+                            Good = y.Key,
+                            Bid = y.Any(x=> x.IsBuy())
+                                 ?y.Where(x=>x.IsBuy()).Average(x=>x.Price)
+                                 :0
+                                   ,
+                            Ask = y.Any(x=>!x.IsBuy())
+                                  ?y.Where(x=>!x.IsBuy()).Average(x=>x.Price)
+                                  :0
+                        }
+                    ).ToList();
+        return spreads;
+    }
     #endregion
 
     #region Supply

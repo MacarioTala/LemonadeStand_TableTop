@@ -1,11 +1,14 @@
 using System;
-
+using UnityEngine;
+[Serializable]
 public class ElasticDemandComponent
 {
-    public ElasticDemandComponentEnum Type { get; set; }
-    public float Elasticity { get; set; }// Note: Elasticity is negative almost always except for Veblen goods.
-    public float MinPercentageChange { get; set; } = float.MinValue;
-    public float MaxPercentageChange { get; set; } = float.MaxValue;// This is the maximum adjustment that this component can make to the demand
+    public ElasticDemandComponentEnum Type;
+    [Tooltip("Note: Elasticity is negative almost always except for Veblen goods.")]
+    public float Elasticity;
+    public float MinPercentageChange = float.MinValue;
+    [Tooltip("This is the maximum adjustment that this component can make to the demand")]
+    public float MaxPercentageChange = float.MaxValue;
     public float BlackSwanToZeroLevel { get; set; } = float.MinValue;// At this level, this component can override all other components
                                                                      // and set demand to zero.
     public float BlackSwanToVerticalLevel { get; set; } = float.MinValue; // At this level, this component can override all other components

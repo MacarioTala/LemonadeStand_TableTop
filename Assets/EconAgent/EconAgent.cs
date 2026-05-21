@@ -22,6 +22,7 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
             return LemonadeStandResultObject.Failure(ResultTypeEnum.MarketAlreadySet, "Market already set");
          
          marketCompanyIsIn = market;
+         SetInitialElasticityPrices();
          
          return LemonadeStandResultObject.Success();
          }
@@ -138,7 +139,18 @@ public StrategyFactory BehaviourStrategyAsset;
         if(good == null || demandData ==null) return;
             _demand[good] = demandData;
     }
-
+    private void SetInitialElasticityPrices()
+    {
+        if(marketCompanyIsIn.CurrentPeriod!=0) return;
+        var currentPrices = marketCompanyIsIn
+                            .GetInventory()
+                            .GetInventoryEntries()
+                            .Where(x=>!x.good.IsProducedGood)
+                            .ToDictionary(x=>x.good,x=>x.Price);
+        
+        foreach(var component in _demand)
+            component.Value.InitialPrice = currentPrices.GetValueOrDefault(component.Key);
+    }
 
     #endregion
 #region Demographics
