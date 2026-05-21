@@ -72,8 +72,9 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
 
     public List<KnownPrice> GetAverageMarketPrices()
     {
-         var averagePrices = _market.MarketData
+         var averagePrices = (_market.MarketData??Enumerable.Empty<MarketData>())
                             .GroupBy(x => x.Good)
+                            .Where(g=>g.Any())
                             .Select(
                                 y=> new KnownPrice
                                 {

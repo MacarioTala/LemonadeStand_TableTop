@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a347ef7042f654a498245cdbc5e87e43, type: 3}
   m_Name: InitialCompetitorsLemonade
   m_EditorClassIdentifier: GameAssembly::Recipe
-  RecipeName: 
-  _product: {fileID: 0}
-  SerializableIngredients: []
+  RecipeName: Lemonade
+  _product: {fileID: 11400000, guid: 989f09048e4c94bd5a2bb02c9943c270, type: 2}
+  SerializableIngredients:
+  - Good: {fileID: 11400000, guid: 00c68f188b3f343daaeb419ae5db5006, type: 2}
+    QuantityNeeded: 2
+  - Good: {fileID: 11400000, guid: 9e561dabd80ec4a7d91f481948d05510, type: 2}
+    QuantityNeeded: 1
+  - Good: {fileID: 11400000, guid: d2a1784592a9c4715a6592128dc80ed0, type: 2}
+    QuantityNeeded: 1

@@ -73,13 +73,13 @@ public class LemonadeSellerStrategyTests
     {
         // Arrange
         // Lemonade cost = 15
-        // Cash = 60
-        // Can afford 4 lemonade
+        // Cash = 45 -- 60 * .8 because of aggression level
+        // Can afford 3 lemonade -- 9 lemon, 3 sugar, 6 water
         
         const int expectedOrderCount = 3;
-        const int expectedLemonCount = 12;
-        const int expectedSugarCount = 4;
-        const int expectedWaterCount = 8;
+        const int expectedLemonCount = 9;
+        const int expectedSugarCount = 3;
+        const int expectedWaterCount = 6;
 
         // Act
         strategy.BuySupplies();

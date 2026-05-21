@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 [Serializable]
 public class DemandData
 {
@@ -14,7 +15,7 @@ public class DemandData
     public float ConsumptionRate { get; set; } = 1f; // Default consumption rate is 1. 
                                                      // Meaning that each population unit consumes one unit
                                                      // of the good per period.
-    public List<ElasticDemandComponent> ElasticDemandComponents { get; set; } = new();
+    [SerializeField]public List<ElasticDemandComponent> ElasticDemandComponents = new();
 
     public int GetAdjustedDemand(Dictionary<ElasticDemandComponentEnum, float > stateChanges)
     {
