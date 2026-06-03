@@ -25,13 +25,13 @@ MonoBehaviour:
       initialPriceInCents: 0
       fulfilmentRate: 0
       minDemand: 0
-      maxDemand: 0
+      maxDemand: 10
       consumptionRate: 0
       elasticDemandComponents:
       - Type: 0
-        Elasticity: 1
+        Elasticity: -3
         MinPercentageChange: 0
-        MaxPercentageChange: 0
+        MaxPercentageChange: 100
   - Good: {fileID: 11400000, guid: 9e561dabd80ec4a7d91f481948d05510, type: 2}
     DemandData:
       askInCents: 0
@@ -40,13 +40,13 @@ MonoBehaviour:
       initialPriceInCents: 0
       fulfilmentRate: 0
       minDemand: 0
-      maxDemand: 0
+      maxDemand: 10
       consumptionRate: 0
       elasticDemandComponents:
       - Type: 0
-        Elasticity: 0.5
+        Elasticity: -0.5
         MinPercentageChange: 0
-        MaxPercentageChange: 0
+        MaxPercentageChange: 100
   - Good: {fileID: 11400000, guid: d2a1784592a9c4715a6592128dc80ed0, type: 2}
     DemandData:
       askInCents: 0
@@ -55,14 +55,14 @@ MonoBehaviour:
       initialPriceInCents: 0
       fulfilmentRate: 0
       minDemand: 0
-      maxDemand: 0
+      maxDemand: 10
       consumptionRate: 0
       elasticDemandComponents:
       - Type: 0
         Elasticity: 0
         MinPercentageChange: 0
-        MaxPercentageChange: 0
+        MaxPercentageChange: 100
   marketIgnorantAssumedCogInCents: 0
   initialRecipes:
   - {fileID: 11400000, guid: fe28bd0008e534b8e8684e3f5303a1cb, type: 2}
-  InitialCashInCents: 10000
+  InitialCashInCents: 20000

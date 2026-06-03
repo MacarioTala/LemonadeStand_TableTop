@@ -174,13 +174,18 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
         //Goods must match
         if(!order.Good.Equals(primaryOrder.Good)) return false;
 
-        //Order cannot be fully filled
-        if(order.IsFullyFilled) return false;
+        //Neither order can be fully filled
+        if(order.IsFullyFilled || primaryOrder.IsFullyFilled) return false;
+
+        //Both Orders can't be buy or sell
+        if((order.IsBuy() && primaryOrder.IsBuy())||(order.IsSell()&&primaryOrder.IsSell())) return false;
         
         //The submitting company cannot be the counterparty
         if(order.SubmittingCompany == primaryOrder.SubmittingCompany) return false;
         
         //Readability helpers for final condition
+        //note: these should be removable because we're already checking the two-sidedness of the order
+        //but that's not what's happening. #refactorCandidate
         var orderIsASellPrimaryIsBuy=order.Seller is not null
                                     &&
                                     primaryOrder.Buyer is not null;
@@ -198,8 +203,8 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
         if(orderIsASellOrPrimaryIsSell && !buyOrdersExistInMarket) return false;
         if(orderIsABuyOrPrimaryIsBuy && !sellOrdersExistInMarket) return false;
 
-        //Valid counterparty for buy order is a sell order
-        //in a market where buy orders exist
+        // Valid counterparty for buy order is a sell order
+        // in a market where buy orders exist
         var isCounterPartyForBuy =  orderIsASellPrimaryIsBuy 
                                     && buyOrdersExistInMarket;
                                 
@@ -207,6 +212,11 @@ public class DefaultTradeProcessor : iTradeProcessor,iMarketAware
         //in a market where sell orders exist
         var isCounterPartyForSell = orderIsABuyPrimaryIsSell 
                                     && sellOrdersExistInMarket;
+        
+        //Order crosses -- Bid 
+        var buyOrder = primaryOrder.IsBuy()?primaryOrder:order;
+        var sellOrder = primaryOrder.IsSell()?primaryOrder:order;
+        if (buyOrder.Price<sellOrder.Price) return false;
 
         return isCounterPartyForBuy || isCounterPartyForSell;
     }
