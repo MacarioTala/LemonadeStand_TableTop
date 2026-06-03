@@ -198,7 +198,7 @@ public class IntegrationTests
 
         TestPopulation = EconAgentBuilder.For<PopulationAgent>()
              .Named("Test Population")
-             .WithInitialCash(1000)
+             .WithInitialCash(100000)
              .WithEnnui(initialEnnui)
              .WithPopulation(initialPopulation)
              .WithBehaviourStrategy(testStrategy)
@@ -250,7 +250,7 @@ public class IntegrationTests
 
         TestPopulation = EconAgentBuilder.For<PopulationAgent>()
              .Named("Test Population")
-             .WithInitialCash(1000)
+             .WithInitialCash(100000)
              .WithEnnui(initialEnnui)
              .WithPopulation(initialPopulation)
              .WithBehaviourStrategy(testStrategy)

@@ -674,6 +674,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
         _lemonadeMadeThisTurn=0;
         _cupsToSell=0;
         _goodsSpoiled = false;
+        currentCash.text = PlayerCompany.GetCash().ToString();
     }
 
     private IEnumerator ShowMessageWithWait(string message,int waitForSeconds)
@@ -717,6 +718,12 @@ private SubscriptionToken otherAgentBankruptSubscription;
         
         if(turnBasedSubscription.IsValid)
             turnBasedSubscription.Dispose();
+        
+        if(playerBankruptSubscription.IsValid)
+            playerBankruptSubscription.Dispose();
+        
+        if(otherAgentBankruptSubscription.IsValid)
+            otherAgentBankruptSubscription.Dispose();
     }
     #endregion
 }

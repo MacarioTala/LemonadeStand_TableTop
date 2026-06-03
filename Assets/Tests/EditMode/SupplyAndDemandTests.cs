@@ -94,7 +94,7 @@ public class SupplyAndDemandTests
         TestPopulation = EconAgentBuilder.For<PopulationAgent>()
             .Named("Test Population")
             .AtLevel(AgentLevelEnum.Market)
-            .WithInitialCash(10000)
+            .WithInitialCash(1000000)
             .WithBehaviourStrategy(TestReduceEnnuiStrategy)
             .WithEnnui(.99f)
             .WithPopulation(1000)
@@ -179,7 +179,7 @@ public class SupplyAndDemandTests
         //Arrange
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 1000 };
         TestPopulation.SetDemand(lemonade, demandForLemonade);
-        TestPopulation.SetCash(5000);
+        TestPopulation.SetCash(5000000);
         const int company1Quantity = 900;
         const int company2Quantity = 1000;
         const decimal company1Ask = 2m;

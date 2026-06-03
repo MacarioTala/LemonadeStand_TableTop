@@ -60,7 +60,7 @@ public class BasicDemandStrategyTests
             .AtLevel(AgentLevelEnum.Market)
             .WithPopulation(1000)
             .WithBehaviourStrategy(TestReduceEnnuiStrategy)
-            .WithInitialCash(10000)
+            .WithInitialCash(1000000)
             .WithEnnui(0.5f)
             .Build();
 
