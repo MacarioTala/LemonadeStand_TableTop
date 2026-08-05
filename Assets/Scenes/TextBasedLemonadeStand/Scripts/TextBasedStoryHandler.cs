@@ -281,7 +281,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
 
         if(orders.Any())
         {
-            //LogMessage($"You tried to sell {SaleSignCupsToSell.text} cups at {SaleSignLemonadePriceField.text}");
+            LogMessage($"You tried to sell {SaleSignCupsToSell.text} cups at {SaleSignLemonadePriceField.text}");
+            if(sales.Count==0) LogMessage("...but sold none.");
             foreach(var order in orders.Where(x=>x.OriginalOrderSnapshot.SellerName==PlayerCompany.Name))
                 LogMessage(order.Message);
         }
@@ -295,6 +296,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
                     if(line.Order.Quantity>1) s="cups";
 
                     LogMessage($"\n{line.Order.Quantity} {line.Order.Good.GoodName} {s} at {line.Order.Price}");
+                    LogMessage($"\n{line.Order.Quantity*line.Order.Price} tokens have appeared in the cash register.");
             }
         }
 
