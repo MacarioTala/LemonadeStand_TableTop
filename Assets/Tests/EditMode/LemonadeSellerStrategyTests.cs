@@ -19,13 +19,13 @@ public class LemonadeSellerStrategyTests
     [SetUp]
     public void Setup()
     {
-        lemon = new GoodBuilder().Named("lemon").Costing(3m).Build();
-        sugar = new GoodBuilder().Named("sugar").Costing(2m).Build();
-        water = new GoodBuilder().Named("water").Costing(2m).Build();
+        lemon = new GoodBuilder().Named("lemon").Costing(3).Build();
+        sugar = new GoodBuilder().Named("sugar").Costing(2).Build();
+        water = new GoodBuilder().Named("water").Costing(2).Build();
 
         lemonade = new GoodBuilder()
             .Named("lemonade")
-            .Costing(20m)
+            .Costing(20)
             .WhichIsProducedGood()
             .Build();
 
@@ -44,9 +44,9 @@ public class LemonadeSellerStrategyTests
          TestMarket = Market.Factory.CreateMarket("Test Market")
             .EnsureDefaults();
 
-        TestMarket.GetInventory().AddGood(new InventoryEntry(lemon, 100, 3m, TestMarket.CurrentPeriod));
-        TestMarket.GetInventory().AddGood(new InventoryEntry(sugar, 100, 2m, TestMarket.CurrentPeriod));
-        TestMarket.GetInventory().AddGood(new InventoryEntry(water, 100, 2m, TestMarket.CurrentPeriod));
+        TestMarket.GetInventory().AddGood(new InventoryEntry(lemon, 100, 3, TestMarket.CurrentPeriod));
+        TestMarket.GetInventory().AddGood(new InventoryEntry(sugar, 100, 2, TestMarket.CurrentPeriod));
+        TestMarket.GetInventory().AddGood(new InventoryEntry(water, 100, 2, TestMarket.CurrentPeriod));
         MarketProvidesSupplies();
 
         strategy = new LemonadeSellerStrategy();
@@ -103,7 +103,7 @@ public class LemonadeSellerStrategyTests
 public void BuySupplies_FloorsFractionalProduction()
 {
     // Arrange
-    company.SetCash(44m);
+    company.SetCash(44);
 
     const int expectedLemonCount = 6;
     const int expectedSugarCount = 2;
@@ -124,7 +124,7 @@ public void BuySupplies_FloorsFractionalProduction()
 public void BuySupplies_QueuesZeroQuantityOrders_WhenCashTooLow()
 {
     // Arrange
-    company.SetCash(14m);
+    company.SetCash(14);
 
     // Act
     strategy.BuySupplies();
@@ -156,9 +156,9 @@ public void BuySupplies_CreatesBuyOrders()
 private void MarketProvidesSupplies()
 {
          // Have Market queue up some orders
-        var marketLemonSale = new Order(null, TestMarket,lemon,20,3m);
-        var marketSugarSale = new Order(null, TestMarket,sugar,20,2m);
-        var marketWaterSale = new Order(null, TestMarket,water,20,2m);
+        var marketLemonSale = new Order(null, TestMarket,lemon,20,3);
+        var marketSugarSale = new Order(null, TestMarket,sugar,20,2);
+        var marketWaterSale = new Order(null, TestMarket,water,20,2);
 
         var marketLemonContext = CreateActionContext(marketLemonSale,TestMarket,0);
         marketLemonContext.SubmittingCompany = TestMarket;

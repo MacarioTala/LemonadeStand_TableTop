@@ -12,7 +12,7 @@ public class InventoryEntryTests
         var TestGood = Good.CreateInstance("TestGood", new PriceBand(1, 3), RarityEnum.Common);
         var TestInventoryEntry = new InventoryEntry(good: TestGood, 
                                                     quantity: 1, 
-                                                    acquisition_price: 1.0m, 
+                                                    acquisitionPrice: 1, 
                                                     period: 0);
         TestGood.IsProducedGood = false;
         Recipe expected = null;
@@ -28,7 +28,7 @@ public class InventoryEntryTests
         var TestGood = Good.CreateInstance("TestGood", new PriceBand(1, 3), RarityEnum.Common);
         var TestInventoryEntry = new InventoryEntry(good: TestGood, 
                                                     quantity: 1, 
-                                                    acquisition_price: 1.0m, 
+                                                    acquisitionPrice: 1, 
                                                     period: 0);
         TestGood.IsProducedGood = false;
 
@@ -46,8 +46,8 @@ public class InventoryEntryTests
         // Arrange
         var TestGood = Good.CreateInstance("TestGood", new PriceBand(1, 3), RarityEnum.Common);
         var TestInventoryEntry = new InventoryEntry(good: TestGood, 
-                                                    quantity: 1, 
-                                                    acquisition_price: 1.0m, 
+                                                    quantity: 1,
+                                                    acquisitionPrice: 1, 
                                                     period: 0);
         TestGood.IsProducedGood = true;
         Recipe TestRecipe = ScriptableObject.CreateInstance<Recipe>();

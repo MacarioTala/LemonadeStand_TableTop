@@ -21,7 +21,7 @@ public class BidCreationTests_ReduceEnnuiStrategy
 
     PopulationAgent TestPopulation;
 
-    const decimal InitialCash=2000;
+    const int InitialCash=2000;
 
     Market TestMarket;
 
@@ -39,17 +39,17 @@ public class BidCreationTests_ReduceEnnuiStrategy
         Lemon = new GoodBuilder()
                 .Named("Lemon")
                 .WithRarity(RarityEnum.Common)
-                .Costing(.2m)
+                .Costing(1)
                 .Build();
         Water = new GoodBuilder()
                 .Named("Water")
                 .WithRarity(RarityEnum.Common)
-                .Costing(.2m)
+                .Costing(1)
                 .Build();
         Sugar = new GoodBuilder()
                 .Named("Sugar")
                 .WithRarity(RarityEnum.Common)
-                .Costing(.2m)
+                .Costing(1)
                 .Build();
 
         LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
@@ -177,9 +177,9 @@ public class BidCreationTests_ReduceEnnuiStrategy
         TestPopulation.AddRecipe(LemonadeRecipe);
         var prices = new List<KnownPrice>()
                         {
-                            new() { Good= Lemon,Price=.3m },
-                            new() { Good=Water,Price=.1m },
-                            new() { Good=Sugar,Price=.2m }
+                            new() { Good= Lemon,Price=3 },
+                            new() { Good=Water,Price=1 },
+                            new() { Good=Sugar,Price=2 }
                         };
         var expected = LemonadeRecipe.GetPerceivedCostPerUnit(prices);
 
@@ -201,13 +201,13 @@ public class BidCreationTests_ReduceEnnuiStrategy
 
         var prices = new List<KnownPrice>()
                         {
-                            new(){ Good=Lemon,Price=.3m },
-                            new(){ Good=Water,Price=.1m },
-                            new(){ Good=Sugar,Price=.2m }
+                            new(){ Good=Lemon,Price=3},
+                            new(){ Good=Water,Price=1},
+                            new(){ Good=Sugar,Price=1}
                         };
-        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Lemon, Ask = .3m});
-        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Water, Ask = .1m });
-        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Sugar, Ask = .2m});
+        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Lemon, Ask = 3});
+        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Water, Ask = 1});
+        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Sugar, Ask = 2});
 
         var expected = LemonadeRecipe.GetPerceivedCostPerUnit(prices);
 
@@ -251,15 +251,14 @@ public class BidCreationTests_ReduceEnnuiStrategy
         //Arrange
         var company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
 
-        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Lemon, Ask = .3m });
-        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Water, Ask = .1m });
-        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Sugar, Ask = .2m });
+        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Lemon, Ask = 3 });
+        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Water, Ask = 1 });
+        TestMarket.MarketData.Add(new MarketData { Company = company1, Good = Sugar, Ask = 2 });
 
         var pricedCog = LemonadeRecipe.GetCostPerUnit(null);
         var expected = pricedCog;
         var reduceEnnuiGoal = TestPopulation.Goals
-                            .Where(x => x.Name.Equals("Reduce Ennui"))
-                            .FirstOrDefault();
+                            .FirstOrDefault(x => x.Name.Equals("Reduce Ennui"));
        
 
         //Act

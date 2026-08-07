@@ -19,24 +19,25 @@ public class PopulationBasedDemandTests
         Lemon = new GoodBuilder() 
                 .Named("Lemon") 
                 .WithRarity(RarityEnum.Common) 
-                .Costing(.2m) 
+                .Costing(1) 
                 .Build(); 
 
         Water = new GoodBuilder() 
                 .Named("Water") 
                 .WithRarity(RarityEnum.Common) 
-                .Costing(.2m) .Build(); 
+                .Costing(1)
+                .Build(); 
         
         Sugar = new GoodBuilder() 
                 .Named("Sugar") 
                 .WithRarity(RarityEnum.Common) 
-                .Costing(.2m) 
+                .Costing(1) 
                 .Build(); 
         
         Lemonade = new GoodBuilder()
                 .Named("Lemonade")
                 .WithRarity(RarityEnum.Uncommon)
-                .Costing(1m)
+                .Costing(1)
                 .Build();
         
         LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
@@ -198,7 +199,7 @@ public class PopulationBasedDemandTests
         var bread = new GoodBuilder()
             .Named("Bread")
             .WithRarity(RarityEnum.Common)
-            .Costing(.5m)
+            .Costing(1)
             .Build();
 
         var demand = new Dictionary<Good, DemandData>

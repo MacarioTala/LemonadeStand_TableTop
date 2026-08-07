@@ -4,22 +4,22 @@ using UnityEngine;
 public class DummyCompany : iEconAgent
 {
     public string Name {get; set;}="Raw Materials Source";
-    public decimal InfiniteCash => 10000000;
+    public int InfiniteCash => 10000000;
         
     public Inventory Inventory{get; private set;} = new Inventory();
 
     public DummyCompany()
     {
-        foreach (var good in new List<Good> {Good.CreateInstance("Lemon", new PriceBand(.5m, 1.0m), RarityEnum.Common),
-                                             Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common),
-                                             Good.CreateInstance("Sugar", new PriceBand(.5m, 1.0m), RarityEnum.Common),
-                                             Good.CreateInstance("Lemonade", new PriceBand(1.0m, 3.0m), RarityEnum.Uncommon)})
+        foreach (var good in new List<Good> {Good.CreateInstance("Lemon", new PriceBand(1, 2), RarityEnum.Common),
+                                             Good.CreateInstance("Water", new PriceBand(1, 1), RarityEnum.Common),
+                                             Good.CreateInstance("Sugar", new PriceBand(1, 3), RarityEnum.Common),
+                                             Good.CreateInstance("Lemonade", new PriceBand(2, 4), RarityEnum.Uncommon)})
         {
             Inventory.AddGood(new InventoryEntry(good, 1000000, 1, 0));
         }
     }
 
-    public decimal GetCash()
+    public int GetCash()
     {
         return InfiniteCash;
     }
@@ -35,7 +35,7 @@ public class DummyCompany : iEconAgent
         throw new System.NotImplementedException();
     }
 
-    public decimal CalculateFixedCostsForPeriod(int period)
+    public int CalculateFixedCostsForPeriod(int period)
     {
         throw new System.NotImplementedException();
     }
@@ -75,7 +75,7 @@ public class DummyCompany : iEconAgent
         throw new System.NotImplementedException();
     }
 
-    public void SetCash(decimal newCash)
+    public void SetCash(int newCash)
     {
         Debug.Log("Null cash transaction for dummy company");
     }

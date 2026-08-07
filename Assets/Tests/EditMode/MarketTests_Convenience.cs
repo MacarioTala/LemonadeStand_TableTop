@@ -19,8 +19,8 @@ public partial class MarketTests
             ;
         var companyA = EconAgent.Factory.Create("CompanyA", AgentLevelEnum.Beginner);
         var companyB = EconAgent.Factory.Create("CompanyB", AgentLevelEnum.Beginner);
-        var lemonSaleA = new Order(TestMarket, Company1, lemon, lemonsCompanyWillSellToMarket, 3.0m);
-        var lemonSaleB = new Order(TestMarket, Company2, lemon, lemonsCompanyWillSellToMarket, 3.0m);
+        var lemonSaleA = new Order(TestMarket, Company1, lemon, lemonsCompanyWillSellToMarket, 3);
+        var lemonSaleB = new Order(TestMarket, Company2, lemon, lemonsCompanyWillSellToMarket, 3);
 
         convenienceMarket.RegisterMarketParticipant(companyA);
         convenienceMarket.RegisterMarketParticipant(companyB);

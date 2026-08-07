@@ -28,9 +28,9 @@ public class BasicConsumptionManagerTests
     readonly List<Good> testGoods = new();
 
     //Pricing bands
-    readonly PriceBand band1 = new(.5m, 2m);
-    readonly PriceBand band2 = new(2.1m, 3m);
-    readonly PriceBand band3 = new(3.1m, 6m);
+    readonly PriceBand band1 = new(1, 2);
+    readonly PriceBand band2 = new(2, 3);
+    readonly PriceBand band3 = new(3, 6);
 
     
     [SetUp]

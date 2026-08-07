@@ -53,8 +53,8 @@ public partial class BasicTradeProcessorTests
     public void ProcessCompanyOrdersIgnoresOrdersWhereSellerIsMarket()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
-        var testOrder = new Order(TestMarket, Company1, Lemonade, 100, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
+        var testOrder = new Order(TestMarket, Company1, Lemonade, 100, 10);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
                     MarketToSubmitTo = TestMarket,
@@ -72,10 +72,10 @@ public partial class BasicTradeProcessorTests
     public void PCO_PerfectMatch_OneGood()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
 
-        var testOrder = new Order(Company1,null, Lemonade, 10, 10m);
-        var testOrder2 = new Order(null,Company2, Lemonade, 10, 10m);
+        var testOrder = new Order(Company1,null, Lemonade, 10, 10);
+        var testOrder2 = new Order(null,Company2, Lemonade, 10, 10);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
                     MarketToSubmitTo = TestMarket,
@@ -100,8 +100,8 @@ public partial class BasicTradeProcessorTests
     public void PCO_TwoBuyers_NoFill_NoException()
     {
         // Arrange
-        var testOrder = new Order(Company1,null, Lemonade, 10, 10m);
-        var testOrder2 = new Order(Company2, null, Lemonade, 10, 10m);
+        var testOrder = new Order(Company1,null, Lemonade, 10, 10);
+        var testOrder2 = new Order(Company2, null, Lemonade, 10, 10);
         var testContext = new ActionContext{
                     TradeToSubmit = testOrder,
                     MarketToSubmitTo = TestMarket,
@@ -129,13 +129,13 @@ public partial class BasicTradeProcessorTests
     public void PCO_Mismatch_NoFill_NoException()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
-        Company1.GetInventory().AddGood(new InventoryEntry(Radium, 10, 1m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 10, 1m, Period));
-        var testOrder = new Order(Company1,null, Lemonade, 10, 10m);
-        var testOrder2 = new Order(Company2, null, Lemonade, 10, 10m);
-        var testOrder3 = new Order(null,Company1, Radium, 10, 10m);
-        var testOrder4 = new Order(null,Company2 , Lemon, 10, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(Radium, 10, 1, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 10, 1, Period));
+        var testOrder = new Order(Company1,null, Lemonade, 10, 10);
+        var testOrder2 = new Order(Company2, null, Lemonade, 10, 10);
+        var testOrder3 = new Order(null,Company1, Radium, 10, 10);
+        var testOrder4 = new Order(null,Company2 , Lemon, 10, 10);
 
         var expectedResults = new (int ExpectedFill, Order Order)[]
         {
@@ -169,13 +169,13 @@ public partial class BasicTradeProcessorTests
     [Test]
     public void PCO_PerfectMatch_TwoGoods()
     {
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1m, Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1, Period));
 
-        var company1RadioactiveLemonadeBuyOrder = new Order(Company1,null, RadioactiveLemonade, 10, 10m);
-        var company2LemonadeBuyOrder = new Order(Company2,null, Lemonade, 100, 10m);
-        var company1LemonadeSellOrder = new Order(null,Company1, Lemonade, 100, 10m);
-        var company2RadioactiveLemonadeOrderSell = new Order(null,Company2, RadioactiveLemonade, 10, 10m);
+        var company1RadioactiveLemonadeBuyOrder = new Order(Company1,null, RadioactiveLemonade, 10, 10);
+        var company2LemonadeBuyOrder = new Order(Company2,null, Lemonade, 100, 10);
+        var company1LemonadeSellOrder = new Order(null,Company1, Lemonade, 100, 10);
+        var company2RadioactiveLemonadeOrderSell = new Order(null,Company2, RadioactiveLemonade, 10, 10);
 
         var company1RadioactiveBuyLemonadeContext = new ActionContext{
                     TradeToSubmit = company1RadioactiveLemonadeBuyOrder,
@@ -233,15 +233,15 @@ public partial class BasicTradeProcessorTests
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
 
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1m, Period));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1, Period));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
 
-        var company1RadioactiveLemonadeBuyOrder = new Order(Company1,null, RadioactiveLemonade, 5, 10m);
-        var company2LemonadeBuyOrder = new Order(Company2,null, Lemonade, 50, 10m);
-        var company3LemonadeBuyOrder = new Order(Company3,null, Lemonade, 50, 10m);
-        var company1LemonadeSellOrder = new Order(null,Company1, Lemonade, 100, 10m);
-        var company2RadioactiveLemonadeOrderSell = new Order(null,Company2, RadioactiveLemonade, 10, 10m);
+        var company1RadioactiveLemonadeBuyOrder = new Order(Company1,null, RadioactiveLemonade, 5, 10);
+        var company2LemonadeBuyOrder = new Order(Company2,null, Lemonade, 50, 10);
+        var company3LemonadeBuyOrder = new Order(Company3,null, Lemonade, 50, 10);
+        var company1LemonadeSellOrder = new Order(null,Company1, Lemonade, 100, 10);
+        var company2RadioactiveLemonadeOrderSell = new Order(null,Company2, RadioactiveLemonade, 10, 10);
 
         var company1RadioactiveBuyLemonadeContext = new ActionContext{
                     TradeToSubmit = company1RadioactiveLemonadeBuyOrder,
@@ -312,13 +312,13 @@ public partial class BasicTradeProcessorTests
     public void PCO_2Companies2Buy2SellAllPartial()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1m, Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 1, Period));
 
-        var company1RadioactiveLemonadeBuyOrder = new Order(Company1,null, RadioactiveLemonade, 5, 10m);
-        var company2LemonadeBuyOrder = new Order(Company2,null, Lemonade, 50, 10m);
-        var company1LemonadeSellOrder = new Order(null,Company1, Lemonade, 100, 10m);
-        var company2RadioactiveLemonadeOrderSell = new Order(null,Company2, RadioactiveLemonade, 10, 10m);
+        var company1RadioactiveLemonadeBuyOrder = new Order(Company1,null, RadioactiveLemonade, 5, 10);
+        var company2LemonadeBuyOrder = new Order(Company2,null, Lemonade, 50, 10);
+        var company1LemonadeSellOrder = new Order(null,Company1, Lemonade, 100, 10);
+        var company2RadioactiveLemonadeOrderSell = new Order(null,Company2, RadioactiveLemonade, 10, 10);
 
         var company1RadioactiveBuyLemonadeContext = new ActionContext{
                     TradeToSubmit = company1RadioactiveLemonadeBuyOrder,

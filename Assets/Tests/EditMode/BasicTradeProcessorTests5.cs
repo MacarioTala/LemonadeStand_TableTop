@@ -13,15 +13,15 @@ public partial class BasicTradeProcessorTests
     public void EBTG_OneBuyerOneSeller_BothExecutionsRecorded()
     {
         //Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9m,Period));
-        var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10m);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9,Period));
+        var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = Company1BuysLemonadeFromAny,
             MarketToSubmitTo = TestMarket,
             Period = Period
         };
-        var Company2SellsLemonadeToAny = new Order(null,Company2,Lemonade,5,10m);
+        var Company2SellsLemonadeToAny = new Order(null,Company2,Lemonade,5,10);
         var Company2Context = new ActionContext
         {
             TradeToSubmit = Company2SellsLemonadeToAny,
@@ -52,24 +52,24 @@ public partial class BasicTradeProcessorTests
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 3,9m,Period));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,9m,Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 3,9,Period));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,9,Period));
 
-        var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10m);
+        var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = Company1BuysLemonadeFromAny,
             MarketToSubmitTo = TestMarket,
             Period = Period
         };
-        var Company2SellsLemonadeToAny = new Order(null,Company2,Lemonade,3,10m);
+        var Company2SellsLemonadeToAny = new Order(null,Company2,Lemonade,3,10);
         var Company2Context = new ActionContext
         {
             TradeToSubmit = Company2SellsLemonadeToAny,
             MarketToSubmitTo = TestMarket,
             Period = Period
         };
-        var Company3SellsLemonadeToAny = new Order(null,Company3,Lemonade,2,10m);
+        var Company3SellsLemonadeToAny = new Order(null,Company3,Lemonade,2,10);
         var Company3Context = new ActionContext
         {
             TradeToSubmit = Company3SellsLemonadeToAny,
@@ -103,23 +103,23 @@ public partial class BasicTradeProcessorTests
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9m,Period));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,10m,Period));
-        var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10m);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9,Period));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,10,Period));
+        var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = Company1BuysLemonadeFromAny,
             MarketToSubmitTo = TestMarket,
             Period = Period
         };
-        var Company2SellsLemonadeToAny = new Order(null,Company2,Lemonade,5,10m);
+        var Company2SellsLemonadeToAny = new Order(null,Company2,Lemonade,5,10);
         var Company2Context = new ActionContext
         {
             TradeToSubmit = Company2SellsLemonadeToAny,
             MarketToSubmitTo = TestMarket,
             Period = Period
         };
-        var Company3SellsLemonadeToAny = new Order(null,Company3,Lemonade,2,10m);
+        var Company3SellsLemonadeToAny = new Order(null,Company3,Lemonade,2,10);
         var Company3Context = new ActionContext
         {
             TradeToSubmit = Company3SellsLemonadeToAny,

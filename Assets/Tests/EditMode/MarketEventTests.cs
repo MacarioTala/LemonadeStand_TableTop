@@ -34,7 +34,7 @@ public class MarketEventTests
     [SetUp]
     public void Setup()
     {
-        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(.5m, 2m), RarityEnum.Uncommon);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(1,2), RarityEnum.Uncommon);
         Lemonade.IsProducedGood = true;
 
         TheEconomy.SetupForTests(new MockLogger());

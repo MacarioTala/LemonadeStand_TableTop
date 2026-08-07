@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -108,7 +109,7 @@ public StrategyFactory BehaviourStrategyAsset;
     #endregion
 #region Perception
     public List<KnownPrice> KnownPrices=new();
-    public decimal GetPerceivedCostOfGood(Good good, List<KnownPrice> prices=null)
+    public int GetPerceivedCostOfGood(Good good, List<KnownPrice> prices=null)
     {
         var minimumBid = GetMarketIgnorantAssumedCOG();
         prices??= KnownPrices;
@@ -116,7 +117,7 @@ public StrategyFactory BehaviourStrategyAsset;
                                 .Select(r => r.GetPerceivedCostPerUnit(prices))
                                 .DefaultIfEmpty(minimumBid)
                                 .Average();
-        return perceivedCost;
+        return (int)Math.Round(perceivedCost);
     }
     #endregion
 #region Demand
@@ -178,15 +179,15 @@ private void SetBus()
     }
 #endregion
 #region Financials
-    public long InitialCashInCents;
+    public int InitialCashInCents;
     private decimal initialCash => InitialCashInCents/100;
-    private decimal cash = 0;
+    private int cash = 0;
     public bool IsBankrupt() => cash <= 0;
-    private decimal minimumBid;
-    public void SetMinimumBid(decimal minBid) => minimumBid = minBid;
-    public decimal GetMinimumBid() => minimumBid;
-    public decimal GetCash() => cash;
-    public void SetCash(decimal newCash)
+    private int minimumBid;
+    public void SetMinimumBid(int minBid) => minimumBid = minBid;
+    public int GetMinimumBid() => minimumBid;
+    public int GetCash() => cash;
+    public void SetCash(int newCash)
     {
         cash = newCash;
         if(cash<=0)
@@ -219,21 +220,21 @@ private void SetBus()
             switch(agentLevel)
             {
                 case AgentLevelEnum.Beginner:
-                    cash = 10000;
+                    cash = 100;
                     break;
                 case AgentLevelEnum.Intermediate:
-                    cash = 5000;
+                    cash = 50;
                     break;
                 case AgentLevelEnum.Advanced:
-                    cash = 1000;
+                    cash = 10;
                     break;  
                 case AgentLevelEnum.Market:
-                    cash = 1000000000000;
+                    cash = int.MaxValue;
                     break;
             }
         }
     public iFixedCostStrategy FixedCostStrategy {get;set;} = null;
-    public decimal CalculateFixedCostsForPeriod(int period)
+    public int CalculateFixedCostsForPeriod(int period)
     {
         if (FixedCostStrategy == null)
         {
@@ -371,17 +372,17 @@ private void SetBus()
     }
 #endregion 
 #region Buy/Sell and helper methods
-    public void BuyGood(Good good, int quantity,decimal price,int period=0)
+    public void BuyGood(Good good, int quantity,int price,int period=0)
 //Currently public for testing purposes
 //Make private or internal afterwards
 //period currently does nothing for companies, but is used in Market which implements iCompany
     {
-        var money_needed = price * quantity;
-        if(HasMoney(money_needed))
+        var moneyNeeded = price * quantity;
+        if(HasMoney(moneyNeeded))
         {
             var inventory_entry = new InventoryEntry(good, quantity, price, period);
             inventory.AddGood(inventory_entry);
-            cash -= money_needed;
+            cash -= moneyNeeded;
         }
         else
         {
@@ -389,9 +390,9 @@ private void SetBus()
         }
     }
 
-    internal bool HasMoney(decimal money_needed)
+    internal bool HasMoney(int moneyNeeded)
     {
-       return cash >= money_needed;
+       return cash >= moneyNeeded;
     }
 
     internal bool HasGood(Good good, int quantity)
@@ -404,7 +405,7 @@ private void SetBus()
         return good_in_inventory != null && good_in_inventory.quantity >= quantity;
     }
 
-    public void SellGood(Good good, int quantity, decimal price,int period=0)
+    public void SellGood(Good good, int quantity, int price,int period=0)
     {
         //period currently does nothing for companies, but is used in Market which implements iCompany
         if(HasGood(good, quantity))

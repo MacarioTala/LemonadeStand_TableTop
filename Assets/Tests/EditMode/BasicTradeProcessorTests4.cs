@@ -11,9 +11,9 @@ public partial class BasicTradeProcessorTests
     public void FindCounterPartiesForOrderReturnsSellOrderIfBuyOrderIsPrimary_OneCounterParty()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10m);
-        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10m);
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
+        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromCompany2ByCompany1,
@@ -41,12 +41,12 @@ public partial class BasicTradeProcessorTests
     {
         // Arrange
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 11, 10m, Period));
-        Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 11, 10, Period));
+        Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         
-        var company1BuysRLFromAnyoneByCompany1 = new Order(Company1, null, RadioactiveLemonade, 20, 10m);
-        var company2SellsRLToAnyoneByCompany2 = new Order(null, Company2, RadioactiveLemonade, 11, 10m);
-        var company3SellsRLToAnyoneByCompany3 = new Order(null, Company3, RadioactiveLemonade, 9, 10m);
+        var company1BuysRLFromAnyoneByCompany1 = new Order(Company1, null, RadioactiveLemonade, 20, 10);
+        var company2SellsRLToAnyoneByCompany2 = new Order(null, Company2, RadioactiveLemonade, 11, 10);
+        var company3SellsRLToAnyoneByCompany3 = new Order(null, Company3, RadioactiveLemonade, 9, 10);
        
         Company1.QueueOrder(CreateActionContext(company1BuysRLFromAnyoneByCompany1, TestMarket, Period));
         Company2.QueueOrder(CreateActionContext(company2SellsRLToAnyoneByCompany2, TestMarket, Period));
@@ -63,10 +63,10 @@ public partial class BasicTradeProcessorTests
     public void FindCounterPartiesForOrderReturnsEmptySetWhenOnlySellOrdersExist()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var company1SellRLToAny= new Order(null, Company1, RadioactiveLemonade, 10, 10m);
-        var company2SellRLToAny= new Order(null, Company2, RadioactiveLemonade, 10, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var company1SellRLToAny= new Order(null, Company1, RadioactiveLemonade, 10, 10);
+        var company2SellRLToAny= new Order(null, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1SellRLToAny,
@@ -91,8 +91,8 @@ public partial class BasicTradeProcessorTests
     public void FindCounterPartiesForOrderReturnsEmptyWhenOnlyBuyersExist()
     {
         //Arrange
-        var company1BuysRLFromAny= new Order(Company1, null, RadioactiveLemonade, 10, 10m);
-        var company2BuysRLFromAny= new Order(Company2, null, RadioactiveLemonade, 10, 10m);
+        var company1BuysRLFromAny= new Order(Company1, null, RadioactiveLemonade, 10, 10);
+        var company2BuysRLFromAny= new Order(Company2, null, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromAny,

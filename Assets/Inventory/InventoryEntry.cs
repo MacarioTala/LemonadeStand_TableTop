@@ -4,9 +4,9 @@ public class InventoryEntry
 {
     public Good good;
     public int quantity;
-    public decimal Cost;
-    private decimal price;
-    public decimal Price {get =>Math.Round(price,3,MidpointRounding.AwayFromZero);}
+    public int? Cost;
+    private int price;
+    public int Price {get =>price;}
     private Recipe recipe;
     public int RemainingDelay=0;
     public int PeriodAcquired;
@@ -23,16 +23,16 @@ public class InventoryEntry
         }
     }
     
-    public InventoryEntry(Good good, int quantity, decimal acquisition_price, int period)
+    public InventoryEntry(Good good, int quantity, int? acquisitionPrice, int period)
     {
         this.good = good;
         this.quantity = quantity;
-        Cost = acquisition_price;
+        Cost = acquisitionPrice;
         PeriodAcquired = period;
         RemainingDelay=good.DeliveryDelay;
     }
 
-    public void SetPrice(decimal price)
+    public void SetPrice(int price)
     {
         this.price = price;
     }
@@ -43,7 +43,7 @@ public class InventoryEntry
 
     public void CalculatePriceFromBand()
     {
-        var priceBand = good.Get_price_band();
-        SetPrice((decimal)UnityEngine.Random.Range((float)priceBand.Min, (float)priceBand.Max));
+        var priceBand = good.GetPriceBand();
+        SetPrice((int)Math.Round(UnityEngine.Random.Range(priceBand.Min, (float)priceBand.Max)));
     }
 }

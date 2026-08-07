@@ -13,8 +13,8 @@ public class SupplyTests
 
     EconAgent Company1;
     EconAgent Company2;
-    readonly PriceBand PriceBand1 = new(.5m, 1.0m);
-    readonly PriceBand PriceBand2 = new(5.0m, 10m);
+    readonly PriceBand PriceBand1 = new(1,2);
+    readonly PriceBand PriceBand2 = new(5, 10);
     readonly iSupplyHelper TestSupplyProvider= new DefaultSupplyHelper();
 
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();

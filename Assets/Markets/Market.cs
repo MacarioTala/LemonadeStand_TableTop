@@ -34,8 +34,8 @@ public class Market : ScriptableObject, iEconAgent
     }
     public AgentLevelEnum company_level;
     //Cash and Inventory
-    public long InitialCashInCents;
-    private decimal cash = 0;
+    public int InitialCashInCents;
+    private int cash = 0;
     private readonly Inventory _inventory = new();
     private readonly List<Recipe> _recipes = new();
     private int minMarketDelay=0; // minimum amount of time that goods get delivered in this market
@@ -60,7 +60,7 @@ public class Market : ScriptableObject, iEconAgent
     public Dictionary<Good, DemandData> GetDemandForPeriod()
         => DemandStrategy.GetDemandInPeriod(this, CurrentPeriod);
     public DemandData GetDemandFor(Good good) => _demandManager.GetDemandFor(good);
-    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket()
+    public IEnumerable<(Good good, int Bid, int Ask)> GetBidAskSpreadsFromMarket()
         => _demandManager.GetBidAskSpreadsFromMarket();
     public decimal GetPerceivedCostOfGood(Good good) 
         => _demandManager.GetPerceivedCostOfGood(good);
@@ -175,8 +175,8 @@ public class Market : ScriptableObject, iEconAgent
     #endregion
 
     #region Convenience Methods
-    public decimal GetCash() => cash;
-    public void SetCash(decimal new_cash) => cash = new_cash;
+    public int GetCash() => cash;
+    public void SetCash(int newCash) => cash = newCash;
     public Inventory GetInventory() => _inventory;
     public List<Order> GetOrdersSentToMarket() => _tradeProcessor.GetOrders();
     public List<Order> GetOrdersSentToMarketByCompany(EconAgent company) => _tradeProcessor?.GetOrders()?.Where(x => x.SubmittingCompany.Equals(company)).ToList()?? new List<Order>();
@@ -268,7 +268,7 @@ public class Market : ScriptableObject, iEconAgent
     }
     #endregion
     #region Fixed costs 
-    public decimal CalculateFixedCostsForPeriod(int period)
+    public int CalculateFixedCostsForPeriod(int period)
     {
         if (FixedCostStrategy is not null)
         {
@@ -332,7 +332,7 @@ public class Market : ScriptableObject, iEconAgent
         // can set their own bid/ask spreads. Is this still needed?
         // #RefactorCandidate
         =>_priceManager.CalculateNewBidAskSpreadForMarket();
-    public decimal GetMarketCostForGood(Market market, Good good)
+    public int? GetMarketCostForGood(Good good)
         => _priceManager.GetMarketCostForGood(good);
 
     public List<KnownPrice> GetAverageMarketPrices()
@@ -386,13 +386,13 @@ public class Market : ScriptableObject, iEconAgent
                         y=> new MarketData
                         {
                             Good = y.Key,
-                            Bid = y.Any(x=> x.IsBuy())
+                            Bid = (int)Math.Round(y.Any(x=> x.IsBuy())
                                  ?y.Where(x=>x.IsBuy()).Average(x=>x.Price)
-                                 :0
+                                 :0)
                                    ,
-                            Ask = y.Any(x=>!x.IsBuy())
+                            Ask = (int)Math.Round(y.Any(x=>!x.IsBuy())
                                   ?y.Where(x=>!x.IsBuy()).Average(x=>x.Price)
-                                  :0
+                                  :0)
                         }
                     ).ToList();
         return spreads;

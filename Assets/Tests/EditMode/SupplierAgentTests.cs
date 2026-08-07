@@ -17,11 +17,11 @@ public class SupplierAgentTests
     const string franciumName = "Francium";
     const string unobtaniumName = "Unobtanium";
 
-    const decimal waterCost = 1m;
-    const decimal lemonCost = 10m;
-    const decimal uraniumCost = 100m;
-    const decimal franciumCost = 1000m;
-    const decimal unobtaniumCost = 10000m;
+    const int waterCost = 1;
+    const int lemonCost = 10;
+    const int uraniumCost = 100;
+    const int franciumCost = 1000;
+    const int unobtaniumCost = 10000;
 
     const int commonQuantity = 10000;
     const int uncommonQuantity = 1000;

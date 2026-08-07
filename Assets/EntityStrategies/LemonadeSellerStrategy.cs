@@ -142,7 +142,7 @@ public class LemonadeSellerStrategy : iStrategy
         var currentPrices = market.GetIngredientBidAskSpreadForPeriod(Actor,market.CurrentPeriod)
                     .ToDictionary(x=>x.Good,x=>x.Ask);
         //Figure out last period's prices
-        var previousPeriodPrices = new Dictionary<Good, decimal>();
+        var previousPeriodPrices = new Dictionary<Good, int>();
         if (market.CurrentPeriod >0)
         {
             //TODO: refactor later when we need the strategy to have demand for new goods introduced
@@ -167,19 +167,19 @@ public class LemonadeSellerStrategy : iStrategy
         // Get market price for lemonade
         var market = Actor.GetMarket();
         var marketPrices = market.GetAverageMarketPrices();
-        decimal sellPrice;
+        int sellPrice;
 
         var costOfLemonade = GetLemonadeEntry(lemonade).Cost;
         
         var lemonadePrices = marketPrices.Where(x=>x.Good==lemonade); 
         var lemonadePrice = lemonadePrices
                            .Any()
-                           ? lemonadePrices.Average(x=>x.Price)
+                           ? (int)Math.Round(lemonadePrices.Average(x=>x.Price))
                            : costOfLemonade;
         if (lemonadePrice > 0)
         {
             // Sell at market price or slightly below to be competitive
-            sellPrice = lemonadePrice * 0.95m;
+            sellPrice = (int)lemonadePrice -1;
         }
         else
         {
@@ -224,7 +224,7 @@ public class LemonadeSellerStrategy : iStrategy
         throw new NotImplementedException();
     }
     #region Helpers
-    private decimal BuyIngredientAndGiveChange(decimal remainingCash, Market market, Dictionary<Good, decimal> currentPrices, Ingredient ingredient)
+    private decimal BuyIngredientAndGiveChange(decimal remainingCash, Market market, Dictionary<Good, int> currentPrices, Ingredient ingredient)
     {
         var amountOfIngredient = ingredient.QuantityNeeded;
         var costOfIngredient = currentPrices[ingredient.Good];

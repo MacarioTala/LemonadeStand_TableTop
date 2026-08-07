@@ -29,7 +29,7 @@ public class BasicConsumptionStrategyTests
 
         lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(3m)
+            .Costing(3)
             .Build();
     }
 

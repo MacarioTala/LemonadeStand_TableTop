@@ -28,7 +28,7 @@ public partial class BasicTradeProcessorTests
     public void EBTFG_NoMatchingOrdersNoFillsNoExceptions()
     {
         // Arrange
-        var Company1BuysLemonsFromAnyone = new Order(Company1, null, Lemon, 10, 10m);
+        var Company1BuysLemonsFromAnyone = new Order(Company1, null, Lemon, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = Company1BuysLemonsFromAnyone,
@@ -37,7 +37,7 @@ public partial class BasicTradeProcessorTests
         };
         Company1.QueueOrder(Company1Context);
 
-        var Company2BuysRLFromAnyone = new Order(Company2, null, RadioactiveLemonade, 10, 10m);
+        var Company2BuysRLFromAnyone = new Order(Company2, null, RadioactiveLemonade, 10, 10);
         var Company2Context = new ActionContext
         {
             TradeToSubmit = Company2BuysRLFromAnyone,
@@ -68,9 +68,9 @@ public partial class BasicTradeProcessorTests
     public void EBTFG_NullBuyerAndSellerNoFills()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var noOneSellsAnythingToAnyone = new Order(null, null, RadioactiveLemonade, 10, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var noOneSellsAnythingToAnyone = new Order(null, null, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = noOneSellsAnythingToAnyone,
@@ -102,13 +102,13 @@ public partial class BasicTradeProcessorTests
     }
     [Test,TestCaseSource(nameof(TestCases_OneBuyerOneSeller))]
     public void EBTFG_OneBuyerOneSeller(int sellerInventoryQuantity,
-                                        decimal sellerAcquirePrice,
+                                        int sellerAcquirePrice,
                                         int buyerOrderQuantity, 
                                         int sellerOrderQuantity,
                                         int expectedBuyerFill,
                                         int expectedSellerFill,
-                                        decimal buyerBid,
-                                        decimal sellerAsk
+                                        int buyerBid,
+                                        int sellerAsk
                                         )
     {
         // Arrange
@@ -143,10 +143,10 @@ public partial class BasicTradeProcessorTests
     public void EBTFG_NoBuyersNoFills()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var company1SellsRLToAnyone= new Order(null, Company1, RadioactiveLemonade, 10, 10m);
-        var company2SellsRLToAnyone= new Order(null, Company2, RadioactiveLemonade, 10, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var company1SellsRLToAnyone= new Order(null, Company1, RadioactiveLemonade, 10, 10);
+        var company2SellsRLToAnyone= new Order(null, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1SellsRLToAnyone,
@@ -176,8 +176,8 @@ public partial class BasicTradeProcessorTests
     public void EBTFG_NoSellersNoFills()
     {
         // Arrange
-        var company1BuysRLFromAnyone= new Order(Company1, null, RadioactiveLemonade, 10, 10m);
-        var company2BuysRLFromAnyone= new Order(Company2, null, RadioactiveLemonade, 10, 10m);
+        var company1BuysRLFromAnyone= new Order(Company1, null, RadioactiveLemonade, 10, 10);
+        var company2BuysRLFromAnyone= new Order(Company2, null, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromAnyone,
@@ -221,15 +221,15 @@ public partial class BasicTradeProcessorTests
     [Test,TestCaseSource(nameof(TestCases_OneBuyerMultipleSellers))]
     public void EBTFG_OneBuyerMultipleSellers(
                                         int Seller1InventoryQuantity,
-                                        decimal Seller1AcquirePrice,
+                                        int Seller1AcquirePrice,
                                         int Seller2InventoryQuantity,
-                                        decimal Seller2AcquirePrice,
+                                        int Seller2AcquirePrice,
                                         int BuyerOrderQuantity,
-                                        decimal BuyerBid,
+                                        int BuyerBid,
                                         int Seller1OrderQuantity,
-                                        decimal Seller1Ask,
+                                        int Seller1Ask,
                                         int Seller2OrderQuantity,
-                                        decimal Seller2Ask,
+                                        int Seller2Ask,
                                         int expectedBuyerFill,
                                         int expectedSeller1Fill,
                                         int expectedSeller2Fill,
@@ -298,13 +298,13 @@ public partial class BasicTradeProcessorTests
     [Test,TestCaseSource(nameof(TestCases_OneSellerMultipleBuyers))]
     public void EBTFG_OneSellerMultipleBuyers(
                                    int SellerInventoryQuantity,
-                                   decimal SellerAcquirePrice,    
+                                   int SellerAcquirePrice,    
                                    int Buyer1OrderQuantity,
-                                   decimal Buyer1Bid,
+                                   int Buyer1Bid,
                                    int Buyer2OrderQuantity,
-                                   decimal Buyer2Bid,
+                                   int Buyer2Bid,
                                    int SellerOrderQuantity,
-                                   decimal SellerAsk,
+                                   int SellerAsk,
                                    int expectedBuyer1Fill,
                                    int expectedBuyer2Fill,
                                    int expectedSellerFill

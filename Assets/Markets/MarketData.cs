@@ -2,8 +2,8 @@ public class MarketData
 {
     public iEconAgent Company;
     public Good Good;
-    public decimal Bid;
-    public decimal Ask;
+    public int Bid;
+    public int Ask;
 
     public override string ToString()
     {

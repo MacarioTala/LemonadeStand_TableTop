@@ -43,10 +43,10 @@ public class CompanyTests
         //arrange
         var company = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
-        const decimal trade_price = 3.0m;
+        const int tradePrice = 3;
         var expected_cash = 10000 - 3;
         //Act
-        company.BuyGood(good, 1, trade_price);
+        company.BuyGood(good, 1, tradePrice);
         var actual_cash = company.GetCash();
         //Assert
         Assert.AreEqual(expected_cash, actual_cash);
@@ -60,7 +60,7 @@ public class CompanyTests
         const int PeriodIsIrrelevant = 0;
         var company = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
-        const decimal trade_price = 3.0m;
+        const int trade_price = 3;
         var expected_inventory_entry = new InventoryEntry(good, 1, trade_price, PeriodIsIrrelevant);
         
         //Act
@@ -81,7 +81,7 @@ public class CompanyTests
         //arrange
         var company = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
-        const decimal trade_price = 3.0m;
+        const int trade_price = 3;
         const int trade_quantity = 10000;
         //Act
         //Assert
@@ -95,7 +95,7 @@ public class CompanyTests
         var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         company.BuyGood(good, 1,good.GetPrice());
         var initial_cash = company.GetCash();
-        var good_price = 3.0m;
+        var good_price = 3;
         var expected_cash = initial_cash + good_price;
         
         //Act
@@ -112,7 +112,7 @@ public class CompanyTests
         var company = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         var good = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         company.BuyGood(good, 1,good.GetPrice());
-        var good_price = 3.0m;
+        var good_price = 3;
         //Act
         //Assert
         Assert.Throws<InventoryException>(() => company.SellGood(good, 2, good_price));
@@ -124,7 +124,7 @@ public class CompanyTests
         //Assert
         var company1 = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         var lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
-        var context = new ActionContext{BidToSubmit = 2.0m, AskToSubmit = 3.0m, GoodToSubmit = lemon};
+        var context = new ActionContext{BidToSubmit = 2, AskToSubmit = 3, GoodToSubmit = lemon};
 
         var expected = new LemonadeStandResultObject{Result = ResultTypeEnum.ContextHasNoTrade, Message = "ActionContext does not contain a trade"};
         //Act
@@ -139,8 +139,8 @@ public class CompanyTests
     public void QO_RejectsOrdersWithNegativePrice()
     {
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 1000, 3m,0));
-        var company1Order = new Order(null, Company1, Lemonade, 1000, -3.5m);
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 1000, 3,0));
+        var company1Order = new Order(null, Company1, Lemonade, 1000, -3);
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidPrice,"").Result;
         //Act
         var actual = Company1.QueueOrder(CreateActionContext(company1Order, TestMarket,Period)).Result;
@@ -152,7 +152,7 @@ public class CompanyTests
     public void QO_RejectsOrdersWithZeroQuantity()
     {
         //Arrange
-        var Company1BuysLemonade = new Order(Company1,null, Lemonade, 0, 3.5m);
+        var Company1BuysLemonade = new Order(Company1,null, Lemonade, 0, 3);
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidQuantity,"").Result;
         //Act
         var actual = Company1.QueueOrder(CreateActionContext(Company1BuysLemonade, TestMarket,Period)).Result;

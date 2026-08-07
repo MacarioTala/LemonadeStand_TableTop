@@ -27,7 +27,7 @@ public class GoodBuilder
         return this;
     }
 
-    public GoodBuilder Costing(decimal cost)
+    public GoodBuilder Costing(int cost)
     {
         goodToReturn.SetPrice(cost);
         return this;

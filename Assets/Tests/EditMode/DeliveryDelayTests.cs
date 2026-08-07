@@ -12,11 +12,11 @@ public void GoodsWithDeliveryDelayGreaterThanZeroShouldDecrementTheirRemainingDe
     var delayedGood = new GoodBuilder()
                         .Named("Delayed Lemon")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1m)
+                        .Costing(1)
                         .WithDeliveryDelay(2)
                         .Build();
     
-    var delayedEntry = new InventoryEntry(delayedGood, 10, 3.0m, 0);
+    var delayedEntry = new InventoryEntry(delayedGood, 10, 3, 0);
     
     var Company1 = EconAgentBuilder.For<EconAgent>()
                     .Named("Company1")
@@ -43,11 +43,11 @@ public void GoodsWithZeroDeliveryDelayShouldNotGoNegativeWhenResolvingDeliveries
     var instantGood = new GoodBuilder()
                         .Named("Instant Water")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
     
-    var instantEntry = new InventoryEntry(instantGood, 10, 1.0m, 0);
+    var instantEntry = new InventoryEntry(instantGood, 10, 1, 0);
 
     var Company1 = EconAgentBuilder.For<EconAgent>()
                     .Named("Company1")

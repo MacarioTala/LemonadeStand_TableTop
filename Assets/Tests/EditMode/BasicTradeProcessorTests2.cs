@@ -9,9 +9,9 @@ public partial class BasicTradeProcessorTests
     public void IfOnlyTwoOrdersExistBuyOrderIsPrimary_MatchedOrders()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10m);
-        var company2BuysRLFromCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10m);
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
+        var company2BuysRLFromCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromCompany2ByCompany1,
@@ -38,8 +38,8 @@ public partial class BasicTradeProcessorTests
     public void IfOnlySellOrderExistsItIsPrimary()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10m);
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromCompany2ByCompany1,
@@ -59,14 +59,14 @@ public partial class BasicTradeProcessorTests
     public void BuyOrderWithGreatestQuantityIsPrimary()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
 
-        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 8, 10m);
-        var company2BuysRLFromCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 15, 10m);
-        var company3BuysRLFromCompany2ByCompany3 = new Order(Company3, Company2, RadioactiveLemonade, 7, 10m);
+        var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 8, 10);
+        var company2BuysRLFromCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 15, 10);
+        var company3BuysRLFromCompany2ByCompany3 = new Order(Company3, Company2, RadioactiveLemonade, 7, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromCompany2ByCompany1,
@@ -100,13 +100,13 @@ public partial class BasicTradeProcessorTests
     public void SellOrderWithGreatestQuantityIsPrimaryIfNoBuyOrdersExist()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
-        Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 15, 10m, Period));
+        Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 15, 10, Period));
 
-        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 8, 10m);
-        var company3SellsRLToCompany1ByCompany3 = new Order(Company1, Company3, RadioactiveLemonade, 15, 10m);
+        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 8, 10);
+        var company3SellsRLToCompany1ByCompany3 = new Order(Company1, Company3, RadioactiveLemonade, 15, 10);
         var company2SellsToCompany1Context = new ActionContext
         {
             TradeToSubmit = company2SellsRLToCompany1ByCompany2,
@@ -132,7 +132,7 @@ public partial class BasicTradeProcessorTests
     public void BuyOrdersAreStillPrimaryEvenWithNoSeller()
     {
         // Arrange
-        var company1BuysRLFromMarket = new Order(Company1, null, RadioactiveLemonade, 10, 10m);
+        var company1BuysRLFromMarket = new Order(Company1, null, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1BuysRLFromMarket,
@@ -150,8 +150,8 @@ public partial class BasicTradeProcessorTests
     public void SellOrdersArePrimaryEvenWithNoBuyerIfTheyreAlone()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
-        var company1SellsRLToAnyone = new Order(null, Company1, RadioactiveLemonade, 10, 10m);
+        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        var company1SellsRLToAnyone = new Order(null, Company1, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
             TradeToSubmit = company1SellsRLToAnyone,
@@ -169,10 +169,10 @@ public partial class BasicTradeProcessorTests
     public void FullyFilledOrdersCannotBePrimary()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10m, Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
 
-        var company1BuysRLFromAnyByCompany1 = new Order(Company1, null, RadioactiveLemonade, 10, 10m);
-        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10m);
+        var company1BuysRLFromAnyByCompany1 = new Order(Company1, null, RadioactiveLemonade, 10, 10);
+        var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         company1BuysRLFromAnyByCompany1.FilledQuantity = 10;
         var Company1Context = new ActionContext
         {

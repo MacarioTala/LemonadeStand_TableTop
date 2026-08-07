@@ -16,11 +16,11 @@ public class RecipeTests
     private Recipe basicLemonadeRecipe;
     private const int Period = 0;
 
-    private readonly PriceBand price_band1= new(.5m, 1.0m);
-    private readonly PriceBand price_band2= new(1.0m, 5.0m);
-    private readonly PriceBand price_band3= new(6.0m, 8.0m);
+    private readonly PriceBand price_band1= new(1,2);
+    private readonly PriceBand price_band2= new(1, 5);
+    private readonly PriceBand price_band3= new(6, 8);
 
-    private readonly PriceBand price_band4 = new(10.0m, 15.0m);
+    private readonly PriceBand price_band4 = new(10, 15);
 
     [SetUp]
     public void SetUp()
@@ -73,9 +73,9 @@ public class RecipeTests
     {
         //arrange
         var test_inventory = new Inventory();
-        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0m, Period);
-        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0m, Period);
-        var inventory_entry3 = new InventoryEntry(water, 10, 1.0m, Period);
+        var inventory_entry1 = new InventoryEntry(lemon, 10, 1, Period);
+        var inventory_entry2 = new InventoryEntry(sugar, 10, 1, Period);
+        var inventory_entry3 = new InventoryEntry(water, 10, 1, Period);
         test_inventory.AddGood(inventory_entry1);
         test_inventory.AddGood(inventory_entry2);
         test_inventory.AddGood(inventory_entry3);
@@ -95,9 +95,9 @@ public class RecipeTests
     {
         //arrange
         var test_inventory = new Inventory();
-        var inventory_entry1 = new InventoryEntry(lemon, 10, 1.0m, Period);
-        var inventory_entry2 = new InventoryEntry(sugar, 10, 1.0m, Period);
-        var inventory_entry3 = new InventoryEntry(water, 10, 1.0m, Period);
+        var inventory_entry1 = new InventoryEntry(lemon, 10, 1, Period);
+        var inventory_entry2 = new InventoryEntry(sugar, 10, 1, Period);
+        var inventory_entry3 = new InventoryEntry(water, 10, 1, Period);
         test_inventory.AddGood(inventory_entry1);
         test_inventory.AddGood(inventory_entry2);
         test_inventory.AddGood(inventory_entry3);
@@ -289,9 +289,9 @@ public void CompaniesCannotMakeRecipesUsingGoodsWithRemainingDelayGreaterThanZer
     var company = EconAgent.Factory.Create("Company1", AgentLevelEnum.Beginner);
     company.AddRecipe(basicLemonadeRecipe);
 
-    company.BuyGood(lemon, 10, 3.0m);
-    company.BuyGood(sugar, 10, 3.0m);
-    company.BuyGood(water, 10, 3.0m);
+    company.BuyGood(lemon, 10, 3);
+    company.BuyGood(sugar, 10, 3);
+    company.BuyGood(water, 10, 3);
 
     var context = new ActionContext
     {
@@ -326,28 +326,28 @@ public void ConsumeForRecipeShouldNotDriveInventoryNegativeWhenUsingMultipleCost
     var splitLemon = new GoodBuilder()
                         .Named("Split Lemon")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1.0m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
 
     var sugarNow = new GoodBuilder()
                         .Named("Sugar Now")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1.0m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
 
     var waterNow = new GoodBuilder()
                         .Named("Water Now")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1.0m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
 
     var output = new GoodBuilder()
                     .Named("Test Lemonade")
                     .WithRarity(RarityEnum.Uncommon)
-                    .Costing(5.0m)
+                    .Costing(5)
                     .WhichIsProducedGood()
                     .Build();
 
@@ -365,15 +365,15 @@ public void ConsumeForRecipeShouldNotDriveInventoryNegativeWhenUsingMultipleCost
     var company = EconAgentBuilder.ForBaseAgent()
                     .Named("Company1")
                     .AtLevel(AgentLevelEnum.Beginner)
-                    .WithInitialCash(1000m)
+                    .WithInitialCash(1000)
                     .Build();
 
     company.AddRecipe(splitBatchRecipe);
 
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1.0m, 0));
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2.0m, 0));
-    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1.0m, 0));
-    company.GetInventory().AddGood(new InventoryEntry(waterNow, 10, 1.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2, 0));
+    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1, 0));
+    company.GetInventory().AddGood(new InventoryEntry(waterNow, 10, 1, 0));
 
     var context = new ActionContext
     {
@@ -403,28 +403,28 @@ public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
     var splitLemon = new GoodBuilder()
                         .Named("Split Lemon")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1.0m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
 
     var sugarNow = new GoodBuilder()
                         .Named("Sugar Now")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1.0m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
 
     var waterNow = new GoodBuilder()
                         .Named("Water Now")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1.0m)
+                        .Costing(1)
                         .WithDeliveryDelay(0)
                         .Build();
 
     var output = new GoodBuilder()
                     .Named("Batch Lemonade")
                     .WithRarity(RarityEnum.Uncommon)
-                    .Costing(5.0m)
+                    .Costing(5)
                     .WhichIsProducedGood()
                     .Build();
 
@@ -441,18 +441,18 @@ public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
     var company = EconAgentBuilder.ForBaseAgent()
                     .Named("Company1")
                     .AtLevel(AgentLevelEnum.Beginner)
-                    .WithInitialCash(1000m)
+                    .WithInitialCash(1000)
                     .Build();
 
     company.AddRecipe(batchRecipe);
 
     // 18 lemons total across 3 different cost bases = enough for quantity 2
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1.0m, 0));
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2.0m, 0));
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 9, 3.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2, 0));
+    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 9, 3, 0));
 
-    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1.0m, 0));
-    company.GetInventory().AddGood(new InventoryEntry(waterNow, 20, 1.0m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1, 0));
+    company.GetInventory().AddGood(new InventoryEntry(waterNow, 20, 1, 0));
 
     var context = new ActionContext
     {
@@ -481,11 +481,11 @@ public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
 public void GetIngredientMaximumsByBudget_ReturnsIngredientTotalsForAffordableBudget()
 {
     // Arrange
-    var prices = new Dictionary<Good, decimal>
+    var prices = new Dictionary<Good, int>
     {
-        { lemon, 3m },
-        { sugar, 2m },
-        { water, 1m }
+        { lemon, 3 },
+        { sugar, 2 },
+        { water, 1 }
     };
 
     // Cost per lemonade = 9*3 + 2*2 + 7*1 = 38
@@ -507,11 +507,11 @@ public void GetIngredientMaximumsByBudget_ReturnsIngredientTotalsForAffordableBu
 public void GetIngredientMaximumsByBudget_FloorsPartialProduction()
 {
     // Arrange
-    var prices = new Dictionary<Good, decimal>
+    var prices = new Dictionary<Good, int>
     {
-        { lemon, 3m },
-        { sugar, 2m },
-        { water, 1m }
+        { lemon, 3 },
+        { sugar, 2 },
+        { water, 1 }
     };
 
     // Cost per lemonade = 38
@@ -533,11 +533,11 @@ public void GetIngredientMaximumsByBudget_FloorsPartialProduction()
 public void GetIngredientMaximumsByBudget_ReturnsZeroQuantitiesWhenBudgetTooSmall()
 {
     // Arrange
-    var prices = new Dictionary<Good, decimal>
+    var prices = new Dictionary<Good, int>
     {
-        { lemon, 3m },
-        { sugar, 2m },
-        { water, 1m }
+        { lemon, 3 },
+        { sugar, 2 },
+        { water, 1 }
     };
 
     // Cost per lemonade = 38
@@ -551,39 +551,15 @@ public void GetIngredientMaximumsByBudget_ReturnsZeroQuantitiesWhenBudgetTooSmal
     Assert.AreEqual(0, actual.First(x => x.Good == sugar).QuantityNeeded);
     Assert.AreEqual(0, actual.First(x => x.Good == water).QuantityNeeded);
 }
-[Test]
-public void GetIngredientMaximumsByBudget_UsesDecimalPricesCorrectly()
-{
-    // Arrange
-    var prices = new Dictionary<Good, decimal>
-    {
-        { lemon, 0.5m },
-        { sugar, 0.25m },
-        { water, 0.1m }
-    };
 
-    // Cost per lemonade = 9*.5 + 2*.25 + 7*.1 = 5.7
-    // Budget 11.4 can make 2 lemonade
-    var expectedLemons = 18;
-    var expectedSugar = 4;
-    var expectedWater = 14;
-
-    // Act
-    var actual = basicLemonadeRecipe.GetIngredientMaximumsByBudget(prices, 11.4m);
-
-    // Assert
-    Assert.AreEqual(expectedLemons, actual.First(x => x.Good == lemon).QuantityNeeded);
-    Assert.AreEqual(expectedSugar, actual.First(x => x.Good == sugar).QuantityNeeded);
-    Assert.AreEqual(expectedWater, actual.First(x => x.Good == water).QuantityNeeded);
-}
 [Test]
 public void GetIngredientMaximumsByBudget_ThrowsWhenIngredientPriceIsMissing()
 {
     // Arrange
-    var prices = new Dictionary<Good, decimal>
+    var prices = new Dictionary<Good, int>
     {
-        { lemon, 3m },
-        { sugar, 2m }
+        { lemon, 3 },
+        { sugar, 2 }
         // water intentionally missing
     };
 

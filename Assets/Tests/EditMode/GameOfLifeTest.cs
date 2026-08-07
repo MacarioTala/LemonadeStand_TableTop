@@ -43,10 +43,10 @@ public class GameOfLifeTest
 
     private void MakeGoodsAndRecipes()
     {
-        Lemon = Good.CreateInstance("Lemon", new PriceBand(1.0m, 3.0m), RarityEnum.Common);
-        Water = Good.CreateInstance("Water", new PriceBand(1.0m, 1.0m), RarityEnum.Common);
-        Sugar = Good.CreateInstance("Sugar", new PriceBand(1.0m, 2.0m), RarityEnum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(4.0m, 5.0m), RarityEnum.Uncommon);
+        Lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
+        Water = Good.CreateInstance("Water", new PriceBand(1, 1), RarityEnum.Common);
+        Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 2), RarityEnum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(4, 5), RarityEnum.Uncommon);
         TestGoods.Add(Lemon);
         TestGoods.Add(Water);
         TestGoods.Add(Sugar);
@@ -92,7 +92,7 @@ public class GameOfLifeTest
        
        foreach (var good in TestGoods)
         {
-            LemonadeMarket.GetInventory().AddGood(new InventoryEntry(good,10000,.5m,0));
+            LemonadeMarket.GetInventory().AddGood(new InventoryEntry(good,10000,5,0));
         }
     }
     [Test]

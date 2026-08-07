@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class MarketBuilder
 {
-    public static Market WithCash(this Market market, decimal cash)
+    public static Market WithCash(this Market market, int cash)
     {
         market.SetCash(cash);
         return market;

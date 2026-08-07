@@ -7,13 +7,8 @@ public class FixedCostTemplate : ScriptableObject
     public string Name;
     public string Description;
     public FixedCostEnum FixedCostType;
-    public int AmountInCents;
+    public int Amount;
     [Tooltip("Occurs every this many periods")]public int Frequency;
-
-    public decimal Amount { 
-        get=>AmountInCents/100m; 
-        set=>AmountInCents=(int)Math.Round(value*100m); 
-        }
 }
 
 [Serializable]

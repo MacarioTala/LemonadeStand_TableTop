@@ -8,18 +8,17 @@ public class Good : ScriptableObject
 {
     public string GoodName;
     public Sprite GoodSprite;
-    private decimal _price;
-    private decimal _minAskPrice;
+    private int _price;
+    private int _minAskPrice;
     public long ExpiresAfterPeriods;
     public bool IsPerishable=true;
     public int DeliveryDelay;
-    private decimal price_increment_rate;
+
     [SerializeField]private PriceBand PriceBand;
-    public int price_increase_threshold; //Might not need this. Are there any good-specific price thresholds?
-    public int price_decrease_threshold; //ibid
 
     public decimal GetCostOfGood(Recipe recipe)
     {
+        if (!IsProducedGood) return Price;
         if (_minAskPrice == 0)
         {
             // If no minimum ask price is set, calculate it based on the recipe's ingredients
@@ -29,10 +28,10 @@ public class Good : ScriptableObject
         }
         return _minAskPrice;
     }
-    private decimal Price
+    private int Price
     {
         get => _price;
-        set => _price = Math.Round(value, 2);
+        set => _price = value;
     }
 
     //Demand
@@ -55,7 +54,7 @@ public class Good : ScriptableObject
 
     public bool IsProducedGood;
 
-    [SerializeField] private readonly List<Good> _substitute_goods = new();
+    [SerializeField] private readonly List<Good> _substituteGoods = new();
     #region Effects
     List<GoodEffect> _effects = new();
 
@@ -115,75 +114,26 @@ public class Good : ScriptableObject
         _rarity = rarity;
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
-        Set_initial_price_thresholds();
-        Set_initial_price_increment_rate();
     }
 
-    public PriceBand Get_price_band() => PriceBand;
-    public decimal GetPrice() => Price;
+    public PriceBand GetPriceBand() => PriceBand;
+    public int GetPrice() => Price;
 
-    internal void SetPrice(decimal new_price) => Price = new_price;
+    internal void SetPrice(int new_price) => Price = new_price;
 
     public RarityEnum GetRarity() => _rarity;
     public void SetRarity(RarityEnum rarity) => _rarity = rarity;
-    public decimal Get_price_increment_rate() => price_increment_rate;
 
-    private decimal Generate_initial_price()
+    private int Generate_initial_price()
     {
         var randomFloat = UnityEngine.Random.value;
         var price_range = PriceBand.Max - PriceBand.Min;
-        return PriceBand.Min + (decimal)randomFloat * price_range;
+        return PriceBand.Min + (int)randomFloat * price_range;
     }
 
-    public void Add_substitute_good(Good good) => _substitute_goods.Add(good);
+    public void AddSubstituteGood(Good good) => _substituteGoods.Add(good);
 
-    private void Set_price_thresholds(int increase_threshold, int decrease_threshold) {
-        price_increase_threshold = increase_threshold;
-        price_decrease_threshold = decrease_threshold;
-    }
-    private void Set_initial_price_thresholds()
-    {
-        const int common_increase_threshold = 500;
-        const int common_decrease_threshold = 100;
-        const int uncommon_increase_threshold = 250;
-        const int uncommon_decrease_threshold = 50;
-        const int rare_increase_threshold = 50;
-        const int rare_decrease_threshold = 10;
-        const int very_rare_increase_threshold = 5;
-        const int very_rare_decrease_threshold = 1;
-        if (_rarity == RarityEnum.Common) {
-            Set_price_thresholds(common_increase_threshold, common_decrease_threshold);
-        }
-        if (_rarity == RarityEnum.Uncommon) {
-            Set_price_thresholds(uncommon_increase_threshold, uncommon_decrease_threshold);
-        }
-        if (_rarity == RarityEnum.Rare) {
-            Set_price_thresholds(rare_increase_threshold, rare_decrease_threshold);
-        }
-        if (_rarity == RarityEnum.Very_Rare) {
-            Set_price_thresholds(very_rare_increase_threshold, very_rare_decrease_threshold);
-        }
-    }
-
-    private void Set_initial_price_increment_rate()
-    {
-        const decimal common_price_increment_rate = 0.1m;
-        const decimal uncommon_price_increment_rate = 0.15m;
-        const decimal rare_price_increment_rate = 0.3m;
-        const decimal very_rare_price_increment_rate = 0.4m;
-        if (_rarity == RarityEnum.Common) {
-            price_increment_rate = common_price_increment_rate;
-        }
-        if (_rarity == RarityEnum.Uncommon) {
-            price_increment_rate = uncommon_price_increment_rate;
-        }
-        if (_rarity == RarityEnum.Rare) {
-            price_increment_rate = rare_price_increment_rate;
-        }
-        if (_rarity == RarityEnum.Very_Rare) {
-            price_increment_rate = very_rare_price_increment_rate;
-        }
-    }
+    
     #region Overrides
     public override bool Equals(object obj)
     {
@@ -217,15 +167,10 @@ public enum RarityEnum
 
 [Serializable]
 public class PriceBand{
-    public decimal Min=>minCentsForInspector/100m;
-    public decimal Max=>maxCentsForInspector/100m;
-    [SerializeField] private int minCentsForInspector;
-    [SerializeField] private int maxCentsForInspector;
+    public int Min;
+    public int Max;
 
-    public PriceBand(decimal lowerBound=0, decimal upperBound=0){
-        minCentsForInspector = (int)(lowerBound*100);
-        maxCentsForInspector = (int)(upperBound*100);
-    }
+    public PriceBand(int min, int max)=> (Min,Max) = (min,max);
 }
 
 public class ReductionResult

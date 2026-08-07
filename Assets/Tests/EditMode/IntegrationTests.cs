@@ -64,7 +64,7 @@ public class IntegrationTests
         Lemonade = new GoodBuilder()
                   .Named("Lemonade")
                   .WithRarity(RarityEnum.Uncommon)
-                  .Costing(5m)
+                  .Costing(5)
                   .WhichIsProducedGood()
                   .Build();
       var reduceEnnuiEffect = new GoodEffect()
@@ -84,7 +84,7 @@ public class IntegrationTests
         // Arrange
         var buyer = Company1;
         var seller = Company2;
-        var good =Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
+        var good =Good.CreateInstance("Good", new PriceBand(1, 2), RarityEnum.Common);
         var sellersInventory = seller.GetInventory();
         sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
         
@@ -114,7 +114,7 @@ public class IntegrationTests
         var seller = EconAgent.Factory.Create("Seller", AgentLevelEnum.Beginner);
         market.RegisterMarketParticipant(buyer);
         market.RegisterMarketParticipant(seller);
-        var good =Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
+        var good =Good.CreateInstance("Good", new PriceBand(1,2), RarityEnum.Common);
         var sellersInventory = seller.GetInventory();
         sellersInventory.AddGood(new InventoryEntry(good, 10, 5, 0));
 
@@ -183,7 +183,7 @@ public class IntegrationTests
     {
         // Arrange
         var company1 = Company1;
-        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3,0));
 
         var demandForLemonade = new DemandData()
         {
@@ -209,7 +209,7 @@ public class IntegrationTests
         testStrategy.GenerateGoals(TestPopulation);// Add to initialization?
         TestMarket.RegisterMarketParticipant(TestPopulation);
 
-        var company1Order = new Order(null, company1, Lemonade, 1000, .25m);
+        var company1Order = new Order(null, company1, Lemonade, 1000, 3);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = TestMarket};
         const int period = 1;
@@ -235,7 +235,7 @@ public class IntegrationTests
     {
         // Arrange
         var company1 = Company1;
-        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+        company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3,0));
 
         var demandForLemonade = new DemandData()
         {
@@ -261,7 +261,7 @@ public class IntegrationTests
         testStrategy.GenerateGoals(TestPopulation);// Add to initialization?
         TestMarket.RegisterMarketParticipant(TestPopulation);
 
-        var company1Order = new Order(null, company1, Lemonade, 1000, .25m);
+        var company1Order = new Order(null, company1, Lemonade, 1000, 3);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = TestMarket};
         const int expectedOrderFillQuantity = 1000;
@@ -291,11 +291,11 @@ public class IntegrationTests
         var market = TestMarket;
         market.SetCash(1000000);
         
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3,0));
         Company2.SetCash(1000000);
 
-        var trade1 = new Order(null, Company1, Lemonade, 500, 2.0m);
-        var trade2 = new Order(Company2, null, Lemonade, 1000, 3.5m);
+        var trade1 = new Order(null, Company1, Lemonade, 500, 2);
+        var trade2 = new Order(Company2, null, Lemonade, 1000, 4);
         
         Company1.QueueOrder(new ActionContext { TradeToSubmit = trade1, MarketToSubmitTo = market });
         Company2.QueueOrder(new ActionContext { TradeToSubmit = trade2, MarketToSubmitTo = market });
@@ -327,11 +327,11 @@ public class IntegrationTests
 
         TheEconomy.Instance.RegisterEconomicAgent(SecondMarket);
         TestMarket.SetCash(1000000);
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3m,0));
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 2000, 3,0));
         Company2.SetCash(1000000);
 
-        var trade1 = new Order(null, Company1, Lemonade, 500, 2.0m);
-        var trade2 = new Order(Company2, null, Lemonade, 1000, 3.5m);
+        var trade1 = new Order(null, Company1, Lemonade, 500, 2);
+        var trade2 = new Order(Company2, null, Lemonade, 1000, 3);
 
         Company1.QueueOrder(new ActionContext { TradeToSubmit = trade1, MarketToSubmitTo = TestMarket });
         Company2.QueueOrder(new ActionContext { TradeToSubmit = trade2, MarketToSubmitTo = TestMarket });
@@ -358,7 +358,7 @@ public class IntegrationTests
     {
         //Arrange
         var period = 0;
-        var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
+        var good = Good.CreateInstance("Good", new PriceBand(1,2), RarityEnum.Common);
         var company = EconAgent.Factory.Create("Company", AgentLevelEnum.Beginner);
         var market = TestMarket;
         market.RegisterMarketParticipant(company);
@@ -382,7 +382,7 @@ public class IntegrationTests
     {
         //Arrange
         var period = 0;
-        var good = Good.CreateInstance("Good", new PriceBand(1m, 2m), RarityEnum.Common);
+        var good = Good.CreateInstance("Good", new PriceBand(1,2), RarityEnum.Common);
         var company = EconAgent.Factory.Create("Company", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(company);
         company.GetInventory().AddGood(new InventoryEntry(good, 10, 1, 0));

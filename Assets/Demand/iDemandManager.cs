@@ -4,7 +4,7 @@ public interface iDemandManager
 {
     DemandData GetDemandFor(Good good);
     int GetMarketDemandForGood(Good good);
-    IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket();
+    IEnumerable<(Good good, int Bid, int Ask)> GetBidAskSpreadsFromMarket();
     decimal GetPerceivedCostOfGood(Good good);
     LemonadeStandResultObject GetEffectiveElasticityForGood(Good good, ElasticityTypeEnum elasticity);
     LemonadeStandResultObject UpdateFulfillmentRates(int tradingPeriod = -1);

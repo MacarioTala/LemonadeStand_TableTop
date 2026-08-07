@@ -36,7 +36,7 @@ public partial class LinearDemandStrategyTests
         //Set up goods
         Lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(1m)
+            .Costing(1)
             .WithRarity(RarityEnum.Uncommon)
             .Build();
         var reduceEnnuiEffect = new GoodEffect()
@@ -242,7 +242,7 @@ public partial class LinearDemandStrategyTests
     public void SaturatedGoodElasticityOneDemandUnchanged()
     {
         //Arrange
-        Company1.GetInventory().AddGood(new(Lemonade, 100,10m,0));
+        Company1.GetInventory().AddGood(new(Lemonade, 100,10,0));
             var marketDemand = TestMarket.GetPopulationDemand();
             var lemonadeDemand = marketDemand[Lemonade];
 
@@ -272,7 +272,7 @@ public partial class LinearDemandStrategyTests
     {
         //Arrange
         const int initialDemand = 100;
-        Company1.GetInventory().AddGood(new(Lemonade, 200,10m,0));
+        Company1.GetInventory().AddGood(new(Lemonade, 200,10,0));
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         
         var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,200,1)

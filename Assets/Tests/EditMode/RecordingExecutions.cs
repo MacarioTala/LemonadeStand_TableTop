@@ -20,8 +20,8 @@ public class RecordingExecutions
 
     iStrategy TestBehaviourStrategy;
     PopulationAgent TestPopulation;
-    readonly PriceBand PriceBand1 = new(.5m, 1.0m);
-    readonly PriceBand PriceBand2 = new(5.0m, 10m);
+    readonly PriceBand PriceBand1 = new(1,2);
+    readonly PriceBand PriceBand2 = new(5, 10);
 
     readonly TestComparer<Execution> ExecutionComparer=new(new string[] { "CounterPartyTrades","RecordedTrade" });
 
@@ -39,7 +39,7 @@ public class RecordingExecutions
         Lemonade = new GoodBuilder()
                 .Named("Lemonade")
                 .WithRarity(RarityEnum.Uncommon)
-                .Costing(.5m)
+                .Costing(1)
                 .WhichIsProducedGood()
                 .Build();
         var reduceEnnuiEffect = new GoodEffect()
@@ -109,9 +109,9 @@ public class RecordingExecutions
     public void ProcessCompanyOrdersRecordsExecutionsInOrders_1P1CP()
     {
         //Arrange
-        var Company1SellsLemonadeToAnyone = new Order(Company1, null, Lemonade, 5, 10m);
-        var Company2BuysLemonadeFromAnyone = new Order(null, Company2, Lemonade, 5, 10m);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10m, 2));
+        var Company1SellsLemonadeToAnyone = new Order(Company1, null, Lemonade, 5, 10);
+        var Company2BuysLemonadeFromAnyone = new Order(null, Company2, Lemonade, 5, 10);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone,TestMarket,Period));
         
@@ -136,11 +136,11 @@ public class RecordingExecutions
      {
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
-        var Company1BuysLemonadeFromAnyone = new Order(Company1, null, Lemonade, 10, 10m);
-        var Company2SellsLemonadeToAnyone = new Order(null, Company2, Lemonade, 5, 10m);
-        var Company3SellsLemonadeToAnyone = new Order(null, Company3, Lemonade, 5, 10m);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10m, 2));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10m, 2));
+        var Company1BuysLemonadeFromAnyone = new Order(Company1, null, Lemonade, 10, 10);
+        var Company2SellsLemonadeToAnyone = new Order(null, Company2, Lemonade, 5, 10);
+        var Company3SellsLemonadeToAnyone = new Order(null, Company3, Lemonade, 5, 10);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
         Company1.QueueOrder(CreateActionContext(Company1BuysLemonadeFromAnyone,TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2SellsLemonadeToAnyone,TestMarket,Period));
         Company3.QueueOrder(CreateActionContext(Company3SellsLemonadeToAnyone,TestMarket,Period));
@@ -173,9 +173,9 @@ public class RecordingExecutions
      public void FulfillDemandRecordsExecutionsInOrders_1P1CP()
      {
         //Arrange
-        var company1Ask = 1m;
+        var company1Ask = 2;
         var companyQuantity = 5;
-        var company1CostOfLemonade = .5m;
+        var company1CostOfLemonade = 1;
         var acquiredInPeriod = 0;
         var Company1SellsLemonadeToAnyone = new Order(null,Company1 , Lemonade,companyQuantity, company1Ask);
         Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, companyQuantity, company1CostOfLemonade, acquiredInPeriod));
@@ -203,9 +203,9 @@ public class RecordingExecutions
     public void MarketExecutionsContainsPartyAndCounterParty_OnePair()
     {
         //Arrange
-        var Company1SellsLemonadeToAnyone = new Order(Company1, null, Lemonade, 5, 10m);
-        var Company2BuysLemonadeFromAnyone = new Order(null, Company2, Lemonade, 5, 10m);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10m, 2));
+        var Company1SellsLemonadeToAnyone = new Order(Company1, null, Lemonade, 5, 10);
+        var Company2BuysLemonadeFromAnyone = new Order(null, Company2, Lemonade, 5, 10);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
 
         const int expectedExecutionCount = 2;
         var expectedExecutions = new List<Execution>
@@ -232,12 +232,12 @@ public class RecordingExecutions
     {
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
 
-        var Company1BuysFromAnyone = new Order(Company1, null, Lemon, 2, 1m);
-        var Company2SellsToAnyone = new Order(null,Company2,Lemon,1,1m);
-        var Company3SellsToAnyone = new Order(null,Company3,Lemon,1,1m);
+        var Company1BuysFromAnyone = new Order(Company1, null, Lemon, 2, 1);
+        var Company2SellsToAnyone = new Order(null,Company2,Lemon,1,1);
+        var Company3SellsToAnyone = new Order(null,Company3,Lemon,1,1);
 
         const int expectedExecutionCount = 4;
         var expectedExecutions = new List<Execution>
@@ -264,7 +264,7 @@ public class RecordingExecutions
     {
         //Arrange
         var company1Quantity = 5;
-        var company1Ask = 3m;
+        var company1Ask = 3;
         var Company1SellsToAnyone = new Order( null,Company1, Lemonade, company1Quantity, company1Ask);
         var TestPopulationBuysFromCompany1 = new Order(TestPopulation,Company1, Lemon, company1Quantity, company1Ask){
             SubmittingCompany = TestPopulation,
@@ -295,7 +295,7 @@ public class RecordingExecutions
         var company1Quantity = 4000;
         var company2Quantity = 10;
         var company3Quantity = 10;
-        var company1Ask = 3m;
+        var company1Ask = 3;
         const int expectedPopulationBuys = 1108;//Note: This will change if you change population parameters.
         //Maybe change this test in the future to set up its own population
         //Arrange

@@ -608,9 +608,9 @@ private SubscriptionToken otherAgentBankruptSubscription;
         SaleSignCupsToSell.SetTextWithoutNotify(zero);
     }
 
-    private decimal GetLemonadePrice()
+    private int GetLemonadePrice()
     {
-        decimal.TryParse(SaleSignLemonadePriceField.text, out var price);
+        int.TryParse(SaleSignLemonadePriceField.text, out var price);
         return price;
     }
     private int GetMaxCups()

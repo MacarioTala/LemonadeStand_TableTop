@@ -23,10 +23,10 @@ public class MarketObserverTests
     [SetUp]
     public void Setup()
     {
-        Lemon = Good.CreateInstance("Lemon", new PriceBand(0.5m, 1.0m), RarityEnum.Common);
-        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(5.0m, 10m), RarityEnum.Uncommon);
-        Water = Good.CreateInstance("Water", new PriceBand(0.1m, 0.5m), RarityEnum.Common);
-        Sugar = Good.CreateInstance("Sugar", new PriceBand(0.2m, 0.8m), RarityEnum.Common);
+        Lemon = Good.CreateInstance("Lemon", new PriceBand(1,2), RarityEnum.Common);
+        Lemonade = Good.CreateInstance("Lemonade", new PriceBand(5, 10), RarityEnum.Uncommon);
+        Water = Good.CreateInstance("Water", new PriceBand(1,2), RarityEnum.Common);
+        Sugar = Good.CreateInstance("Sugar", new PriceBand(1,2), RarityEnum.Common);
         Company1 = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         Company2 = EconAgent.Factory.Create("Company 2", AgentLevelEnum.Beginner);
 

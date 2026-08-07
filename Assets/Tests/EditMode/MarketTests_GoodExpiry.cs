@@ -13,7 +13,7 @@ public void UnleashMarketForcesShouldExpireGoods()
 
     var francium = Good.CreateInstance("Francium", band2, RarityEnum.Very_Rare);
     francium.ExpiresAfterPeriods = 1;
-    company.GetInventory().AddGood(new InventoryEntry(francium, 1, 10000m, 0));
+    company.GetInventory().AddGood(new InventoryEntry(francium, 1, 10000, 0));
 
     var expected = 0;
 

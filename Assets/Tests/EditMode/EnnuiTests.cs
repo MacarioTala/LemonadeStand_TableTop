@@ -20,7 +20,7 @@ public class EnnuiTests
       Lemonade = new GoodBuilder()
                   .Named("Lemonade")
                   .WithRarity(RarityEnum.Uncommon)
-                  .Costing(5m)
+                  .Costing(5)
                   .WhichIsProducedGood()
                   .Build();
       var reduceEnnuiEffect = new GoodEffect()
@@ -124,7 +124,7 @@ public class EnnuiTests
       Good FruitPunch = new GoodBuilder()
          .Named("Fruit Punch")
          .WithRarity(RarityEnum.Uncommon)
-         .Costing(5m)
+         .Costing(5)
          .WhichIsProducedGood()
          .Build();
 
@@ -225,7 +225,7 @@ public class EnnuiTests
       Good FruitPunch = new GoodBuilder()
          .Named("Fruit Punch")
          .WithRarity(RarityEnum.Uncommon)
-         .Costing(5m)
+         .Costing(5)
          .WhichIsProducedGood()
          .Build();
 

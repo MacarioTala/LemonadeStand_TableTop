@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,9 +11,9 @@ public class DefaultDemandManager : iDemandManager,iMarketAware
             .OfType<PopulationAgent>()
             .Where(x=>!x.IsPlayer);
 
-    public IEnumerable<(Good good, decimal Bid, decimal Ask)> GetBidAskSpreadsFromMarket()
+    public IEnumerable<(Good good, int Bid, int Ask)> GetBidAskSpreadsFromMarket()
     {
-        return marketBeingManaged.MarketData == null? Enumerable.Empty<(Good, decimal, decimal)>()
+        return marketBeingManaged.MarketData == null? Enumerable.Empty<(Good, int, int)>()
             : marketBeingManaged.MarketData.Select(x => (x.Good, x.Bid, x.Ask));
     }
 
@@ -29,7 +30,7 @@ public class DefaultDemandManager : iDemandManager,iMarketAware
                     .Select(g=> new KnownPrice
                     {
                         Good = g.Key,
-                        Price = g.Average(x=>x.Ask)
+                        Price = (int)Math.Round(g.Average(x=>x.Ask))
                     })
                     .ToList();
 

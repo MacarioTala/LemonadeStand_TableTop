@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StarterMarketInitializer : iMarketInitializer
@@ -14,13 +13,13 @@ public class StarterMarketInitializer : iMarketInitializer
     private void SeedWithInitialGoods (Market market)
     {
         var _inventory = market.GetInventory();
-        var Lemonade = Good.CreateInstance("Lemonade", new PriceBand(8.0m, 13.0m), RarityEnum.Uncommon);
-        var Lemon = Good.CreateInstance("Lemon", new PriceBand(1.0m, 3.0m), RarityEnum.Common);
-        var Sugar = Good.CreateInstance("Sugar", new PriceBand(1.0m, 2.0m), RarityEnum.Common);
-        var Water = Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common);
-        _inventory.AddGood(new InventoryEntry(Lemon, 10000, 2.0m, 0));
-        _inventory.AddGood(new InventoryEntry(Sugar, 10000, 1.5m, 0));
-        _inventory.AddGood(new InventoryEntry(Water, 10000, .75m, 0));
+        var Lemonade = Good.CreateInstance("Lemonade", new PriceBand(8, 13), RarityEnum.Uncommon);
+        var Lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
+        var Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 2), RarityEnum.Common);
+        var Water = Good.CreateInstance("Water", new PriceBand(1, 1), RarityEnum.Common);
+        _inventory.AddGood(new InventoryEntry(Lemon, 100, 2, 0));
+        _inventory.AddGood(new InventoryEntry(Sugar, 100, 1, 0));
+        _inventory.AddGood(new InventoryEntry(Water, 100, 1, 0));
         var LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
         LemonadeRecipe.Initialize("Basic Lemonade",
                                   Lemonade,
@@ -56,7 +55,7 @@ public class StarterMarketInitializer : iMarketInitializer
         //Initialize demand data
         //If no demand data is passed, demand defaults to 1000 units of Lemonade
         //This is a placeholder and will be replaced with a more sophisticated system
-        var lemonade = Good.CreateInstance("Lemonade", new PriceBand(8.0m, 13.0m), RarityEnum.Uncommon);
+        var lemonade = Good.CreateInstance("Lemonade", new PriceBand(8, 13), RarityEnum.Uncommon);
         lemonade.IsProducedGood = true;
     }
 }

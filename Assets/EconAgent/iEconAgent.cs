@@ -9,9 +9,9 @@ public interface iEconAgent
     #region Financials
         List<FixedCostInstance> FixedCosts {get;set;}    
         iFixedCostStrategy FixedCostStrategy{get;set;}
-        decimal GetCash ();
-        void SetCash(decimal newCash);
-        decimal CalculateFixedCostsForPeriod(int period);
+        int GetCash ();
+        void SetCash(int newCash);
+        int CalculateFixedCostsForPeriod(int period);
     #endregion
 
     #region Demand

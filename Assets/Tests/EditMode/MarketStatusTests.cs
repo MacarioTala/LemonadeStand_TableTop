@@ -39,24 +39,24 @@ public class MarketStatusTests
         TestMarket.RegisterMarketParticipant(Company1);
         TestMarket.RegisterMarketParticipant(Company2);
 
-        lemon = Good.CreateInstance("Lemon", new PriceBand(.5m, 1.0m), RarityEnum.Common);
-        water = Good.CreateInstance("Water", new PriceBand(.5m, 1.0m), RarityEnum.Common);
-        sugar = Good.CreateInstance("Sugar", new PriceBand(.5m, 1.0m), RarityEnum.Common);
+        lemon = Good.CreateInstance("Lemon", new PriceBand(1,2), RarityEnum.Common);
+        water = Good.CreateInstance("Water", new PriceBand(1,2), RarityEnum.Common);
+        sugar = Good.CreateInstance("Sugar", new PriceBand(1,2), RarityEnum.Common);
     }
     [Test]
     public void GetOrdersExecutedInPeriodReturnsAllExecutedOrders()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3,Period));
         Company1.SetCash(5000);
 
-        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3,Period));
         Company2.SetCash(5000);
 
-        var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3.0m);
-        var company2SellWaterOrder = new Order(null, Company2, water, 500, 3.0m);
-        var company1BuyWaterOrder = new Order(Company1,null,water,500,3.0m);
-        var company2BuyLemonOrder = new Order(Company2,null,lemon,500,3.0m);
+        var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3);
+        var company2SellWaterOrder = new Order(null, Company2, water, 500, 3);
+        var company1BuyWaterOrder = new Order(Company1,null,water,500,3);
+        var company2BuyLemonOrder = new Order(Company2,null,lemon,500,3);
         
         Company1.QueueOrder(CreateActionContext(company1SellLemonOrder, TestMarket, Period));
         Company1.QueueOrder(CreateActionContext(company1BuyWaterOrder, TestMarket, Period));
@@ -84,19 +84,19 @@ public class MarketStatusTests
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test",strategy);
         
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3m,Period));
+        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3,Period));
         Company1.SetCash(5000);
 
-        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3m,Period));
+        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3,Period));
         Company2.SetCash(5000);
 
         //Period 0 orders
-        var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3.0m);
-        var company2BuyLemonOrder = new Order(Company2,null,lemon,500,3.0m);
+        var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3);
+        var company2BuyLemonOrder = new Order(Company2,null,lemon,500,3);
 
         //Period 1 orders
-        var company2SellWaterOrder = new Order(null, Company2, water, 500, 3.0m);
-        var company1BuyWaterOrder = new Order(Company1,null,water,500,3.0m);
+        var company2SellWaterOrder = new Order(null, Company2, water, 500, 3);
+        var company1BuyWaterOrder = new Order(Company1,null,water,500,3);
         
         Company1.QueueOrder(CreateActionContext(company1SellLemonOrder, marketToTest, Period));
         Company2.QueueOrder(CreateActionContext(company2BuyLemonOrder, marketToTest, Period));
@@ -123,8 +123,8 @@ public class MarketStatusTests
     public void PeriodsWithNoCounterPartiesRecordNoTrades()
     {
         // Arrange
-        var Company1BuyLemonOrder = new Order(Company1,null,lemon,500,3.0m);
-        var Company2BuyWaterOrder = new Order(Company2,null,water,500,3.0m);
+        var Company1BuyLemonOrder = new Order(Company1,null,lemon,500,3);
+        var Company2BuyWaterOrder = new Order(Company2,null,water,500,3);
         Company1.QueueOrder(CreateActionContext(Company1BuyLemonOrder, TestMarket, Period));
         Company2.QueueOrder(CreateActionContext(Company2BuyWaterOrder, TestMarket, Period));
         // Act

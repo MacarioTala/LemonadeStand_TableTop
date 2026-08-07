@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 [CreateAssetMenu(menuName ="LemonadeStandAssets/Recipes")]
@@ -47,7 +48,7 @@ public class Recipe : ScriptableObject
     /// <param name="prices"></param>
     /// <param name="budget"></param>
     /// <returns></returns>
-    public List<Ingredient> GetIngredientMaximumsByBudget(Dictionary<Good,decimal> prices, decimal budget)
+    public List<Ingredient> GetIngredientMaximumsByBudget(Dictionary<Good,int> prices, decimal budget)
     {
         if(prices.Count==0) return new List<Ingredient>();
         var pricePerUnit = _ingredients.Sum(x=>x.QuantityNeeded * prices[x.Good]);
@@ -103,18 +104,11 @@ public class Recipe : ScriptableObject
 
     public override int GetHashCode() => RecipeName?.GetHashCode() ?? 0;
 
-    public decimal GetCostPerUnit(Inventory inventory)
+    public int? GetCostPerUnit(Inventory inventory)
     {
-        Dictionary<string, decimal> cost_per_good = new();
+        Dictionary<string, int> costPerGood = new();
         //If inventory is empty, naively use the base cost of the good
-        if (inventory is null)
-        {
-            inventory = new();
-            foreach (var ingredient in _ingredients)
-            {
-                inventory.AddGood(new(ingredient.Good, 1, ingredient.Good.GetPrice(), 0));
-            }
-        }
+        if (inventory is null) return null;
         
         foreach (var ingredient in _ingredients)
         {
@@ -123,10 +117,14 @@ public class Recipe : ScriptableObject
             var quantityForThisIngredient = inventoryEntries.Sum(entry => entry.quantity);
             var requiredUnits = ingredient.QuantityNeeded;
 
-            var costPerUnit = Math.Round(requiredUnits * (costForThisIngredient / quantityForThisIngredient), 2);
-            cost_per_good.Add(ingredient.Good.GoodName, costPerUnit);
+            if(costForThisIngredient is null) return null;
+            else
+                {
+                    var costPerUnit = (int)Math.Round((decimal)(requiredUnits * ((int)costForThisIngredient / quantityForThisIngredient)));
+                    costPerGood.Add(ingredient.Good.GoodName, costPerUnit);
+                }
         }
-        return Math.Round(cost_per_good.Sum(entry => entry.Value), 2);
+        return costPerGood.Sum(entry => entry.Value);
     }
 
     public decimal GetPerceivedCostPerUnit(List<KnownPrice> prices)
@@ -140,12 +138,12 @@ public class Recipe : ScriptableObject
 
         foreach (var ingredient in _ingredients)
             {
-                var averagePrice = prices
+                var averagePrice = (int)Math.Round(prices
                         .Where(x=>x.Good == ingredient.Good)
-                        .Average(x=> x.Price);
+                        .Average(x=> x.Price));
 
                 
-                totalCost += averagePrice *ingredient.QuantityNeeded;
+                totalCost += averagePrice * ingredient.QuantityNeeded;
             }
         return totalCost;
     }

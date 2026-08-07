@@ -29,13 +29,13 @@ public class RefactorOutFulfillDemand
 
         Lemon = new GoodBuilder()
                 .Named("Lemon")
-                .Costing(.10m)
+                .Costing(1)
                 .WithRarity(RarityEnum.Common)
                 .Build();
         
         Lemonade = new GoodBuilder()
                 .Named("Lemonade")
-                .Costing(1m)
+                .Costing(1)
                 .WithRarity(RarityEnum.Uncommon)
                 .Build();
 
@@ -77,7 +77,7 @@ public class RefactorOutFulfillDemand
         TestPopulation = EconAgentBuilder.For<PopulationAgent>()
                 .Named("Test Population")
                 .AtLevel(AgentLevelEnum.Beginner)
-                .WithInitialCash(1000m)
+                .WithInitialCash(1000)
                 .Demanding(Demands)
                 .WithPopulation(100)
                 .WithEnnui(.90f)
@@ -88,7 +88,7 @@ public class RefactorOutFulfillDemand
         TestCompany1 = EconAgentBuilder.For<EconAgent>()
                 .Named("Test Company 1")
                 .AtLevel(AgentLevelEnum.Beginner)
-                .WithInitialCash(1000m)
+                .WithInitialCash(1000)
                 .WithFixedCostStrategy(new BasicFixedCostStrategy())
                 .Build();
 
@@ -128,10 +128,10 @@ public class RefactorOutFulfillDemand
         TestMarket.RegisterMarketParticipant(TestCompany1);
 
         const int lemonadeQuantity = 100;
-        const decimal lemonadePrice = 1m;
+        const int lemonadePrice = 1;
         TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemonade, lemonadeQuantity,lemonadePrice,Period));
         
-        var lemonadeSale = new Order(null, TestCompany1, Lemonade, 100, .15m);
+        var lemonadeSale = new Order(null, TestCompany1, Lemonade, 100, 15);
         TestCompany1.QueueOrder(CreateActionContext(lemonadeSale,TestMarket,Period));
         Exception actualException = null;
 
@@ -160,13 +160,13 @@ public class RefactorOutFulfillDemand
         TestEconomy.RegisterEconomicAgent(TestMarket);
 
         const int lemonadeQuantity = 100;
-        const decimal lemonadePrice = 1m;
+        const int lemonadePrice = 1;
         TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemonade, lemonadeQuantity,lemonadePrice,Period));
         
-        var lemonadeSale = new Order(null, TestCompany1, Lemonade, 100, .15m);
+        var lemonadeSale = new Order(null, TestCompany1, Lemonade, 100, 15);
         TestCompany1.QueueOrder(CreateActionContext(lemonadeSale,TestMarket,Period));
 
-        var company1Order = new Order(null, TestCompany1, Lemonade, 1000, .25m);
+        var company1Order = new Order(null, TestCompany1, Lemonade, 1000, 25);
         var company1Context = new ActionContext{TradeToSubmit = company1Order,
                                                 MarketToSubmitTo = TestMarket};
         Exception actualException = null;

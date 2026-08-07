@@ -32,7 +32,7 @@ public class CompanyOrderValidationTests
     {
         // Arrange
         var company = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
-        var order = new Order(company, TestMarket, Lemon, 10000, 10m);
+        var order = new Order(company, TestMarket, Lemon, 10000, 10);
         var context = new ActionContext
         {
             TradeToSubmit = order,

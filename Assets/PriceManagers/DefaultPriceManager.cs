@@ -5,7 +5,7 @@ using System.Linq;
 public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
 {
     Market _market;
-    public decimal GetMarketCostForGood(Good good)
+    public int? GetMarketCostForGood(Good good)
     {
         var recipeToUse = _market.GetRecipes().FirstOrDefault(recipe => recipe.GetProduct().Equals(good)) ?? throw new Exception("No recipe found for " + good);
         var costPerUnit = recipeToUse.GetCostPerUnit(_market.GetInventory());
@@ -16,7 +16,7 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
         //remember to call CalculateNewBidAskSpreadForMarket 
         //as part of TheEconomy.Instance.ExecuteDailyTrades.
         //eventually
-        var temporaryPriceIncrease = .01m;
+        var temporaryPriceIncrease = 1;
         foreach(var entry in _market.GetInventory().GetInventoryEntries())
         {
             var data = new MarketData
@@ -34,18 +34,18 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
     {
          foreach(var entry in _market.GetInventory().GetInventoryEntries())
             {   
-                var new_price = CalculateNewPrice(entry.good); 
-                SetPrice(entry.good,new_price); 
+                var newPrice = CalculateNewPrice(entry.good); 
+                SetPrice(entry.good,newPrice); 
             }
     }
-    private decimal CalculateNewPrice (Good good)
+    private int CalculateNewPrice (Good good)
         {
             decimal price = good.GetPrice();
             foreach(var modifier in _market.GetPriceModifiers())
             {
                 price = modifier.Apply(price,good,_market);
             }
-            return price;
+            return (int)price;
         }
 
     public void CyclePrices()
@@ -58,14 +58,14 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
             if(!stabilityDictionary.TryGetValue(entry.good, out var flex)) continue;
             
             var direction = MathHelper.IsCoinFlipHeads()?1:-1;
-            var delta = direction*entry.Price*(decimal)flex;
+            var delta = direction*entry.Price*flex;
             entry.SetPrice(entry.Price+delta);
         }
     }
 
-     public void SetPrice (Good good, decimal new_price)
+     public void SetPrice (Good good, int newPrice)
         {
-            good.SetPrice(new_price);
+            good.SetPrice(newPrice);
         }
 
     public void SetMarket(Market market)=>_market = market;
@@ -79,7 +79,7 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
                                 y=> new KnownPrice
                                 {
                                     Good = y.Key,
-                                    Price = y.Average(x=>x.Ask)
+                                    Price = (int)Math.Round(y.Average(x=>x.Ask))
                                 }
                             )
                             .ToList();

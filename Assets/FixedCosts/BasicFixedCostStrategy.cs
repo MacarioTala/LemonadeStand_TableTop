@@ -4,9 +4,9 @@ using System.Collections.Generic;
 public class BasicFixedCostStrategy : iFixedCostStrategy
 {
     EconAgent econAgent;
-    public decimal CalculateFixedCosts(List<FixedCostInstance> fixedCosts, int period)
+    public int CalculateFixedCosts(List<FixedCostInstance> fixedCosts, int period)
     {
-       decimal total = 0;
+       int total = 0;
         if(fixedCosts == null|| fixedCosts.Count == 0)
         {
             return total;

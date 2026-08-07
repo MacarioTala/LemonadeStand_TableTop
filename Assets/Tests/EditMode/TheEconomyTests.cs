@@ -13,8 +13,8 @@ public class TheEconomyTests
     Good water;
     Good sugar;
 
-    readonly PriceBand band1 = new(.5m, 1.0m);
-    readonly PriceBand band2 = new(1.0m, 3.0m);
+    readonly PriceBand band1 = new(1,2);
+    readonly PriceBand band2 = new(1, 3);
     readonly ITradeLogger trade_logger = new MockLogger();
     readonly List<Good> test_goods = new();
 

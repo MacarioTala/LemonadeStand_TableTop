@@ -110,7 +110,7 @@ public class ReduceEnnuiStrategy : iStrategy
             var market = company.GetMarket();
             var period = market != null ? market.CurrentPeriod : 0;
             var good = spread.Key;
-            var bid = Math.Max(spread.Value.Bid, company.GetMinimumBid());
+            var bid = (int)Math.Max(spread.Value.Bid, company.GetMinimumBid());
             var aggressionLevel = company.GetAggressionLevel();
             var cash = company.GetCash()*aggressionLevel;
             var populationCompany = company as PopulationAgent;
@@ -193,7 +193,7 @@ public class ReduceEnnuiStrategy : iStrategy
 
         //Calculate Bid Premium or discount
         var market = populationCompany.GetMarket();
-        IEnumerable<(Good Good, decimal Bid, decimal Ask)> marketSpreads;
+        IEnumerable<(Good Good, int Bid, int Ask)> marketSpreads;
         decimal minMarketAsk = 0m;
         if (market != null)
         {

@@ -72,7 +72,7 @@ public class Simulation : MonoBehaviour
         var populationAgent = EconAgentBuilder.For<PopulationAgent>()
             .Named("Population")
             .WithPopulation(1000)
-            .WithInitialCash(100000m)
+            .WithInitialCash(1000)
             .WithEnnui(0.9f)
             .WithBehaviourStrategy(populationStrategy)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())

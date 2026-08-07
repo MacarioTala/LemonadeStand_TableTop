@@ -10,12 +10,12 @@ public void UnleashMarketForcesShouldResolveDeliveriesForAllParticipants()
     var delayedGood = new GoodBuilder()
                         .Named("Delayed Lemon")
                         .WithRarity(RarityEnum.Common)
-                        .Costing(1m)
+                        .Costing(1)
                         .WithDeliveryDelay(2)
                         .WithExpiryAfter(5)
                         .Build();
 
-    var entry = new InventoryEntry(delayedGood, 10, 3.0m, 0);
+    var entry = new InventoryEntry(delayedGood, 10, 3, 0);
     Company1.GetInventory().AddGood(entry);
 
     var expected = 1;

@@ -7,7 +7,7 @@ public partial class MarketTests
     public void MarketLemonSellOrderVisibleToGetIngredientBidAskSpreadForPeriod()
     {
         //Arrange
-        var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
+        var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
         TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
         var marketcontext = CreateActionContext(lemonSaleA,TestMarket,0);
         marketcontext.SubmittingCompany = TestMarket;
@@ -38,7 +38,7 @@ public partial class MarketTests
     public void SelfSubmittedLemonSellOrderInvisibleToGetIngredientBidAskSpreadForPeriod()
     {
         //Arrange
-        var lemonSaleA = new Order(null, Company1,lemon,20,2m);
+        var lemonSaleA = new Order(null, Company1,lemon,20,2);
         Company1.GetInventory().AddGood(new(lemon,20,1,0));
         var lemonSaleContext = CreateActionContext(lemonSaleA,TestMarket,0);
         
@@ -59,12 +59,12 @@ public partial class MarketTests
     {
         //Arrange
         TestMarket.GetInventory().AddGood(new(lemon,15,1,0));
-        var Period1lemonSale = new Order(null, TestMarket,lemon,10,2m);
+        var Period1lemonSale = new Order(null, TestMarket,lemon,10,2);
         var marketcontext1 = CreateActionContext(Period1lemonSale,TestMarket,0);
         marketcontext1.SubmittingCompany = TestMarket;
         TestMarket.QueueOrder(marketcontext1);
 
-        var Period2lemonSale = new Order(null, TestMarket,lemon,5,1m);
+        var Period2lemonSale = new Order(null, TestMarket,lemon,5,1);
         var marketcontext2 = CreateActionContext(Period2lemonSale,TestMarket,1);
         marketcontext2.SubmittingCompany = TestMarket;
         TestMarket.QueueOrder(marketcontext2);

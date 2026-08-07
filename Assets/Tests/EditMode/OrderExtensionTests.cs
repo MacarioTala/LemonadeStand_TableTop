@@ -14,20 +14,20 @@ public class OrderExtensionsTests
         buyer = EconAgentBuilder.For<EconAgent>()
             .Named("Buyer Company")
             .AtLevel(AgentLevelEnum.Beginner)
-            .WithInitialCash(1000m)
+            .WithInitialCash(1000)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
             .Build();
 
         seller = EconAgentBuilder.For<EconAgent>()
             .Named("Seller Company")
             .AtLevel(AgentLevelEnum.Beginner)
-            .WithInitialCash(1000m)
+            .WithInitialCash(1000)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
             .Build();
 
         lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(3m)
+            .Costing(3)
             .Build();
     }
 
@@ -45,7 +45,7 @@ public class OrderExtensionsTests
     public void ToOrderSnapshot_ClonesOrderWithCorrectValues()
     {
         // Arrange
-        var order = new Order(buyer, seller, lemonade, 10, 2.5m)
+        var order = new Order(buyer, seller, lemonade, 10, 3)
         {
             SubmittingCompany = seller
         };

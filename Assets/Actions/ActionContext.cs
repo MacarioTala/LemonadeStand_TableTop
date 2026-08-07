@@ -32,8 +32,8 @@ public class ActionContext
 
     //Submit Bid/Ask
     public Good GoodToSubmit;
-    public decimal BidToSubmit;
-    public decimal AskToSubmit;
+    public int BidToSubmit;
+    public int AskToSubmit;
 
     public LemonadeStandResultObject HasSubmittingCompany()
     {

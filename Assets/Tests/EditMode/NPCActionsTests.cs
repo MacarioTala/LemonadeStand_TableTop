@@ -45,18 +45,18 @@ public class NPCActionsTests
         //Arrange
         var lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(5m)
+            .Costing(5)
             .WhichIsProducedGood()
             .Build();
         
-        Company1.GetInventory().AddGood(new(lemonade,1,5m,0));
-        Company2.GetInventory().AddGood(new(lemonade,1,6m,0));
-        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6.0m);
-        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7.0m);
+        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
+        Company2.GetInventory().AddGood(new(lemonade,1,6,0));
+        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
+        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company1,lemonade,1,6.0m),
-            new (Company2,lemonade,1,7.0m)
+            new (Company1,lemonade,1,6),
+            new (Company2,lemonade,1,7)
         };
 
         //Act
@@ -75,26 +75,26 @@ public class NPCActionsTests
         //Arrange
         var lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(5m)
+            .Costing(5)
             .WhichIsProducedGood()
             .Build();
         
         var lemon = new GoodBuilder()
             .Named("Lemon")
-            .Costing(1m)
+            .Costing(1)
             .Build();
         
         TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5m,0));
-        Company2.GetInventory().AddGood(new(lemonade,1,6m,0));
-        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6.0m);
-        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7.0m);
-        var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
+        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
+        Company2.GetInventory().AddGood(new(lemonade,1,6,0));
+        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
+        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
+        var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company1,lemonade,1,6.0m),
-            new (Company2,lemonade,1,7.0m),
-            new (TestMarket,lemon,20,2m)
+            new (Company1,lemonade,1,6),
+            new (Company2,lemonade,1,7),
+            new (TestMarket,lemon,20,2)
         };
 
         //Act
@@ -115,24 +115,24 @@ public class NPCActionsTests
         //Arrange
         var lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(5m)
+            .Costing(5)
             .WhichIsProducedGood()
             .Build();
         
         var lemon = new GoodBuilder()
             .Named("Lemon")
-            .Costing(1m)
+            .Costing(1)
             .Build();
         
         TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5m,0));
-        Company2.GetInventory().AddGood(new(lemonade,1,6m,0));
-        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6.0m);
-        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7.0m);
-        var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
+        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
+        Company2.GetInventory().AddGood(new(lemonade,1,6,0));
+        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
+        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
+        var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (TestMarket,lemon,20,2m)
+            new (TestMarket,lemon,20,2)
         };
 
         //Act
@@ -153,25 +153,25 @@ public class NPCActionsTests
         //Arrange
         var lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(5m)
+            .Costing(5)
             .WhichIsProducedGood()
             .Build();
         
         var lemon = new GoodBuilder()
             .Named("Lemon")
-            .Costing(1m)
+            .Costing(1)
             .Build();
         
         TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5m,0));
-        Company2.GetInventory().AddGood(new(lemon,1,.5m,0));
-        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6.0m);
-        var lemonSaleB = new Order(null, Company2, lemon, 1, 1.0m);
-        var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
+        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
+        Company2.GetInventory().AddGood(new(lemon,1,1,0));
+        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
+        var lemonSaleB = new Order(null, Company2, lemon, 1, 1);
+        var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company2,lemon,1,1m),
-            new (TestMarket,lemon,20,2m)
+            new (Company2,lemon,1,1),
+            new (TestMarket,lemon,20,2)
         };
 
         //Act
@@ -192,28 +192,28 @@ public class NPCActionsTests
         //Arrange
         var lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(5m)
+            .Costing(5)
             .WhichIsProducedGood()
             .Build();
         
         var lemon = new GoodBuilder()
             .Named("Lemon")
-            .Costing(1m)
+            .Costing(1)
             .Build();
         
         TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5m,0));
-        Company2.GetInventory().AddGood(new(lemon,1,.5m,0));
-        Company2.GetInventory().AddGood(new(lemon,1,1m,0));
+        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
+        Company2.GetInventory().AddGood(new(lemon,1,1,0));
+        Company2.GetInventory().AddGood(new(lemon,1,1,0));
 
-        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6.0m);
-        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7.0m);
-        var lemonSaleB = new Order(null, Company2, lemon, 1, 1.0m);
-        var lemonSaleA = new Order(null, TestMarket,lemon,20,2m);
+        var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
+        var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
+        var lemonSaleB = new Order(null, Company2, lemon, 1, 1);
+        var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
         var expectedGoodsAvailable = new List<AvailableGood>
         {
-            new (Company2,lemon,1,1m),
-            new (TestMarket,lemon,20,2m)
+            new (Company2,lemon,1,1),
+            new (TestMarket,lemon,20,2)
         };
 
         //Act

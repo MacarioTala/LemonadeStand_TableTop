@@ -31,19 +31,19 @@ public class DemandAndElasticityTests
         Lemon = new GoodBuilder()
             .Named("Lemon")
             .WithRarity(RarityEnum.Common)
-            .Costing(.5m)
+            .Costing(2)
             .Build();
 
         Sugar = new GoodBuilder()
             .Named("Sugar")
             .WithRarity(RarityEnum.Common)
-            .Costing(.2m)
+            .Costing(2)
             .Build();
 
         Water = new GoodBuilder()
             .Named("Water")
             .WithRarity(RarityEnum.Common)
-            .Costing(.1m)
+            .Costing(1)
             .Build();
 
         Lemonade = new GoodBuilder()

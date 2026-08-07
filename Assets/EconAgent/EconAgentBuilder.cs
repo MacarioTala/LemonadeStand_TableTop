@@ -81,7 +81,7 @@ public class EconAgentBuilder<T> where T : EconAgent
         agentToReturn.AddGoal(goal);
         return this;
     }
-    public EconAgentBuilder<T> WithInitialCash(decimal initialCash)
+    public EconAgentBuilder<T> WithInitialCash(int initialCash)
     {
         agentToReturn.SetCash(initialCash);
         return this;

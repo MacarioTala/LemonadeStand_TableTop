@@ -6,5 +6,5 @@ public class PriceStabilityEntry
 {
     public Good Good;
     [Range(0f,1f)]
-     public float Flex;
+     public int Flex;
 }

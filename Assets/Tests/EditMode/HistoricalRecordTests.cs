@@ -31,21 +31,21 @@ public class HistoricalRecordTests
         testCompany = EconAgentBuilder.For<EconAgent>()
             .Named("Test Company 1")
             .AtLevel(AgentLevelEnum.Beginner)
-            .WithInitialCash(1000m)
+            .WithInitialCash(1000)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
             .Build();
         
         testBuyer = EconAgentBuilder.For<EconAgent>()
             .Named("Test Buyer")
             .AtLevel(AgentLevelEnum.Beginner)
-            .WithInitialCash(1000m)
+            .WithInitialCash(1000)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
             .Build();
 
         testSeller = EconAgentBuilder.For<EconAgent>()
             .Named("Test Seller")
             .AtLevel(AgentLevelEnum.Beginner)
-            .WithInitialCash(1000m)
+            .WithInitialCash(1000)
             .WithFixedCostStrategy(new BasicFixedCostStrategy())
             .Build();
 
@@ -55,7 +55,7 @@ public class HistoricalRecordTests
 
         lemonade = new GoodBuilder()
             .Named("Lemonade")
-            .Costing(3m)
+            .Costing(3)
             .Build();
     }
 
@@ -77,7 +77,7 @@ public class HistoricalRecordTests
     public void QueueOrder_WhenNoRecordsExistLog1Record()
     {
         // Arrange
-        var order = new Order(null, testCompany, lemonade, 10, 2.5m)
+        var order = new Order(null, testCompany, lemonade, 10, 2)
         {
             SubmittingCompany = testCompany
         };
@@ -110,7 +110,7 @@ public class HistoricalRecordTests
     public void QueueOrder_WhenRecordExistsLog1Submitted1Rejected()
     {
         // Arrange
-        var order = new Order(null, testCompany, lemonade, 10, 2.5m)
+        var order = new Order(null, testCompany, lemonade, 10, 2)
         {
             SubmittingCompany = testCompany
         };
@@ -146,9 +146,9 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOnlyOneOrderExists_LogsRejectedRecordForNoMatchingCounterParty()
     {
         // Arrange
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3m, 0));
+        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
 
-        var sellOrder = new Order(null, testSeller, lemonade, 10, 2.5m)
+        var sellOrder = new Order(null, testSeller, lemonade, 10, 2)
         {
             SubmittingCompany = testSeller
         };
@@ -183,15 +183,15 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOneOrderIsInvalid_Logs2RejectedRecords()
     {
         // Arrange
-        testBuyer.SetCash(1m);
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3m, 0));
+        testBuyer.SetCash(1);
+        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
 
-        var buyOrder = new Order(testBuyer, null, lemonade, 10, 2.5m)
+        var buyOrder = new Order(testBuyer, null, lemonade, 10, 2)
         {
             SubmittingCompany = testBuyer
         };
 
-        var sellOrder = new Order(null, testSeller, lemonade, 10, 2.5m)
+        var sellOrder = new Order(null, testSeller, lemonade, 10, 2)
         {
             SubmittingCompany = testSeller
         };
@@ -232,14 +232,14 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOrderFullyFills_LogsFilledRecordWithUpdatedQuantities()
     {
         // Arrange
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3m, 0));
+        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
 
-        var buyOrder = new Order(testBuyer, null, lemonade, 10, 2.5m)
+        var buyOrder = new Order(testBuyer, null, lemonade, 10, 2)
         {
             SubmittingCompany = testBuyer
         };
 
-        var sellOrder = new Order(null, testSeller, lemonade, 10, 2.5m)
+        var sellOrder = new Order(null, testSeller, lemonade, 10, 2)
         {
             SubmittingCompany = testSeller
         };
@@ -282,14 +282,14 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOrderPartiallyFills_LogsPartiallyFilledRecordWithUpdatedQuantities()
     {
         // Arrange
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3m, 0));
+        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
 
-        var buyOrder = new Order(testBuyer, null, lemonade, 20, 2.5m)
+        var buyOrder = new Order(testBuyer, null, lemonade, 20, 2)
         {
             SubmittingCompany = testBuyer
         };
 
-        var sellOrder = new Order(null, testSeller, lemonade, 10, 2.5m)
+        var sellOrder = new Order(null, testSeller, lemonade, 10, 2)
         {
             SubmittingCompany = testSeller
         };
@@ -326,14 +326,14 @@ public class HistoricalRecordTests
 public void ExecuteBestTradesForGood_WhenOrderPartiallyFillsCorrectlyLogsWhichIsFilledAndWhichIsPartiallyFilled()
 {
     // Arrange
-    testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3m, 0));
+    testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
 
-    var buyOrder = new Order(testBuyer, null, lemonade, 20, 2.5m)
+    var buyOrder = new Order(testBuyer, null, lemonade, 20, 2)
     {
         SubmittingCompany = testBuyer
     };
 
-    var sellOrder = new Order(null, testSeller, lemonade, 10, 2.5m)
+    var sellOrder = new Order(null, testSeller, lemonade, 10, 2)
     {
         SubmittingCompany = testSeller
     };

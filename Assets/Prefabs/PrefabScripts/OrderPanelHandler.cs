@@ -227,7 +227,7 @@ public class OrderPanelHandler : MonoBehaviour
         var selectedGood = MarketInventoryEntries[orderPanelDropdown.value].good;
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         var totalprice = decimal.Parse(totalText.text);
-        decimal.TryParse(ValueLabel.text, out var unitPrice);
+        int.TryParse(ValueLabel.text, out var unitPrice);
         int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out var quantity);
     
         iEconAgent seller = null; //Market Order

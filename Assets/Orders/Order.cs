@@ -11,7 +11,7 @@ public class Order
     public int Quantity;
     public int FilledQuantity=0;
     public int RemainingQuantity=>Quantity-FilledQuantity;
-    public decimal Price;
+    public int Price;
     private readonly List<Execution> _executions = new();
     public LemonadeStandResultObject AddExecution(Execution execution)
     {
@@ -51,7 +51,7 @@ public class Order
 
         return false;
     }
-    public Order(iEconAgent buyer, iEconAgent seller, Good good, int quantity, decimal price)
+    public Order(iEconAgent buyer, iEconAgent seller, Good good, int quantity, int price)
     {
         Buyer = buyer;
         Seller = seller;

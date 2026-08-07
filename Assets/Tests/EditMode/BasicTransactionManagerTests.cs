@@ -15,8 +15,8 @@ public class BasicTransactionManagerTests
 
     EconAgent Company1;
     EconAgent Company2;
-    readonly PriceBand PriceBand1 = new(.5m, 1.0m);
-    readonly PriceBand PriceBand2 = new(5.0m, 10m);
+    readonly PriceBand PriceBand1 = new(1, 2);
+    readonly PriceBand PriceBand2 = new(5, 10);
 
     readonly iDemandStrategy TestDemandStrategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
     readonly TestComparer<Execution> ExecutionComparer = new(new string[] { "CounterPartyTrades" });
@@ -47,12 +47,12 @@ public class BasicTransactionManagerTests
     public void ValidateTransactionShouldReturnSelfTradeWhenCompanySubmitsTwoIdenticalTrades()
     {
         //Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var order = new Order(Company1,Company2,Lemon,1,1m)
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var order = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company1
         };
@@ -70,7 +70,7 @@ public class BasicTransactionManagerTests
     public void ValidateTransactionShouldReturnSelfTradeWhenCompanyTriesToTradeWithItself()
     {
         //Arrange
-        var order = new Order(Company1,Company1,Lemon,1,1m)
+        var order = new Order(Company1,Company1,Lemon,1,1)
         {
             SubmittingCompany = Company1
         };
@@ -89,13 +89,13 @@ public class BasicTransactionManagerTests
     public void ValidateTransactionReturnsSuccessForValidOrderPair()
     {
         //Arrange
-        Company1.SetCash(1000m);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var order = new Order(Company1, Company2, Lemon, 1, 1m)
+        Company1.SetCash(1000);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
@@ -112,12 +112,12 @@ public class BasicTransactionManagerTests
     public void ValidateTransactionReturnsInsufficientFundsWhenBuyerDoesNotHaveEnoughCash()
     {
         //Arrange
-        Company1.SetCash(0m);
-        var order = new Order(Company1, Company2, Lemon, 1, 1m)
+        Company1.SetCash(0);
+        var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
@@ -134,12 +134,12 @@ public class BasicTransactionManagerTests
     public void ValidateTransactionReturnsInsufficientGoodsWhenSellerDoesNotHaveEnoughGoods()
     {
         //Arrange
-        Company1.SetCash(1000m);
-        var order = new Order(Company1, Company2, Lemon, 1, 1m)
+        Company1.SetCash(1000);
+        var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
@@ -157,13 +157,13 @@ public class BasicTransactionManagerTests
     public void ForFullyFilledTradesProcessTransactionShouldReturnSuccess()
     {
         //Arrange
-        Company1.SetCash(1000m);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var order = new Order(Company1, Company2, Lemon, 1, 1m)
+        Company1.SetCash(1000);
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
@@ -178,15 +178,15 @@ public class BasicTransactionManagerTests
     public void FullyFilledTradesTransferCashAndGoodsCorrectly()
     {
         //Arrange
-        Company1.SetCash(1000m);
+        Company1.SetCash(1000);
         Company2.SetCash(0);
         Company1.GetInventory().Clear();
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var order = new Order(Company1, Company2, Lemon, 1, 1m)
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
@@ -215,15 +215,15 @@ public class BasicTransactionManagerTests
     public void PartiallyFilledTradesTransferCashAndGoodsCorrectly()
     {
         //Arrange
-        Company1.SetCash(1000m);
+        Company1.SetCash(1000);
         Company2.SetCash(0);
         Company1.GetInventory().Clear();
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var order = new Order(Company1, Company2, Lemon, 2, 1m)
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var order = new Order(Company1, Company2, Lemon, 2, 1)
         {
             SubmittingCompany = Company1
         };
-        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var counterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
@@ -261,18 +261,18 @@ public class BasicTransactionManagerTests
         var basicTransactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
         
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var Company1Buys2LemonFromMultiple = new Order(Company1, Company2, Lemon, 2, 1m)
+        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var Company1Buys2LemonFromMultiple = new Order(Company1, Company2, Lemon, 2, 1)
         {
             SubmittingCompany = Company1
         };
         var counterPartyOrders = new List<Order>();
-        var company2Sells1LemonToCompany1 = new Order(Company1,Company2,Lemon,1,1m)
+        var company2Sells1LemonToCompany1 = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };
-        var company3Sells1LemonToCompany1 = new Order(Company1,Company3,Lemon,1,1m)
+        var company3Sells1LemonToCompany1 = new Order(Company1,Company3,Lemon,1,1)
         {
             SubmittingCompany = Company3
         };
@@ -305,12 +305,12 @@ public class BasicTransactionManagerTests
     public void ProcessMarketTransactionShouldReturnSuccessForValidOrderPair()
     {
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1m, 1));
-        var Company1SellsLemonsToAnyone = new Order(Company1, null, Lemon, 1, 1m)
+        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        var Company1SellsLemonsToAnyone = new Order(Company1, null, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
         };
-        var marketGeneratedCounterPartyOrder = new Order(Company1,Company2,Lemon,1,1m)
+        var marketGeneratedCounterPartyOrder = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company2
         };

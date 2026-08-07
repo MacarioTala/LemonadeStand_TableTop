@@ -15,10 +15,10 @@ namespace Sandbox
         public void CreateGoodsAndRecipes()
         {
             // Create goods with price bands and rarity
-            lemon = Good.CreateInstance("Lemon", new PriceBand(1.0m, 3.0m), RarityEnum.Common);
-            water = Good.CreateInstance("Water", new PriceBand(1.0m, 1.0m), RarityEnum.Common);
-            sugar = Good.CreateInstance("Sugar", new PriceBand(1.0m, 2.0m), RarityEnum.Common);
-            lemonade = Good.CreateInstance("Lemonade", new PriceBand(4.0m, 5.0m), RarityEnum.Uncommon);
+            lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
+            water = Good.CreateInstance("Water", new PriceBand(1, 1), RarityEnum.Common);
+            sugar = Good.CreateInstance("Sugar", new PriceBand(1, 2), RarityEnum.Common);
+            lemonade = Good.CreateInstance("Lemonade", new PriceBand(4, 5), RarityEnum.Uncommon);
             
             // Add elasticity values for Lemon
             lemon.AddElasticity(ElasticityTypeEnum.SaturationElasticity, -0.3f);

@@ -44,16 +44,7 @@ public class LinearDemandStrategy : ScriptableObject,iDemandStrategy
 
         return LemonadeStandResultObject.Success();
     }
-
-    private decimal CalculateAskForProducedGood (Market market,Good good)
-    {
-        if(!good.IsProducedGood) return 0;
-        var costPerUnit = market.GetMarketCostForGood(market,good);
-        var rng = (double)UnityEngine.Random.Range(.01f,.15f);
-        var ask = costPerUnit * 1+(decimal)rng;
-        return ask;
-    }
-
+    
     public void OnOrderFulfilled(OrderFulfilledEvent orderFulfilledEvent)
     {
         var good = orderFulfilledEvent.Good;

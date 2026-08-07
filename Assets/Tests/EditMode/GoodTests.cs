@@ -6,7 +6,7 @@ using UnityEngine;
 [TestFixture]
 public class GoodTests
 {
-    readonly PriceBand price_band1 = new(.5m, 1.0m);
+    readonly PriceBand price_band1 = new(1,2);
     Good Lemon;
     Good Sugar;
     Good Water;
@@ -17,17 +17,17 @@ public class GoodTests
         Lemon = new GoodBuilder()
             .Named("Lemon")
             .WithRarity(RarityEnum.Common)
-            .Costing(.1m)
+            .Costing(1)
             .Build();
         Sugar = new GoodBuilder()
             .Named("Sugar")
             .WithRarity(RarityEnum.Common)
-            .Costing(.05m)
+            .Costing(1)
             .Build();
         Water = new GoodBuilder()
             .Named("Water")
             .WithRarity(RarityEnum.Common)
-            .Costing(.8m)
+            .Costing(1)
             .Build();
     }
 
@@ -49,41 +49,7 @@ public class GoodTests
         Assert.IsTrue(lemon.GetPrice() >= expected_price_min && lemon.GetPrice() <= expected_price_max);
     }
     
-    [Test]
-    public void Creating_good_generates_price_thresholds_based_on_rarity()
-    {
-        // Arrange
-        var good_name = "lemon";
-        var uncommon = RarityEnum.Uncommon;
-        var expected_rarity = RarityEnum.Uncommon;
-        var expected_price_increase_threshold = 250;
-        var expected_price_decrease_threshold = 50;
 
-        // Act
-        var lemon = Good.CreateInstance(good_name, price_band1,uncommon);
-        // Assert
-        Assert.AreEqual(good_name, lemon.GoodName);
-        Assert.AreEqual(expected_price_increase_threshold, lemon.price_increase_threshold);
-        Assert.AreEqual(expected_price_decrease_threshold, lemon.price_decrease_threshold);
-        Assert.AreEqual(expected_rarity, lemon.GetRarity());
-    }
-
-    [Test]
-    public void Creating_good_generates_price_increment_rates_based_on_rarity()
-    {
-        // Arrange
-        var good_name = "lemon";
-        var uncommon = RarityEnum.Uncommon;
-        var expected_rarity = RarityEnum.Uncommon;
-        var expected_price_increment_rate = .15f;
-
-        // Act
-        var lemon = Good.CreateInstance(good_name, price_band1,uncommon);
-        // Assert
-        Assert.AreEqual(good_name, lemon.GoodName);
-        Assert.AreEqual(expected_price_increment_rate, lemon.Get_price_increment_rate());
-        Assert.AreEqual(expected_rarity, lemon.GetRarity());
-    }
 #region Good Effects
     [Test]
     public void ApplyingEnnuiReducingGoodEffectReducesEnnui()

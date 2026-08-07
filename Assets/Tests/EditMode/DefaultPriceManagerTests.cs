@@ -15,7 +15,7 @@ public class DefaultPriceManagerTests
         Lemon = new GoodBuilder()
                 .Named("Lemon")
                 .WithRarity(RarityEnum.Common)
-                .Costing(1.0m)
+                .Costing(1)
                 .WithDeliveryDelay(0)
                 .Build();
         var entry = new InventoryEntry(Lemon,10,10,0);
@@ -64,7 +64,7 @@ public class DefaultPriceManagerTests
     public void PriceShouldCycleTenPercentIfPriceStabilityForGoodIsTenPercent_CalledFromCyclePrices()
     {
         //Arrange
-        var flex = .1f;
+        var flex = 1;
         TestMarket.AddPriceStabilityEntry(new(){Good=Lemon,Flex=flex});
         TestMarket.SetPricesFluctuateEvery(1);
         TestMarket.CurrentPeriod=1;
@@ -85,7 +85,7 @@ public class DefaultPriceManagerTests
     public void PriceShouldCycleTenPercentIfPriceStabilityForGoodIsTenPercent_CalledFromUnleashMarketForces()
     {
         //Arrange
-        var flex = .1f;
+        var flex = 1;
         TestMarket.AddPriceStabilityEntry(new(){Good=Lemon,Flex=flex});
         TestMarket.SetPricesFluctuateEvery(1);
         TestMarket.CurrentPeriod=1;
