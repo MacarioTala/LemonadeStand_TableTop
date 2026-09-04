@@ -12,7 +12,10 @@ EditorBuildSettings:
     path: Assets/Splash.unity
     guid: a64868dd00a594828a5174e4f8095be8
   - enabled: 1
-    path: Assets/ZorkScene.unity
+    path: Assets/Scenes/ZorkScene.unity
     guid: faf43e86b642c46e3a66f96173d344a7
+  - enabled: 1
+    path: Assets/Scenes/CraftingScene/CraftingScene.unity
+    guid: 5fecb73b8b11c4eb3a492e1bebdc6a60
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

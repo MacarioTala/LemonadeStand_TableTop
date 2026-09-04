@@ -10,6 +10,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button loadGameButton;
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button settingsButton;
+    [SerializeField] private Button craftingButton;
     [SerializeField] GameObject mainMenu;
     [SerializeField] private TextBasedGameManager textBasedGameManager;
     #pragma warning restore 0649
@@ -17,6 +18,7 @@ public class MainMenuController : MonoBehaviour
     private void Start()
     {
         newGameButton.onClick.AddListener(StartNewGame);
+        craftingButton.onClick.AddListener(Crafting);
         loadGameButton.onClick.AddListener(LoadGame);
         exitGameButton.onClick.AddListener(ExitGame);
         settingsButton.onClick.AddListener(ShowSettings);
@@ -48,6 +50,7 @@ public class MainMenuController : MonoBehaviour
     private void ExitGame()
     {
         Debug.Log("Exiting Game");
+        Application.Quit();
     }
 
     private void LoadGame()
@@ -67,6 +70,11 @@ public class MainMenuController : MonoBehaviour
                 textBasedGameManager.StartNewGame();
                 Debug.Log("Starting New Game");
             }
+    }
+    private void Crafting()
+    {
+        textBasedGameManager.StartCrafting();
+        Debug.Log("Starting Crafting Directly");
     }
     private void ShowMainMenu()
     {

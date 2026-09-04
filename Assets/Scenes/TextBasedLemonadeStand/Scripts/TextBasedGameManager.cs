@@ -11,6 +11,7 @@ public class TextBasedGameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI typeWrittenText;
     [SerializeField] private TextMeshProUGUI cursor;
     private readonly string gameSceneName = Scenes.ZorkView;
+    private readonly string craftingSceneName = Scenes.Crafting;
 #endregion
     public static TextBasedGameManager Instance { get; private set; }
     private TypeWriter typeWriterInstance;
@@ -90,6 +91,12 @@ public class TextBasedGameManager : MonoBehaviour
             Debug.Log("Running in Scene-only mode");
         else
             GameRoot.Instance.Bus.Publish(new RequestLoadSceneEvent(gameSceneName));
+    }
+
+    public void StartCrafting()
+    {
+        Debug.Log("Starting Crafting");
+        GameRoot.Instance.Bus.Publish(new RequestLoadSceneEvent(craftingSceneName));
     }
 #endregion
 

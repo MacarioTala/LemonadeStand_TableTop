@@ -43,6 +43,8 @@ public class EconAgent : ScriptableObject, iEconAgent, iMarketParticipant
         //setup
         if(initialCash==0) 
             SetInitialCash();
+        else
+            cash=initialCash;
         SetInitialActions();  
     }
 
@@ -179,8 +181,8 @@ private void SetBus()
     }
 #endregion
 #region Financials
-    public int InitialCashInCents;
-    private decimal initialCash => InitialCashInCents/100;
+    public int InitialCash;
+    private int initialCash => InitialCash;
     private int cash = 0;
     public bool IsBankrupt() => cash <= 0;
     private int minimumBid;

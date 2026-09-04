@@ -88,7 +88,7 @@ public class EconAgentBuilder<T> where T : EconAgent
     }
     public EconAgentBuilder<T> WithInitialCashFromTemplate()
     {
-        agentToReturn.SetCash(agentToReturn.InitialCashInCents/100);
+        agentToReturn.SetCash(agentToReturn.InitialCash);
         return this;
     }
     public EconAgentBuilder<T> WithInitialRecipes()

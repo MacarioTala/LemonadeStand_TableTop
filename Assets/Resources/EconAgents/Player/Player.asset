@@ -18,4 +18,5 @@ MonoBehaviour:
   BehaviourStrategyAsset: {fileID: 0}
   demandEntries: []
   marketIgnorantAssumedCogInCents: 0
-  InitialCashInCents: 10000
+  initialRecipes: []
+  InitialCash: 10
