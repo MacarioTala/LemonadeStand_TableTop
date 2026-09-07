@@ -73,7 +73,7 @@ public class MarketObserverTests
     {
         // Arrange
         Company1.SetCash(1000);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 10, 1, 0));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 10, 1, 0));
         var marketDemand = new Dictionary<Good, DemandData>
         {
             { Lemon, new DemandData { CurrentDemand = 10 } }

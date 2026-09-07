@@ -69,7 +69,7 @@ public class OrderPanelHandler : MonoBehaviour
             RefreshMarketInventory();
 
             if (MarketInventoryEntries.Count > 0)
-                ValueLabel.text = MarketInventoryEntries[0].Price.ToString();
+                ValueLabel.text = MarketInventoryEntries[0].PriceOfGood.ToString();
         }
         InitializeOrderDropDown();
     }
@@ -136,7 +136,7 @@ public class OrderPanelHandler : MonoBehaviour
     {
         int.TryParse(value, out int quantity);
         var selectedEntry = MarketInventoryEntries[orderPanelDropdown.value];
-        var price = selectedEntry.Price;
+        var price = selectedEntry.PriceOfGood;
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         totalText.text = (price * quantity).ToString();
     }
@@ -182,7 +182,7 @@ public class OrderPanelHandler : MonoBehaviour
     private void HandleOrderSelection(int selectedIndex)
     {
         var selectedEntry = MarketInventoryEntries[selectedIndex];
-        var price = selectedEntry.Price;
+        var price = selectedEntry.PriceOfGood;
         int.TryParse(QuantityInput.GetComponent<TMP_InputField>().text, out int quantity);
         var totalText = TotalLabel.GetComponent<TextMeshProUGUI>();
         ValueLabel.text = price.ToString();

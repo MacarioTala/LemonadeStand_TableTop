@@ -429,7 +429,6 @@ public class Market : ScriptableObject, iEconAgent
         ProcessCompanyOrders();
         ResolveDeliveries();
         UpdateFulfillmentRates(period);
-        UpdatePrices();
         ConsumeGoods();
         ExpireGoods(period);
         UpdateCompanyStatuses(period);

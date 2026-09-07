@@ -111,7 +111,7 @@ public class RecordingExecutions
         //Arrange
         var Company1SellsLemonadeToAnyone = new Order(Company1, null, Lemonade, 5, 10);
         var Company2BuysLemonadeFromAnyone = new Order(null, Company2, Lemonade, 5, 10);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 5, 10, 2));
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2BuysLemonadeFromAnyone,TestMarket,Period));
         
@@ -139,8 +139,8 @@ public class RecordingExecutions
         var Company1BuysLemonadeFromAnyone = new Order(Company1, null, Lemonade, 10, 10);
         var Company2SellsLemonadeToAnyone = new Order(null, Company2, Lemonade, 5, 10);
         var Company3SellsLemonadeToAnyone = new Order(null, Company3, Lemonade, 5, 10);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 5, 10, 2));
+        Company3.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 5, 10, 2));
         Company1.QueueOrder(CreateActionContext(Company1BuysLemonadeFromAnyone,TestMarket,Period));
         Company2.QueueOrder(CreateActionContext(Company2SellsLemonadeToAnyone,TestMarket,Period));
         Company3.QueueOrder(CreateActionContext(Company3SellsLemonadeToAnyone,TestMarket,Period));
@@ -178,7 +178,7 @@ public class RecordingExecutions
         var company1CostOfLemonade = 1;
         var acquiredInPeriod = 0;
         var Company1SellsLemonadeToAnyone = new Order(null,Company1 , Lemonade,companyQuantity, company1Ask);
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, companyQuantity, company1CostOfLemonade, acquiredInPeriod));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, companyQuantity, company1CostOfLemonade, acquiredInPeriod));
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone,TestMarket,Period));
 
         const int expectedCompany1OrderExecutionCount = 1;
@@ -205,7 +205,7 @@ public class RecordingExecutions
         //Arrange
         var Company1SellsLemonadeToAnyone = new Order(Company1, null, Lemonade, 5, 10);
         var Company2BuysLemonadeFromAnyone = new Order(null, Company2, Lemonade, 5, 10);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5, 10, 2));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 5, 10, 2));
 
         const int expectedExecutionCount = 2;
         var expectedExecutions = new List<Execution>
@@ -232,8 +232,8 @@ public class RecordingExecutions
     {
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
+        Company3.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
 
         var Company1BuysFromAnyone = new Order(Company1, null, Lemon, 2, 1);
         var Company2SellsToAnyone = new Order(null,Company2,Lemon,1,1);
@@ -271,7 +271,7 @@ public class RecordingExecutions
             FilledQuantity = 5
         };
 
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, company1Quantity, company1Ask,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, company1Quantity, company1Ask,Period));
         
         const int expectedExecutionCount = 2;
         var expectedExecutions = new List<Execution>
@@ -299,7 +299,7 @@ public class RecordingExecutions
         const int expectedPopulationBuys = 1108;//Note: This will change if you change population parameters.
         //Maybe change this test in the future to set up its own population
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, company1Quantity, company1Ask, Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, company1Quantity, company1Ask, Period));
 
         var Company3 = EconAgentBuilder.For<EconAgent>()
                         .Named("Company 3")

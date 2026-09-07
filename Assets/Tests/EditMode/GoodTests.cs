@@ -86,7 +86,7 @@ public class GoodTests
          // Arrange
         var enhancedlemonade = new GoodBuilder()
             .Named("Enhanced Lemonade")
-            .WithRarity(RarityEnum.Very_Rare)
+            .WithRarity(RarityEnum.VeryRare)
             .Build();
         enhancedlemonade.IsProducedGood = true;
         var enhancedLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>(); 

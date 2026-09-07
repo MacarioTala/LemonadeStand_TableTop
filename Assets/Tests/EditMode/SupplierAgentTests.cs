@@ -46,7 +46,7 @@ public class SupplierAgentTests
         RarityQuantities[RarityEnum.Common] = commonQuantity;
         RarityQuantities[RarityEnum.Uncommon] = uncommonQuantity;
         RarityQuantities[RarityEnum.Rare] = rareQuantity;
-        RarityQuantities[RarityEnum.Very_Rare] = veryRareQuantity;
+        RarityQuantities[RarityEnum.VeryRare] = veryRareQuantity;
         RarityQuantities[RarityEnum.Unique] = 1;
     }
 
@@ -79,7 +79,7 @@ public class SupplierAgentTests
         Francium = new GoodBuilder()
                 .Named(franciumName)
                 .Costing(franciumCost)
-                .WithRarity(RarityEnum.Very_Rare)
+                .WithRarity(RarityEnum.VeryRare)
                 .Build();
         Unobtanium = new GoodBuilder()
                 .Named(unobtaniumName)
@@ -150,7 +150,7 @@ public class SupplierAgentTests
                 RarityQuantities[RarityEnum.Common],
                 RarityQuantities[RarityEnum.Uncommon],
                 RarityQuantities[RarityEnum.Rare],
-                RarityQuantities[RarityEnum.Very_Rare]
+                RarityQuantities[RarityEnum.VeryRare]
                 );
 
         var expectedWater = RarityQuantities[Water.GetRarity()];
@@ -195,7 +195,7 @@ public class SupplierAgentTests
                 RarityQuantities[RarityEnum.Common],
                 RarityQuantities[RarityEnum.Uncommon],
                 RarityQuantities[RarityEnum.Rare],
-                RarityQuantities[RarityEnum.Very_Rare]
+                RarityQuantities[RarityEnum.VeryRare]
                 );
 
         const int expectedBeforeOrderCount = 0;

@@ -168,10 +168,10 @@ public class TheEconomy : MonoBehaviour
                 RarityEnum.Common => common_range,
                 RarityEnum.Uncommon => uncommon_range,
                 RarityEnum.Rare => rare_range,
-                RarityEnum.Very_Rare => very_rare_range,
+                RarityEnum.VeryRare => very_rare_range,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            InitialMarket.GetInventory().AddGood(new InventoryEntry(good, quantity, good.GetPrice(), TradingPeriod));
+            InitialMarket.GetInventory().AddInventoryEntry(new InventoryEntry(good, quantity, good.GetPrice(), TradingPeriod));
         //in the future, have a concept of rarity driving the initial price
         }
     }

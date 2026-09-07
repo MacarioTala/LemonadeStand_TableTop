@@ -11,9 +11,9 @@ public void UnleashMarketForcesShouldExpireGoods()
     var company = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
     TestMarket.RegisterMarketParticipant(company);
 
-    var francium = Good.CreateInstance("Francium", band2, RarityEnum.Very_Rare);
+    var francium = Good.CreateInstance("Francium", band2, RarityEnum.VeryRare);
     francium.ExpiresAfterPeriods = 1;
-    company.GetInventory().AddGood(new InventoryEntry(francium, 1, 10000, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(francium, 1, 10000, 0));
 
     var expected = 0;
 

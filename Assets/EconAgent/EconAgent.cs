@@ -149,7 +149,7 @@ public StrategyFactory BehaviourStrategyAsset;
                             .GetInventory()
                             .GetInventoryEntries()
                             .Where(x=>!x.good.IsProducedGood)
-                            .ToDictionary(x=>x.good,x=>x.Price);
+                            .ToDictionary(x=>x.good,x=>x.PriceOfGood);
         
         foreach(var component in _demand)
             component.Value.InitialPrice = currentPrices.GetValueOrDefault(component.Key);
@@ -289,7 +289,7 @@ private void SetBus()
             var (product, product_quantity) = recipe.MakeRecipe(quantity, inventory);
             var inventoryEntryToAdd=new InventoryEntry(product, product_quantity, cost,context.Period);
             inventoryEntryToAdd.SetRecipe(recipe);
-            inventory.AddGood(inventoryEntryToAdd);
+            inventory.AddInventoryEntry(inventoryEntryToAdd);
         }
         catch(RecipeException e)
         {
@@ -383,7 +383,7 @@ private void SetBus()
         if(HasMoney(moneyNeeded))
         {
             var inventory_entry = new InventoryEntry(good, quantity, price, period);
-            inventory.AddGood(inventory_entry);
+            inventory.AddInventoryEntry(inventory_entry);
             cash -= moneyNeeded;
         }
         else

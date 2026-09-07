@@ -44,9 +44,9 @@ public class LemonadeSellerStrategyTests
          TestMarket = Market.Factory.CreateMarket("Test Market")
             .EnsureDefaults();
 
-        TestMarket.GetInventory().AddGood(new InventoryEntry(lemon, 100, 3, TestMarket.CurrentPeriod));
-        TestMarket.GetInventory().AddGood(new InventoryEntry(sugar, 100, 2, TestMarket.CurrentPeriod));
-        TestMarket.GetInventory().AddGood(new InventoryEntry(water, 100, 2, TestMarket.CurrentPeriod));
+        TestMarket.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 100, 3, TestMarket.CurrentPeriod));
+        TestMarket.GetInventory().AddInventoryEntry(new InventoryEntry(sugar, 100, 2, TestMarket.CurrentPeriod));
+        TestMarket.GetInventory().AddInventoryEntry(new InventoryEntry(water, 100, 2, TestMarket.CurrentPeriod));
         MarketProvidesSupplies();
 
         strategy = new LemonadeSellerStrategy();

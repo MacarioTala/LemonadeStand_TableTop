@@ -22,7 +22,7 @@ public void GoodsWithDeliveryDelayGreaterThanZeroShouldDecrementTheirRemainingDe
                     .Named("Company1")
                     .Build();
     
-    Company1.GetInventory().AddGood(delayedEntry);
+    Company1.GetInventory().AddInventoryEntry(delayedEntry);
 
     var expected = 1;
 
@@ -53,7 +53,7 @@ public void GoodsWithZeroDeliveryDelayShouldNotGoNegativeWhenResolvingDeliveries
                     .Named("Company1")
                     .Build();
 
-    Company1.GetInventory().AddGood(instantEntry);
+    Company1.GetInventory().AddInventoryEntry(instantEntry);
 
     var expected = 0;
 

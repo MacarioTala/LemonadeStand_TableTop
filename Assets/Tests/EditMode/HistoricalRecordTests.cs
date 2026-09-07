@@ -146,7 +146,7 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOnlyOneOrderExists_LogsRejectedRecordForNoMatchingCounterParty()
     {
         // Arrange
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
+        testSeller.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 10, 3, 0));
 
         var sellOrder = new Order(null, testSeller, lemonade, 10, 2)
         {
@@ -184,7 +184,7 @@ public class HistoricalRecordTests
     {
         // Arrange
         testBuyer.SetCash(1);
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
+        testSeller.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 10, 3, 0));
 
         var buyOrder = new Order(testBuyer, null, lemonade, 10, 2)
         {
@@ -232,7 +232,7 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOrderFullyFills_LogsFilledRecordWithUpdatedQuantities()
     {
         // Arrange
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
+        testSeller.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 10, 3, 0));
 
         var buyOrder = new Order(testBuyer, null, lemonade, 10, 2)
         {
@@ -282,7 +282,7 @@ public class HistoricalRecordTests
     public void ExecuteBestTradesForGood_WhenOrderPartiallyFills_LogsPartiallyFilledRecordWithUpdatedQuantities()
     {
         // Arrange
-        testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
+        testSeller.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 10, 3, 0));
 
         var buyOrder = new Order(testBuyer, null, lemonade, 20, 2)
         {
@@ -326,7 +326,7 @@ public class HistoricalRecordTests
 public void ExecuteBestTradesForGood_WhenOrderPartiallyFillsCorrectlyLogsWhichIsFilledAndWhichIsPartiallyFilled()
 {
     // Arrange
-    testSeller.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, 0));
+    testSeller.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 10, 3, 0));
 
     var buyOrder = new Order(testBuyer, null, lemonade, 20, 2)
     {

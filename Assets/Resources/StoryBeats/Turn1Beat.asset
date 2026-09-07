@@ -15,4 +15,5 @@ MonoBehaviour:
   id: cedbe9db-3584-4e89-8176-765ce3b8f3d6
   Image: {fileID: 0}
   FlavourText: You hear carpentry in the distance
-  PeriodToPlayIn: 1
+  fixedCostAssociatedWithBeat: {fileID: 0}
+  PeriodToPlayIn: 0

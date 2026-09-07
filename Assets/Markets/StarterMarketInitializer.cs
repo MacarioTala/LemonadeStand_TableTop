@@ -17,9 +17,9 @@ public class StarterMarketInitializer : iMarketInitializer
         var Lemon = Good.CreateInstance("Lemon", new PriceBand(1, 3), RarityEnum.Common);
         var Sugar = Good.CreateInstance("Sugar", new PriceBand(1, 2), RarityEnum.Common);
         var Water = Good.CreateInstance("Water", new PriceBand(1, 1), RarityEnum.Common);
-        _inventory.AddGood(new InventoryEntry(Lemon, 100, 2, 0));
-        _inventory.AddGood(new InventoryEntry(Sugar, 100, 1, 0));
-        _inventory.AddGood(new InventoryEntry(Water, 100, 1, 0));
+        _inventory.AddInventoryEntry(new InventoryEntry(Lemon, 100, 2, 0));
+        _inventory.AddInventoryEntry(new InventoryEntry(Sugar, 100, 1, 0));
+        _inventory.AddInventoryEntry(new InventoryEntry(Water, 100, 1, 0));
         var LemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
         LemonadeRecipe.Initialize("Basic Lemonade",
                                   Lemonade,

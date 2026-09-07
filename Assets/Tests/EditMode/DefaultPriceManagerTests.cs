@@ -20,7 +20,7 @@ public class DefaultPriceManagerTests
                 .Build();
         var entry = new InventoryEntry(Lemon,10,10,0);
         entry.SetPrice(10);
-        TestMarket.GetInventory().AddGood(entry);
+        TestMarket.GetInventory().AddInventoryEntry(entry);
     }
     [TearDown]
     public void TearDown()
@@ -69,12 +69,12 @@ public class DefaultPriceManagerTests
         TestMarket.SetPricesFluctuateEvery(1);
         TestMarket.CurrentPeriod=1;
         var marketInventoryEntries=TestMarket.GetInventory().GetInventoryEntries();
-        var originalLemonPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).Price;
+        var originalLemonPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).PriceOfGood;
         var expected = originalLemonPrice*(decimal)flex;
 
         //Act
         TestMarket.CyclePrices();
-        var actualPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).Price;
+        var actualPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).PriceOfGood;
         var actual = Math.Abs(originalLemonPrice-actualPrice);
 
         //Assert
@@ -90,12 +90,12 @@ public class DefaultPriceManagerTests
         TestMarket.SetPricesFluctuateEvery(1);
         TestMarket.CurrentPeriod=1;
         var marketInventoryEntries=TestMarket.GetInventory().GetInventoryEntries();
-        var originalLemonPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).Price;
+        var originalLemonPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).PriceOfGood;
         var expected = originalLemonPrice*(decimal)flex;
 
         //Act
         TestMarket.UnleashMarketForces(1);
-        var actualPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).Price;
+        var actualPrice = marketInventoryEntries.FirstOrDefault(x=>x.good.Equals(Lemon)).PriceOfGood;
         var actual = Math.Abs(originalLemonPrice-actualPrice);
 
         //Assert

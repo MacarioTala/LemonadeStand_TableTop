@@ -19,4 +19,4 @@ MonoBehaviour:
   demandEntries: []
   marketIgnorantAssumedCogInCents: 0
   initialRecipes: []
-  InitialCash: 10
+  InitialCash: 100

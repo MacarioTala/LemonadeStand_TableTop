@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b833e4e5645045f7acafd0c9b10b948, type: 3}
+  m_Name: Ether
+  m_EditorClassIdentifier: GameAssembly::Good
+  GoodName: Ether
+  GoodSprite: {fileID: 7620807097080832373, guid: e1254cd1e680d4d60a8ccd9effb35578, type: 3}
+  ExpiresAfterPeriods: 0
+  IsPerishable: 1
+  DeliveryDelay: 0
+  PriceBand:
+    Min: 0
+    Max: 0
+  _rarity: 2
+  IsProducedGood: 0

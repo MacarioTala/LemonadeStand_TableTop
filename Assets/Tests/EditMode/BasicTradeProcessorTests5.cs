@@ -13,7 +13,7 @@ public partial class BasicTradeProcessorTests
     public void EBTG_OneBuyerOneSeller_BothExecutionsRecorded()
     {
         //Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 5,9,Period));
         var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10);
         var Company1Context = new ActionContext
         {
@@ -52,8 +52,8 @@ public partial class BasicTradeProcessorTests
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 3,9,Period));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,9,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 3,9,Period));
+        Company3.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 2,9,Period));
 
         var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10);
         var Company1Context = new ActionContext
@@ -103,8 +103,8 @@ public partial class BasicTradeProcessorTests
         //Arrange
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 5,9,Period));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemonade, 2,10,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 5,9,Period));
+        Company3.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 2,10,Period));
         var Company1BuysLemonadeFromAny = new Order(Company1,null,Lemonade,5,10);
         var Company1Context = new ActionContext
         {

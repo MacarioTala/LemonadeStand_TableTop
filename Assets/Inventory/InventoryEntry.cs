@@ -6,7 +6,7 @@ public class InventoryEntry
     public int quantity;
     public int? Cost;
     private int price;
-    public int Price {get =>price;}
+    public int PriceOfGood {get =>price;}
     private Recipe recipe;
     public int RemainingDelay=0;
     public int PeriodAcquired;
@@ -28,6 +28,7 @@ public class InventoryEntry
         this.good = good;
         this.quantity = quantity;
         Cost = acquisitionPrice;
+        price = acquisitionPrice??0;
         PeriodAcquired = period;
         RemainingDelay=good.DeliveryDelay;
     }

@@ -132,7 +132,7 @@ public class SupplyAndDemandTests
         //Arrange
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 0 };
         TestPopulation.SetDemand(lemonade, demandForLemonade);
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 2000, 3, 0));
         var company1Order = new Order(null, Company1, lemonade, 1000, 3);
 
         var expected = 0;
@@ -152,9 +152,9 @@ public class SupplyAndDemandTests
 
         //Arrange
         var company1Order = new Order(null, Company1, lemonade, 500, 4);
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 500, 3, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 500, 3, 0));
         var company2Order = new Order(null, Company2, lemonade, 500, 4);
-        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 500, 3, 0));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 500, 3, 0));
 
         var expectedFilledQuantityForCompany1 = 500;
         var expectedFilledQuantityForCompany2 = 500;
@@ -185,8 +185,8 @@ public class SupplyAndDemandTests
         const int company1Ask = 2;
         const int company2Ask = 3;
         const int lemonadeAcquisitionCost = 1;
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, company1Quantity, lemonadeAcquisitionCost, 0));
-        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, company2Quantity, lemonadeAcquisitionCost, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, company1Quantity, lemonadeAcquisitionCost, 0));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, company2Quantity, lemonadeAcquisitionCost, 0));
 
         var company1Order = new Order(null, Company1, lemonade, company1Quantity, company1Ask);
         var company2Order = new Order(null, Company2, lemonade, company2Quantity, company2Ask);
@@ -209,7 +209,7 @@ public class SupplyAndDemandTests
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 1000 };
         TestPopulation.SetDemand(lemonade, demandForLemonade);
 
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 2000, 3, 0));
 
         var Company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1000, 4);
 
@@ -233,8 +233,8 @@ public class SupplyAndDemandTests
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 2000 };
         TestPopulation.SetDemand(lemonade, demandForLemonade);
 
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3, 0));
-        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 1000, 3, 0));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 1000, 3, 0));
 
         var company1Order = new Order(null, Company1, lemonade, 400, 4);
         var company2Order = new Order(null, Company2, lemonade, 400, 4);
@@ -258,7 +258,7 @@ public class SupplyAndDemandTests
         //Arrange
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 1000 };
         TestPopulation.SetDemand(lemonade, demandForLemonade);
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000, 3, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 2000, 3, 0));
 
         var company1SellsLemonadeToAnyone = new Order(null, Company1, lemonade, 1500, 4);
         var expected = 1000;
@@ -300,7 +300,7 @@ public class SupplyAndDemandTests
         var period = 0;
 
         //give the selling company some lemons
-        sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3, 0));
+        sellingCompany.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 1000, 3, 0));
 
         //create the ActionContext
         var testContext = new ActionContext
@@ -331,7 +331,7 @@ public class SupplyAndDemandTests
         var sellingCompany = EconAgent.Factory.Create("Test Company", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(sellingCompany);
         //give the selling company some lemons
-        sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3, 0));
+        sellingCompany.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 1000, 3, 0));
         var period = 0;
 
         //queue up a lemon sell order
@@ -364,7 +364,7 @@ public class SupplyAndDemandTests
         var period = 0;
 
         //give the selling company some lemons
-        sellingCompany.GetInventory().AddGood(new InventoryEntry(lemon, 900, 3, 0));
+        sellingCompany.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 900, 3, 0));
         var marketBuysLemons = new Order(null, sellingCompany, lemon, 600, 3);
         var lemonBuyingContext = new ActionContext { TradeToSubmit = marketBuysLemons, MarketToSubmitTo = TestMarket, Period = period };
 
@@ -392,7 +392,7 @@ public class SupplyAndDemandTests
         TestMarket.RegisterMarketParticipant(sellingCompany);
 
         //give the selling company some lemonade
-        sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3, 0));
+        sellingCompany.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 1000, 3, 0));
         //Act
         //have the market buy some lemonade
         var marketBuysLemonade = new Order(null, sellingCompany, lemonade, 1000, 3);
@@ -435,7 +435,7 @@ public class SupplyAndDemandTests
         TestMarket.AddRecipe(lemonadeRecipe);
 
         //give the selling company some lemonade
-        sellingCompany.GetInventory().AddGood(new InventoryEntry(lemonade, 1000, 3, 0));
+        sellingCompany.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 1000, 3, 0));
         //Act
         //have the market buy some lemonade
         var companySellsLemonade = new Order(null, sellingCompany, lemonade, 1000, 3);
@@ -462,7 +462,7 @@ public class SupplyAndDemandTests
     public void GetTotalBoughtByMarketReturnsZeroWhenNoneOfSoldGoodsIsDemanded()
     {   // Populations don't want sugar, so we expect no population orders to be recorded.
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(sugar, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(sugar, 2000,3,Period));
 
         var Company1SellsSugarToCompany2 = new Order(Company2, Company1, sugar, 500, 3);
         var SugarOrder2 = new Order(Company2, Company1, sugar, 500, 3);

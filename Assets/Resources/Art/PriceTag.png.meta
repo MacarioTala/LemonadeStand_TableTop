@@ -1,0 +1,1144 @@
+fileFormatVersion: 2
+guid: 2ffeeb75e322b47f0b8109776084cc98
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8823367193311512305
+    second: PriceTag_0
+  - first:
+      213: 6107322176167311840
+    second: PriceTag_1
+  - first:
+      213: 6952906953967096806
+    second: PriceTag_2
+  - first:
+      213: 8186381593279043665
+    second: PriceTag_3
+  - first:
+      213: 2291667680437492190
+    second: PriceTag_4
+  - first:
+      213: -3418883675444899229
+    second: PriceTag_5
+  - first:
+      213: 649897116942122341
+    second: PriceTag_6
+  - first:
+      213: 3704496698257616018
+    second: PriceTag_7
+  - first:
+      213: -1153401676711468392
+    second: PriceTag_8
+  - first:
+      213: 3044428398805577055
+    second: PriceTag_9
+  - first:
+      213: 2921006523462914948
+    second: PriceTag_10
+  - first:
+      213: 4344585920531273067
+    second: PriceTag_11
+  - first:
+      213: -7718353250954078400
+    second: PriceTag_12
+  - first:
+      213: 6653347815352961875
+    second: PriceTag_13
+  - first:
+      213: 206020770164357532
+    second: PriceTag_14
+  - first:
+      213: -7126508004877291055
+    second: PriceTag_15
+  - first:
+      213: 488308179061013587
+    second: PriceTag_16
+  - first:
+      213: -5364526956483852491
+    second: PriceTag_17
+  - first:
+      213: 6289958879236298667
+    second: PriceTag_18
+  - first:
+      213: -7601760141912979628
+    second: PriceTag_19
+  - first:
+      213: 8447396180318123498
+    second: PriceTag_20
+  - first:
+      213: -3179921672590537255
+    second: PriceTag_21
+  - first:
+      213: -4177425333572938520
+    second: PriceTag_22
+  - first:
+      213: 2740495320391865783
+    second: PriceTag_23
+  - first:
+      213: 1110172900427744995
+    second: PriceTag_24
+  - first:
+      213: -880353689241603328
+    second: PriceTag_25
+  - first:
+      213: -7690494378489296160
+    second: PriceTag_26
+  - first:
+      213: -738025452310841438
+    second: PriceTag_27
+  - first:
+      213: -6628455269854642598
+    second: PriceTag_28
+  - first:
+      213: 261984886736794225
+    second: PriceTag_29
+  - first:
+      213: -8033024359305439216
+    second: PriceTag_30
+  - first:
+      213: 876860620690274514
+    second: PriceTag_31
+  - first:
+      213: 1797557904971401437
+    second: PriceTag_32
+  - first:
+      213: 4744814821466926743
+    second: PriceTag_33
+  - first:
+      213: -2096073592156110719
+    second: PriceTag_34
+  - first:
+      213: 4838747821243617749
+    second: PriceTag_35
+  - first:
+      213: 6931250008373231958
+    second: PriceTag_36
+  - first:
+      213: 5637257449877246597
+    second: PriceTag_37
+  - first:
+      213: -289742244367935904
+    second: PriceTag_38
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PriceTag_0
+      rect:
+        serializedVersion: 2
+        x: 564
+        y: 850
+        width: 30
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f09f4df294a1d8580800000000000000
+      internalID: -8823367193311512305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_1
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 805
+        width: 33
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e97157492191c450800000000000000
+      internalID: 6107322176167311840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_2
+      rect:
+        serializedVersion: 2
+        x: 526
+        y: 684
+        width: 161
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e35d8b5900bd7060800000000000000
+      internalID: 6952906953967096806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_3
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 723
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 158913f8faedb9170800000000000000
+      internalID: 8186381593279043665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_4
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 717
+        width: 41
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed958b31d93adcf10800000000000000
+      internalID: 2291667680437492190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_5
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 687
+        width: 50
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36299b4496fad80d0800000000000000
+      internalID: -3418883675444899229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_6
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 713
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56db2eb0cf5e40900800000000000000
+      internalID: 649897116942122341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_7
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 706
+        width: 40
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29ca04bae14096330800000000000000
+      internalID: 3704496698257616018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_8
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 709
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 892e548394b4effe0800000000000000
+      internalID: -1153401676711468392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_9
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 709
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5deae6af7bff3a20800000000000000
+      internalID: 3044428398805577055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_10
+      rect:
+        serializedVersion: 2
+        x: 893
+        y: 715
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4831b99f4ff798820800000000000000
+      internalID: 2921006523462914948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_11
+      rect:
+        serializedVersion: 2
+        x: 925
+        y: 694
+        width: 80
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b651e6940e11b4c30800000000000000
+      internalID: 4344585920531273067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_12
+      rect:
+        serializedVersion: 2
+        x: 1006
+        y: 684
+        width: 72
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04796e1ac96e2e490800000000000000
+      internalID: -7718353250954078400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_13
+      rect:
+        serializedVersion: 2
+        x: 1106
+        y: 705
+        width: 80
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b0c3d4690755c50800000000000000
+      internalID: 6653347815352961875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_14
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 688
+        width: 153
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c99bff58cceebd200800000000000000
+      internalID: 206020770164357532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_15
+      rect:
+        serializedVersion: 2
+        x: 1298
+        y: 711
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1bf483abe891d90800000000000000
+      internalID: -7126508004877291055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_16
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 25
+        width: 1424
+        height: 643
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35c79d1a3b1d6c600800000000000000
+      internalID: 488308179061013587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_17
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 299
+        width: 6
+        height: 295
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 537c5c2d72f5d85b0800000000000000
+      internalID: -5364526956483852491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_18
+      rect:
+        serializedVersion: 2
+        x: 1580
+        y: 267
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba791b8664c6a4750800000000000000
+      internalID: 6289958879236298667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_19
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 176
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 457cd814d6f118690800000000000000
+      internalID: -7601760141912979628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_20
+      rect:
+        serializedVersion: 2
+        x: 1248
+        y: 195
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae57adcd11e2b3570800000000000000
+      internalID: 8447396180318123498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_21
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 166
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ddcca33616aed3d0800000000000000
+      internalID: -3179921672590537255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_22
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 165
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e4daa4cacdc606c0800000000000000
+      internalID: -4177425333572938520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_23
+      rect:
+        serializedVersion: 2
+        x: 822
+        y: 168
+        width: 18
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b5d39069f1380620800000000000000
+      internalID: 2740495320391865783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_24
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 134
+        width: 14
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e6c249fe50286f00800000000000000
+      internalID: 1110172900427744995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_25
+      rect:
+        serializedVersion: 2
+        x: 984
+        y: 120
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 003bc04ebfa58c3f0800000000000000
+      internalID: -880353689241603328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_26
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 112
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eac107db10e54590800000000000000
+      internalID: -7690494378489296160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_27
+      rect:
+        serializedVersion: 2
+        x: 1201
+        y: 112
+        width: 8
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a7b0d7e2c102c5f0800000000000000
+      internalID: -738025452310841438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_28
+      rect:
+        serializedVersion: 2
+        x: 1256
+        y: 104
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5e7fb61d0ff204a0800000000000000
+      internalID: -6628455269854642598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_29
+      rect:
+        serializedVersion: 2
+        x: 1336
+        y: 110
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 172b77ecdd1c2a300800000000000000
+      internalID: 261984886736794225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_30
+      rect:
+        serializedVersion: 2
+        x: 1337
+        y: 86
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0181a8fe7e6f48090800000000000000
+      internalID: -8033024359305439216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_31
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 98
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d8b5c5b61c3b2c00800000000000000
+      internalID: 876860620690274514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_32
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 96
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd80405046532f810800000000000000
+      internalID: 1797557904971401437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_33
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 90
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79e6b86e0f7f8d140800000000000000
+      internalID: 4744814821466926743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_34
+      rect:
+        serializedVersion: 2
+        x: 1191
+        y: 88
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18045746c2049e2e0800000000000000
+      internalID: -2096073592156110719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_35
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 80
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d1dbe2b18fa62340800000000000000
+      internalID: 4838747821243617749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_36
+      rect:
+        serializedVersion: 2
+        x: 982
+        y: 84
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6518286c82fb03060800000000000000
+      internalID: 6931250008373231958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_37
+      rect:
+        serializedVersion: 2
+        x: 1209
+        y: 90
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5829b5f78cf8b3e40800000000000000
+      internalID: 5637257449877246597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PriceTag_38
+      rect:
+        serializedVersion: 2
+        x: 1451
+        y: 55
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0665600c6f0aafbf0800000000000000
+      internalID: -289742244367935904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      PriceTag_0: -8823367193311512305
+      PriceTag_1: 6107322176167311840
+      PriceTag_10: 2921006523462914948
+      PriceTag_11: 4344585920531273067
+      PriceTag_12: -7718353250954078400
+      PriceTag_13: 6653347815352961875
+      PriceTag_14: 206020770164357532
+      PriceTag_15: -7126508004877291055
+      PriceTag_16: 488308179061013587
+      PriceTag_17: -5364526956483852491
+      PriceTag_18: 6289958879236298667
+      PriceTag_19: -7601760141912979628
+      PriceTag_2: 6952906953967096806
+      PriceTag_20: 8447396180318123498
+      PriceTag_21: -3179921672590537255
+      PriceTag_22: -4177425333572938520
+      PriceTag_23: 2740495320391865783
+      PriceTag_24: 1110172900427744995
+      PriceTag_25: -880353689241603328
+      PriceTag_26: -7690494378489296160
+      PriceTag_27: -738025452310841438
+      PriceTag_28: -6628455269854642598
+      PriceTag_29: 261984886736794225
+      PriceTag_3: 8186381593279043665
+      PriceTag_30: -8033024359305439216
+      PriceTag_31: 876860620690274514
+      PriceTag_32: 1797557904971401437
+      PriceTag_33: 4744814821466926743
+      PriceTag_34: -2096073592156110719
+      PriceTag_35: 4838747821243617749
+      PriceTag_36: 6931250008373231958
+      PriceTag_37: 5637257449877246597
+      PriceTag_38: -289742244367935904
+      PriceTag_4: 2291667680437492190
+      PriceTag_5: -3418883675444899229
+      PriceTag_6: 649897116942122341
+      PriceTag_7: 3704496698257616018
+      PriceTag_8: -1153401676711468392
+      PriceTag_9: 3044428398805577055
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

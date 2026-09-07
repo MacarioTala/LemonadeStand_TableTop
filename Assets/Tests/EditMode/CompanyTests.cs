@@ -139,7 +139,7 @@ public class CompanyTests
     public void QO_RejectsOrdersWithNegativePrice()
     {
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 1000, 3,0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 1000, 3,0));
         var company1Order = new Order(null, Company1, Lemonade, 1000, -3);
         var expected = LemonadeStandResultObject.Failure(ResultTypeEnum.OrderHasInvalidPrice,"").Result;
         //Act

@@ -39,7 +39,7 @@ public partial class LinearDemandStrategyTests
 
         Lemonade.Elasticities.Add(ElasticityTypeEnum.SaturationElasticity, 1);
         var Company1SellsLemonadeToAnyone = new Order(null,Company1,Lemonade,100,1);
-        _= Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 1, TestMarket.CurrentPeriod));
+        _= Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 100, 1, TestMarket.CurrentPeriod));
         Company1.QueueOrder(CreateActionContext(Company1SellsLemonadeToAnyone, TestMarket,0));
         var expectedDemand = 100;
 

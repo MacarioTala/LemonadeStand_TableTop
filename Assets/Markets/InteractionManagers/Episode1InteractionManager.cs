@@ -7,7 +7,7 @@ public class Episode1InteractionManager : InteractionManagerBase
         //Markets attempt to sell all inventory
         foreach(var inventoryItem in _market.GetInventory().GetInventoryEntries())
         {
-            var sellOrder = new Order(null, _market, inventoryItem.good, inventoryItem.quantity, inventoryItem.Price)
+            var sellOrder = new Order(null, _market, inventoryItem.good, inventoryItem.quantity, inventoryItem.PriceOfGood)
             {
                 SubmittingCompany = _market
             };

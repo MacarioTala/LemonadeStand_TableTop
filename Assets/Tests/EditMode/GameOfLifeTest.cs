@@ -92,7 +92,7 @@ public class GameOfLifeTest
        
        foreach (var good in TestGoods)
         {
-            LemonadeMarket.GetInventory().AddGood(new InventoryEntry(good,10000,5,0));
+            LemonadeMarket.GetInventory().AddInventoryEntry(new InventoryEntry(good,10000,5,0));
         }
     }
     [Test]

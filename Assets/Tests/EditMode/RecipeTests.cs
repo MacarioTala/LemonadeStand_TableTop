@@ -32,9 +32,9 @@ public class RecipeTests
         var lemon_inventory_entry = new InventoryEntry(lemon, 10, 1, Period);
         var sugar_inventory_entry = new InventoryEntry(sugar, 10, 1, Period);
         var water_inventory_entry = new InventoryEntry(water, 10, 1, Period);
-        test_inventory.AddGood(lemon_inventory_entry);
-        test_inventory.AddGood(sugar_inventory_entry);
-        test_inventory.AddGood(water_inventory_entry);
+        test_inventory.AddInventoryEntry(lemon_inventory_entry);
+        test_inventory.AddInventoryEntry(sugar_inventory_entry);
+        test_inventory.AddInventoryEntry(water_inventory_entry);
 
         lemonade = Good.CreateInstance("lemonade", price_band4);
         var lemonade_ingredients = new List<Ingredient> { new(lemon, 9),
@@ -76,9 +76,9 @@ public class RecipeTests
         var inventory_entry1 = new InventoryEntry(lemon, 10, 1, Period);
         var inventory_entry2 = new InventoryEntry(sugar, 10, 1, Period);
         var inventory_entry3 = new InventoryEntry(water, 10, 1, Period);
-        test_inventory.AddGood(inventory_entry1);
-        test_inventory.AddGood(inventory_entry2);
-        test_inventory.AddGood(inventory_entry3);
+        test_inventory.AddInventoryEntry(inventory_entry1);
+        test_inventory.AddInventoryEntry(inventory_entry2);
+        test_inventory.AddInventoryEntry(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
         var lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
         lemonade_recipe.Initialize(recipeName: "Basic Lemonade",
@@ -98,9 +98,9 @@ public class RecipeTests
         var inventory_entry1 = new InventoryEntry(lemon, 10, 1, Period);
         var inventory_entry2 = new InventoryEntry(sugar, 10, 1, Period);
         var inventory_entry3 = new InventoryEntry(water, 10, 1, Period);
-        test_inventory.AddGood(inventory_entry1);
-        test_inventory.AddGood(inventory_entry2);
-        test_inventory.AddGood(inventory_entry3);
+        test_inventory.AddInventoryEntry(inventory_entry1);
+        test_inventory.AddInventoryEntry(inventory_entry2);
+        test_inventory.AddInventoryEntry(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
         var lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
         lemonade_recipe.Initialize(recipeName:"Basic Lemonade",
@@ -150,10 +150,10 @@ public class RecipeTests
         var sugarInventoryEntry = new InventoryEntry(sugar, 5, 2,Period);
         var waterInventoryEntry = new InventoryEntry(water, 7, 1,Period);
         var secondLemonInventoryEntry = new InventoryEntry(lemon, 5, 2,Period);
-        inventory.AddGood(lemonInventoryEntry);
-        inventory.AddGood(sugarInventoryEntry);
-        inventory.AddGood(waterInventoryEntry);
-        inventory.AddGood(secondLemonInventoryEntry);
+        inventory.AddInventoryEntry(lemonInventoryEntry);
+        inventory.AddInventoryEntry(sugarInventoryEntry);
+        inventory.AddInventoryEntry(waterInventoryEntry);
+        inventory.AddInventoryEntry(secondLemonInventoryEntry);
         basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
         basicLemonadeRecipe.Initialize(recipeName:"Basic Lemonade",
                                     product: lemonade, 
@@ -175,9 +175,9 @@ public class RecipeTests
         var lemon_inventory_entry = new InventoryEntry(lemon, 10, 3,Period);
         var sugar_inventory_entry = new InventoryEntry(sugar, 10, 2,Period);
         var water_inventory_entry = new InventoryEntry(water, 10, 1,Period);
-        inventory.AddGood(lemon_inventory_entry);
-        inventory.AddGood(sugar_inventory_entry);
-        inventory.AddGood(water_inventory_entry);
+        inventory.AddInventoryEntry(lemon_inventory_entry);
+        inventory.AddInventoryEntry(sugar_inventory_entry);
+        inventory.AddInventoryEntry(water_inventory_entry);
         var expected = (float)(9*3 + 2*2 + 7*1);
         // Act
         var actual = basicLemonadeRecipe.GetCostPerUnit(inventory);
@@ -192,9 +192,9 @@ public class RecipeTests
         var lemonInventoryEntry = new InventoryEntry(lemon, 10, 3,Period);
         var sugarInventoryEntry = new InventoryEntry(sugar, 10, 2,Period);
         var waterInventoryEntry = new InventoryEntry(water, 10, 1,Period);
-        inventory.AddGood(lemonInventoryEntry);
-        inventory.AddGood(sugarInventoryEntry);
-        inventory.AddGood(waterInventoryEntry);
+        inventory.AddInventoryEntry(lemonInventoryEntry);
+        inventory.AddInventoryEntry(sugarInventoryEntry);
+        inventory.AddInventoryEntry(waterInventoryEntry);
         basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
         basicLemonadeRecipe.Initialize(recipeName: "Basic Lemonade",
                                      product: lemonade, 
@@ -221,9 +221,9 @@ public class RecipeTests
         var lemonInventoryEntry = new InventoryEntry(lemon, 10, 3,Period);
         var sugarInventoryEntry = new InventoryEntry(sugar, 10, 2,Period);
         var waterInventoryEntry = new InventoryEntry(water, 10, 1,Period);
-        inventory.AddGood(lemonInventoryEntry);
-        inventory.AddGood(sugarInventoryEntry);
-        inventory.AddGood(waterInventoryEntry);
+        inventory.AddInventoryEntry(lemonInventoryEntry);
+        inventory.AddInventoryEntry(sugarInventoryEntry);
+        inventory.AddInventoryEntry(waterInventoryEntry);
         basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>(); 
         basicLemonadeRecipe.Initialize("Basic Lemonade",
                                     product: lemonade, 
@@ -255,9 +255,9 @@ public class RecipeTests
         var lemonInventoryEntry = new InventoryEntry(lemon, 10, 3,Period);
         var sugarInventoryEntry = new InventoryEntry(sugar, 10, 2,Period);
         var waterInventoryEntry = new InventoryEntry(water, 10, 1,Period);
-        inventory.AddGood(lemonInventoryEntry);
-        inventory.AddGood(sugarInventoryEntry);
-        inventory.AddGood(waterInventoryEntry);
+        inventory.AddInventoryEntry(lemonInventoryEntry);
+        inventory.AddInventoryEntry(sugarInventoryEntry);
+        inventory.AddInventoryEntry(waterInventoryEntry);
         basicLemonadeRecipe = ScriptableObject.CreateInstance<Recipe>();
         basicLemonadeRecipe.Initialize("Basic Lemonade",
                                     product: lemonade, 
@@ -370,10 +370,10 @@ public void ConsumeForRecipeShouldNotDriveInventoryNegativeWhenUsingMultipleCost
 
     company.AddRecipe(splitBatchRecipe);
 
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1, 0));
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2, 0));
-    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1, 0));
-    company.GetInventory().AddGood(new InventoryEntry(waterNow, 10, 1, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(splitLemon, 5, 1, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(splitLemon, 4, 2, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(sugarNow, 10, 1, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(waterNow, 10, 1, 0));
 
     var context = new ActionContext
     {
@@ -447,12 +447,12 @@ public void MakeRecipeShouldSupportLargeBatchAcrossMultipleCostBases()
     company.AddRecipe(batchRecipe);
 
     // 18 lemons total across 3 different cost bases = enough for quantity 2
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 5, 1, 0));
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 4, 2, 0));
-    company.GetInventory().AddGood(new InventoryEntry(splitLemon, 9, 3, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(splitLemon, 5, 1, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(splitLemon, 4, 2, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(splitLemon, 9, 3, 0));
 
-    company.GetInventory().AddGood(new InventoryEntry(sugarNow, 10, 1, 0));
-    company.GetInventory().AddGood(new InventoryEntry(waterNow, 20, 1, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(sugarNow, 10, 1, 0));
+    company.GetInventory().AddInventoryEntry(new InventoryEntry(waterNow, 20, 1, 0));
 
     var context = new ActionContext
     {

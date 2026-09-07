@@ -24,7 +24,7 @@ public class Inventory
         }
         return items;
     }
-    public InventoryEntry AddGood(InventoryEntry entry)
+    public InventoryEntry AddInventoryEntry(InventoryEntry entry)
     {
         var existingGoodAtPriceAndExpiry = inventoryEntries.Find(item=> item.good.GoodName == entry.good.GoodName 
                                             && item.Cost == entry.Cost

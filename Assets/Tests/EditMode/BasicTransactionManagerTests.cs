@@ -47,7 +47,7 @@ public class BasicTransactionManagerTests
     public void ValidateTransactionShouldReturnSelfTradeWhenCompanySubmitsTwoIdenticalTrades()
     {
         //Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var order = new Order(Company1,Company2,Lemon,1,1)
         {
             SubmittingCompany = Company1
@@ -90,7 +90,7 @@ public class BasicTransactionManagerTests
     {
         //Arrange
         Company1.SetCash(1000);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
@@ -158,7 +158,7 @@ public class BasicTransactionManagerTests
     {
         //Arrange
         Company1.SetCash(1000);
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
@@ -181,7 +181,7 @@ public class BasicTransactionManagerTests
         Company1.SetCash(1000);
         Company2.SetCash(0);
         Company1.GetInventory().Clear();
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var order = new Order(Company1, Company2, Lemon, 1, 1)
         {
             SubmittingCompany = Company1
@@ -218,7 +218,7 @@ public class BasicTransactionManagerTests
         Company1.SetCash(1000);
         Company2.SetCash(0);
         Company1.GetInventory().Clear();
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var order = new Order(Company1, Company2, Lemon, 2, 1)
         {
             SubmittingCompany = Company1
@@ -261,8 +261,8 @@ public class BasicTransactionManagerTests
         var basicTransactionManager = TestMarket.TransactionManager as DefaultTransactionManager;
         var Company3 = EconAgent.Factory.Create("Company 3",AgentLevelEnum.Beginner);
         
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
-        Company3.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
+        Company3.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var Company1Buys2LemonFromMultiple = new Order(Company1, Company2, Lemon, 2, 1)
         {
             SubmittingCompany = Company1
@@ -305,7 +305,7 @@ public class BasicTransactionManagerTests
     public void ProcessMarketTransactionShouldReturnSuccessForValidOrderPair()
     {
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 1, 1, 1));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 1, 1, 1));
         var Company1SellsLemonsToAnyone = new Order(Company1, null, Lemon, 1, 1)
         {
             SubmittingCompany = Company1

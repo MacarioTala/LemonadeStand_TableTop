@@ -85,7 +85,7 @@ public class GameRoot : MonoBehaviour
         var inventory = initialMarket.GetInventory();
 
         foreach(var good in goods)
-            inventory.AddGood(new InventoryEntry(good,1000,good.GetPrice(),period));
+            inventory.AddInventoryEntry(new InventoryEntry(good,1000,good.GetPrice(),period));
 
         foreach(var item in inventory.GetInventoryEntries())
             item.CalculatePriceFromBand();

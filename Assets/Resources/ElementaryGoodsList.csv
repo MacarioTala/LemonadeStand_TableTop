@@ -1,0 +1,15 @@
+Element,Sprite,Frequency,MinPrice,MaxPrice
+Lemon,lemon,Common,1,3
+Water,water,Common,1,3
+Plant,plant, Common,1,3
+Stone,stone, Common,1,3
+Wood,wood, Common,1,3
+Salt,salt, Common,1,3
+Grain,grain, Common,1,3
+Metal,metal,Uncommon,4,7
+Oil,oil, Uncommon,4,7
+Fire,fire,Uncommon,4,7
+Sulfur,sulfur, Uncommon,4,7
+Diamond,diamond, Rare,8,15
+Lightning,lightning, Rare,8,15
+Ether,ether, VeryRare,100,100

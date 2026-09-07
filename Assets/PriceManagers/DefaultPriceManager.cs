@@ -58,8 +58,8 @@ public class DefaultPriceManager : iPriceManager, iPriceSetter,iMarketAware
             if(!stabilityDictionary.TryGetValue(entry.good, out var flex)) continue;
             
             var direction = MathHelper.IsCoinFlipHeads()?1:-1;
-            var delta = direction*entry.Price*flex;
-            entry.SetPrice(entry.Price+delta);
+            var delta = direction*entry.PriceOfGood*flex;
+            entry.SetPrice(entry.PriceOfGood+delta);
         }
     }
 

@@ -33,7 +33,7 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
         if(primaryOrder.Buyer.Equals(context.MarketToSubmitTo))
         {
             context.MarketToSubmitTo.GetInventory()
-                .AddGood(new InventoryEntry(primaryOrder.Good, 
+                .AddInventoryEntry(new InventoryEntry(primaryOrder.Good, 
                     primaryOrder.RemainingQuantity, 
                     primaryOrder.Price,
                     context.Period));
@@ -126,7 +126,7 @@ public class DefaultTransactionManager : iTransactionManager,iMarketAware
         else
             adjustedPeriod+=good.DeliveryDelay+1;//Goods should count as being acquired when they arrive, which is always the next turn
         
-        buyerInventory.AddGood(new InventoryEntry(good, quantity, price, adjustedPeriod));
+        buyerInventory.AddInventoryEntry(new InventoryEntry(good, quantity, price, adjustedPeriod));
         sellerInventory.RemoveGood(good, quantity, price);
 
         //Set filled quantity and status

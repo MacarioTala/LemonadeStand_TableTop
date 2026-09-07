@@ -45,7 +45,7 @@ public class InventoryTests
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 1, 1, PeriodIsIrrelevant);
 
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var expected = lemon;
         //act
         var actual = test_inventory.GetInventoryEntries().First().good;
@@ -58,11 +58,11 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var existing_test_inventory_entry = new InventoryEntry(lemon, 1, 1, PeriodIsIrrelevant);
-        test_inventory.AddGood(existing_test_inventory_entry);
+        test_inventory.AddInventoryEntry(existing_test_inventory_entry);
         var new_test_inventory_entry = new InventoryEntry(lemon, 1, 1, PeriodIsIrrelevant);
         var expected_quantity = 2;
         //act
-        test_inventory.AddGood(new_test_inventory_entry);
+        test_inventory.AddInventoryEntry(new_test_inventory_entry);
         var actual_quantity = test_inventory.GetInventoryEntries().First().quantity;
         //assert
         Assert.AreEqual(expected_quantity, actual_quantity);
@@ -75,12 +75,12 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var existing_test_inventory_entry = new InventoryEntry(lemon, 1, 1, PeriodIsIrrelevant);
-        test_inventory.AddGood(existing_test_inventory_entry);
+        test_inventory.AddInventoryEntry(existing_test_inventory_entry);
         var new_test_inventory_entry = new InventoryEntry(lemon, 1, 2, PeriodIsIrrelevant);
         var expected_number_of_entries = 2;
         var expected_quantity = 1;
         //act
-        test_inventory.AddGood(new_test_inventory_entry);
+        test_inventory.AddInventoryEntry(new_test_inventory_entry);
         var actual_number_of_entries = test_inventory.GetInventoryEntries().Count;
         var actual_quantity = test_inventory.GetInventoryEntries().Last().quantity;
         //assert
@@ -94,7 +94,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var lemons_to_sell = 5;
         var expected_entry = new InventoryEntry(lemon, 5, 1, PeriodIsIrrelevant);
         
@@ -112,7 +112,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var lemons_to_sell = 15;
         var expected_entry = new InventoryEntry(lemon, 10, 1, PeriodIsIrrelevant);
         //act
@@ -127,9 +127,9 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var test_inventory_entry2 = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry2);
+        test_inventory.AddInventoryEntry(test_inventory_entry2);
         var lemons_to_sell = 15;
         var price_to_sell_at = 2.0m;
         var expected_inventory= new List<InventoryEntry>(){new(lemon, 10, 1,PeriodIsIrrelevant), new(lemon, 5, 2,PeriodIsIrrelevant)};
@@ -156,7 +156,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 2,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var lemons_to_sell = 15;
         var price_to_sell_at = 1.0m;
         var expected_inventory_count = 0;
@@ -172,7 +172,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var lemons_to_sell = 15;
         var price_to_sell_at = 2.0m;
         var expected_inventory_count = 1;
@@ -188,7 +188,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var lemons_to_sell = 10;
         var price_to_sell_at = 1.0m;
         var expected_inventory_count = 0;
@@ -204,9 +204,9 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var test_inventory_entry2 = new InventoryEntry(lemon, 10, 2,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry2);
+        test_inventory.AddInventoryEntry(test_inventory_entry2);
         var lemons_to_sell = 15;
         var price_to_sell_at = 2.0m;
         var expected_remaining_inventory  = new List<InventoryEntry>(){new(lemon, 5, 2,PeriodIsIrrelevant)};
@@ -235,9 +235,9 @@ public class InventoryTests
         var inventory_entry1 = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
         var inventory_entry2 = new InventoryEntry(sugar, 10, 1,PeriodIsIrrelevant);
         var inventory_entry3 = new InventoryEntry(water, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(inventory_entry1);
-        test_inventory.AddGood(inventory_entry2);
-        test_inventory.AddGood(inventory_entry3);
+        test_inventory.AddInventoryEntry(inventory_entry1);
+        test_inventory.AddInventoryEntry(inventory_entry2);
+        test_inventory.AddInventoryEntry(inventory_entry3);
         var lemonade = Good.CreateInstance("Lemonade", price_band4);
         
         var lemonade_recipe = ScriptableObject.CreateInstance<Recipe>();
@@ -270,7 +270,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var quantity = 10;
         var expected = 0;
         //act
@@ -285,7 +285,7 @@ public class InventoryTests
         //arrange
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
         var quantity = 15;
         var expected = 5;
         //act
@@ -301,8 +301,8 @@ public class InventoryTests
         var test_inventory = new Inventory();
         var test_inventory_entry = new InventoryEntry(lemon, 10, 1,PeriodIsIrrelevant);
         var test_inventory_entry2 = new InventoryEntry(sugar, 10, 1,PeriodIsIrrelevant);
-        test_inventory.AddGood(test_inventory_entry);
-        test_inventory.AddGood(test_inventory_entry2);
+        test_inventory.AddInventoryEntry(test_inventory_entry);
+        test_inventory.AddInventoryEntry(test_inventory_entry2);
         var expected = test_inventory_entry;
         //act
         var actual = test_inventory.GetInventoryEntriesByGood("Lemon").FirstOrDefault();
@@ -318,7 +318,7 @@ public void Perishable_goods_are_removed_from_inventory_after_expiry()
     var test_inventory = new Inventory();
     lemon.ExpiresAfterPeriods = 1;
     var test_inventory_entry = new InventoryEntry(lemon, 10, 1, 1);
-    test_inventory.AddGood(test_inventory_entry);
+    test_inventory.AddInventoryEntry(test_inventory_entry);
     const int expectedItemCount = 0;
     //act
     test_inventory.ExpireGoods(2);

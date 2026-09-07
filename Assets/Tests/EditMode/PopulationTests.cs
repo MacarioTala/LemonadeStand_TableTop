@@ -60,7 +60,7 @@ public class PopulationTests
         // Arrange
         var inventory = new Inventory();
         const int initialLemonCount = 110;
-        inventory.AddGood(new InventoryEntry(lemon, initialLemonCount, 1, 0));
+        inventory.AddInventoryEntry(new InventoryEntry(lemon, initialLemonCount, 1, 0));
 
         var lemonDemandData = new DemandData
         {
@@ -104,7 +104,7 @@ public class PopulationTests
         // Arrange
         var inventory1 = new Inventory();
         const int initialLemonCount = 1000;
-        inventory1.AddGood(new InventoryEntry(lemon, initialLemonCount, 1, 0));
+        inventory1.AddInventoryEntry(new InventoryEntry(lemon, initialLemonCount, 1, 0));
 
         var lemonDemandData = new DemandData
         {
@@ -122,7 +122,7 @@ public class PopulationTests
         };
 
         var inventory2 = new Inventory();
-        inventory2.AddGood(new InventoryEntry(lemon, initialLemonCount, 1, 0));
+        inventory2.AddInventoryEntry(new InventoryEntry(lemon, initialLemonCount, 1, 0));
 
         var population1 = EconAgentBuilder.For<PopulationAgent>()
             .Named("Test Company")
@@ -211,7 +211,7 @@ public class PopulationTests
                         .Build();
         Lemonade.AddEffect(reduceEnnuiEffect);
 
-        TestPopulation.GetInventory().AddGood(new InventoryEntry(Lemonade, 200, 2, testMarket.CurrentPeriod));
+        TestPopulation.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 200, 2, testMarket.CurrentPeriod));
         TestPopulation.InitializeDemandBasedOnPopulation(
             good: Lemonade,
             percentOfPopulation: 1f,
@@ -257,7 +257,7 @@ public class PopulationTests
                         .Build();
         Lemonade.AddEffect(reduceEnnuiEffect);
 
-        TestPopulation.GetInventory().AddGood(new InventoryEntry(Lemonade, 100, 2, testMarket.CurrentPeriod));
+        TestPopulation.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 100, 2, testMarket.CurrentPeriod));
         TestPopulation.InitializeDemandBasedOnPopulation(
             good: Lemonade,
             percentOfPopulation: 1f,

@@ -91,7 +91,7 @@ public class BasicDemandStrategyTests
         var lemonadeDemand = new DemandData { MinDemand = 1000, MaxDemand = 1000 };
         TestPopulation.SetDemand(lemonade, lemonadeDemand);
         
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 2000,3,Period));
 
         var Company1SellsLemonsToAnyone = new Order(null, Company1, lemonade, 1000, 3);
         var Company2BuysLemonsFromAnyone = new Order(Company2,null, lemonade, 500, 3);
@@ -136,7 +136,7 @@ public class BasicDemandStrategyTests
         TestPopulation.SetDemand(lemonade, demandForLemonade);
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 2000,3,Period));
 
         var Company1BuysLemonadeFromAnyone = new Order(Company1, null, lemonade, 500, 3);
         var lemonadeContext = new ActionContext { TradeToSubmit = Company1BuysLemonadeFromAnyone, MarketToSubmitTo = TestMarket , Period = Period};
@@ -157,7 +157,7 @@ public class BasicDemandStrategyTests
         var demandForLemonade = new DemandData { MinDemand = 0, MaxDemand = 0 };
         TestPopulation.SetDemand(lemonade, demandForLemonade);
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
-        Company1.GetInventory().AddGood(new InventoryEntry(lemonade, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 2000,3,Period));
 
         var lemonOrder = new Order(Company1, null, lemonade, 500, 3);
         var lemonContext = new ActionContext { TradeToSubmit = lemonOrder, MarketToSubmitTo = TestMarket , Period = Period};
@@ -175,8 +175,8 @@ public class BasicDemandStrategyTests
     public void CalculateSupplyForPeriodReturnsTotalQuantityOfAllFilledTrades()
     {
         //Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3,Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 2000,3,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(water, 2000,3,Period));
 
         var Company2BuysLemonsFromAnyone = new Order(Company2, null, lemon, 500, 3);
         var Company1SellsLemonsToAnyone = new Order(null, Company1, lemon, 500, 3);

@@ -187,9 +187,9 @@ public partial class MarketTests
         var testMarket = TestMarket;
         var company = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         testMarket.RegisterMarketParticipant(company);
-        var francium = Good.CreateInstance("Francium", band2, RarityEnum.Very_Rare);
+        var francium = Good.CreateInstance("Francium", band2, RarityEnum.VeryRare);
         francium.ExpiresAfterPeriods = 1;
-        company.GetInventory().AddGood(new InventoryEntry(francium, 1,10000,0));
+        company.GetInventory().AddInventoryEntry(new InventoryEntry(francium, 1,10000,0));
         var expected = 0;
         // Act
         testMarket.ExpireGoods(tradingPeriod);
@@ -214,9 +214,9 @@ public partial class MarketTests
         var ripeLemonInventoryEntry = new InventoryEntry(ripeLemon, 10, 3,0);
         var waterInventoryEntry = new InventoryEntry(water, 10, 1,0);
         var sugarInventoryEntry = new InventoryEntry(sugar, 10, 1,0);
-        company.GetInventory().AddGood(ripeLemonInventoryEntry);
-        company.GetInventory().AddGood(waterInventoryEntry);
-        company.GetInventory().AddGood(sugarInventoryEntry);
+        company.GetInventory().AddInventoryEntry(ripeLemonInventoryEntry);
+        company.GetInventory().AddInventoryEntry(waterInventoryEntry);
+        company.GetInventory().AddInventoryEntry(sugarInventoryEntry);
         var expectedWaterQuantity = 10;
         var expectedRipeLemonQuantity = 0;
         // Act
@@ -239,11 +239,11 @@ public partial class MarketTests
         var company = EconAgent.Factory.Create("Company 1", AgentLevelEnum.Beginner);
         var testMarket = TestMarket;
         testMarket.RegisterMarketParticipant(company);
-        company.GetInventory().AddGood(new InventoryEntry(lemon, 10, 3,0));
+        company.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 10, 3,0));
         lemon.ExpiresAfterPeriods=2;
         var ripeLemon = Good.CreateInstance("Ripe Lemon", band2, RarityEnum.Common);
         ripeLemon.ExpiresAfterPeriods=1;
-        company.GetInventory().AddGood(new InventoryEntry(ripeLemon, 10, 3,0));
+        company.GetInventory().AddInventoryEntry(new InventoryEntry(ripeLemon, 10, 3,0));
         var expectedLemonQuantity = 10;
         var expectedRipeLemonQuantity = 0;
         // Act
@@ -271,8 +271,8 @@ public partial class MarketTests
         
         var apple = Good.CreateInstance("Apple", band2, RarityEnum.Common);
         apple.ExpiresAfterPeriods=1;
-        company.GetInventory().AddGood(new InventoryEntry(apple, 10, 3,0));
-        company.GetInventory().AddGood(new InventoryEntry(apple, 10, 3,1));
+        company.GetInventory().AddInventoryEntry(new InventoryEntry(apple, 10, 3,0));
+        company.GetInventory().AddInventoryEntry(new InventoryEntry(apple, 10, 3,1));
         var expectedAppleQuantity = 10;
         // Act
         testMarket.ExpireGoods(tradingPeriod); //only 1 batch of apples expires
@@ -319,7 +319,7 @@ public partial class MarketTests
     {
         // Arrange
         var testMarket = TestMarket;
-        testMarket.GetInventory().AddGood(new InventoryEntry(lemon, 1000, 3, 0));
+        testMarket.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 1000, 3, 0));
         var initialPrice = testMarket.GetInventory().GetInventoryEntriesByGood(lemon.GoodName).First().good.GetPrice();
         var expected = initialPrice * 1.01m;
         // Act
@@ -389,8 +389,8 @@ public partial class MarketTests
     {
         // Arrange
         var period = 0;
-        Company1.GetInventory().AddGood(new InventoryEntry(sugar,10,2,period));
-        Company2.GetInventory().AddGood(new InventoryEntry(sugar,10, 2,period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(sugar,10,2,period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(sugar,10, 2,period));
         
         var expectedCompany1Cash = Company1.GetCash() - 2;
         var expectedCompany2Cash = Company2.GetCash() + 2;
@@ -442,11 +442,11 @@ public partial class MarketTests
     {
         // Arrange
         lemonade.IsProducedGood = true;
-        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", band2, RarityEnum.Very_Rare);
+        var radioactiveLemonade = Good.CreateInstance("Radioactive Lemonade", band2, RarityEnum.VeryRare);
         radioactiveLemonade.IsProducedGood = true;
 
-        Company1.GetInventory().AddGood(new InventoryEntry(radioactiveLemonade, 10, 3, Period));
-        Company2.GetInventory().AddGood(new InventoryEntry(lemonade, 10, 3, Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(radioactiveLemonade, 10, 3, Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(lemonade, 10, 3, Period));
 
         var radioactiveLemonadeTrade = new Order(TestMarket, Company1, radioactiveLemonade, 10, 3);
         var radioactiveLemonadeContext = new ActionContext{TradeToSubmit = radioactiveLemonadeTrade, MarketToSubmitTo = TestMarket, Period = Period};

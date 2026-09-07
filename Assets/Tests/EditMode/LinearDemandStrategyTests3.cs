@@ -20,7 +20,7 @@ public partial class LinearDemandStrategyTests
         var expectedLowerBound = initialDemand;
         var expectedUpperBound = initialDemand + (int)(initialDemand * .1f);
         
-        Company2.GetInventory().AddGood(new InventoryEntry(Lemonade, 100,1,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 100,1,Period));
         var Company2SellsLemonadeToAnyone = new Order(null,Company2,Lemonade,100,1);
         var Company2SellLemonadeContext = new ActionContext{TradeToSubmit = Company2SellsLemonadeToAnyone,MarketToSubmitTo = TestMarket,Period = Period};
 

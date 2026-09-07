@@ -49,8 +49,8 @@ public class NPCActionsTests
             .WhichIsProducedGood()
             .Build();
         
-        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
-        Company2.GetInventory().AddGood(new(lemonade,1,6,0));
+        Company1.GetInventory().AddInventoryEntry(new(lemonade,1,5,0));
+        Company2.GetInventory().AddInventoryEntry(new(lemonade,1,6,0));
         var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
         var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
         var expectedGoodsAvailable = new List<AvailableGood>
@@ -84,9 +84,9 @@ public class NPCActionsTests
             .Costing(1)
             .Build();
         
-        TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
-        Company2.GetInventory().AddGood(new(lemonade,1,6,0));
+        TestMarket.GetInventory().AddInventoryEntry(new(lemon,20,1,0));
+        Company1.GetInventory().AddInventoryEntry(new(lemonade,1,5,0));
+        Company2.GetInventory().AddInventoryEntry(new(lemonade,1,6,0));
         var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
         var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
@@ -124,9 +124,9 @@ public class NPCActionsTests
             .Costing(1)
             .Build();
         
-        TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
-        Company2.GetInventory().AddGood(new(lemonade,1,6,0));
+        TestMarket.GetInventory().AddInventoryEntry(new(lemon,20,1,0));
+        Company1.GetInventory().AddInventoryEntry(new(lemonade,1,5,0));
+        Company2.GetInventory().AddInventoryEntry(new(lemonade,1,6,0));
         var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
         var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
@@ -162,9 +162,9 @@ public class NPCActionsTests
             .Costing(1)
             .Build();
         
-        TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
-        Company2.GetInventory().AddGood(new(lemon,1,1,0));
+        TestMarket.GetInventory().AddInventoryEntry(new(lemon,20,1,0));
+        Company1.GetInventory().AddInventoryEntry(new(lemonade,1,5,0));
+        Company2.GetInventory().AddInventoryEntry(new(lemon,1,1,0));
         var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
         var lemonSaleB = new Order(null, Company2, lemon, 1, 1);
         var lemonSaleA = new Order(null, TestMarket,lemon,20,2);
@@ -201,10 +201,10 @@ public class NPCActionsTests
             .Costing(1)
             .Build();
         
-        TestMarket.GetInventory().AddGood(new(lemon,20,1,0));
-        Company1.GetInventory().AddGood(new(lemonade,1,5,0));
-        Company2.GetInventory().AddGood(new(lemon,1,1,0));
-        Company2.GetInventory().AddGood(new(lemon,1,1,0));
+        TestMarket.GetInventory().AddInventoryEntry(new(lemon,20,1,0));
+        Company1.GetInventory().AddInventoryEntry(new(lemonade,1,5,0));
+        Company2.GetInventory().AddInventoryEntry(new(lemon,1,1,0));
+        Company2.GetInventory().AddInventoryEntry(new(lemon,1,1,0));
 
         var lemonadeSaleA = new Order(null, Company1, lemonade, 1, 6);
         var lemonadeSaleB = new Order(null, Company2, lemonade, 1, 7);

@@ -15,6 +15,9 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI PeriodText;
     [SerializeField] private int numberOfPopulations; 
     [SerializeField] private int numberOfNPCFirms;
+    [SerializeField] private DeliveryVan _currentVan;
+    [SerializeField] private Suitcase ElementDelivery;
+
     private const string InitialMarketName = "Episode 1 Market";
     public static CraftingStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
@@ -262,7 +265,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
     private void ProcessPlayerActions()
     {
         /// other player actions here
-        SellGoods();
+        //SellGoods();
     }
 
     private void SellGoods()
@@ -287,6 +290,9 @@ private SubscriptionToken otherAgentBankruptSubscription;
             case 'C':
                 DisplayInventory();
                 break;
+            case 'S':
+                BuyGoods(TheEconomyInstance.TradingPeriod);
+                break;
             case 'M':
                 MakeGood();
                 break;
@@ -297,10 +303,11 @@ private SubscriptionToken otherAgentBankruptSubscription;
         }
         LogMessage("\nPress <esc> to continue.");
     }
+
     private void HandleMainMenu()
     {
         if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
-        if (Input.GetKeyDown(KeyCode.N)) ChooseFromMainMenu('N');
+        if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
         if (Input.GetKeyDown(KeyCode.M)) ChooseFromMainMenu('M');
     }
 
@@ -316,6 +323,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
         
         LogMessage("What would you like to do?");
         LogMessage("(C)heck your supplies");
+        LogMessage("(S)ee what Pete and Dmitri have for sale");
         LogMessage("(M)ake something");
         LogMessage("\n");
 
@@ -324,6 +332,16 @@ private SubscriptionToken otherAgentBankruptSubscription;
 #endregion
 
 #region Game Choices
+    private void BuyGoods(int tradingPeriod)
+    {
+        ElementDelivery.gameObject.SetActive(true);
+        var availableGoods = _currentVan.GetCurrentDelivery(tradingPeriod);
+       
+       ElementDelivery.Display(availableGoods);
+    }
+
+   
+
     private void DisplayInventory()
     {
         CurrentUIState = UIStateEnum.Reading;
@@ -367,6 +385,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
         else
             LogMessage("You have not discovered any recipes");
     }
+
     private void MakeGood()
     {
         CurrentUIState = UIStateEnum.Reading;

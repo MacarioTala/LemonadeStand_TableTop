@@ -10,17 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b833e4e5645045f7acafd0c9b10b948, type: 3}
-  m_Name: DelayedLemon
+  m_Name: Metal
   m_EditorClassIdentifier: GameAssembly::Good
-  GoodName: Delayed Lemon
-  GoodSprite: {fileID: 0}
-  ExpiresAfterPeriods: 5
+  GoodName: Metal
+  GoodSprite: {fileID: -262108834630032882, guid: 2d434a068706a43d3ad4c230039dc4ed, type: 3}
+  ExpiresAfterPeriods: 0
   IsPerishable: 1
-  DeliveryDelay: 2
+  DeliveryDelay: 0
   PriceBand:
-    minCentsForInspector: 0
-    maxCentsForInspector: 100
-  _rarity: 2
+    Min: 0
+    Max: 0
+  _rarity: 1
   IsProducedGood: 0
-  price_increase_threshold: 0
-  price_decrease_threshold: 0

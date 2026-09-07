@@ -10,17 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b833e4e5645045f7acafd0c9b10b948, type: 3}
-  m_Name: Sugar
+  m_Name: Fire
   m_EditorClassIdentifier: GameAssembly::Good
-  GoodName: Sugar
-  GoodSprite: {fileID: 0}
-  ExpiresAfterPeriods: 3
+  GoodName: Fire
+  GoodSprite: {fileID: 8334651344603559088, guid: 0c68c7f823fb447d4a2c8f727f4cfae3, type: 3}
+  ExpiresAfterPeriods: 0
   IsPerishable: 1
   DeliveryDelay: 0
   PriceBand:
-    minCentsForInspector: 100
-    maxCentsForInspector: 300
-  _rarity: 0
+    Min: 0
+    Max: 0
+  _rarity: 1
   IsProducedGood: 0
-  price_increase_threshold: 0
-  price_decrease_threshold: 0

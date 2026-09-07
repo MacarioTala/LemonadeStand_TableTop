@@ -13,7 +13,7 @@ public class StoryOrchestrator : MonoBehaviour
     
     private void CheckForStoryBeatsInPeriod()
     {
-        foreach(var beat in potentialStoryBeats)
+         foreach(var beat in potentialStoryBeats)
         {
             if(playedBeats.Contains(beat.Id)) continue;
             if(!beat.ShouldPlay(gameState)) continue;

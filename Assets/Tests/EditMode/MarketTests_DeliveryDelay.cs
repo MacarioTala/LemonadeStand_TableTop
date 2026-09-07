@@ -16,7 +16,7 @@ public void UnleashMarketForcesShouldResolveDeliveriesForAllParticipants()
                         .Build();
 
     var entry = new InventoryEntry(delayedGood, 10, 3, 0);
-    Company1.GetInventory().AddGood(entry);
+    Company1.GetInventory().AddInventoryEntry(entry);
 
     var expected = 1;
 

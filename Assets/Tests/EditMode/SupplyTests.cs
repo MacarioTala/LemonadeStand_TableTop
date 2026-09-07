@@ -45,7 +45,7 @@ public class SupplyTests
     {
         //Arrange
         var Company1SellsLemonadeToAnyone = new Order(null,Company1, Lemonade,1000,20);
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 1000,10,0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 1000,10,0));
         const int period = 2;
         var expected = (Lemonade, 1000, 20m);
 
@@ -77,7 +77,7 @@ public class SupplyTests
     {
         //Arrange
         var Company1SellsLemonadeToAnyone = new Order(null,Company1, Lemonade,1000,20);
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemonade, 1000,10,0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, 1000,10,0));
         const int period = 2;
         var expected = (Lemonade, 1000, 20m);
         //Act   

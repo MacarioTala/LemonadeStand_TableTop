@@ -54,6 +54,28 @@ public static class MathHelper
         return valueToReturn;
     }
 
+    public static int GetNumAppearingFromRarity(RarityEnum rolledRarity)
+    {
+        return rolledRarity switch
+        {
+          RarityEnum.Common => RollD(1,10),  
+          RarityEnum.Uncommon => RollD(1,5),
+          RarityEnum.Rare => RollD(1,2),
+          RarityEnum.VeryRare => 1,
+          _ =>0
+        };
+    }
+    public static RarityEnum GetRarityFromPercentage(int roll)
+    {
+        return roll switch
+        {
+            <= 10 =>  RarityEnum.VeryRare,
+            <= 30 => RarityEnum.Rare,
+            <= 50 => RarityEnum.Uncommon,
+            _ => RarityEnum.Common
+        };
+    }
+
     public static decimal Median<T>(this IEnumerable<T> source, Func<T, decimal> selector)
     {
         var sorted = source
@@ -74,6 +96,17 @@ public static class MathHelper
         {
             return sorted[count / 2];
         }
-        
+    }
+
+    public static int RollD(int numDice,int numSides)
+    {
+        var rng = new Random();
+        int roll=0;
+        for(var i=0;i<numDice;i++)
+        {
+            var currentRoll = rng.Next(1,numSides+1);
+            roll+=currentRoll;
+        }
+        return roll;
     }
 }

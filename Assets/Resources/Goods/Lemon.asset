@@ -13,14 +13,12 @@ MonoBehaviour:
   m_Name: Lemon
   m_EditorClassIdentifier: GameAssembly::Good
   GoodName: Lemon
-  GoodSprite: {fileID: 0}
+  GoodSprite: {fileID: -6937016870503053974, guid: 949e0955104024206b3289deb57f0ac7, type: 3}
   ExpiresAfterPeriods: 2
   IsPerishable: 1
   DeliveryDelay: 0
   PriceBand:
-    minCentsForInspector: 100
-    maxCentsForInspector: 300
+    Min: 0
+    Max: 0
   _rarity: 0
   IsProducedGood: 0
-  price_increase_threshold: 0
-  price_decrease_threshold: 0

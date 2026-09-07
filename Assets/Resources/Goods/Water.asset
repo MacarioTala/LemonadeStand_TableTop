@@ -13,14 +13,12 @@ MonoBehaviour:
   m_Name: Water
   m_EditorClassIdentifier: GameAssembly::Good
   GoodName: Water
-  GoodSprite: {fileID: 0}
+  GoodSprite: {fileID: 8509550459451208454, guid: ac0ff414f36114853974ec23a062f58b, type: 3}
   ExpiresAfterPeriods: 9999
   IsPerishable: 1
   DeliveryDelay: 0
   PriceBand:
-    minCentsForInspector: 100
-    maxCentsForInspector: 300
+    Min: 0
+    Max: 0
   _rarity: 0
   IsProducedGood: 0
-  price_increase_threshold: 0
-  price_decrease_threshold: 0

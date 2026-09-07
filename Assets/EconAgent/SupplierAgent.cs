@@ -30,7 +30,7 @@ public class SupplierAgent : EconAgent, iSupplier
         _maxGoodsProducedPerTurn[RarityEnum.Common] = common;
         _maxGoodsProducedPerTurn[RarityEnum.Uncommon] = uncommon;
         _maxGoodsProducedPerTurn[RarityEnum.Rare] = rare;
-        _maxGoodsProducedPerTurn[RarityEnum.Very_Rare] = veryRare;
+        _maxGoodsProducedPerTurn[RarityEnum.VeryRare] = veryRare;
         _maxGoodsProducedPerTurn[RarityEnum.Unique] = 1;
     }
 
@@ -47,7 +47,7 @@ public class SupplierAgent : EconAgent, iSupplier
                 if (!hasProducedUnique)
                     {
                         hasProducedUnique = true;
-                        GetInventory().AddGood(entry);    
+                        GetInventory().AddInventoryEntry(entry);    
                     }
                 }
             else
@@ -56,7 +56,7 @@ public class SupplierAgent : EconAgent, iSupplier
                     existingGood.quantity += _maxGoodsProducedPerTurn[existingGood.good.GetRarity()];
                 else
                 {
-                    GetInventory().AddGood(entry);
+                    GetInventory().AddInventoryEntry(entry);
                 }
             }
         }

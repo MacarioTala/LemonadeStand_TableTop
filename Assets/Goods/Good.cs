@@ -117,6 +117,7 @@ public class Good : ScriptableObject
     }
 
     public PriceBand GetPriceBand() => PriceBand;
+    public void SetPriceBand(int minPrice,int maxPrice) => (PriceBand.Min,PriceBand.Max)=(minPrice,maxPrice);
     public int GetPrice() => Price;
 
     internal void SetPrice(int new_price) => Price = new_price;
@@ -161,7 +162,7 @@ public enum RarityEnum
     Common,
     Uncommon,
     Rare,
-    Very_Rare,
+    VeryRare,
     Unique
 }
 

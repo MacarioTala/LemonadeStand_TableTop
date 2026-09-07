@@ -9,7 +9,7 @@ public partial class BasicTradeProcessorTests
     public void IfOnlyTwoOrdersExistBuyOrderIsPrimary_MatchedOrders()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         var company2BuysRLFromCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
@@ -38,7 +38,7 @@ public partial class BasicTradeProcessorTests
     public void IfOnlySellOrderExistsItIsPrimary()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         var company1BuysRLFromCompany2ByCompany1 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
@@ -59,7 +59,7 @@ public partial class BasicTradeProcessorTests
     public void BuyOrderWithGreatestQuantityIsPrimary()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
@@ -100,10 +100,10 @@ public partial class BasicTradeProcessorTests
     public void SellOrderWithGreatestQuantityIsPrimaryIfNoBuyOrdersExist()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         var Company3 = EconAgent.Factory.Create("Company 3", AgentLevelEnum.Beginner);
         TestMarket.RegisterMarketParticipant(Company3);
-        Company3.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 15, 10, Period));
+        Company3.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 15, 10, Period));
 
         var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 8, 10);
         var company3SellsRLToCompany1ByCompany3 = new Order(Company1, Company3, RadioactiveLemonade, 15, 10);
@@ -150,7 +150,7 @@ public partial class BasicTradeProcessorTests
     public void SellOrdersArePrimaryEvenWithNoBuyerIfTheyreAlone()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
         var company1SellsRLToAnyone = new Order(null, Company1, RadioactiveLemonade, 10, 10);
         var Company1Context = new ActionContext
         {
@@ -169,7 +169,7 @@ public partial class BasicTradeProcessorTests
     public void FullyFilledOrdersCannotBePrimary()
     {
         // Arrange
-        Company2.GetInventory().AddGood(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(RadioactiveLemonade, 10, 10, Period));
 
         var company1BuysRLFromAnyByCompany1 = new Order(Company1, null, RadioactiveLemonade, 10, 10);
         var company2SellsRLToCompany1ByCompany2 = new Order(Company1, Company2, RadioactiveLemonade, 10, 10);

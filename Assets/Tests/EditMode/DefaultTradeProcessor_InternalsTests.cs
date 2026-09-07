@@ -31,7 +31,7 @@ public class DefaultTradeProcessorInternalsTests
     public void IfSellOrderPriceSmallerThanBuyOrderPriceTradesCross()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
         Company2.SetCash(1000);
 
         var sellOrder = new Order(null, Company1, Lemon, 10, 9);
@@ -50,7 +50,7 @@ public class DefaultTradeProcessorInternalsTests
     public void IfSellOrderPriceEqualToBuyOrderPriceTradesCross()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
         Company2.SetCash(1000);
 
         var sellOrder = new Order(null, Company1, Lemon, 10, 10);
@@ -69,7 +69,7 @@ public class DefaultTradeProcessorInternalsTests
     public void IfSellOrderPriceLargerThanBuyOrderPriceTradesDontCross()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
         Company2.SetCash(1000);
 
         var sellOrder = new Order(null, Company1, Lemon, 10, 19);
@@ -89,7 +89,7 @@ public class DefaultTradeProcessorInternalsTests
 public void IfSellOrderPriceSmallerThanBuyOrderPriceTradesCrossRegardlessOfOrderDirection()
 {
     // Arrange
-    Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+    Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
     Company2.SetCash(1000);
 
     var sellOrder = new Order(null, Company1, Lemon, 10, 9);
@@ -111,7 +111,7 @@ public void IfSellOrderPriceSmallerThanBuyOrderPriceTradesCrossRegardlessOfOrder
 public void IfSellOrderPriceLargerThanBuyOrderPriceTradesDontCrossRegardlessOfOrderDirection()
 {
     // Arrange
-    Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+    Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
     Company2.SetCash(1000);
 
     var sellOrder = new Order(null, Company1, Lemon, 10, 19);
@@ -152,8 +152,8 @@ public void IfBothOrdersBuyNoValidCounterparties()
 public void IfBothOrdersSellNoValidCounterparties()
 {
     // Arrange
-    Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
-    Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+    Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
+    Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
 
     var sellOrder = new Order(null, Company2, Lemon, 10, 10);
     var otherSellOrder = new Order(null,Company1 , Lemon, 10, 19);
@@ -171,8 +171,8 @@ public void IfBothOrdersSellNoValidCounterparties()
 public void IfAnyOrderFilledNoValidCounterparties()
 {
     // Arrange
-    Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
-    Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+    Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
+    Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
 
         var sellOrder = new Order(null, Company2, Lemon, 10, 10);
         var otherSellOrder = new Order(null,Company1 , Lemon, 10, 19)
@@ -193,8 +193,8 @@ public void IfAnyOrderFilledNoValidCounterparties()
 public void IfBothOrdersFullyFilledNoValidCounterparties()
 {
     // Arrange
-    Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
-    Company2.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+    Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
+    Company2.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
 
         var sellOrder = new Order(null, Company2, Lemon, 10, 10)
         {
@@ -218,7 +218,7 @@ public void IfBothOrdersFullyFilledNoValidCounterparties()
 public void IfBothOrdersBySameCompanyNoValidCounterparties()
 {
     // Arrange
-    Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+    Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
     Company1.SetCash(1000);
 
     var sellOrder = new Order(null, Company1, Lemon, 10, 19);
@@ -237,7 +237,7 @@ public void IfBothOrdersBySameCompanyNoValidCounterparties()
     public void IfGoodsAreDifferentNoValidCounterparties()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(Lemon, 100, 1, 0));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemon, 100, 1, 0));
         Company2.SetCash(1000);
 
         var sellOrder = new Order(null, Company1, Lemon, 10, 9);

@@ -15,7 +15,7 @@ public class DummyCompany : iEconAgent
                                              Good.CreateInstance("Sugar", new PriceBand(1, 3), RarityEnum.Common),
                                              Good.CreateInstance("Lemonade", new PriceBand(2, 4), RarityEnum.Uncommon)})
         {
-            Inventory.AddGood(new InventoryEntry(good, 1000000, 1, 0));
+            Inventory.AddInventoryEntry(new InventoryEntry(good, 1000000, 1, 0));
         }
     }
 

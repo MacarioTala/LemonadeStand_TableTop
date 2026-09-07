@@ -129,7 +129,7 @@ public class RefactorOutFulfillDemand
 
         const int lemonadeQuantity = 100;
         const int lemonadePrice = 1;
-        TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemonade, lemonadeQuantity,lemonadePrice,Period));
+        TestCompany1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, lemonadeQuantity,lemonadePrice,Period));
         
         var lemonadeSale = new Order(null, TestCompany1, Lemonade, 100, 15);
         TestCompany1.QueueOrder(CreateActionContext(lemonadeSale,TestMarket,Period));
@@ -161,7 +161,7 @@ public class RefactorOutFulfillDemand
 
         const int lemonadeQuantity = 100;
         const int lemonadePrice = 1;
-        TestCompany1.GetInventory().AddGood(new InventoryEntry(Lemonade, lemonadeQuantity,lemonadePrice,Period));
+        TestCompany1.GetInventory().AddInventoryEntry(new InventoryEntry(Lemonade, lemonadeQuantity,lemonadePrice,Period));
         
         var lemonadeSale = new Order(null, TestCompany1, Lemonade, 100, 15);
         TestCompany1.QueueOrder(CreateActionContext(lemonadeSale,TestMarket,Period));

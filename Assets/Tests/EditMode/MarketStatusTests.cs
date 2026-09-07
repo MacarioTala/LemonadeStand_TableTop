@@ -47,10 +47,10 @@ public class MarketStatusTests
     public void GetOrdersExecutedInPeriodReturnsAllExecutedOrders()
     {
         // Arrange
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 2000,3,Period));
         Company1.SetCash(5000);
 
-        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(water, 2000,3,Period));
         Company2.SetCash(5000);
 
         var company1SellLemonOrder = new Order(null, Company1, lemon, 500, 3);
@@ -84,10 +84,10 @@ public class MarketStatusTests
         var strategy = ScriptableObject.CreateInstance<LinearDemandStrategy>();
         var marketToTest = Market.Factory.CreateStarterMarket("Market To Test",strategy);
         
-        Company1.GetInventory().AddGood(new InventoryEntry(lemon, 2000,3,Period));
+        Company1.GetInventory().AddInventoryEntry(new InventoryEntry(lemon, 2000,3,Period));
         Company1.SetCash(5000);
 
-        Company2.GetInventory().AddGood(new InventoryEntry(water, 2000,3,Period));
+        Company2.GetInventory().AddInventoryEntry(new InventoryEntry(water, 2000,3,Period));
         Company2.SetCash(5000);
 
         //Period 0 orders
