@@ -34,6 +34,7 @@ RectTransform:
   - {fileID: 80512114259979703}
   - {fileID: 2397105804102501249}
   - {fileID: 7534901314563068348}
+  - {fileID: 6859893659060461693}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
@@ -199,6 +200,41 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &7573226341088152444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6859893659060461693}
+  m_Layer: 0
+  m_Name: HoverLayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6859893659060461693
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7573226341088152444}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3181843151930817218}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &554349322263438483
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -215,6 +251,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PriceTagImage
       objectReference: {fileID: 0}
+    - target: {fileID: 2732011848533350025, guid: f3b4a6f5e386b4a30b323b38c83a2b64, type: 3}
+      propertyPath: _hoverLayer
+      value: 
+      objectReference: {fileID: 6859893659060461693}
     - target: {fileID: 5124285828035439272, guid: f3b4a6f5e386b4a30b323b38c83a2b64, type: 3}
       propertyPath: m_Name
       value: Element
@@ -329,6 +369,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1162442978445507191, guid: f431e8f8d66cf41d6a38575cf5652642, type: 3}
+    - target: {fileID: 2732011848533350025, guid: f3b4a6f5e386b4a30b323b38c83a2b64, type: 3}
+      propertyPath: _hoverLayer
+      value: 
+      objectReference: {fileID: 6859893659060461693}
     - target: {fileID: 6357838938098592603, guid: f3b4a6f5e386b4a30b323b38c83a2b64, type: 3}
       propertyPath: m_text
       value: 3 for 60
@@ -439,6 +483,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -2983090718515566234, guid: 636e6d426b7414b77853a9259c830ec2, type: 3}
+    - target: {fileID: 2732011848533350025, guid: f3b4a6f5e386b4a30b323b38c83a2b64, type: 3}
+      propertyPath: _hoverLayer
+      value: 
+      objectReference: {fileID: 6859893659060461693}
     - target: {fileID: 5124285828035439272, guid: f3b4a6f5e386b4a30b323b38c83a2b64, type: 3}
       propertyPath: m_Name
       value: Element

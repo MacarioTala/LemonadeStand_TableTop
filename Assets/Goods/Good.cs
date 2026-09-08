@@ -8,6 +8,7 @@ public class Good : ScriptableObject
 {
     public string GoodName;
     public Sprite GoodSprite;
+    public string Tooltip;
     private int _price;
     private int _minAskPrice;
     public long ExpiresAfterPeriods;

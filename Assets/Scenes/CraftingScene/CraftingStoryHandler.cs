@@ -46,12 +46,36 @@ private SubscriptionToken otherAgentBankruptSubscription;
 #endregion
     private void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null) 
+        {
+            Instance = this;
+            ElementDelivery.BuyRequested += BuyRequested;
+        }
         else 
         {
             Destroy(gameObject);
             return;
         }
+    }
+
+    private void BuyRequested(InventoryEntry entry)
+    {
+        try
+            {
+                PlayerCompany.BuyGood(entry.good,entry.quantity,entry.PriceOfGood,TheEconomyInstance.TradingPeriod);
+                var totalPrice = entry.PriceOfGood*entry.quantity;
+                int.TryParse(currentCash.text,out var intCash);
+                intCash -= totalPrice;
+                currentCash.text=intCash.ToString();
+                
+                ElementDelivery.BuySucceeded(entry);    
+            }
+        catch(InsufficientFundsException)
+        {
+            Debug.Log("Insufficient funds");
+            ElementDelivery.BuyFailed(entry);
+        }
+            
     }
 
     private void Start()

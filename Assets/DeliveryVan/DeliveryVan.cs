@@ -79,9 +79,11 @@ public class DeliveryVan:MonoBehaviour
             Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
             int.TryParse(columns[3].Trim(),out var minPrice);
             int.TryParse(columns[4].Trim(),out var maxPrice);
+            var tooltip = columns[5].Trim();
 
             currentGood.SetRarity(rarity);
             currentGood.SetPriceBand(minPrice,maxPrice);
+            currentGood.Tooltip = tooltip;
         }
     }
     #endregion

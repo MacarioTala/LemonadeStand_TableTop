@@ -382,8 +382,8 @@ private void SetBus()
         var moneyNeeded = price * quantity;
         if(HasMoney(moneyNeeded))
         {
-            var inventory_entry = new InventoryEntry(good, quantity, price, period);
-            inventory.AddInventoryEntry(inventory_entry);
+            var inventoryEntry = new InventoryEntry(good, quantity, price, period);
+            inventory.AddInventoryEntry(inventoryEntry);
             cash -= moneyNeeded;
         }
         else
@@ -391,7 +391,6 @@ private void SetBus()
             throw new InsufficientFundsException("Insufficient funds to buy good");
         }
     }
-
     internal bool HasMoney(int moneyNeeded)
     {
        return cash >= moneyNeeded;
