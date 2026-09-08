@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DeliveryVan:MonoBehaviour
 {
@@ -70,17 +71,19 @@ public class DeliveryVan:MonoBehaviour
 
         foreach(var line in lines.Skip(1))
         {
-            var columns = line.Split(",");
+            var columns = line.Split(new[] {','},6);
             var goodName = columns[0].Trim();
 
             var currentGood = GoodsMasterList.FirstOrDefault(x=>x.GoodName == goodName);
 
             //Set Good characteristics here
-            Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
+            var sprite = Resources.Load<Sprite>($"Art/{columns[1]}");
+             Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
             int.TryParse(columns[3].Trim(),out var minPrice);
             int.TryParse(columns[4].Trim(),out var maxPrice);
             var tooltip = columns[5].Trim();
 
+            currentGood.GoodSprite=sprite;
             currentGood.SetRarity(rarity);
             currentGood.SetPriceBand(minPrice,maxPrice);
             currentGood.Tooltip = tooltip;

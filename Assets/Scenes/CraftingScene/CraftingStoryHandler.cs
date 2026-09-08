@@ -17,6 +17,7 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private int numberOfNPCFirms;
     [SerializeField] private DeliveryVan _currentVan;
     [SerializeField] private Suitcase ElementDelivery;
+    [SerializeField] private Shelf _shelf;
 
     private const string InitialMarketName = "Episode 1 Market";
     public static CraftingStoryHandler Instance { get; private set; }
@@ -67,7 +68,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
                 int.TryParse(currentCash.text,out var intCash);
                 intCash -= totalPrice;
                 currentCash.text=intCash.ToString();
-                
+
+                _shelf.PlaceOnShelf(entry);
                 ElementDelivery.BuySucceeded(entry);    
             }
         catch(InsufficientFundsException)
@@ -75,7 +77,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
             Debug.Log("Insufficient funds");
             ElementDelivery.BuyFailed(entry);
         }
-            
     }
 
     private void Start()

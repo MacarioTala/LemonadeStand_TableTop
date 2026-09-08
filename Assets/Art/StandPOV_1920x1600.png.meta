@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e50529cc9dd6740ab939cab212849e6d
+guid: 6bf61470fecfc4cb398a843b66d9e6e3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -730307326584287124
-    second: OilFlask1_0
+      213: -7296058754835411927
+    second: StandPOV_1920x1600_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: OilFlask1_0
+      name: StandPOV_1920x1600_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1536
-        height: 1024
+        width: 1374
+        height: 1145
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c6014161b5d6dd5f0800000000000000
-      internalID: -730307326584287124
+      spriteID: 92c08a9f7313fba90800000000000000
+      internalID: -7296058754835411927
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      OilFlask1_0: -730307326584287124
+      StandPOV_1920x1600_0: -7296058754835411927
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

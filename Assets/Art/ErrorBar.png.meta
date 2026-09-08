@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4d9393b8dd4c74d75a33ace6e7140690
+guid: 9362c23397b954d0b9b419f29bee5bfc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6748384255609890082
-    second: Oil_0
+      213: -6702746605495650798
+    second: ErrorBar_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Oil_0
+      name: ErrorBar_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1536
-        height: 1024
+        x: 43
+        y: 101
+        width: 2085
+        height: 424
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eda9884264ce852a0800000000000000
-      internalID: -6748384255609890082
+      spriteID: 216f9f7997f0bf2a0800000000000000
+      internalID: -6702746605495650798
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Oil_0: -6748384255609890082
+      ErrorBar_0: -6702746605495650798
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

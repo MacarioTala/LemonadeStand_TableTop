@@ -1,15 +1,15 @@
 Element,Sprite,Frequency,MinPrice,MaxPrice,ToolTip
 Lemon,lemon,Common,1,3,"Used by sailors to prevent scurvy, this acidic fruit has many useful properties."
 Water,water,Common,1,3,"Formless but unyielding, water is the element of change."
-Plant,plant,Common,1,3,Some say this is the only truly dominant lifeform
+Plant,plant,Common,1,3,"Some say this is the only truly dominant lifeform"
 Stone,stone,Common,1,3,"Unyielding stone will shelter, bolster, and destroy"
 Wood,wood,Common,1,3,"Until we befriended wood, we had shelters, but not homes"
-Salt,salt,Common,1,3,Salt will preserve even the worst of ideas.
+Salt,salt,Common,1,3,"Salt will preserve even the worst of ideas."
 Grain,grain,Common,1,3,"Armies march on it, and towards it."
-Metal,metal,Uncommon,4,7,A sword is a piece of metal between two peasants.
-Oil,oil,Uncommon,4,7,It will season your salad. Or start your war.
-Fire,fire,Uncommon,4,7,Fire is the all consuming solution to any problem
-Sulfur,sulfur,Uncommon,4,7,Ancient brimstone. Violent and miraculous.
-Diamond,diamond,Rare,8,15,Unbreakable. Coveted
+Metal,metal,Uncommon,4,7,"A sword is a piece of metal between two peasants."
+Oil,oil,Uncommon,4,7,"It will season your salad. Or start your war."
+Fire,fire,Uncommon,4,7,"Fire is the all consuming solution to any problem"
+Sulfur,sulfur,Uncommon,4,7,"Ancient brimstone. Violent and miraculous."
+Diamond,diamond,Rare,8,15,"Unbreakable. Coveted"
 Lightning,lightning,Rare,8,15,"Leaving as quickly as it arrives, lightning is motion and impatience"
 Ether,ether,VeryRare,100,100,"In the end, all return to Ether."
