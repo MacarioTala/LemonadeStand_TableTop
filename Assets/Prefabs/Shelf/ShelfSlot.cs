@@ -3,24 +3,23 @@ using UnityEngine.UI;
 
 public class ShelfSlot : MonoBehaviour
 {
-    private Image _slotImage;
-    private InventoryEntry _entry;
+    private ShelfItem _item;
 
     private void Awake()
     {
-        _slotImage = transform.Find("ShelfImage").GetComponent<Image>();
-        _slotImage.gameObject.SetActive(false);
+        _item = transform.Find("ShelfItem").GetComponent<ShelfItem>();
+    }
+    public void Clear()
+    {
+        _item.gameObject.SetActive(false);
+        _item = null;
     }
     public InventoryEntry GetContents()
-        => _entry;
+        => _item.GetItem();
     
     public bool IsEmpty()
-        => _entry is null;
+        => _item.IsEmpty;
 
     public void ReplaceContents(InventoryEntry entry)
-    {
-        _entry = entry;
-        _slotImage.sprite = entry.good.GoodSprite;
-        _slotImage.gameObject.SetActive(true);
-    }
+        =>_item.ReplaceInventoryEntry(entry);
 }

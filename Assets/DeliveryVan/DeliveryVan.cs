@@ -78,7 +78,7 @@ public class DeliveryVan:MonoBehaviour
 
             //Set Good characteristics here
             var sprite = Resources.Load<Sprite>($"Art/{columns[1]}");
-             Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
+            Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
             int.TryParse(columns[3].Trim(),out var minPrice);
             int.TryParse(columns[4].Trim(),out var maxPrice);
             var tooltip = columns[5].Trim();

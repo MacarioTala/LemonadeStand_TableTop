@@ -35,7 +35,12 @@ public class Suitcase : MonoBehaviour
         BuyRequested?.Invoke(entry);
     }
 
-    public void Close() => ElementDelivery.SetActive(false);
+    public void Close()
+    {
+        ElementDelivery.SetActive(false);
+        foreach(var slot in slots)
+            slot.gameObject.SetActive(true);
+    }
     
     public void Display(List<InventoryEntry> entries)
     {

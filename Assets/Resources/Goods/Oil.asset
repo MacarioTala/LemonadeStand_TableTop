@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Oil
   m_EditorClassIdentifier: GameAssembly::Good
   GoodName: Oil
-  GoodSprite: {fileID: -730307326584287124, guid: e50529cc9dd6740ab939cab212849e6d, type: 3}
+  GoodSprite: {fileID: 21300000, guid: 4d9393b8dd4c74d75a33ace6e7140690, type: 3}
+  Tooltip: '"It will season your salad. Or start your war."'
   ExpiresAfterPeriods: 0
   IsPerishable: 1
   DeliveryDelay: 0
   PriceBand:
-    Min: 0
-    Max: 0
+    Min: 4
+    Max: 7
   _rarity: 1
   IsProducedGood: 0

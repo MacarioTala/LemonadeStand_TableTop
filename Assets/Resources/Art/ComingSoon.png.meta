@@ -1,0 +1,1820 @@
+fileFormatVersion: 2
+guid: 895a6cc8fb03444abbefea5e5575c4e4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1106419765245611521
+    second: ComingSoon_0
+  - first:
+      213: 1298982596464489404
+    second: ComingSoon_1
+  - first:
+      213: 305819592225458507
+    second: ComingSoon_2
+  - first:
+      213: 5169566209902314843
+    second: ComingSoon_3
+  - first:
+      213: -9159123028766660497
+    second: ComingSoon_4
+  - first:
+      213: 2483614638081692530
+    second: ComingSoon_5
+  - first:
+      213: 5812727623020293515
+    second: ComingSoon_6
+  - first:
+      213: -2952156709449506168
+    second: ComingSoon_7
+  - first:
+      213: 4542112560143448380
+    second: ComingSoon_8
+  - first:
+      213: -652523127672059910
+    second: ComingSoon_9
+  - first:
+      213: -2756265802722552849
+    second: ComingSoon_10
+  - first:
+      213: 98635198265676211
+    second: ComingSoon_11
+  - first:
+      213: 2845066366223649168
+    second: ComingSoon_12
+  - first:
+      213: 1461223627057337976
+    second: ComingSoon_13
+  - first:
+      213: 831008757293705020
+    second: ComingSoon_14
+  - first:
+      213: -1719513680369659577
+    second: ComingSoon_15
+  - first:
+      213: -5004494654627480965
+    second: ComingSoon_16
+  - first:
+      213: 4379768581963720390
+    second: ComingSoon_17
+  - first:
+      213: -7754100875213656753
+    second: ComingSoon_18
+  - first:
+      213: 2071889328540586140
+    second: ComingSoon_19
+  - first:
+      213: 8895583050499356445
+    second: ComingSoon_20
+  - first:
+      213: 8276538408912074454
+    second: ComingSoon_21
+  - first:
+      213: 8816521279035648853
+    second: ComingSoon_22
+  - first:
+      213: 6556644286197755229
+    second: ComingSoon_23
+  - first:
+      213: 4805829416500342413
+    second: ComingSoon_24
+  - first:
+      213: 7100852077901472074
+    second: ComingSoon_25
+  - first:
+      213: 1396872229304435534
+    second: ComingSoon_26
+  - first:
+      213: -6243184881038591717
+    second: ComingSoon_27
+  - first:
+      213: 8339369264462968816
+    second: ComingSoon_28
+  - first:
+      213: -573008181198918338
+    second: ComingSoon_29
+  - first:
+      213: 4543674252530372608
+    second: ComingSoon_30
+  - first:
+      213: 7492876837052847806
+    second: ComingSoon_31
+  - first:
+      213: 4695181163660978608
+    second: ComingSoon_32
+  - first:
+      213: 1991626445379447963
+    second: ComingSoon_33
+  - first:
+      213: -8151492393025553349
+    second: ComingSoon_34
+  - first:
+      213: 4641579106313328018
+    second: ComingSoon_35
+  - first:
+      213: -8652219024821554356
+    second: ComingSoon_36
+  - first:
+      213: 1008063395152291950
+    second: ComingSoon_37
+  - first:
+      213: -3603528855836472059
+    second: ComingSoon_38
+  - first:
+      213: 4934638003569605891
+    second: ComingSoon_39
+  - first:
+      213: -3082053713115932747
+    second: ComingSoon_40
+  - first:
+      213: -4201643533280398869
+    second: ComingSoon_41
+  - first:
+      213: 4612577993979359051
+    second: ComingSoon_42
+  - first:
+      213: 7947259486553864627
+    second: ComingSoon_43
+  - first:
+      213: -6446858673417800065
+    second: ComingSoon_44
+  - first:
+      213: 4367125061792736673
+    second: ComingSoon_45
+  - first:
+      213: -122141256814166773
+    second: ComingSoon_46
+  - first:
+      213: -317487103412641125
+    second: ComingSoon_47
+  - first:
+      213: -7703466098397914246
+    second: ComingSoon_48
+  - first:
+      213: -3149798254924492396
+    second: ComingSoon_49
+  - first:
+      213: -2491089479986642918
+    second: ComingSoon_50
+  - first:
+      213: 6992223733565542155
+    second: ComingSoon_51
+  - first:
+      213: -5863652000100053227
+    second: ComingSoon_52
+  - first:
+      213: -7070571058266317874
+    second: ComingSoon_53
+  - first:
+      213: -8082249834406022926
+    second: ComingSoon_54
+  - first:
+      213: 5686503504276628529
+    second: ComingSoon_55
+  - first:
+      213: -2545108961569472609
+    second: ComingSoon_56
+  - first:
+      213: -7375110070008032914
+    second: ComingSoon_57
+  - first:
+      213: -4131717284278195615
+    second: ComingSoon_58
+  - first:
+      213: -5179073787787698858
+    second: ComingSoon_59
+  - first:
+      213: 3647522151583990544
+    second: ComingSoon_60
+  - first:
+      213: 3029516968229215764
+    second: ComingSoon_61
+  - first:
+      213: -1788807593180993073
+    second: ComingSoon_62
+  - first:
+      213: 2232637599307504674
+    second: ComingSoon_63
+  - first:
+      213: -184273498108093352
+    second: ComingSoon_64
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ComingSoon_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1527
+        height: 1016
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10e8fe71aeaca5f00800000000000000
+      internalID: 1106419765245611521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_1
+      rect:
+        serializedVersion: 2
+        x: 374
+        y: 983
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb33ea70ac9e60210800000000000000
+      internalID: 1298982596464489404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_2
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 997
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4904ff7c4d7e3400800000000000000
+      internalID: 305819592225458507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_3
+      rect:
+        serializedVersion: 2
+        x: 1330
+        y: 981
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b550710141dfdb740800000000000000
+      internalID: 5169566209902314843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_4
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 943
+        width: 17
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f686348e12244e080800000000000000
+      internalID: -9159123028766660497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_5
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 951
+        width: 16
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 273d1d5ca52977220800000000000000
+      internalID: 2483614638081692530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_6
+      rect:
+        serializedVersion: 2
+        x: 1096
+        y: 967
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8da93ad9f4faa050800000000000000
+      internalID: 5812727623020293515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_7
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 949
+        width: 36
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 882e9fb2d15d707d0800000000000000
+      internalID: -2952156709449506168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_8
+      rect:
+        serializedVersion: 2
+        x: 824
+        y: 943
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c39b03dee43d80f30800000000000000
+      internalID: 4542112560143448380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_9
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 947
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af7416f2ca5c1f6f0800000000000000
+      internalID: -652523127672059910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_10
+      rect:
+        serializedVersion: 2
+        x: 984
+        y: 951
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe35a221bd6cfb9d0800000000000000
+      internalID: -2756265802722552849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_11
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 927
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b1d9f2b03c6e5100800000000000000
+      internalID: 98635198265676211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_12
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 917
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0990c2949c4bb7720800000000000000
+      internalID: 2845066366223649168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_13
+      rect:
+        serializedVersion: 2
+        x: 1168
+        y: 921
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 876192c952f474410800000000000000
+      internalID: 1461223627057337976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_14
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 926
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c37eab7df06588b00800000000000000
+      internalID: 831008757293705020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_15
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 743
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74154270b6f0328e0800000000000000
+      internalID: -1719513680369659577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_16
+      rect:
+        serializedVersion: 2
+        x: 1390
+        y: 627
+        width: 21
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7a769660a67c8ab0800000000000000
+      internalID: -5004494654627480965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_17
+      rect:
+        serializedVersion: 2
+        x: 1412
+        y: 643
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c62d5ef15018cc30800000000000000
+      internalID: 4379768581963720390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_18
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 593
+        width: 39
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4d28544656e36490800000000000000
+      internalID: -7754100875213656753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_19
+      rect:
+        serializedVersion: 2
+        x: 1414
+        y: 597
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c909591fd54d0cc10800000000000000
+      internalID: 2071889328540586140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_20
+      rect:
+        serializedVersion: 2
+        x: 1422
+        y: 586
+        width: 33
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d17fff257a5737b70800000000000000
+      internalID: 8895583050499356445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_21
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 583
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d6b419f4db2cd270800000000000000
+      internalID: 8276538408912074454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_22
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 532
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55ba79f24639a5a70800000000000000
+      internalID: 8816521279035648853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_23
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 549
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5d696d5d31edfa50800000000000000
+      internalID: 6556644286197755229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_24
+      rect:
+        serializedVersion: 2
+        x: 1423
+        y: 541
+        width: 8
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8e20a5546cb1b240800000000000000
+      internalID: 4805829416500342413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_25
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 551
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4169e9c75b4b8260800000000000000
+      internalID: 7100852077901472074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_26
+      rect:
+        serializedVersion: 2
+        x: 1400
+        y: 522
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e438c4044efa26310800000000000000
+      internalID: 1396872229304435534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_27
+      rect:
+        serializedVersion: 2
+        x: 1428
+        y: 319
+        width: 87
+        height: 205
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b19fa92bd60cb59a0800000000000000
+      internalID: -6243184881038591717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_28
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 480
+        width: 15
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f7302389246bb370800000000000000
+      internalID: 8339369264462968816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_29
+      rect:
+        serializedVersion: 2
+        x: 1406
+        y: 503
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3dee3a58144c08f0800000000000000
+      internalID: -573008181198918338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_30
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 420
+        width: 29
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0005925c8af5e0f30800000000000000
+      internalID: 4543674252530372608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_31
+      rect:
+        serializedVersion: 2
+        x: 1413
+        y: 447
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb6994ac8cb0cf760800000000000000
+      internalID: 7492876837052847806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_32
+      rect:
+        serializedVersion: 2
+        x: 1422
+        y: 454
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b92e186462a82140800000000000000
+      internalID: 4695181163660978608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_33
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 379
+        width: 51
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9cad1233bda3ab10800000000000000
+      internalID: 1991626445379447963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_34
+      rect:
+        serializedVersion: 2
+        x: 1418
+        y: 415
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3cb9646bd410ee80800000000000000
+      internalID: -8151492393025553349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_35
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 287
+        width: 25
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2955ea4ea933a6040800000000000000
+      internalID: 4641579106313328018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_36
+      rect:
+        serializedVersion: 2
+        x: 1461
+        y: 310
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4372aa63a42de780800000000000000
+      internalID: -8652219024821554356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_37
+      rect:
+        serializedVersion: 2
+        x: 1474
+        y: 196
+        width: 62
+        height: 115
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e686023215c5dfd00800000000000000
+      internalID: 1008063395152291950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_38
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 241
+        width: 25
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50d4ff11991bdfdc0800000000000000
+      internalID: -3603528855836472059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_39
+      rect:
+        serializedVersion: 2
+        x: 1422
+        y: 241
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30db8e19e1b5b7440800000000000000
+      internalID: 4934638003569605891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_40
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 223
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b71d033a785a35d0800000000000000
+      internalID: -3082053713115932747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_41
+      rect:
+        serializedVersion: 2
+        x: 1458
+        y: 214
+        width: 16
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be1310eb773c0b5c0800000000000000
+      internalID: -4201643533280398869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_42
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 207
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4f6ced3f3b230040800000000000000
+      internalID: 4612577993979359051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_43
+      rect:
+        serializedVersion: 2
+        x: 1482
+        y: 192
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b975e985665a4e60800000000000000
+      internalID: 7947259486553864627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_44
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 193
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7639c581382886a0800000000000000
+      internalID: -6446858673417800065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_45
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 182
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a5acdd0b152b9c30800000000000000
+      internalID: 4367125061792736673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_46
+      rect:
+        serializedVersion: 2
+        x: 1454
+        y: 167
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0dfb2f8c211e4ef0800000000000000
+      internalID: -122141256814166773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_47
+      rect:
+        serializedVersion: 2
+        x: 1474
+        y: 156
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b92625c592f089bf0800000000000000
+      internalID: -317487103412641125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_48
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 128
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7b5ab1f56ac71590800000000000000
+      internalID: -7703466098397914246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_49
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 134
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 491941dec2ba944d0800000000000000
+      internalID: -3149798254924492396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_50
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 108
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a100fa9f05fdd6dd0800000000000000
+      internalID: -2491089479986642918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_51
+      rect:
+        serializedVersion: 2
+        x: 1406
+        y: 119
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0fca35707e590160800000000000000
+      internalID: 6992223733565542155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_52
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 84
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51f0787a29f10aea0800000000000000
+      internalID: -5863652000100053227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_53
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 81
+        width: 17
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecbd0e0851940ed90800000000000000
+      internalID: -7070571058266317874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_54
+      rect:
+        serializedVersion: 2
+        x: 1284
+        y: 0
+        width: 91
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f0f442e89416df80800000000000000
+      internalID: -8082249834406022926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_55
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 65
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1342c6a0fc48aee40800000000000000
+      internalID: 5686503504276628529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_56
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 33
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ffcfe42e4fdacd0800000000000000
+      internalID: -2545108961569472609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_57
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 31
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e61d3c1677856a990800000000000000
+      internalID: -7375110070008032914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_58
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 30
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16aa14e450139a6c0800000000000000
+      internalID: -4131717284278195615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_59
+      rect:
+        serializedVersion: 2
+        x: 1262
+        y: 25
+        width: 21
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65d906574db3028b0800000000000000
+      internalID: -5179073787787698858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_60
+      rect:
+        serializedVersion: 2
+        x: 1294
+        y: 16
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 013488b421a9e9230800000000000000
+      internalID: 3647522151583990544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_61
+      rect:
+        serializedVersion: 2
+        x: 1302
+        y: 14
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41e125ca1a10b0a20800000000000000
+      internalID: 3029516968229215764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_62
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 11
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc9ece4b8f0ec27e0800000000000000
+      internalID: -1788807593180993073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_63
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 23
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22c97ea411cebfe10800000000000000
+      internalID: 2232637599307504674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ComingSoon_64
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 13
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85c9fb3da34517df0800000000000000
+      internalID: -184273498108093352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ComingSoon_0: 1106419765245611521
+      ComingSoon_1: 1298982596464489404
+      ComingSoon_10: -2756265802722552849
+      ComingSoon_11: 98635198265676211
+      ComingSoon_12: 2845066366223649168
+      ComingSoon_13: 1461223627057337976
+      ComingSoon_14: 831008757293705020
+      ComingSoon_15: -1719513680369659577
+      ComingSoon_16: -5004494654627480965
+      ComingSoon_17: 4379768581963720390
+      ComingSoon_18: -7754100875213656753
+      ComingSoon_19: 2071889328540586140
+      ComingSoon_2: 305819592225458507
+      ComingSoon_20: 8895583050499356445
+      ComingSoon_21: 8276538408912074454
+      ComingSoon_22: 8816521279035648853
+      ComingSoon_23: 6556644286197755229
+      ComingSoon_24: 4805829416500342413
+      ComingSoon_25: 7100852077901472074
+      ComingSoon_26: 1396872229304435534
+      ComingSoon_27: -6243184881038591717
+      ComingSoon_28: 8339369264462968816
+      ComingSoon_29: -573008181198918338
+      ComingSoon_3: 5169566209902314843
+      ComingSoon_30: 4543674252530372608
+      ComingSoon_31: 7492876837052847806
+      ComingSoon_32: 4695181163660978608
+      ComingSoon_33: 1991626445379447963
+      ComingSoon_34: -8151492393025553349
+      ComingSoon_35: 4641579106313328018
+      ComingSoon_36: -8652219024821554356
+      ComingSoon_37: 1008063395152291950
+      ComingSoon_38: -3603528855836472059
+      ComingSoon_39: 4934638003569605891
+      ComingSoon_4: -9159123028766660497
+      ComingSoon_40: -3082053713115932747
+      ComingSoon_41: -4201643533280398869
+      ComingSoon_42: 4612577993979359051
+      ComingSoon_43: 7947259486553864627
+      ComingSoon_44: -6446858673417800065
+      ComingSoon_45: 4367125061792736673
+      ComingSoon_46: -122141256814166773
+      ComingSoon_47: -317487103412641125
+      ComingSoon_48: -7703466098397914246
+      ComingSoon_49: -3149798254924492396
+      ComingSoon_5: 2483614638081692530
+      ComingSoon_50: -2491089479986642918
+      ComingSoon_51: 6992223733565542155
+      ComingSoon_52: -5863652000100053227
+      ComingSoon_53: -7070571058266317874
+      ComingSoon_54: -8082249834406022926
+      ComingSoon_55: 5686503504276628529
+      ComingSoon_56: -2545108961569472609
+      ComingSoon_57: -7375110070008032914
+      ComingSoon_58: -4131717284278195615
+      ComingSoon_59: -5179073787787698858
+      ComingSoon_6: 5812727623020293515
+      ComingSoon_60: 3647522151583990544
+      ComingSoon_61: 3029516968229215764
+      ComingSoon_62: -1788807593180993073
+      ComingSoon_63: 2232637599307504674
+      ComingSoon_64: -184273498108093352
+      ComingSoon_7: -2952156709449506168
+      ComingSoon_8: 4542112560143448380
+      ComingSoon_9: -652523127672059910
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

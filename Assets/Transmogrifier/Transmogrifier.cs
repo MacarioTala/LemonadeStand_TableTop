@@ -1,16 +1,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
+[RequireComponent(typeof(Image))]
 public class Transmogrifier:MonoBehaviour
 {
+    private Image _productImage;
+    [SerializeField] private Button _button;
+    [SerializeField]private TransmogrifierSlot _slot1;
+    [SerializeField]private TransmogrifierSlot _slot2;
     readonly Dictionary<string,Combination> combinations = new ();
 
     private void Awake()
     {
+        _productImage = transform.Find("Product").GetComponentInChildren<Image>();
+        _productImage.gameObject.SetActive(false);
+
+
         LoadGoodCombinationsFromResources();
+        _button.onClick.AddListener(Transmogrify);
     }
 
+    public void Transmogrify()
+    {
+        if(!_slot1.IsEmpty&& !_slot2.IsEmpty)
+            Debug.Log("No transmogrify for you!");
+        else
+            Debug.Log("Transmogrify!");
+    }
     public string Make(bool hasRecipe,List<string> ingredients)
     {
         if(ingredients.Count<2) return string.Empty;
