@@ -14,6 +14,7 @@ public class Transmogrifier:MonoBehaviour
     [SerializeField] private Button _button;
     [SerializeField]private TransmogrifierSlot _slot1;
     [SerializeField]private TransmogrifierSlot _slot2;
+
     private GameObject _statusBar;
     private TextMeshProUGUI _resultText;
     private Button _sellIt;
@@ -23,8 +24,7 @@ public class Transmogrifier:MonoBehaviour
     private static readonly Color32 _junkFontColour = new(255, 59, 48, 255);
     private static readonly Color32 _successFontColour = new(57, 255, 136, 255);
     readonly Dictionary<string,Combination> combinations = new ();
-
-    //public event Action<InventoryEntry> OnForSaleRequested;
+    public event Action<InventoryEntry> OnSaleRequested;
 
     private void Awake()
     {
@@ -43,25 +43,22 @@ public class Transmogrifier:MonoBehaviour
         _sellIt=_decision.transform.Find("SellIt").GetComponent<Button>();
         _storeIt=_decision.transform.Find("StoreIt").GetComponent<Button>();
         _chuckIt=_decision.transform.Find("ChuckIt").GetComponent<Button>();
-        _sellIt.onClick.AddListener(()=>ProductChoice("SellIt"));
-        _storeIt.onClick.AddListener(()=>ProductChoice("StoreIt"));
-        _chuckIt.onClick.AddListener(()=>ProductChoice("ChuckIt"));
 
         LoadGoodCombinationsFromResources();
         _button.onClick.AddListener(Transmogrify);
     }
 
-    private void ProductChoice(string choice)
+    private void ProductChoice(ProductChoiceEnum choice,InventoryEntry entry)
     {
         switch (choice)
         {
-            case "SellIt":
-               // OnForSaleRequested?.Invoke();
+            case ProductChoiceEnum.SellIt:
+                OnSaleRequested?.Invoke(entry);
                 break;
-            case "StoreIt":
+            case ProductChoiceEnum.StoreIt:
                 _resultText.text += " Stored!";
                 break;
-            case "ChuckIt":
+            case ProductChoiceEnum.ChuckIt:
                 _resultText.text += " Chucked!";
                 break;
             default:
@@ -135,6 +132,47 @@ public class Transmogrifier:MonoBehaviour
         return returnValue;
     }
 
+    #region UI Helpers
+     private IEnumerator RenderChoice(InventoryEntry result)
+    {
+        _productImage.gameObject.SetActive(true);
+        _resultText.text = $"You made: {result.quantity} {result.good.GoodName}";
+
+        yield return _waitForSeconds2;
+
+        var rect = _resultText.rectTransform;
+        _resultText.text = $"{result.good.GoodName}";
+        _resultText.alignment = TextAlignmentOptions.MidlineLeft;
+        rect.SetSizeWithCurrentAnchors(
+            RectTransform.Axis.Horizontal,
+            rect.rect.width/2f
+        );
+
+        //Listeners
+        _sellIt.onClick.RemoveAllListeners();
+        _storeIt.onClick.RemoveAllListeners();
+        _chuckIt.onClick.RemoveAllListeners();
+        _sellIt.onClick.AddListener(()=>ProductChoice(ProductChoiceEnum.SellIt,result));
+        _storeIt.onClick.AddListener(()=>ProductChoice(ProductChoiceEnum.StoreIt,result));
+        _chuckIt.onClick.AddListener(()=>ProductChoice(ProductChoiceEnum.ChuckIt,result));
+        
+        _decision.SetActive(true);
+    }
+
+    private void ResetTransmogrifierStatusBar()
+    {
+        var rect=_resultText.rectTransform;
+        _resultText.alignment = TextAlignmentOptions.Midline;
+        rect.SetSizeWithCurrentAnchors(
+            RectTransform.Axis.Horizontal,
+            rect.rect.width*2f
+        );
+        _decision.SetActive(false);
+        _productImage.gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region TransMogrification Helpers
     private int? GetProducedPrice(Combination resultingGood, InventoryEntry[] ingredients,int qty)
     {
         var good1Name= resultingGood.Ingredient1;
@@ -162,36 +200,6 @@ public class Transmogrifier:MonoBehaviour
             return resultingGood.ProducesQtyJunk;
         
         return MathHelper.RollD(1,resultingGood.MaxQtyWithoutRecipe);
-    }
-    #region UI Helpers
-     private IEnumerator RenderChoice(InventoryEntry result)
-    {
-        _productImage.gameObject.SetActive(true);
-        _resultText.text = $"You made: {result.quantity} {result.good.GoodName}";
-
-        yield return _waitForSeconds2;
-
-        var rect = _resultText.rectTransform;
-        _resultText.text = $"{result.good.GoodName}";
-        _resultText.alignment = TextAlignmentOptions.MidlineLeft;
-        rect.SetSizeWithCurrentAnchors(
-            RectTransform.Axis.Horizontal,
-            rect.rect.width/2f
-        );
-        
-        _decision.SetActive(true);
-    }
-
-    private void ResetTransmogrifierStatusBar()
-    {
-        var rect=_resultText.rectTransform;
-        _resultText.alignment = TextAlignmentOptions.Midline;
-        rect.SetSizeWithCurrentAnchors(
-            RectTransform.Axis.Horizontal,
-            rect.rect.width*2f
-        );
-        _decision.SetActive(false);
-        _productImage.gameObject.SetActive(false);
     }
     #endregion
 #region ETL
@@ -258,4 +266,10 @@ internal class Combination
     public int MaxQtyWithoutRecipe;
 
 
+}
+public enum ProductChoiceEnum
+{
+    SellIt,
+    StoreIt,
+    ChuckIt
 }

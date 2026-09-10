@@ -19,7 +19,7 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private Suitcase ElementDelivery;
     [SerializeField] private Shelf _shelf;
     [SerializeField] private TextMeshProUGUI _forSaleText;
-
+    [SerializeField] private Transmogrifier _transmogrifier;
     private const string InitialMarketName = "Episode 1 Market";
     public static CraftingStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
@@ -52,6 +52,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
         {
             Instance = this;
             ElementDelivery.BuyRequested += BuyRequested;
+            _transmogrifier.OnSaleRequested += ForSaleRequested;
         }
         else 
         {
@@ -80,28 +81,10 @@ private SubscriptionToken otherAgentBankruptSubscription;
         }
     }
 
-    private void Start()
-        => StartTextBasedGame();
+    private void ForSaleRequested(InventoryEntry entry)
+        => _forSaleText.text += entry.good.GoodName;
+    
 
-    private void Update()
-    {
-        //return if player is entering text
-        if(IsPlayerTyping()) return;
-        
-        switch(CurrentUIState)
-        {
-            case UIStateEnum.MainMenu:
-                HandleMainMenu();
-                break;
-            case UIStateEnum.Reading:
-                if(Input.GetKeyDown(KeyCode.Space))
-                    CurrentUIState=UIStateEnum.Idle;
-                else if(Input.GetKeyDown(KeyCode.Escape))
-                    ShowMainMenu();
-                break;
-        }
-    }
- 
     private void ClearUISelection()
     {
         if (EventSystem.current != null)
@@ -494,6 +477,28 @@ private SubscriptionToken otherAgentBankruptSubscription;
 
     #endregion
     #region Unity Stuff
+    private void Start()
+        => StartTextBasedGame();
+
+    private void Update()
+    {
+        //return if player is entering text
+        if(IsPlayerTyping()) return;
+        
+        switch(CurrentUIState)
+        {
+            case UIStateEnum.MainMenu:
+                HandleMainMenu();
+                break;
+            case UIStateEnum.Reading:
+                if(Input.GetKeyDown(KeyCode.Space))
+                    CurrentUIState=UIStateEnum.Idle;
+                else if(Input.GetKeyDown(KeyCode.Escape))
+                    ShowMainMenu();
+                break;
+        }
+    }
+ 
     private void OnDisable()
         => CleanupSubscription();
     private void OnDestroy()
