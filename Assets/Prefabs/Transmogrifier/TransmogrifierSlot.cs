@@ -29,4 +29,7 @@ public class TransmogrifierSlot : MonoBehaviour,
         _slotImage.sprite = _inventoryEntry.good.GoodSprite;
         _slotImage.gameObject.SetActive(true);
     }
+
+    public InventoryEntry GetInventoryEntry()
+        => _inventoryEntry;
 }

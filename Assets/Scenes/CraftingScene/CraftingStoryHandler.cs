@@ -18,6 +18,7 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private DeliveryVan _currentVan;
     [SerializeField] private Suitcase ElementDelivery;
     [SerializeField] private Shelf _shelf;
+    [SerializeField] private TextMeshProUGUI _forSaleText;
 
     private const string InitialMarketName = "Episode 1 Market";
     public static CraftingStoryHandler Instance { get; private set; }
@@ -318,9 +319,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
             case 'S':
                 BuyGoods(TheEconomyInstance.TradingPeriod);
                 break;
-            case 'M':
-                MakeGood();
-                break;
             default:
                 LogMessage("Invalid choice. Please choose again.");
                 ShowMainMenu();
@@ -333,7 +331,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
     {
         if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
         if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
-        if (Input.GetKeyDown(KeyCode.M)) ChooseFromMainMenu('M');
     }
 
     private void ShowMainMenu()
@@ -349,7 +346,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
         LogMessage("What would you like to do?");
         LogMessage("(C)heck your supplies");
         LogMessage("(S)ee what Pete and Dmitri have for sale");
-        LogMessage("(M)ake something");
         LogMessage("\n");
 
         isPeriodStart = false;
@@ -411,18 +407,9 @@ private SubscriptionToken otherAgentBankruptSubscription;
             LogMessage("You have not discovered any recipes");
     }
 
-    private void MakeGood()
+    public void SetThingToSell(InventoryEntry entry)
     {
-        CurrentUIState = UIStateEnum.Reading;
-        ClearUISelection();
-        if(PlayerCompany.Recipes.Count==0)
-        {
-            
-        }
-        else
-        {
-            //jury rigging
-        }
+        _forSaleText.text = entry.good.GoodName;
     }
     #endregion
    

@@ -1,0 +1,936 @@
+fileFormatVersion: 2
+guid: 51b2af868f96244cfbd5d74a07619cf7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7318595563115052541
+    second: StoreItButton_0
+  - first:
+      213: -752498574255560201
+    second: StoreItButton_1
+  - first:
+      213: -7476161130564202636
+    second: StoreItButton_2
+  - first:
+      213: -4544217896618759398
+    second: StoreItButton_3
+  - first:
+      213: -7061523644055202673
+    second: StoreItButton_4
+  - first:
+      213: 746111027794583949
+    second: StoreItButton_5
+  - first:
+      213: -6276984404332684478
+    second: StoreItButton_6
+  - first:
+      213: 8694788275348042019
+    second: StoreItButton_7
+  - first:
+      213: -7452409053885239268
+    second: StoreItButton_8
+  - first:
+      213: 4431129675143086750
+    second: StoreItButton_9
+  - first:
+      213: -7305883747202414054
+    second: StoreItButton_10
+  - first:
+      213: 313857965756163129
+    second: StoreItButton_11
+  - first:
+      213: 4453379302178933152
+    second: StoreItButton_12
+  - first:
+      213: 2090442854643546519
+    second: StoreItButton_13
+  - first:
+      213: 1566288175366190959
+    second: StoreItButton_14
+  - first:
+      213: 8670846039746973299
+    second: StoreItButton_15
+  - first:
+      213: 5997174947412819703
+    second: StoreItButton_16
+  - first:
+      213: -3274855918253511765
+    second: StoreItButton_17
+  - first:
+      213: 4564007573914057284
+    second: StoreItButton_18
+  - first:
+      213: -6794209737745433802
+    second: StoreItButton_19
+  - first:
+      213: 7629088787188806075
+    second: StoreItButton_20
+  - first:
+      213: 6527041670567810709
+    second: StoreItButton_21
+  - first:
+      213: 9097593103183488914
+    second: StoreItButton_22
+  - first:
+      213: -5510442273933796003
+    second: StoreItButton_23
+  - first:
+      213: 6241039564868058425
+    second: StoreItButton_24
+  - first:
+      213: -6681500445001163173
+    second: StoreItButton_25
+  - first:
+      213: 3474223500691602913
+    second: StoreItButton_26
+  - first:
+      213: 5413641009325661611
+    second: StoreItButton_27
+  - first:
+      213: -2958717694308349535
+    second: StoreItButton_28
+  - first:
+      213: 4605443000593997347
+    second: StoreItButton_29
+  - first:
+      213: 8764435670576311768
+    second: StoreItButton_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: StoreItButton_0
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 739
+        width: 85
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfdf83a93efd09560800000000000000
+      internalID: 7318595563115052541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_1
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 702
+        width: 74
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f9628b98869e85f0800000000000000
+      internalID: -752498574255560201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_2
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 749
+        width: 64
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47f4329ef075f3890800000000000000
+      internalID: -7476161130564202636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_3
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 784
+        width: 34
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1be01a36e1bfe0c0800000000000000
+      internalID: -4544217896618759398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_4
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 739
+        width: 85
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f845117c8ad600e90800000000000000
+      internalID: -7061523644055202673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_5
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 716
+        width: 44
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d81a2b6d608ba5a00800000000000000
+      internalID: 746111027794583949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_6
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 739
+        width: 57
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24b551fe0fba3e8a0800000000000000
+      internalID: -6276984404332684478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_7
+      rect:
+        serializedVersion: 2
+        x: 1005
+        y: 749
+        width: 25
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 321f9559ed71aa870800000000000000
+      internalID: 8694788275348042019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_8
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 781
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c10f3463379b39890800000000000000
+      internalID: -7452409053885239268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_9
+      rect:
+        serializedVersion: 2
+        x: 1025
+        y: 751
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e92889066f88e7d30800000000000000
+      internalID: 4431129675143086750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_10
+      rect:
+        serializedVersion: 2
+        x: 1037
+        y: 661
+        width: 186
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1a43bda0794c9a90800000000000000
+      internalID: -7305883747202414054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_11
+      rect:
+        serializedVersion: 2
+        x: 1051
+        y: 781
+        width: 20
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 934a2de282c0b5400800000000000000
+      internalID: 313857965756163129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_12
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 724
+        width: 228
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a9c37c51e49dcd30800000000000000
+      internalID: 4453379302178933152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_13
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 751
+        width: 35
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 799384e53beb20d10800000000000000
+      internalID: 2090442854643546519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_14
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 377
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f67b8940cc29cb510800000000000000
+      internalID: 1566288175366190959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_15
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 38
+        width: 1571
+        height: 602
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37e88357888055870800000000000000
+      internalID: 8670846039746973299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_16
+      rect:
+        serializedVersion: 2
+        x: 1069
+        y: 115
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7feb96c17de3a3350800000000000000
+      internalID: 5997174947412819703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_17
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 105
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: babe9eda4ef5d82d0800000000000000
+      internalID: -3274855918253511765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_18
+      rect:
+        serializedVersion: 2
+        x: 1150
+        y: 105
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44af65315bc965f30800000000000000
+      internalID: 4564007573914057284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_19
+      rect:
+        serializedVersion: 2
+        x: 1354
+        y: 101
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63bfe24ad3e16b1a0800000000000000
+      internalID: -6794209737745433802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_20
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 97
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb1fd40d4d7ffd960800000000000000
+      internalID: 7629088787188806075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_21
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 89
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 596dd5051d5b49a50800000000000000
+      internalID: 6527041670567810709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_22
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 83
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 297ab4ae9b4214e70800000000000000
+      internalID: 9097593103183488914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_23
+      rect:
+        serializedVersion: 2
+        x: 1067
+        y: 87
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5d51ea82f9f683b0800000000000000
+      internalID: -5510442273933796003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_24
+      rect:
+        serializedVersion: 2
+        x: 1089
+        y: 80
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93d7e15fa60ac9650800000000000000
+      internalID: 6241039564868058425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_25
+      rect:
+        serializedVersion: 2
+        x: 1124
+        y: 70
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5e5711deba8643a0800000000000000
+      internalID: -6681500445001163173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_26
+      rect:
+        serializedVersion: 2
+        x: 1150
+        y: 80
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ed790ddddbe63030800000000000000
+      internalID: 3474223500691602913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_27
+      rect:
+        serializedVersion: 2
+        x: 1025
+        y: 72
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: badd756b0dd112b40800000000000000
+      internalID: 5413641009325661611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_28
+      rect:
+        serializedVersion: 2
+        x: 1116
+        y: 55
+        width: 9
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a98618dee580f6d0800000000000000
+      internalID: -2958717694308349535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_29
+      rect:
+        serializedVersion: 2
+        x: 1172
+        y: 68
+        width: 19
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ed6b32202d9ef30800000000000000
+      internalID: 4605443000593997347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoreItButton_30
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 56
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dda6717ec781a970800000000000000
+      internalID: 8764435670576311768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      StoreItButton_0: 7318595563115052541
+      StoreItButton_1: -752498574255560201
+      StoreItButton_10: -7305883747202414054
+      StoreItButton_11: 313857965756163129
+      StoreItButton_12: 4453379302178933152
+      StoreItButton_13: 2090442854643546519
+      StoreItButton_14: 1566288175366190959
+      StoreItButton_15: 8670846039746973299
+      StoreItButton_16: 5997174947412819703
+      StoreItButton_17: -3274855918253511765
+      StoreItButton_18: 4564007573914057284
+      StoreItButton_19: -6794209737745433802
+      StoreItButton_2: -7476161130564202636
+      StoreItButton_20: 7629088787188806075
+      StoreItButton_21: 6527041670567810709
+      StoreItButton_22: 9097593103183488914
+      StoreItButton_23: -5510442273933796003
+      StoreItButton_24: 6241039564868058425
+      StoreItButton_25: -6681500445001163173
+      StoreItButton_26: 3474223500691602913
+      StoreItButton_27: 5413641009325661611
+      StoreItButton_28: -2958717694308349535
+      StoreItButton_29: 4605443000593997347
+      StoreItButton_3: -4544217896618759398
+      StoreItButton_30: 8764435670576311768
+      StoreItButton_4: -7061523644055202673
+      StoreItButton_5: 746111027794583949
+      StoreItButton_6: -6276984404332684478
+      StoreItButton_7: 8694788275348042019
+      StoreItButton_8: -7452409053885239268
+      StoreItButton_9: 4431129675143086750
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

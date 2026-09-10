@@ -1,0 +1,650 @@
+fileFormatVersion: 2
+guid: cd8ccc6ce006c45eda147cc51ca3cba1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2976115408535868421
+    second: SellItButton_0
+  - first:
+      213: -7380635843187633797
+    second: SellItButton_1
+  - first:
+      213: -6008097691802761592
+    second: SellItButton_2
+  - first:
+      213: 4600380997098501672
+    second: SellItButton_3
+  - first:
+      213: -7126819157093530458
+    second: SellItButton_4
+  - first:
+      213: -1469166507045730989
+    second: SellItButton_5
+  - first:
+      213: -3625206077140763494
+    second: SellItButton_6
+  - first:
+      213: -1881141948312952242
+    second: SellItButton_7
+  - first:
+      213: 3835046049281196094
+    second: SellItButton_8
+  - first:
+      213: 8045357164234733760
+    second: SellItButton_9
+  - first:
+      213: 7492885885942823256
+    second: SellItButton_10
+  - first:
+      213: -2554127584540920107
+    second: SellItButton_11
+  - first:
+      213: -5378272429783121266
+    second: SellItButton_12
+  - first:
+      213: -5050105147719098725
+    second: SellItButton_13
+  - first:
+      213: 8330431438429853823
+    second: SellItButton_14
+  - first:
+      213: -1733741817459645702
+    second: SellItButton_15
+  - first:
+      213: 8615929354198793988
+    second: SellItButton_16
+  - first:
+      213: 6460322865094510405
+    second: SellItButton_17
+  - first:
+      213: 8252203688927261256
+    second: SellItButton_18
+  - first:
+      213: -4833830207631204864
+    second: SellItButton_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SellItButton_0
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 21
+        width: 1479
+        height: 786
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 504d85822394d4920800000000000000
+      internalID: 2976115408535868421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_1
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 774
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b71194e0ec6b29990800000000000000
+      internalID: -7380635843187633797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_2
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 773
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88680484bf2fe9ca0800000000000000
+      internalID: -6008097691802761592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_3
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 83
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 826738b9426d7df30800000000000000
+      internalID: 4600380997098501672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_4
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 78
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a4cdf27cb3781d90800000000000000
+      internalID: -7126819157093530458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_5
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 79
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35543a788d87c9be0800000000000000
+      internalID: -1469166507045730989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_6
+      rect:
+        serializedVersion: 2
+        x: 981
+        y: 89
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9cff6ea74ea0bdc0800000000000000
+      internalID: -3625206077140763494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_7
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 87
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4268be5d57d4e5e0800000000000000
+      internalID: -1881141948312952242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_8
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 82
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e30cba81012d83530800000000000000
+      internalID: 3835046049281196094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_9
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 84
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c8fa59f6b9d6af60800000000000000
+      internalID: 8045357164234733760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_10
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 50
+        width: 49
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 859f826a3041cf760800000000000000
+      internalID: 7492885885942823256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_11
+      rect:
+        serializedVersion: 2
+        x: 1317
+        y: 89
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d679648e7aed8cd0800000000000000
+      internalID: -2554127584540920107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_12
+      rect:
+        serializedVersion: 2
+        x: 1343
+        y: 82
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e82008d68b98c55b0800000000000000
+      internalID: -5378272429783121266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_13
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 65
+        width: 17
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9ed4dfef1c6ae9b0800000000000000
+      internalID: -5050105147719098725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_14
+      rect:
+        serializedVersion: 2
+        x: 949
+        y: 72
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f789b59b143ab9370800000000000000
+      internalID: 8330431438429853823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_15
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 50
+        width: 33
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af2e316b00380f7e0800000000000000
+      internalID: -1733741817459645702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_16
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 73
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40f31e6391ee19770800000000000000
+      internalID: 8615929354198793988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_17
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 48
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 547ca44ea6da7a950800000000000000
+      internalID: 6460322865094510405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_18
+      rect:
+        serializedVersion: 2
+        x: 786
+        y: 55
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8427da47887b58270800000000000000
+      internalID: 8252203688927261256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SellItButton_19
+      rect:
+        serializedVersion: 2
+        x: 1150
+        y: 60
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00ed6917909caecb0800000000000000
+      internalID: -4833830207631204864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SellItButton_0: 2976115408535868421
+      SellItButton_1: -7380635843187633797
+      SellItButton_10: 7492885885942823256
+      SellItButton_11: -2554127584540920107
+      SellItButton_12: -5378272429783121266
+      SellItButton_13: -5050105147719098725
+      SellItButton_14: 8330431438429853823
+      SellItButton_15: -1733741817459645702
+      SellItButton_16: 8615929354198793988
+      SellItButton_17: 6460322865094510405
+      SellItButton_18: 8252203688927261256
+      SellItButton_19: -4833830207631204864
+      SellItButton_2: -6008097691802761592
+      SellItButton_3: 4600380997098501672
+      SellItButton_4: -7126819157093530458
+      SellItButton_5: -1469166507045730989
+      SellItButton_6: -3625206077140763494
+      SellItButton_7: -1881141948312952242
+      SellItButton_8: 3835046049281196094
+      SellItButton_9: 8045357164234733760
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
