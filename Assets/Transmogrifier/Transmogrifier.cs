@@ -23,7 +23,7 @@ public class Transmogrifier:MonoBehaviour
     private GameObject _decision;
     private static readonly Color32 _junkFontColour = new(255, 59, 48, 255);
     private static readonly Color32 _successFontColour = new(57, 255, 136, 255);
-    readonly Dictionary<string,Combination> combinations = new ();
+    IReadOnlyDictionary<string,Combination> combinations;
     public event Action<InventoryEntry> OnSaleRequested;
     public event Action<InventoryEntry> OnStoreRequested;
 
@@ -45,7 +45,7 @@ public class Transmogrifier:MonoBehaviour
         _storeIt=_decision.transform.Find("StoreIt").GetComponent<Button>();
         _chuckIt=_decision.transform.Find("ChuckIt").GetComponent<Button>();
 
-        LoadGoodCombinationsFromResources();
+        combinations = GameRoot.Instance.GetCombinations();
         _button.onClick.AddListener(Transmogrify);
     }
 
@@ -99,7 +99,7 @@ public class Transmogrifier:MonoBehaviour
     }
     private InventoryEntry Make(bool hasRecipe,InventoryEntry[] ingredients)
     {
-        var key = MakeKey(ingredients[0].good.GoodName, ingredients[1].good.GoodName);
+        var key = ETLHelper.MakeKey(ingredients[0].good.GoodName, ingredients[1].good.GoodName);
 
         combinations.TryGetValue(key,out var combination);
         var isJunk=false;
@@ -210,69 +210,8 @@ public class Transmogrifier:MonoBehaviour
     }
     #endregion
 #region ETL
-    private void LoadGoodCombinationsFromResources()
-    {
-        var assetPath = "GoodCombinations";
-        var csv = Resources.Load<TextAsset>(assetPath);
-
-        var lines = csv.text.Split("\n");
-        foreach (var line in lines.Skip(1))
-        {
-            if(string.IsNullOrWhiteSpace(line)) continue;
-
-            var columns = line.Trim().Split(",");
-
-            var ingredient1 = columns[0].Trim();
-            var ingredient2 = columns[1].Trim();
-            var product = columns[2].Trim();
-            var junk = columns[3].Trim();
-            int.TryParse(columns[4].Trim(),out var percentageJunk);
-            int.TryParse(columns[5].Trim(), out var recipeDiscoveryChance);
-            int.TryParse(columns[6].Trim(),out var ingredient1Needed);
-            int.TryParse(columns[7].Trim(),out var ingredient2Needed);
-            int.TryParse(columns[8].Trim(),out var producesQty);
-            int.TryParse(columns[9].Trim(),out var producesQtyJunk);
-            int.TryParse(columns[10].Trim(),out var maxQtyWithoutRecipe);
-
-            if(string.IsNullOrWhiteSpace(product)) continue;
-
-            var key = MakeKey(ingredient1,ingredient2);
-            combinations.Add(key,new Combination()
-                    {
-                        Ingredient1=ingredient1,
-                        Ingredient2=ingredient2,
-                        Product=product,
-                        Junk=junk,
-                        PercentageJunk=percentageJunk,
-                        RecipeDiscoveryChance=recipeDiscoveryChance,
-                        Ingredient1Needed=ingredient1Needed,
-                        Ingredient2Needed=ingredient2Needed,
-                        ProducesQty=producesQty,
-                        ProducesQtyJunk=producesQtyJunk,
-                        MaxQtyWithoutRecipe=maxQtyWithoutRecipe
-                        });
-        }
-    }
+    
 #endregion
-    private string MakeKey(string a, string b)
-        => string.CompareOrdinal(a,b) < 0? $"{a}|{b}":$"{b}|{a}";
-}
-
-internal class Combination
-{
-    public string Ingredient1;
-    public string Ingredient2;
-    public string Product;
-    public string Junk;
-    public int PercentageJunk;
-    public int RecipeDiscoveryChance;	
-    public int Ingredient1Needed;
-    public int Ingredient2Needed;	
-    public int ProducesQty;	
-    public int ProducesQtyJunk;	
-    public int MaxQtyWithoutRecipe;
-
-
 }
 public enum ProductChoiceEnum
 {

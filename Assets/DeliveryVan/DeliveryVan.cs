@@ -1,17 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class DeliveryVan:MonoBehaviour
 {
-    List<Good> GoodsMasterList=new();
+    IReadOnlyList<Good> GoodsMasterList;
     readonly Inventory AvailableInventory = new();
     private void Awake()
     {
         LoadGoods();
-        LoadElementCharacteristicsFromResources();
     }
 
     public List<InventoryEntry> GetCurrentDelivery(int period)
@@ -53,46 +50,12 @@ public class DeliveryVan:MonoBehaviour
             
             if(candidates.Count==0) continue;
 
-            return candidates[UnityEngine.Random.Range(0,candidates.Count)];
+            return candidates[Random.Range(0,candidates.Count)];
         }
     }
 
-    #region load stuff from resources
+    #region ETL
     private void LoadGoods()
-    {
-        GoodsMasterList= Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false).ToList();
-    }
-
-    private void LoadElementCharacteristicsFromResources()
-    {
-        const string elementsPath = "ElementaryGoodsList";
-        var elementsCSV = Resources.Load<TextAsset>(elementsPath);
-        var lines = elementsCSV.text.Split('\n');
-
-        foreach(var line in lines.Skip(1))
-        {
-            var columns = line.Split(new[] {','},6);
-            var goodName = columns[0].Trim();
-
-            var currentGood = GoodsMasterList.FirstOrDefault(x=>x.GoodName == goodName);
-
-            //Set Good characteristics here
-            var sprite = Resources.Load<Sprite>($"Art/{columns[1]}");
-            Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
-            int.TryParse(columns[3].Trim(),out var minPrice);
-            int.TryParse(columns[4].Trim(),out var maxPrice);
-            var tooltip = columns[5].Trim();
-
-            currentGood.GoodSprite=sprite;
-            currentGood.SetRarity(rarity);
-            currentGood.SetPriceBand(minPrice,maxPrice);
-            currentGood.Tooltip = tooltip;
-        }
-    }
-
-    private void LoadProducedGoodsCharacteristicsFromResources()
-    {
-        
-    }
+        => GoodsMasterList=GameRoot.Instance.GetElements();
     #endregion
 }

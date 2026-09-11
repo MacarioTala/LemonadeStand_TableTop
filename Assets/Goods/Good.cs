@@ -164,7 +164,8 @@ public enum RarityEnum
     Uncommon,
     Rare,
     VeryRare,
-    Unique
+    Unique,
+    Produced
 }
 
 [Serializable]

@@ -20,6 +20,9 @@ public class GameRoot : MonoBehaviour
     private Market initialMarket = null;
     private EconAgent PlayerCompany=null;
     private IEnumerable<FixedCostTemplate> fixedCostTemplates;
+    private List<Good> _elements;
+    private List<Good> _products;
+    private readonly Dictionary<string,Combination> _combinations=new();
 
     private void Start()
     {
@@ -50,6 +53,11 @@ public class GameRoot : MonoBehaviour
         }, replaySticky: false
         );
     }
+#region Public Methods
+    public IReadOnlyList<Good> GetElements() => _elements;
+    public IReadOnlyList<Good> GetProducts() => _products;
+    public IReadOnlyDictionary<string,Combination> GetCombinations()=>_combinations;
+#endregion
 #region Initialization
     private void InitializeEconomy()
     {
@@ -73,22 +81,111 @@ public class GameRoot : MonoBehaviour
         LoadFixedCosts();
         CreateNpcs();
         CreateMarketEvents();
-     }
+    }
     private void LoadFixedCosts()
     {
         fixedCostTemplates = Resources.LoadAll<FixedCostTemplate>("FixedCosts");
     }
     private void LoadGoods()
     {
-        var goods = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false);
-        var period = EconomyInstance.TradingPeriod;
-        var inventory = initialMarket.GetInventory();
+        LoadElements();
+        LoadProducts();
+        LoadGoodCombinationsFromResources();
+    }
+private void LoadGoodCombinationsFromResources()
+    {
+        var assetPath = "GoodCombinations";
+        var csv = Resources.Load<TextAsset>(assetPath);
 
-        foreach(var good in goods)
-            inventory.AddInventoryEntry(new InventoryEntry(good,1000,good.GetPrice(),period));
+        var lines = csv.text.Split("\n");
+        foreach (var line in lines.Skip(1))
+        {
+            if(string.IsNullOrWhiteSpace(line)) continue;
 
-        foreach(var item in inventory.GetInventoryEntries())
-            item.CalculatePriceFromBand();
+            var columns = line.Trim().Split(",");
+
+            var ingredient1 = columns[0].Trim();
+            var ingredient2 = columns[1].Trim();
+            var product = columns[2].Trim();
+            var junk = columns[3].Trim();
+            int.TryParse(columns[4].Trim(),out var percentageJunk);
+            int.TryParse(columns[5].Trim(), out var recipeDiscoveryChance);
+            int.TryParse(columns[6].Trim(),out var ingredient1Needed);
+            int.TryParse(columns[7].Trim(),out var ingredient2Needed);
+            int.TryParse(columns[8].Trim(),out var producesQty);
+            int.TryParse(columns[9].Trim(),out var producesQtyJunk);
+            int.TryParse(columns[10].Trim(),out var maxQtyWithoutRecipe);
+
+            if(string.IsNullOrWhiteSpace(product)) continue;
+
+            var key = ETLHelper.MakeKey(ingredient1,ingredient2);
+            _combinations.Add(key,new Combination()
+                    {
+                        Ingredient1=ingredient1,
+                        Ingredient2=ingredient2,
+                        Product=product,
+                        Junk=junk,
+                        PercentageJunk=percentageJunk,
+                        RecipeDiscoveryChance=recipeDiscoveryChance,
+                        Ingredient1Needed=ingredient1Needed,
+                        Ingredient2Needed=ingredient2Needed,
+                        ProducesQty=producesQty,
+                        ProducesQtyJunk=producesQtyJunk,
+                        MaxQtyWithoutRecipe=maxQtyWithoutRecipe
+                        });
+        }
+    }
+    private void LoadElements()
+    {
+        _elements = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood==false).ToList();
+        const string elementsPath = "ElementaryGoodsList";
+        var elementsCSV = Resources.Load<TextAsset>(elementsPath);
+        var lines = elementsCSV.text.Split('\n');
+
+        foreach(var line in lines.Skip(1))
+        {
+            var columns = line.Split(new[] {','},6);
+            var goodName = columns[0].Trim();
+
+            var currentGood = _elements.FirstOrDefault(x=>x.GoodName == goodName);
+
+            //Set Element characteristics here
+            var sprite = Resources.Load<Sprite>($"Art/{columns[1]}");
+            Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
+            int.TryParse(columns[3].Trim(),out var minPrice);
+            int.TryParse(columns[4].Trim(),out var maxPrice);
+            var tooltip = columns[5].Trim();
+
+            currentGood.GoodSprite=sprite;
+            currentGood.SetRarity(rarity);
+            currentGood.SetPriceBand(minPrice,maxPrice);
+            currentGood.Tooltip = tooltip;
+        }
+    }
+    private void LoadProducts()
+    {
+        _products = Resources.LoadAll<Good>("Goods").Where(x=>x.IsProducedGood).ToList();
+        const string productsPath = "ProductAttributes";
+        var productsCSV = Resources.Load<TextAsset>(productsPath);
+        var lines=productsCSV.text.Split('\n');
+
+        foreach(var line in lines.Skip(1))
+        {
+            var columns = line.Split(new[]{','});
+            var goodName = columns[0].Trim();
+            if(string.IsNullOrEmpty(goodName)) continue;
+
+            var currentGood = _products.FirstOrDefault(x=>x.GoodName==goodName);
+
+            //Set product characteristics here
+            var sprite = Resources.Load<Sprite>($"Art/{goodName.ToLower()}");
+            var rarity = RarityEnum.Produced;
+            var tooltip = columns[7];
+
+            if(sprite != null) currentGood.GoodSprite=sprite;
+
+            currentGood.SetRarity(rarity);
+        }
     }
 
     private void LoadRecipes()
