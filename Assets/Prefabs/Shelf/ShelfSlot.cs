@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ShelfSlot : MonoBehaviour
 {
@@ -10,16 +9,14 @@ public class ShelfSlot : MonoBehaviour
         _item = transform.Find("ShelfItem").GetComponent<ShelfItem>();
     }
     public void Clear()
-    {
-        _item.gameObject.SetActive(false);
-        _item = null;
-    }
+    =>_item.Clear();
+
     public InventoryEntry GetContents()
         => _item.GetItem();
     
     public bool IsEmpty()
         => _item.IsEmpty;
 
-    public void ReplaceContents(InventoryEntry entry)
-        =>_item.ReplaceInventoryEntry(entry);
+    public void StoreItem(InventoryEntry entry)
+        =>_item.PutItemInShelf(entry);
 }

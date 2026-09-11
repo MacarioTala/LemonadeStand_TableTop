@@ -1,14 +1,14 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-[RequireComponent(typeof(Image))]
 
-[RequireComponent(typeof(RectTransform))]
-[RequireComponent(typeof(CanvasGroup))]
-public class ShelfItem : MonoBehaviour,
-                         IBeginDragHandler,
-                         IDragHandler,
-                         IEndDragHandler
+[RequireComponent(typeof(Image))]
+public class FridgeItem : MonoBehaviour,
+    IBeginDragHandler,
+    IDragHandler,
+    IEndDragHandler,
+    IDropHandler
 {
     private Image _image;
     private InventoryEntry _entry;
@@ -20,24 +20,23 @@ public class ShelfItem : MonoBehaviour,
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
-        _canvas = GetComponentInParent<Canvas>();
-        _canvasGroup = GetComponent<CanvasGroup>();
-
         _image = GetComponent<Image>();
+        _canvas = GetComponent<Canvas>();
+        _canvasGroup= GetComponent<CanvasGroup>();
+
         _image.enabled=false;
     }
     public void Clear()
     {
+        _entry = null;
         _image.enabled=false;
         _image.sprite=null;
-        _entry=null;
     }
-    
-    public InventoryEntry GetItem() =>_entry;
-    public bool IsEmpty => _entry is null;
 
-    public void PutItemInShelf (InventoryEntry entry)
-    { 
+    public bool IsEmpty()=>_entry is null;
+    public InventoryEntry GetItem() =>_entry;
+    public void PlaceItem(InventoryEntry entry)
+    {
         _image.sprite = entry.good.GoodSprite;
         
         if(_entry == null)
@@ -47,19 +46,25 @@ public class ShelfItem : MonoBehaviour,
 
         _image.enabled=true;
     }
-
+#region UI Stuff
     public void OnBeginDrag(PointerEventData eventData)
     {
-        _originalPosition = _rectTransform.anchoredPosition;
-        _canvasGroup.blocksRaycasts = false;
+        _originalPosition=_rectTransform.anchoredPosition;
+        _canvasGroup.blocksRaycasts=false;
     }
 
     public void OnDrag(PointerEventData eventData)
-    => _rectTransform.anchoredPosition += eventData.delta/_canvas.scaleFactor;
+        => _rectTransform.anchoredPosition += eventData.delta/_canvas.scaleFactor;
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        _rectTransform.anchoredPosition = _originalPosition;
-        _canvasGroup.blocksRaycasts = true;
+        _rectTransform.anchoredPosition=_originalPosition;
+        _canvasGroup.blocksRaycasts=true;
     }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        throw new NotImplementedException();
+    }
+#endregion
 }

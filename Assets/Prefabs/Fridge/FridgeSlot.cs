@@ -1,16 +1,22 @@
 using UnityEngine;
+using UnityEngine.UI;
 
+[RequireComponent(typeof(Image))]
 public class FridgeSlot : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+   Image _image;
+   FridgeItem _item;
+    private void Awake()
     {
-        
+        _item = transform.Find("Item").GetComponent<FridgeItem>();
+        _image = GetComponent<Image>();
+        _image.enabled=false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public bool IsEmpty()
+        =>_item.IsEmpty();
+
+    public InventoryEntry GetContents() => _item.GetItem();
+    public void StoreItem(InventoryEntry entry)
+    => _item.PlaceItem(entry);
 }

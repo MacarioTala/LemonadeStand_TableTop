@@ -25,12 +25,13 @@ public class Transmogrifier:MonoBehaviour
     private static readonly Color32 _successFontColour = new(57, 255, 136, 255);
     readonly Dictionary<string,Combination> combinations = new ();
     public event Action<InventoryEntry> OnSaleRequested;
+    public event Action<InventoryEntry> OnStoreRequested;
 
     private void Awake()
     {
         //Product Window
         _productImage = transform.Find("Product").GetComponentInChildren<Image>();
-        _productImage.gameObject.SetActive(false);
+        _productImage.enabled=false;
 
         //Status Bar
         _statusBar = transform.Find("StatusBar").gameObject;
@@ -54,15 +55,19 @@ public class Transmogrifier:MonoBehaviour
         {
             case ProductChoiceEnum.SellIt:
                 OnSaleRequested?.Invoke(entry);
+                ResetTransmogrifierStatusBar();
                 break;
             case ProductChoiceEnum.StoreIt:
-                _resultText.text += " Stored!";
+                OnStoreRequested?.Invoke(entry);
+                ResetTransmogrifierStatusBar();
                 break;
             case ProductChoiceEnum.ChuckIt:
                 _resultText.text += " Chucked!";
+                ResetTransmogrifierStatusBar();
                 break;
             default:
                 _resultText.text = "How did you even do this?";
+                ResetTransmogrifierStatusBar();
                 break;
         }
         ResetTransmogrifierStatusBar();
@@ -135,7 +140,8 @@ public class Transmogrifier:MonoBehaviour
     #region UI Helpers
      private IEnumerator RenderChoice(InventoryEntry result)
     {
-        _productImage.gameObject.SetActive(true);
+        _productImage.enabled=true;
+        _productImage.sprite=result.good.GoodSprite;
         _resultText.text = $"You made: {result.quantity} {result.good.GoodName}";
 
         yield return _waitForSeconds2;
@@ -168,7 +174,8 @@ public class Transmogrifier:MonoBehaviour
             rect.rect.width*2f
         );
         _decision.SetActive(false);
-        _productImage.gameObject.SetActive(false);
+        _productImage.enabled=false;
+        _resultText.text=string.Empty;
     }
     #endregion
 

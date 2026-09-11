@@ -89,5 +89,10 @@ public class DeliveryVan:MonoBehaviour
             currentGood.Tooltip = tooltip;
         }
     }
+
+    private void LoadProducedGoodsCharacteristicsFromResources()
+    {
+        
+    }
     #endregion
 }

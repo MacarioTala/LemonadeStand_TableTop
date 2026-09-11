@@ -10,12 +10,16 @@ public class Shelf : MonoBehaviour
     }
     public void PlaceOnShelf(InventoryEntry entry)
     {
-        var emptySlot = FindFirstEmptySlot();
-        if(emptySlot != null)
-            emptySlot.ReplaceContents(entry);
+        var slotToFill = DoesASlotAlreadyContainThis(entry.good.GoodName)?? FindFirstEmptySlot();
+
+        if(slotToFill != null)
+            slotToFill.StoreItem(entry);
         else
             Debug.Log("Shelf is full!");
     }
+
+    private ShelfSlot DoesASlotAlreadyContainThis(string good)
+        =>_shelfSlots.FirstOrDefault(x=> x.GetContents()?.good.GoodName==good);
 
     private ShelfSlot FindFirstEmptySlot()
         => _shelfSlots.FirstOrDefault(x=>x.IsEmpty());

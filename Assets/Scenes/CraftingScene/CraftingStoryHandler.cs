@@ -20,6 +20,7 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private Shelf _shelf;
     [SerializeField] private TextMeshProUGUI _forSaleText;
     [SerializeField] private Transmogrifier _transmogrifier;
+    [SerializeField] private Fridge _fridge;
     private const string InitialMarketName = "Episode 1 Market";
     public static CraftingStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
@@ -53,6 +54,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
             Instance = this;
             ElementDelivery.BuyRequested += BuyRequested;
             _transmogrifier.OnSaleRequested += ForSaleRequested;
+            _transmogrifier.OnStoreRequested += StoreRequested;
         }
         else 
         {
@@ -84,6 +86,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
     private void ForSaleRequested(InventoryEntry entry)
         => _forSaleText.text += entry.good.GoodName;
     
+    private void StoreRequested(InventoryEntry entry)
+        => _fridge.PlaceInFridge(entry);
 
     private void ClearUISelection()
     {
