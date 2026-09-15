@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b833e4e5645045f7acafd0c9b10b948, type: 3}
   m_Name: Nothing
   m_EditorClassIdentifier: GameAssembly::Good
-  GoodName: 
+  GoodName: Nothing
   GoodSprite: {fileID: 0}
   Tooltip: 
   ExpiresAfterPeriods: 0
   IsPerishable: 1
   DeliveryDelay: 0
+  IncomeModifier: 0
   PriceBand:
     Min: 0
     Max: 0
-  _rarity: 0
-  IsProducedGood: 0
+  _rarity: 5
+  IsProducedGood: 1

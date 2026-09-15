@@ -54,7 +54,7 @@ public static class MathHelper
         return valueToReturn;
     }
 
-    public static int GetNumAppearingFromRarity(RarityEnum rolledRarity)
+    public static int GetNumAppearingInSuitcaseFromRarity(RarityEnum rolledRarity)
     {
         return rolledRarity switch
         {
@@ -65,13 +65,25 @@ public static class MathHelper
           _ =>0
         };
     }
+
+    public static int GetNumberProducedPerTurnFromRarity(RarityEnum rarity)
+    {
+        return rarity switch
+        {
+            RarityEnum.Common => RollD(1,6),
+            RarityEnum.Uncommon => RollD(1,3),
+            RarityEnum.Rare => RollD(1,2),
+            RarityEnum.VeryRare => 1,
+            _ =>0
+        };
+    }
     public static RarityEnum GetRarityFromPercentage(int roll)
     {
         return roll switch
         {
-            <= 10 =>  RarityEnum.VeryRare,
-            <= 30 => RarityEnum.Rare,
-            <= 50 => RarityEnum.Uncommon,
+            <= 1 =>  RarityEnum.VeryRare,
+            <= 15 => RarityEnum.Rare,
+            <= 40 => RarityEnum.Uncommon,
             _ => RarityEnum.Common
         };
     }

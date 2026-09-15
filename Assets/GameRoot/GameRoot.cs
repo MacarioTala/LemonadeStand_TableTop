@@ -20,6 +20,10 @@ public class GameRoot : MonoBehaviour
     private Market initialMarket = null;
     private EconAgent PlayerCompany=null;
     private IEnumerable<FixedCostTemplate> fixedCostTemplates;
+
+    //World
+    private Country country;
+    //Goods
     private List<Good> _elements;
     private List<Good> _products;
     private readonly Dictionary<string,Combination> _combinations=new();
@@ -79,6 +83,9 @@ public class GameRoot : MonoBehaviour
         LoadGoods();
         LoadRecipes();
         LoadFixedCosts();
+
+        CreateWorld();
+
         CreateNpcs();
         CreateMarketEvents();
     }
@@ -92,6 +99,69 @@ public class GameRoot : MonoBehaviour
         LoadProducts();
         LoadGoodCombinationsFromResources();
     }
+
+
+    private void LoadRecipes()
+    {
+        var recipes = Resources.LoadAll<Recipe>("Recipes");
+        BasicLemonadeRecipe= recipes.FirstOrDefault(x=>x.RecipeName==BasicLemonadeRecipeName);
+    }
+    private void InitializePlayer()
+    {
+        var existingPlayer = EconomyInstance.EconomicAgents
+                            .OfType<EconAgent>()
+                            .FirstOrDefault(x=>x.IsPlayer);
+        if(existingPlayer == null)
+        {
+            var playerTemplate = Resources.Load<EconAgent>("EconAgents/Player/Player");
+            PlayerCompany = SpawnAgentFromTemplate(playerTemplate);
+         }
+        else 
+        PlayerCompany = existingPlayer;
+        
+        if(BasicLemonadeRecipe != null)
+            PlayerCompany.AddRecipe(BasicLemonadeRecipe);
+    }
+
+    private void CreateNpcs()
+    {
+        CreatePopulations();
+        CreateFirms();
+    }
+
+    private void CreateFirms()
+    {
+        var firmTemplates = Resources.LoadAll<EconAgent>("EconAgents/Firms");
+        foreach(var firm in firmTemplates)
+        {
+            SpawnAgentFromTemplate(firm);
+        }
+    }
+    private void CreatePopulations()
+    {
+        var populationTemplates = Resources.LoadAll<PopulationAgent>("EconAgents/Populations");
+        foreach(var population in populationTemplates)
+        {
+            SpawnAgentFromTemplate(population);
+        }
+    }
+    public void CreateMarketEvents()
+    {
+        var eventTemplates = Resources.LoadAll<MarketEventSO>("MarketEvents");
+        foreach(var template in eventTemplates)
+        {
+            initialMarket.AddPotentialMarketEvent(template);
+        }
+    }
+    private void CreateWorld()
+    {
+        country = Resources.Load<Country>("TradeLandia");
+        country.Initialize();
+    }
+
+
+#endregion
+#region ETL
 private void LoadGoodCombinationsFromResources()
     {
         var assetPath = "GoodCombinations";
@@ -177,70 +247,29 @@ private void LoadGoodCombinationsFromResources()
 
             var currentGood = _products.FirstOrDefault(x=>x.GoodName==goodName);
 
-            //Set product characteristics here
+            //Get product characteristics here
             var sprite = Resources.Load<Sprite>($"Art/{goodName.ToLower()}");
             var rarity = RarityEnum.Produced;
+            int.TryParse(columns[1],out var physiological);
+            int.TryParse(columns[2],out var safety);
+            int.TryParse(columns[3],out var belonging);
+            int.TryParse(columns[4],out var esteem);
+            int.TryParse(columns[5],out var selfActualization);
+            int.TryParse(columns[6],out var incomeModifier);
             var tooltip = columns[7];
 
+            //Set them here
             if(sprite != null) currentGood.GoodSprite=sprite;
+            currentGood.MaslovianEffects.Effects[MaslovianTypeEnum.Physiological].Modifier=physiological;
+            currentGood.MaslovianEffects.Effects[MaslovianTypeEnum.Safety].Modifier=safety;
+            currentGood.MaslovianEffects.Effects[MaslovianTypeEnum.Belonging].Modifier=belonging;
+            currentGood.MaslovianEffects.Effects[MaslovianTypeEnum.Esteem].Modifier=esteem;
+            currentGood.MaslovianEffects.Effects[MaslovianTypeEnum.SelfActualization].Modifier=selfActualization;
+            currentGood.IncomeModifier=incomeModifier;
 
             currentGood.SetRarity(rarity);
         }
     }
-
-    private void LoadRecipes()
-    {
-        var recipes = Resources.LoadAll<Recipe>("Recipes");
-        BasicLemonadeRecipe= recipes.FirstOrDefault(x=>x.RecipeName==BasicLemonadeRecipeName);
-    }
-    private void InitializePlayer()
-    {
-        var existingPlayer = EconomyInstance.EconomicAgents
-                            .OfType<EconAgent>()
-                            .FirstOrDefault(x=>x.IsPlayer);
-        if(existingPlayer == null)
-        {
-            var playerTemplate = Resources.Load<EconAgent>("EconAgents/Player/Player");
-            PlayerCompany = SpawnAgentFromTemplate(playerTemplate);
-         }
-        else 
-        PlayerCompany = existingPlayer;
-        
-        if(BasicLemonadeRecipe != null)
-            PlayerCompany.AddRecipe(BasicLemonadeRecipe);
-    }
-    private void CreateNpcs()
-    {
-        CreatePopulations();
-        CreateFirms();
-    }
-
-    private void CreateFirms()
-    {
-        var firmTemplates = Resources.LoadAll<EconAgent>("EconAgents/Firms");
-        foreach(var firm in firmTemplates)
-        {
-            SpawnAgentFromTemplate(firm);
-        }
-    }
-    private void CreatePopulations()
-    {
-        var populationTemplates = Resources.LoadAll<PopulationAgent>("EconAgents/Populations");
-        foreach(var population in populationTemplates)
-        {
-            SpawnAgentFromTemplate(population);
-        }
-    }
-    public void CreateMarketEvents()
-    {
-        var eventTemplates = Resources.LoadAll<MarketEventSO>("MarketEvents");
-        foreach(var template in eventTemplates)
-        {
-            initialMarket.AddPotentialMarketEvent(template);
-        }
-    }
-
-
 #endregion
 #region Helpers
 private EconAgent SpawnAgentFromTemplate(EconAgent agent)

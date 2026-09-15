@@ -2,8 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 [RequireComponent(typeof(Image))]
+
+[RequireComponent(typeof(CanvasGroup))]
+[RequireComponent(typeof(Canvas))]
+[RequireComponent(typeof(RectTransform))]
 public class FridgeItem : MonoBehaviour,
     IBeginDragHandler,
     IDragHandler,

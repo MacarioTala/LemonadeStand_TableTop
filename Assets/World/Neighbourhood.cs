@@ -1,30 +1,48 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class Neighbourhood : ScriptableObject
+public class Neighbourhood 
 {
     public readonly Guid NeighbourhoodId=new();
     public string Name;
-    //Maslow
-    public int Food;
-    public int Security;
-    public int Society;
-    public int Validation;
-    public int SelfActualization;
+    
+    private int gold;
+    private readonly MaslovianNeeds maslovianNeeds=new();
+    private readonly List<Resident> residents;
+
+    //Infrastructure
+    private readonly Dictionary<Good,int> produces = new();
+    private readonly Dictionary<Good,int> stockpile = new();
+    public int InfrastructureLimit;
+    public int CostToRaiseInfrastructureLimit;
 
     //Geography
+    public readonly HashSet<Neighbourhood> Neighbours=new();
     public int Zone;
-    private Country _country;
-    public Country GetCountry() => _country;
-    public void SetCountry(Country value) => _country=value;
-    public int GetLocalDeliveryCostFrom(Neighbourhood otherNeighbourhood, DeliverySizeEnum size)
+    private Country country;
+    public Neighbourhood(int? maxResidents=null)
     {
-        var nodeCount = GetDistanceToOrFrom(otherNeighbourhood);
-        return nodeCount*(int)size;
+        maxResidents ??= MathHelper.RollD(1,6);
+
+        for(var i=0;i<maxResidents;i++)
+            residents.Add(new Resident());
+        
     }
 
-    public int GetDistanceToOrFrom(Neighbourhood otherNeighbourhood)
+    public void Act()
+    {
+        Produce();
+    }
+
+    #region Geography
+    public Country GetCountry() => country;
+    public void SetCountry(Country value) => country=value;
+    public void ConnectTo(Neighbourhood neighbour)
+    {
+        Neighbours.Add(neighbour);
+        neighbour.Neighbours.Add(this);
+    }
+     public int GetDistanceToOrFrom(Neighbourhood otherNeighbourhood)
     {
         if(otherNeighbourhood == this)
             return 0;
@@ -52,25 +70,45 @@ public class Neighbourhood : ScriptableObject
         }
         return -1;
     }
+    #endregion
 
-    //Map Gen
-    public readonly HashSet<Neighbourhood> Neighbours=new();
-    public void ConnectTo(Neighbourhood neighbour)
+    #region Logistics
+    public int GetLocalDeliveryCostFrom(Neighbourhood otherNeighbourhood, DeliverySizeEnum size)
     {
-        Neighbours.Add(neighbour);
-        neighbour.Neighbours.Add(this);
+        var nodeCount = GetDistanceToOrFrom(otherNeighbourhood);
+        return nodeCount*(int)size;
     }
-
-    //Infrastructure
-    public List<Good> CanProduce = new();
-    public int InfrastructureLimit;
-    public int CostToRaiseInfrastructureLimit;
+    #endregion
     
+    #region Economics
+    public void AddProduction(Good good, int amountPerTurn) =>produces.Add(good,amountPerTurn);
+
+    private void Produce()
+    {
+        foreach(var product in produces)
+        {
+            stockpile.TryGetValue(product.Key, out int currentStock);
+            stockpile[product.Key]=currentStock+product.Value;
+        }
+    }
+    public MaslovianNeeds GetMaslovianNeeds()=>maslovianNeeds;
+    private void RankGoods()
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
 }
 
-public enum DeliverySizeEnum
+public class Preferences
 {
-    small=1,
-    medium=2,
-    large=3
+    readonly List<Good> knownGoods=new();
+
+    public void AddKnownGood(Good good) => knownGoods.Add(good);
+
+    
+}
+public class Preference
+{
+    public Good Good;
+    public int Rank;
 }

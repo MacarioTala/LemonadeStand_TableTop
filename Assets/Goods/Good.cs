@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,6 +13,8 @@ public class Good : ScriptableObject
     public long ExpiresAfterPeriods;
     public bool IsPerishable=true;
     public int DeliveryDelay;
+    public MaslovianEffects MaslovianEffects=new();
+    public int IncomeModifier;
 
     [SerializeField]private PriceBand PriceBand;
 
@@ -38,17 +39,6 @@ public class Good : ScriptableObject
     //Demand
     public Dictionary<ElasticityTypeEnum, float> Elasticities = new();
     public void AddElasticity(ElasticityTypeEnum key, float value) => Elasticities.Add(key, value);
-    public bool isDemandInelastic
-    {
-        get {
-            return Elasticities.Count == 0
-            ||
-            Elasticities.Count(x=>x.Value!=0)==0
-            ;
-        }
-    }
-
-
     public void SetExpiry(int periods)
         => ExpiresAfterPeriods = periods;
     [SerializeField]private RarityEnum _rarity;
@@ -69,8 +59,7 @@ public class Good : ScriptableObject
     {
         var isReducing = _effects.Any(effect => effect.AffectsMetric == metric && effect.IsReduce);
         var reductionAmount = _effects
-            .Where(effect => effect.AffectsMetric == metric && effect.IsReduce)
-            .FirstOrDefault()
+            .FirstOrDefault(effect => effect.AffectsMetric == metric && effect.IsReduce)
             ?.Magnitude ?? 0f;
         return new ReductionResult(isReducing, reductionAmount);
     }
@@ -156,35 +145,4 @@ public class Good : ScriptableObject
         return GoodName;
     }
     #endregion
-}
-
-public enum RarityEnum
-{
-    Common,
-    Uncommon,
-    Rare,
-    VeryRare,
-    Unique,
-    Produced
-}
-
-[Serializable]
-public class PriceBand{
-    public int Min;
-    public int Max;
-
-    public PriceBand(int min, int max)=> (Min,Max) = (min,max);
-}
-
-public class ReductionResult
-{
-    public readonly bool IsReducing;
-    public readonly float ReductionAmount;
-    public ReductionResult(bool isReducing, float reductionAmount)
-    {
-        IsReducing = isReducing;
-        ReductionAmount = reductionAmount;
-    }
-
-    public float By()=> IsReducing ? ReductionAmount : 0f;
 }

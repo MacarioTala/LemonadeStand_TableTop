@@ -25,10 +25,10 @@ public class DeliveryVan:MonoBehaviour
         for (var i=0;i<3;i++)
         {
             var selectedCandidate = RollCandidate(alreadyRolled);
-            var numAppearing = MathHelper.GetNumAppearingFromRarity(selectedCandidate.GetRarity());
+            var numAppearing = MathHelper.GetNumAppearingInSuitcaseFromRarity(selectedCandidate.GetRarity());
 
             var candidatePriceBand = selectedCandidate.GetPriceBand();
-            var candidatePrice = UnityEngine.Random.Range(candidatePriceBand.Min,candidatePriceBand.Max+1);
+            var candidatePrice = Random.Range(candidatePriceBand.Min,candidatePriceBand.Max+1);
             var inventoryEntry = new InventoryEntry(selectedCandidate,numAppearing,candidatePrice,period);
 
             AvailableInventory.AddInventoryEntry(inventoryEntry);

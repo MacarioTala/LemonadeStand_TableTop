@@ -175,6 +175,7 @@ public class Transmogrifier:MonoBehaviour
         );
         _decision.SetActive(false);
         _productImage.enabled=false;
+        _resultText.color=_successFontColour;
         _resultText.text=string.Empty;
     }
     #endregion
