@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PeteNDmitri:MonoBehaviour
 {
-    IReadOnlyList<Good> GoodsMasterList;
     readonly Inventory TotalInventory = new();
     readonly Inventory SuitCaseInventory = new();
     private Country country;
@@ -19,7 +18,6 @@ public class PeteNDmitri:MonoBehaviour
     {
         Debug.Assert(percentRare+percentUncommon<=100,"Pete and Dmitri inventory preferences exceed 100%");
 
-        LoadGoods();
         country=GameRoot.Instance.Country;
         ether=Resources.Load<Good>("Goods/Ether");
     }
@@ -158,9 +156,14 @@ public class PeteNDmitri:MonoBehaviour
         }
     }
 
+    internal void SellGood(InventoryEntry entry)
+    {
+        var totalPrice = entry.quantity*entry.PriceOfGood;
+        gold+=totalPrice;
+        TotalInventory.TryConsumeGood(entry.good.GoodName,entry.quantity);
+    }
+
     #region Domains
-    private void LoadGoods()
-        => GoodsMasterList=GameRoot.Instance.GetElements();
     #endregion
     #region Private objects
     private class NeighbourhoodStockpile{

@@ -74,6 +74,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
                 currentCash.text=intCash.ToString();
 
                 _shelf.PlaceOnShelf(entry);
+                
+                _currentVan.SellGood(entry);
                 ElementDelivery.BuySucceeded(entry);    
             }
         catch(InsufficientFundsException)
@@ -84,7 +86,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
     }
 
     private void ForSaleRequested(InventoryEntry entry)
-        => _forSaleText.text += entry.good.GoodName;
+        => _forSaleText.text = $" Now Selling: {entry.good.GoodName}";
     
     private void StoreRequested(InventoryEntry entry)
         => _fridge.PlaceInFridge(entry);

@@ -109,6 +109,7 @@ public class LemonadeSellerStrategy : iStrategy
 
     private void StockpileIngredientsWithRemainingCash(decimal remainingCash)
     {
+        if(remainingCash<=0) return;
         var market = Actor.GetMarket();
         var lemonadeRecipe = GetLemonadeRecipe();
         var currentPrices = market.GetIngredientBidAskSpreadForPeriod(Actor,market.CurrentPeriod)

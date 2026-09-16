@@ -78,37 +78,37 @@ public class Inventory
     {
         //tries to consume good, returns quantity that was not consumed
         //do not call after SellGood or ConsumeForRecipe. Those already consume goods
-        var inventory_entries = GetInventoryEntriesByGood(goodName);
-        var remaining_quantity = quantity;
-        var entries_to_remove = new List<InventoryEntry>();
+        var inventoryEntries = GetInventoryEntriesByGood(goodName);
+        var remainingQuantity = quantity;
+        var entriesToRemove = new List<InventoryEntry>();
         
-        if (inventory_entries == null)
+        if (inventoryEntries == null)
         {
             return quantity;
         }   
      
-        foreach(var entry in inventory_entries)
+        foreach(var entry in inventoryEntries)
         {
-            if(remaining_quantity <= 0)
+            if(remainingQuantity <= 0)
             {
                 break;
             }
-            if(entry.quantity <= remaining_quantity)
+            if(entry.quantity <= remainingQuantity)
             {
-                remaining_quantity -= entry.quantity;
-                entries_to_remove.Add(entry);
+                remainingQuantity -= entry.quantity;
+                entriesToRemove.Add(entry);
             }
             else //consume remaining quantity
             {
-                entry.quantity -= remaining_quantity;
-                remaining_quantity = 0;
+                entry.quantity -= remainingQuantity;
+                remainingQuantity = 0;
             }
         }
-        foreach(var entry in entries_to_remove)
+        foreach(var entry in entriesToRemove)
         {
-            inventoryEntries.Remove(entry);
+            this.inventoryEntries.Remove(entry);
         }
-        return remaining_quantity;
+        return remainingQuantity;
     }
     
     public void ConsumeForRecipe(Recipe recipe, int quantity)
