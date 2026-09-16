@@ -3,10 +3,15 @@ using UnityEngine;
 
 public class Shelf : MonoBehaviour
 {
+    private Inventory playerInventory;
     private ShelfSlot[] _shelfSlots; 
-    private void Awake()
+    
+    public void Initialize(Inventory inventory)
     {
         _shelfSlots = GetComponentsInChildren<ShelfSlot>();
+        playerInventory=inventory;
+        foreach(var slot in _shelfSlots) 
+            slot.Initialize(playerInventory);
     }
     public void PlaceOnShelf(InventoryEntry entry)
     {

@@ -990,6 +990,26 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -12
       objectReference: {fileID: 0}
+    - target: {fileID: 4901857032805427337, guid: 9a8f5e49757f44cfebea28c9d4c33bf3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4901857032805427337, guid: 9a8f5e49757f44cfebea28c9d4c33bf3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8073883941661890104, guid: 9a8f5e49757f44cfebea28c9d4c33bf3, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8073883941661890104, guid: 9a8f5e49757f44cfebea28c9d4c33bf3, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 8073883941661890104, guid: 9a8f5e49757f44cfebea28c9d4c33bf3, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8178418881484646679, guid: 9a8f5e49757f44cfebea28c9d4c33bf3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

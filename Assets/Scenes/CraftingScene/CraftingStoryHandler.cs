@@ -55,6 +55,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
             ElementDelivery.BuyRequested += BuyRequested;
             _transmogrifier.OnSaleRequested += ForSaleRequested;
             _transmogrifier.OnStoreRequested += StoreRequested;
+            var inventory = GameRoot.Instance.GetPlayer().GetInventory();
+            _shelf.Initialize(inventory);
         }
         else 
         {
@@ -68,10 +70,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
         try
             {
                 PlayerCompany.BuyGood(entry.good,entry.quantity,entry.PriceOfGood,TheEconomyInstance.TradingPeriod);
-                var totalPrice = entry.PriceOfGood*entry.quantity;
-                int.TryParse(currentCash.text,out var intCash);
-                intCash -= totalPrice;
-                currentCash.text=intCash.ToString();
+                
+                currentCash.text=PlayerCompany.GetCash().ToString();
 
                 _shelf.PlaceOnShelf(entry);
                 

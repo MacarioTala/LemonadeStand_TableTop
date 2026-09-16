@@ -215,8 +215,10 @@ private void LoadGoodCombinationsFromResources()
 
         foreach(var line in lines.Skip(1))
         {
-            var columns = line.Split(new[] {','},6);
+            var columns = line.Split(new[] {','},7);
             var goodName = columns[0].Trim();
+            
+            if(string.IsNullOrEmpty(goodName)) continue;
 
             var currentGood = _elements.FirstOrDefault(x=>x.GoodName == goodName);
 
@@ -225,11 +227,14 @@ private void LoadGoodCombinationsFromResources()
             Enum.TryParse<RarityEnum>(columns[2].Trim(),out var rarity);
             int.TryParse(columns[3].Trim(),out var minPrice);
             int.TryParse(columns[4].Trim(),out var maxPrice);
-            var tooltip = columns[5].Trim();
+            int.TryParse(columns[5].Trim(),out var expiresIn);
+            var tooltip = columns[6].Trim();
+            
 
             currentGood.GoodSprite=sprite;
             currentGood.SetRarity(rarity);
             currentGood.SetPriceBand(minPrice,maxPrice);
+            currentGood.SetExpiry(expiresIn);
             currentGood.Tooltip = tooltip;
         }
     }
@@ -321,4 +326,6 @@ private void LateUpdate()
     if (EconomyInstance == null)
         Debug.LogError($"[GR] EconomyInstance is NULL (unity-null) at frame {Time.frameCount}", this);
 }
+
+    public EconAgent GetPlayer()=>PlayerCompany;
 }

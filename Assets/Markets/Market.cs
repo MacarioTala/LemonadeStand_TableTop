@@ -411,8 +411,8 @@ public class Market : ScriptableObject, iEconAgent
         _demographicManager.RecordDemographicSnapshot(MarketId, CurrentPeriod, TurnPhase.Beginning);
         ResolveMarketEvents();
         //Local Agents
-        _marketInteractionManager.MarketsProvideLiquidityOfLastResort();
-        _marketInteractionManager.NPCsAct(CurrentPeriod);
+        // _marketInteractionManager.MarketsProvideLiquidityOfLastResort();
+        // _marketInteractionManager.NPCsAct(CurrentPeriod);
     }
 
     private void ResolveDeliveries()
@@ -426,11 +426,10 @@ public class Market : ScriptableObject, iEconAgent
 
     public void UnleashMarketForces(int period)
     {
-        ProcessCompanyOrders();
-        ResolveDeliveries();
-        UpdateFulfillmentRates(period);
-        ConsumeGoods();
-        ExpireGoods(period);
+        // ProcessCompanyOrders();
+        // ResolveDeliveries();
+        // UpdateFulfillmentRates(period);
+        //ConsumeGoods();
         UpdateCompanyStatuses(period);
         RecordDemographicSnapshot(TurnPhase.End);
         CurrentPeriod++;
