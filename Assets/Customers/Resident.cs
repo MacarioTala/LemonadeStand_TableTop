@@ -13,8 +13,9 @@ public class Resident
     Neighbourhood currentDestination;
     readonly HashSet<Neighbourhood> neighbourhoodsVisited=new();
 
-    public Resident()
+    public Resident(Neighbourhood neighbourhood)
     {
+        homeNeighbourhood=neighbourhood;
         homeNeighbourhood.GetMaslovianNeeds();
         maxDistanceWillingToTravel=MathHelper.RollD(1,2)+homeNeighbourhood.GetCountry().TransportCapacity;
     }

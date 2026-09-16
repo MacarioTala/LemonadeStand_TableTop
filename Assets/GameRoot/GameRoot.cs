@@ -23,6 +23,7 @@ public class GameRoot : MonoBehaviour
 
     //World
     private Country country;
+    public Country Country=>country;
     //Goods
     private List<Good> _elements;
     private List<Good> _products;

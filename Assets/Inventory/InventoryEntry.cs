@@ -22,29 +22,25 @@ public class InventoryEntry
             throw new Exception("This good is not a produced good");
         }
     }
-    
-    public InventoryEntry(Good good, int quantity, int? acquisitionPrice, int period)
+    public void CalculatePriceFromBand()
+    {
+        var priceBand = good.GetPriceBand();
+        price = UnityEngine.Random.Range(priceBand.Min,priceBand.Max+1);
+    }
+    public InventoryEntry(Good good, int quantity, int? acquisitionPricePerUnit, int period)
     {
         this.good = good;
         this.quantity = quantity;
-        Cost = acquisitionPrice;
-        price = acquisitionPrice??0;
+        Cost = acquisitionPricePerUnit;
+        price = acquisitionPricePerUnit??0;
         PeriodAcquired = period;
         RemainingDelay=good.DeliveryDelay;
     }
 
-    public void SetPrice(int price)
-    {
-        this.price = price;
-    }
+    public void SetPrice(int price)=>this.price = price;
+
     public override string ToString()
     {
         return $"{good.GoodName} {quantity} units at {Cost} ";
-    }
-
-    public void CalculatePriceFromBand()
-    {
-        var priceBand = good.GetPriceBand();
-        SetPrice((int)Math.Round(UnityEngine.Random.Range(priceBand.Min, (float)priceBand.Max)));
     }
 }

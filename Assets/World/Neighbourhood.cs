@@ -8,11 +8,12 @@ public class Neighbourhood
     
     private int gold;
     private readonly MaslovianNeeds maslovianNeeds=new();
-    private readonly List<Resident> residents;
+    private readonly List<Resident> residents=new();
 
     //Infrastructure
     private readonly Dictionary<Good,int> produces = new();
-    private readonly Dictionary<Good,int> stockpile = new();
+    private readonly Dictionary<Good,InventoryEntry> stockpile = new();
+    public IReadOnlyDictionary<Good,InventoryEntry> StockPile => stockpile;
     public int InfrastructureLimit;
     public int CostToRaiseInfrastructureLimit;
 
@@ -20,12 +21,13 @@ public class Neighbourhood
     public readonly HashSet<Neighbourhood> Neighbours=new();
     public int Zone;
     private Country country;
-    public Neighbourhood(int? maxResidents=null)
+    public Neighbourhood(Country homeCountry,int? maxResidents=null)
     {
+        country=homeCountry;
         maxResidents ??= MathHelper.RollD(1,6);
 
         for(var i=0;i<maxResidents;i++)
-            residents.Add(new Resident());
+            residents.Add(new Resident(this));
         
     }
 
@@ -83,12 +85,19 @@ public class Neighbourhood
     #region Economics
     public void AddProduction(Good good, int amountPerTurn) =>produces.Add(good,amountPerTurn);
 
-    private void Produce()
+    public void Produce()
     {
         foreach(var product in produces)
         {
-            stockpile.TryGetValue(product.Key, out int currentStock);
-            stockpile[product.Key]=currentStock+product.Value;
+            stockpile.TryGetValue(product.Key, out InventoryEntry currentStock);
+            if(currentStock != null)
+                currentStock.quantity+=product.Value;
+            else
+            {
+                var entry = new InventoryEntry(product.Key,product.Value,0,TheEconomy.Instance.TradingPeriod);
+                entry.CalculatePriceFromBand();
+                stockpile.Add(entry.good,entry);
+            }
         }
     }
     public MaslovianNeeds GetMaslovianNeeds()=>maslovianNeeds;
@@ -96,6 +105,24 @@ public class Neighbourhood
     {
         throw new NotImplementedException();
     }
+
+    public LemonadeStandResultObject SellGood(Good good, int qty)
+    {
+        if(stockpile[good].quantity>=qty)
+        {
+            stockpile[good].quantity-=qty;
+            gold+=qty*stockpile[good].PriceOfGood;
+            return LemonadeStandResultObject.Success();
+        }
+        else
+        {
+            return LemonadeStandResultObject.Failure(ResultTypeEnum.InsufficientGoods,$"not enough {good.GoodName}");
+        }
+    }
+
+    public IReadOnlyDictionary<Good,int> GetProduction()
+        => produces;
+    
     #endregion
 }
 

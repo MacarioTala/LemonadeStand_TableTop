@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c4aa5ec103344fc0a4cc303adcc37d1, type: 3}
   m_Name: TradeLandia
   m_EditorClassIdentifier: GameAssembly::Country
+  numberOfNeighbourhoods: 10
   TransportCapacity: 0

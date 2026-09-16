@@ -10,13 +10,13 @@ using UnityEngine.UI;
 public class Transmogrifier:MonoBehaviour
 {
     private static readonly WaitForSeconds _waitForSeconds2 = new(2f);
-    private Image _productImage;
     [SerializeField] private Button _button;
     [SerializeField]private TransmogrifierSlot _slot1;
     [SerializeField]private TransmogrifierSlot _slot2;
 
     private GameObject _statusBar;
     private TextMeshProUGUI _resultText;
+    private Image _productWindowImage;
     private Button _sellIt;
     private Button _storeIt;
     private Button _chuckIt;
@@ -30,8 +30,8 @@ public class Transmogrifier:MonoBehaviour
     private void Awake()
     {
         //Product Window
-        _productImage = transform.Find("Product").GetComponentInChildren<Image>();
-        _productImage.enabled=false;
+        _productWindowImage=transform.Find("Product/ProductImage").GetComponent<Image>();
+        EnableProductWindowImages(false);
 
         //Status Bar
         _statusBar = transform.Find("StatusBar").gameObject;
@@ -138,10 +138,17 @@ public class Transmogrifier:MonoBehaviour
     }
 
     #region UI Helpers
+    private void EnableProductWindowImages(bool enable)
+    {
+        var productImage = transform.Find("Product/ProductImage").GetComponentInChildren<Image>();
+        var shippingCrate = transform.Find("Product/ShippingCrate").GetComponentInChildren<Image>();
+        productImage.enabled=enable;
+        shippingCrate.enabled=enable;
+    }
      private IEnumerator RenderChoice(InventoryEntry result)
     {
-        _productImage.enabled=true;
-        _productImage.sprite=result.good.GoodSprite;
+        EnableProductWindowImages(true);
+        _productWindowImage.sprite=result.good.GoodSprite;
         _resultText.text = $"You made: {result.quantity} {result.good.GoodName}";
 
         yield return _waitForSeconds2;
@@ -174,7 +181,7 @@ public class Transmogrifier:MonoBehaviour
             rect.rect.width*2f
         );
         _decision.SetActive(false);
-        _productImage.enabled=false;
+        EnableProductWindowImages(false);
         _resultText.color=_successFontColour;
         _resultText.text=string.Empty;
     }

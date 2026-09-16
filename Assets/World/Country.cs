@@ -21,7 +21,7 @@ public class Country : ScriptableObject
     {
         for(var i=0; i<totalNeighbourhoods;i++)
         {
-            var neighbourhood = new Neighbourhood
+            var neighbourhood = new Neighbourhood(this)
             {
                 Name = $"N{i}"
             };
@@ -40,15 +40,23 @@ public class Country : ScriptableObject
     public void EndowNeighbourhoods()
     {
         foreach(var neighbourhood in Neighbourhoods)
-            foreach(var element in GameRoot.Instance.GetElements())
-                Endow(element,neighbourhood);
+            {
+                foreach(var element in GameRoot.Instance.GetElements())
+                {
+                    if(neighbourhood.GetProduction().Count>=3) break;
+                    Endow(element,neighbourhood);
+                }
+                
+                neighbourhood.Produce();
+            }
     }
 
     private void Endow(Good element, Neighbourhood neighbourhood)
     {
         var endowThis = element.GetRarity()==MathHelper.GetRarityFromPercentage(MathHelper.RollD(1,100));
 
-        var producedQty = MathHelper.GetNumberProducedPerTurnFromRarity(element.GetRarity());
+        var producedQty = Math.Min(MathHelper.GetNumberProducedPerTurnFromRarity(element.GetRarity()),1);
+
         if(endowThis)
             neighbourhood.AddProduction(element,producedQty);
     }

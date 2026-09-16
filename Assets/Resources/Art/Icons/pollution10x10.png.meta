@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bb1fc18305f6949559bf3790e4b60558
+guid: 245fd40c3c47f4e01b30a17746a8d973
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6832553394565480913
-    second: hydroelectricdam_0
+      213: -1373985255013493155
+    second: pollution_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: hydroelectricdam_0
+      name: pollution_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 15
-        height: 15
+        width: 10
+        height: 10
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d107f7ac1b12de50800000000000000
-      internalID: 6832553394565480913
+      spriteID: d56db44b0bf9eece0800000000000000
+      internalID: -1373985255013493155
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      hydroelectricdam_0: 6832553394565480913
+      pollution_0: -1373985255013493155
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

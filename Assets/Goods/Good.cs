@@ -105,7 +105,7 @@ public class Good : ScriptableObject
         //Initial price will be determined based on price_band
         Price = Generate_initial_price();
     }
-
+    
     public PriceBand GetPriceBand() => PriceBand;
     public void SetPriceBand(int minPrice,int maxPrice) => (PriceBand.Min,PriceBand.Max)=(minPrice,maxPrice);
     public int GetPrice() => Price;

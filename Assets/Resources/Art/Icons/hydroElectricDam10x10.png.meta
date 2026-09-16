@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bb1fc18305f6949559bf3790e4b60558
+guid: 5db6742801eed449792530b34d04bd89
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6832553394565480913
-    second: hydroelectricdam_0
+      213: 3789808742609300811
+    second: hydroElectricDam_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: hydroelectricdam_0
+      name: hydroElectricDam_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 15
-        height: 15
+        width: 10
+        height: 10
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d107f7ac1b12de50800000000000000
-      internalID: 6832553394565480913
+      spriteID: b4da5edd8fa189430800000000000000
+      internalID: 3789808742609300811
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      hydroelectricdam_0: 6832553394565480913
+      hydroElectricDam_0: 3789808742609300811
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

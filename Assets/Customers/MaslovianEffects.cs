@@ -8,16 +8,16 @@ public class MaslovianEffects
 
     public MaslovianEffects()
     {
-        Enum.GetValues(typeof(MaslovianTypeEnum))
-            .Cast<MaslovianTypeEnum>()
-            .ToDictionary(
-                type=>type,
-                type=> new MaslovianEffect
-                        {
-                            Type=type,
-                            Modifier=0
-                        }
-            );
+        Effects = Enum.GetValues(typeof(MaslovianTypeEnum))
+                    .Cast<MaslovianTypeEnum>()
+                    .ToDictionary(
+                        type=>type,
+                        type=> new MaslovianEffect
+                                {
+                                    Type=type,
+                                    Modifier=0
+                                }
+                    );
     }
 }
 public class MaslovianEffect

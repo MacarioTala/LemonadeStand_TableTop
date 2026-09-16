@@ -15,7 +15,7 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI PeriodText;
     [SerializeField] private int numberOfPopulations; 
     [SerializeField] private int numberOfNPCFirms;
-    [SerializeField] private DeliveryVan _currentVan;
+    [SerializeField] private PeteNDmitri _currentVan;
     [SerializeField] private Suitcase ElementDelivery;
     [SerializeField] private Shelf _shelf;
     [SerializeField] private TextMeshProUGUI _forSaleText;
@@ -342,6 +342,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
 #region Game Choices
     private void BuyGoods(int tradingPeriod)
     {
+        _currentVan.GetStockThisTurn();
         ElementDelivery.gameObject.SetActive(true);
         var availableGoods = _currentVan.GetCurrentDelivery(tradingPeriod);
        

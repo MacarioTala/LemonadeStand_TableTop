@@ -8,6 +8,7 @@ public class Suitcase : MonoBehaviour
 {
     [SerializeField] Button Lid;
     [SerializeField] GameObject ElementDelivery;
+    [SerializeField] PeteNDmitri peteNDmitri;
     public event Action<InventoryEntry> BuyRequested;
     private DeliverySlot[] slots;
 
