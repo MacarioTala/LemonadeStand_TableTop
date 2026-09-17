@@ -1,21 +1,19 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 public class Resident
 {
     Neighbourhood homeNeighbourhood;
     int maxDistanceWillingToTravel=0;
-    int maxNeighbourhoodsToVisit=0;
-    bool isMoving=false;
-    bool atHome=true;
-    Neighbourhood currentLocation;
+    bool isMoving =false;
+
+    public Neighbourhood CurrentLocation{get; private set;}
     Neighbourhood currentDestination;
-    readonly HashSet<Neighbourhood> neighbourhoodsVisited=new();
 
     public Resident(Neighbourhood neighbourhood)
     {
         homeNeighbourhood=neighbourhood;
+        CurrentLocation=homeNeighbourhood;
         homeNeighbourhood.GetMaslovianNeeds();
         maxDistanceWillingToTravel=MathHelper.RollD(1,2)+homeNeighbourhood.GetCountry().TransportCapacity;
     }
@@ -28,8 +26,11 @@ public class Resident
     public void GoHome()
     {
         isMoving=true;
-        homeNeighbourhood.GetDistanceToOrFrom(currentLocation);
+        homeNeighbourhood.GetDistanceToOrFrom(CurrentLocation);
+        currentDestination=homeNeighbourhood;
     }
+    
+    public bool IsHome()=>CurrentLocation==homeNeighbourhood;
 
     public void EstablishTradeRoute(InventoryEntry entry, Neighbourhood neighbourhood)
     {
@@ -38,15 +39,27 @@ public class Resident
     private void Move()
     {
         isMoving=true;
-        throw new NotImplementedException();
-    }
-    public void MoveToNextNeighbourhood()
-    {
-        var possibleMoves = currentLocation.Neighbours;
+        var from = CurrentLocation;
+        var possibleMoves = from.Neighbours;
         
-        var neighbourHoodToMoveTo = possibleMoves.ElementAt(MathHelper.RollD(1,possibleMoves.Count));
+        Neighbourhood neighbourHoodToMoveTo;
+        if(currentDestination != null)
+            neighbourHoodToMoveTo = possibleMoves
+                                    .OrderBy(x=>x.GetDistanceToOrFrom(currentDestination))
+                                    .First();
+        else
+            neighbourHoodToMoveTo=possibleMoves.ElementAt(UnityEngine.Random.Range(0,possibleMoves.Count));
         
-        currentLocation=neighbourHoodToMoveTo;
+        CurrentLocation=neighbourHoodToMoveTo;
+
+        GameRoot.Instance.Bus.Publish(new ResidentMovedEvent(this,from,CurrentLocation));
+        
+        if(CurrentLocation==currentDestination)
+        {
+            currentDestination=null;
+            isMoving=false;
+        }
     }
-    public void SetCurrentLocation(Neighbourhood neighbourhood) => currentLocation=neighbourhood;
+    
+    public void SetCurrentLocation(Neighbourhood neighbourhood) => CurrentLocation=neighbourhood;
 }

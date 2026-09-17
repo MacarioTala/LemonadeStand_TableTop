@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Country", menuName = "LemonadeStandAssets/Country", order = 1)]
@@ -21,11 +22,11 @@ public class Country : ScriptableObject
     {
         for(var i=0; i<totalNeighbourhoods;i++)
         {
-            var neighbourhood = new Neighbourhood(this)
+            var maxResidents = MathHelper.RollD(1,6);
+            var neighbourhood = new Neighbourhood(this,maxResidents)
             {
                 Name = $"N{i}"
             };
-            neighbourhood.SetCountry(this);
             Neighbourhoods.Add(neighbourhood);
         }
         
@@ -59,5 +60,10 @@ public class Country : ScriptableObject
 
         if(endowThis)
             neighbourhood.AddProduction(element,producedQty);
+    }
+
+    public void Dispose()
+    {
+        foreach(var neighbourhood in Neighbourhoods) neighbourhood.Dispose();
     }
 }

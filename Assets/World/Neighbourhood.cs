@@ -9,6 +9,8 @@ public class Neighbourhood
     private int gold;
     private readonly MaslovianNeeds maslovianNeeds=new();
     private readonly List<Resident> residents=new();
+    private readonly SubscriptionToken arrivingResidentsSubscription;
+    private readonly List<Resident> peopleWhoAreHere=new();
 
     //Infrastructure
     private readonly Dictionary<Good,int> produces = new();
@@ -21,19 +23,25 @@ public class Neighbourhood
     public readonly HashSet<Neighbourhood> Neighbours=new();
     public int Zone;
     private Country country;
+    
     public Neighbourhood(Country homeCountry,int? maxResidents=null)
     {
         country=homeCountry;
-        maxResidents ??= MathHelper.RollD(1,6);
 
         for(var i=0;i<maxResidents;i++)
-            residents.Add(new Resident(this));
+        {
+            var newResident=new Resident(this);
+            residents.Add(newResident);
+            peopleWhoAreHere.Add(newResident);
+        }
         
+        arrivingResidentsSubscription=GameRoot.Instance.Bus.Subscribe<ResidentMovedEvent>(OnResidentArrivedOrLeft);
     }
 
     public void Act()
     {
         Produce();
+        MoveResidents();
     }
 
     #region Geography
@@ -124,6 +132,28 @@ public class Neighbourhood
         => produces;
     
     #endregion
+    #region Residents
+    public IEnumerable<Resident> GetResidents ()=> residents;
+    private void MoveResidents()
+    {
+        foreach(var resident in residents)
+            resident.Act();
+    }
+    public void OnResidentArrivedOrLeft(ResidentMovedEvent evt)
+    {
+        if(evt.CurrentLocation==this)
+            peopleWhoAreHere.Add(evt.Resident);
+        
+        if(evt.From==this)
+            peopleWhoAreHere.Remove(evt.Resident);
+    }
+    public IEnumerable<Resident> WhosHere()=>peopleWhoAreHere;
+    #endregion
+
+    public void Dispose()
+    {
+        if(arrivingResidentsSubscription.IsValid) arrivingResidentsSubscription.Dispose();
+    }
 }
 
 public class Preferences

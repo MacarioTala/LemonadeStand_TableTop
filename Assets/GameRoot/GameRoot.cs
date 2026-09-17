@@ -118,10 +118,19 @@ public class GameRoot : MonoBehaviour
             PlayerCompany = SpawnAgentFromTemplate(playerTemplate);
          }
         else 
-        PlayerCompany = existingPlayer;
+            PlayerCompany = existingPlayer;
         
+        PlacePlayer();
+
         if(BasicLemonadeRecipe != null)
             PlayerCompany.AddRecipe(BasicLemonadeRecipe);
+    }
+
+    private void PlacePlayer()
+    {
+        var neighbourhoods = Country.GetNeighbourhoods();
+        var location = neighbourhoods[UnityEngine.Random.Range(1,neighbourhoods.Count)];
+        PlayerCompany.SetLocation(location);
     }
 
     private void CreateNpcs()

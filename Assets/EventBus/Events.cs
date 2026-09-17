@@ -57,15 +57,24 @@ public readonly struct PlayerBankruptEvent
 
     public PlayerBankruptEvent(int period, EconAgent player)=> (Period,Player)=(period,player);
 }
+
+public readonly struct ResidentMovedEvent
+{
+    public readonly Resident Resident;
+    public readonly Neighbourhood From;
+    public readonly Neighbourhood CurrentLocation;
+
+    public ResidentMovedEvent(Resident resident,Neighbourhood origin,Neighbourhood currentLocation)
+        => (Resident,From,CurrentLocation)=(resident,origin,currentLocation);
+}
+public readonly struct RequestLoadSceneEvent
+{
+    public readonly string SceneName;
+    public RequestLoadSceneEvent(string sceneName) => SceneName = sceneName;
+}
 public readonly struct StoryBeatHappenedEvent
 {
     public readonly StoryBeat Beat;
     public readonly BeatPropertyBag Bag;
     public StoryBeatHappenedEvent(StoryBeat beat,BeatPropertyBag bag) => (Beat,Bag) = (beat,bag);
-}
-
-public readonly struct RequestLoadSceneEvent
-{
-    public readonly string SceneName;
-    public RequestLoadSceneEvent(string sceneName) => SceneName = sceneName;
 }

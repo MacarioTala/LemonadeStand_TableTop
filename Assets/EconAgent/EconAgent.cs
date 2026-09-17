@@ -316,6 +316,12 @@ private void SetBus()
         }
     }
 #endregion    
+#region Geography
+private Neighbourhood location;
+public Neighbourhood Location=>location;
+public void SetLocation(Neighbourhood neighbourhood)=> location=neighbourhood;
+
+#endregion
 #region Goals and strategies
     private iStrategy agentStrategy = null;
     public iStrategy GetStrategy() => agentStrategy;

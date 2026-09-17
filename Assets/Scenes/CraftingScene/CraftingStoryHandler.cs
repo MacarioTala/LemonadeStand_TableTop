@@ -27,6 +27,7 @@ public class CraftingStoryHandler : MonoBehaviour
 
 #region Turn Variables
     [SerializeField]TextMeshProUGUI currentCash;
+
     #endregion
     #region Story Beats
     readonly List<StoryBeat> storyBeats=new();
@@ -38,6 +39,7 @@ private SubscriptionToken goodsExpiredSubscription;
 private SubscriptionToken turnBasedSubscription;
 private SubscriptionToken playerBankruptSubscription;
 private SubscriptionToken otherAgentBankruptSubscription;
+private SubscriptionToken residentsMovedSubscription;
 #endregion
     
 #region Game Variables
@@ -46,7 +48,64 @@ private SubscriptionToken otherAgentBankruptSubscription;
     private Market initialMarket;
     private UIStateEnum CurrentUIState = UIStateEnum.Idle;
     private bool areEventsSubscribed =false;
+    private Country country;
 #endregion
+#region ThingsYouLikelyCareAboutMost
+private void StartTurn()
+    {
+        isPeriodStart = true;
+        ClearTextScroll();
+     
+        GameRoot.Instance.Bus.Publish(new PeriodHappenedEvent(TheEconomyInstance.TradingPeriod),false);
+        PlayStoryBeatsInPeriod();
+        
+        ShowMainMenu();
+        foreach(var neighbourhood in country.GetNeighbourhoods())
+            neighbourhood.Act();
+
+        ResolveResidentEncounters();
+    }
+    private IEnumerator EndTurnFlow()
+    {
+        CurrentUIState = UIStateEnum.Reading;
+        ClearUISelection();
+        ClearTextScroll();
+
+        ProcessPlayerActions();
+
+        yield return ShowMessageWithWait($"The day passes. Period {initialMarket.CurrentPeriod} ends", 1);
+        
+        TheEconomyInstance.ResolveTurn();
+
+        PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
+
+        yield return ShowTurnSummary();
+        LogMessage("Hit <Space> to continue");
+        yield return WaitForContinue();
+
+        ResetTurnVariables();
+        StartTurn();
+    }
+    private void StartTextBasedGame()
+    {
+        if (IsSceneOnly())
+        {
+            ClearTextScroll();
+            LogMessage("Scene-only mode: Backend disabled");
+            return;
+        }
+        Initialize();
+        StartCoroutine(PlayIntro());
+    }
+    private void EndTurn()
+    {
+        if(IsSceneOnly()) return;
+
+        StartCoroutine(EndTurnFlow());
+        Debug.Log("End Turn");
+    }
+#endregion
+#region Initialization
     private void Awake()
     {
         if (Instance == null) 
@@ -64,6 +123,26 @@ private SubscriptionToken otherAgentBankruptSubscription;
             return;
         }
     }
+    private void Initialize()
+    {
+        if(GameRoot.Instance == null)
+        {
+            Debug.LogWarning("Gameroot is missing. Playing scene in scene-only mode.");
+            return;
+        }
+        else
+        {
+            TheEconomyInstance = GameRoot.Instance.EconomyInstance;
+            initialMarket = TheEconomyInstance.GetMarketByName(InitialMarketName);
+            PlayerCompany = initialMarket.GetMarketParticipants()
+                        .FirstOrDefault(x=>x.IsPlayer);
+            currentCash.text = PlayerCompany.GetCash().ToString();
+            PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
+            SubscribeToEvents();
+            country=GameRoot.Instance.Country;
+        }
+    }
+#endregion
 
     private void BuyRequested(InventoryEntry entry)
     {
@@ -91,43 +170,7 @@ private SubscriptionToken otherAgentBankruptSubscription;
     private void StoreRequested(InventoryEntry entry)
         => _fridge.PlaceInFridge(entry);
 
-    private void ClearUISelection()
-    {
-        if (EventSystem.current != null)
-            EventSystem.current.SetSelectedGameObject(null);
-    }
-
-    private void StartTextBasedGame()
-    {
-        if (IsSceneOnly())
-        {
-            ClearTextScroll();
-            LogMessage("Scene-only mode: Backend disabled");
-            return;
-        }
-        Initialize();
-        StartCoroutine(PlayIntro());
-    }
-
-    private void Initialize()
-    {
-        if(GameRoot.Instance == null)
-        {
-            Debug.LogWarning("Gameroot is missing. Playing scene in scene-only mode.");
-            return;
-        }
-        else
-        {
-            TheEconomyInstance = GameRoot.Instance.EconomyInstance;
-            initialMarket = TheEconomyInstance.GetMarketByName(InitialMarketName);
-            PlayerCompany = initialMarket.GetMarketParticipants()
-                        .FirstOrDefault(x=>x.IsPlayer);
-            currentCash.text = PlayerCompany.GetCash().ToString();
-            PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
-            SubscribeToEvents();
-        }
-    }
-
+    #region Events and Handlers
     private void SubscribeToEvents()
     {
         if(GameRoot.Instance!=null && GameRoot.Instance.Bus !=null)
@@ -136,27 +179,41 @@ private SubscriptionToken otherAgentBankruptSubscription;
                     .Subscribe<StoryBeatHappenedEvent>(OnStoryBeatHappened,false);
 
             EndTurnButton.onClick.AddListener(EndTurn);
+
+            residentsMovedSubscription = GameRoot.Instance.Bus
+                    .Subscribe<ResidentMovedEvent>(OnResidentMoveHappened);
         }
 
         areEventsSubscribed = true;
     }
-    #region Handlers
-
-    private void OnStoryBeatHappened(StoryBeatHappenedEvent evt)
-        {
-            if(evt.Bag.FixedCostAssociatedWithBeat !=null)
-                AddFixedCostsForPlayer(evt.Bag.FixedCostAssociatedWithBeat);
-
-            AddStoryBeat(evt.Beat);
-        }
-
-    private void AddFixedCostsForPlayer(FixedCostTemplate template)
+    private void OnResidentMoveHappened(ResidentMovedEvent evt)
     {
-        PlayerCompany.AddFixedCostInPeriod(template,initialMarket.CurrentPeriod);
+        Debug.Log("Residents moved!");
     }
-    
+    private void OnStoryBeatHappened(StoryBeatHappenedEvent evt)
+    {
+        if(evt.Bag.FixedCostAssociatedWithBeat !=null)
+            AddFixedCostsForPlayer(evt.Bag.FixedCostAssociatedWithBeat);
+
+        AddStoryBeat(evt.Beat);
+    }
     #endregion
 
+    private void ResolveResidentEncounters()
+    {
+        //Player encounters for now
+        var whereIsEverybody=PlayerCompany.Location.WhosHere();
+        
+        LogMessage(whereIsEverybody.Count() switch
+        {
+            0=> "No one arrived today",
+            >=1 and <= 5 => "People are coming in and out of the shop",
+            > 5 => "A huge crowd has gathered",
+            _ => "How is this firing like this?"
+        });
+    }
+
+   
     private IEnumerator ShowTurnSummary()
     {
         var summaryPeriod = initialMarket.CurrentPeriod==0?0:initialMarket.CurrentPeriod -1;
@@ -223,16 +280,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
 
         LogMessage("You lock up and go home");
     }
-    private void StartTurn()
-    {
-        isPeriodStart = true;
-        ClearTextScroll();
-     
-        GameRoot.Instance.Bus.Publish(new PeriodHappenedEvent(TheEconomyInstance.TradingPeriod),false);
-        PlayStoryBeatsInPeriod();
-        
-        ShowMainMenu();
-    }
 
     private void PlayStoryBeatsInPeriod()
     {
@@ -240,37 +287,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
             LogMessage(beat.FlavourText);
         storyBeats.Clear();
     }
-
-    private void EndTurn()
-    {
-        if(IsSceneOnly()) return;
-
-        StartCoroutine(EndTurnFlow());
-        Debug.Log("End Turn");
-    }
-
-    private IEnumerator EndTurnFlow()
-    {
-        CurrentUIState = UIStateEnum.Reading;
-        ClearUISelection();
-        ClearTextScroll();
-
-        ProcessPlayerActions();
-
-        yield return ShowMessageWithWait($"The day passes. Period {initialMarket.CurrentPeriod} ends", 1);
-        
-        TheEconomyInstance.ResolveTurn();
-
-        PeriodText.text = TheEconomyInstance.TradingPeriod.ToString();
-
-        yield return ShowTurnSummary();
-        LogMessage("Hit <Space> to continue");
-        yield return WaitForContinue();
-
-        ResetTurnVariables();
-        StartTurn();
-    }
-
     public void GameOver()
     {
         LogMessage("Game Over");
@@ -351,8 +367,6 @@ private SubscriptionToken otherAgentBankruptSubscription;
        ElementDelivery.Display(availableGoods);
     }
 
-   
-
     private void DisplayInventory()
     {
         CurrentUIState = UIStateEnum.Reading;
@@ -405,6 +419,8 @@ private SubscriptionToken otherAgentBankruptSubscription;
    
 
 #region helpers
+    private void AddFixedCostsForPlayer(FixedCostTemplate template)
+    => PlayerCompany.AddFixedCostInPeriod(template,initialMarket.CurrentPeriod);
     private bool IsSceneOnly()
     {
         if(GameRoot.Instance==null) 
@@ -415,6 +431,11 @@ private SubscriptionToken otherAgentBankruptSubscription;
     private void ClearTextScroll()
     {
         if(gameLog!=null) gameLog.text = "";
+    }
+    private void ClearUISelection()
+    {
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
     private bool IsPlayerTyping()
     {
@@ -483,50 +504,52 @@ private SubscriptionToken otherAgentBankruptSubscription;
     }
 
     #endregion
-    #region Unity Stuff
-    private void Start()
-        => StartTextBasedGame();
+#region Unity Stuff
+private void Start()
+    => StartTextBasedGame();
 
-    private void Update()
+private void Update()
+{
+    //return if player is entering text
+    if(IsPlayerTyping()) return;
+    
+    switch(CurrentUIState)
     {
-        //return if player is entering text
-        if(IsPlayerTyping()) return;
-        
-        switch(CurrentUIState)
-        {
-            case UIStateEnum.MainMenu:
-                HandleMainMenu();
-                break;
-            case UIStateEnum.Reading:
-                if(Input.GetKeyDown(KeyCode.Space))
-                    CurrentUIState=UIStateEnum.Idle;
-                else if(Input.GetKeyDown(KeyCode.Escape))
-                    ShowMainMenu();
-                break;
-        }
+        case UIStateEnum.MainMenu:
+            HandleMainMenu();
+            break;
+        case UIStateEnum.Reading:
+            if(Input.GetKeyDown(KeyCode.Space))
+                CurrentUIState=UIStateEnum.Idle;
+            else if(Input.GetKeyDown(KeyCode.Escape))
+                ShowMainMenu();
+            break;
     }
- 
-    private void OnDisable()
-        => CleanupSubscription();
-    private void OnDestroy()
-        => CleanupSubscription();
+}
 
-    private void CleanupSubscription()
-    {
-        if(deliveriesResolvedSubscription.IsValid)
-            deliveriesResolvedSubscription.Dispose();
-        
-        if(goodsExpiredSubscription.IsValid)
-            goodsExpiredSubscription.Dispose();
-        
-        if(turnBasedSubscription.IsValid)
-            turnBasedSubscription.Dispose();
-        
-        if(playerBankruptSubscription.IsValid)
-            playerBankruptSubscription.Dispose();
-        
-        if(otherAgentBankruptSubscription.IsValid)
-            otherAgentBankruptSubscription.Dispose();
-    }
-    #endregion
+private void OnDisable()
+    => CleanupSubscription();
+private void OnDestroy()
+    => CleanupSubscription();
+
+private void CleanupSubscription()
+{
+    if(deliveriesResolvedSubscription.IsValid)
+        deliveriesResolvedSubscription.Dispose();
+    
+    if(goodsExpiredSubscription.IsValid)
+        goodsExpiredSubscription.Dispose();
+    
+    if(turnBasedSubscription.IsValid)
+        turnBasedSubscription.Dispose();
+    
+    if(playerBankruptSubscription.IsValid)
+        playerBankruptSubscription.Dispose();
+    
+    if(otherAgentBankruptSubscription.IsValid)
+        otherAgentBankruptSubscription.Dispose();
+    if(residentsMovedSubscription.IsValid)
+        residentsMovedSubscription.Dispose();
+}
+#endregion
 }
