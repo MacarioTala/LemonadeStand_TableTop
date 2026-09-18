@@ -9,6 +9,7 @@ using System;
 
 public class CraftingStoryHandler : MonoBehaviour
 {
+    private static readonly WaitForSeconds _waitForSeconds2 = new(2f);
     [SerializeField] private TextMeshProUGUI gameLog;
     [SerializeField] private ScrollRect textScroll;
     [SerializeField] private Button EndTurnButton;
@@ -24,6 +25,10 @@ public class CraftingStoryHandler : MonoBehaviour
     private const string InitialMarketName = "Episode 1 Market";
     public static CraftingStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
+    private Image hudTextScroll;
+    private Coroutine _dimTextScrollCoroutine;
+    private Color _textScrollActiveColor;
+    private Color _gameLogActiveColor;
 
 #region Turn Variables
     [SerializeField]TextMeshProUGUI currentCash;
@@ -116,6 +121,9 @@ private void StartTurn()
             _transmogrifier.OnStoreRequested += StoreRequested;
             var inventory = GameRoot.Instance.GetPlayer().GetInventory();
             _shelf.Initialize(inventory);
+            hudTextScroll=textScroll.GetComponent<Image>();
+            _textScrollActiveColor=hudTextScroll.color;
+            _gameLogActiveColor=gameLog.color;
         }
         else 
         {
@@ -318,9 +326,6 @@ private void StartTurn()
 
         switch (choice)
         {
-            case 'C':
-                DisplayInventory();
-                break;
             case 'S':
                 BuyGoods(TheEconomyInstance.TradingPeriod);
                 break;
@@ -334,7 +339,6 @@ private void StartTurn()
 
     private void HandleMainMenu()
     {
-        if (Input.GetKeyDown(KeyCode.C)) ChooseFromMainMenu('C');
         if (Input.GetKeyDown(KeyCode.S)) ChooseFromMainMenu('S');
     }
 
@@ -349,7 +353,6 @@ private void StartTurn()
         if(isPeriodStart) LogMessage($"You flip the sign open");
         
         LogMessage("What would you like to do?");
-        LogMessage("(C)heck your supplies");
         LogMessage("(S)ee what Pete and Dmitri have for sale");
         LogMessage("\n");
 
@@ -365,50 +368,6 @@ private void StartTurn()
         var availableGoods = _currentVan.GetCurrentDelivery(tradingPeriod);
        
        ElementDelivery.Display(availableGoods);
-    }
-
-    private void DisplayInventory()
-    {
-        CurrentUIState = UIStateEnum.Reading;
-
-        ClearUISelection();
-        var inventory = PlayerCompany.GetInventory().GetAvailableInventory();
-        LogMessage($"You have {currentCash.text} gold");
-        LogMessage("You open the fridge, you see:");
-        if(inventory.Count>0)
-        {
-            foreach (var item in inventory.Where(x=>!x.good.IsProducedGood))
-            {
-                var s = string.Empty;
-                if(item.quantity>1)
-                    s="s";
-                LogMessage($"{item.quantity} {item.good} {s} you bought for {item.Cost}");
-            }
-            if(inventory.Any(x=>x.good.IsProducedGood))
-            {
-                LogMessage("..and");
-                foreach (var item in inventory.Where(x=>x.good.IsProducedGood))
-                {
-                    var s = string.Empty;
-                    if(item.quantity>1)
-                        s="s";
-                    LogMessage($"{item.quantity} {item.good} {s} you made at {item.Cost} per {item.good}");
-                }
-            }
-        }
-        else
-        {
-            LogMessage("... an empty fridge");
-        }
-
-        if(PlayerCompany.Recipes.Count()>0)
-        {
-            LogMessage("\nYou have recipes for: ");
-            foreach(var recipe in PlayerCompany.Recipes)
-                LogMessage($"- {recipe.RecipeName}");
-        }
-        else
-            LogMessage("You have not discovered any recipes");
     }
 
     public void SetThingToSell(InventoryEntry entry)
@@ -428,6 +387,30 @@ private void StartTurn()
         else
             return false;
     }
+    private void ChangeTextScrollLighting(LightingEnum lighting)
+    {
+        var dimmedBackground = _textScrollActiveColor*.55f;
+        var dimmedText = _gameLogActiveColor*.75f;
+
+        if(lighting==LightingEnum.Active)
+        {
+            hudTextScroll.color=_textScrollActiveColor;
+            gameLog.color = _gameLogActiveColor;
+            return;
+        }
+
+        if(lighting==LightingEnum.Dimmed)
+        {
+            hudTextScroll.color = dimmedBackground;
+            gameLog.color=dimmedText;
+        }
+    }
+    private IEnumerator DimTextScroll()
+    {
+        yield return _waitForSeconds2;
+        ChangeTextScrollLighting(LightingEnum.Dimmed);
+        _dimTextScrollCoroutine=null;
+    }
     private void ClearTextScroll()
     {
         if(gameLog!=null) gameLog.text = "";
@@ -444,21 +427,27 @@ private void StartTurn()
     }
     public void LogMessage(string message)
     {
-        if (gameLog != null)
-        {
-            gameLog.text += "\n" + message;
-            gameLog.ForceMeshUpdate();
-
-            if (textScroll != null)
-            {
-                Canvas.ForceUpdateCanvases();
-                textScroll.verticalNormalizedPosition = 0f;
-            }
-        }
-        else
+        if(gameLog==null)
         {
             Debug.Log("GameLogTMP is not assigned in the inspector.");
+            return;
         }
+
+        
+        ChangeTextScrollLighting(LightingEnum.Active);
+        gameLog.text += "\n" + message;
+        gameLog.ForceMeshUpdate();
+
+        if (textScroll != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            textScroll.verticalNormalizedPosition = 0f;
+        }
+
+        if(_dimTextScrollCoroutine !=null)
+            StopCoroutine(_dimTextScrollCoroutine);
+            
+        _dimTextScrollCoroutine=StartCoroutine(DimTextScroll());
     }
     
     private IEnumerator PlayIntro()
@@ -552,4 +541,10 @@ private void CleanupSubscription()
         residentsMovedSubscription.Dispose();
 }
 #endregion
+}
+
+public enum LightingEnum
+{
+    Dimmed,
+    Active
 }
