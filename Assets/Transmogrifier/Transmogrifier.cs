@@ -49,30 +49,6 @@ public class Transmogrifier:MonoBehaviour
         _button.onClick.AddListener(Transmogrify);
     }
 
-    private void ProductChoice(ProductChoiceEnum choice,InventoryEntry entry)
-    {
-        switch (choice)
-        {
-            case ProductChoiceEnum.SellIt:
-                OnSaleRequested?.Invoke(entry);
-                ResetTransmogrifierStatusBar();
-                break;
-            case ProductChoiceEnum.StoreIt:
-                OnStoreRequested?.Invoke(entry);
-                ResetTransmogrifierStatusBar();
-                break;
-            case ProductChoiceEnum.ChuckIt:
-                _resultText.text += " Chucked!";
-                ResetTransmogrifierStatusBar();
-                break;
-            default:
-                _resultText.text = "How did you even do this?";
-                ResetTransmogrifierStatusBar();
-                break;
-        }
-        ResetTransmogrifierStatusBar();
-    }
-
     public void Transmogrify()
     {
         if(_slot1.IsEmpty || _slot2.IsEmpty)
@@ -145,7 +121,7 @@ public class Transmogrifier:MonoBehaviour
         productImage.enabled=enable;
         shippingCrate.enabled=enable;
     }
-     private IEnumerator RenderChoice(InventoryEntry result)
+    private IEnumerator RenderChoice(InventoryEntry result)
     {
         EnableProductWindowImages(true);
         _productWindowImage.sprite=result.good.GoodSprite;
@@ -170,6 +146,30 @@ public class Transmogrifier:MonoBehaviour
         _chuckIt.onClick.AddListener(()=>ProductChoice(ProductChoiceEnum.ChuckIt,result));
         
         _decision.SetActive(true);
+    }
+
+    private void ProductChoice(ProductChoiceEnum choice,InventoryEntry entry)
+    {
+        switch (choice)
+        {
+            case ProductChoiceEnum.SellIt:
+                OnSaleRequested?.Invoke(entry);
+                ResetTransmogrifierStatusBar();
+                break;
+            case ProductChoiceEnum.StoreIt:
+                OnStoreRequested?.Invoke(entry);
+                ResetTransmogrifierStatusBar();
+                break;
+            case ProductChoiceEnum.ChuckIt:
+                _resultText.text += " Chucked!";
+                ResetTransmogrifierStatusBar();
+                break;
+            default:
+                _resultText.text = "How did you even do this?";
+                ResetTransmogrifierStatusBar();
+                break;
+        }
+        ResetTransmogrifierStatusBar();
     }
 
     private void ResetTransmogrifierStatusBar()

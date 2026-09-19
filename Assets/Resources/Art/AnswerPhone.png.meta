@@ -1,0 +1,1716 @@
+fileFormatVersion: 2
+guid: 0944e9fc2129e4386aaf821a5764f748
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 457645040910476949
+    second: AnswerPhone_0
+  - first:
+      213: 1213510077358944069
+    second: AnswerPhone_1
+  - first:
+      213: 6645403573665306039
+    second: AnswerPhone_2
+  - first:
+      213: -8413334947543648469
+    second: AnswerPhone_3
+  - first:
+      213: -5644700042840086360
+    second: AnswerPhone_4
+  - first:
+      213: 5176298547671886054
+    second: AnswerPhone_5
+  - first:
+      213: -7214092989858519978
+    second: AnswerPhone_6
+  - first:
+      213: 4341452804949266038
+    second: AnswerPhone_7
+  - first:
+      213: -2164841321405343507
+    second: AnswerPhone_8
+  - first:
+      213: -1040312492367450045
+    second: AnswerPhone_9
+  - first:
+      213: 2972012953646408503
+    second: AnswerPhone_10
+  - first:
+      213: -4674383337323068358
+    second: AnswerPhone_11
+  - first:
+      213: -2269211086965604496
+    second: AnswerPhone_12
+  - first:
+      213: -546583827883497435
+    second: AnswerPhone_13
+  - first:
+      213: 7678406636100317485
+    second: AnswerPhone_14
+  - first:
+      213: 238919401166612934
+    second: AnswerPhone_15
+  - first:
+      213: -4978252778770920644
+    second: AnswerPhone_16
+  - first:
+      213: 6674780310645553938
+    second: AnswerPhone_17
+  - first:
+      213: 9130026930323036240
+    second: AnswerPhone_18
+  - first:
+      213: 2958405673245985736
+    second: AnswerPhone_19
+  - first:
+      213: 8821333763762213507
+    second: AnswerPhone_20
+  - first:
+      213: -3169939867430648158
+    second: AnswerPhone_21
+  - first:
+      213: 4614808400554665284
+    second: AnswerPhone_22
+  - first:
+      213: -7103165260564017433
+    second: AnswerPhone_23
+  - first:
+      213: 8408666290450433343
+    second: AnswerPhone_24
+  - first:
+      213: -1032021141331656028
+    second: AnswerPhone_25
+  - first:
+      213: 5818274926564961294
+    second: AnswerPhone_26
+  - first:
+      213: -3170854169330216467
+    second: AnswerPhone_27
+  - first:
+      213: -1987162735958675067
+    second: AnswerPhone_28
+  - first:
+      213: 5084988547229404558
+    second: AnswerPhone_29
+  - first:
+      213: 7167798600448422439
+    second: AnswerPhone_30
+  - first:
+      213: 4771061070146085475
+    second: AnswerPhone_31
+  - first:
+      213: -6852641900392322089
+    second: AnswerPhone_32
+  - first:
+      213: -7017458150667452642
+    second: AnswerPhone_33
+  - first:
+      213: 533968300351276520
+    second: AnswerPhone_34
+  - first:
+      213: 1112318795437793802
+    second: AnswerPhone_35
+  - first:
+      213: -3142937598539818323
+    second: AnswerPhone_36
+  - first:
+      213: 5894976593787247868
+    second: AnswerPhone_37
+  - first:
+      213: -3905485338527244192
+    second: AnswerPhone_38
+  - first:
+      213: 2573769655989068485
+    second: AnswerPhone_39
+  - first:
+      213: 628575426866189815
+    second: AnswerPhone_40
+  - first:
+      213: 3519475978263754437
+    second: AnswerPhone_41
+  - first:
+      213: 4015216429855256593
+    second: AnswerPhone_42
+  - first:
+      213: -7941725687079604075
+    second: AnswerPhone_43
+  - first:
+      213: 6496277261247895671
+    second: AnswerPhone_44
+  - first:
+      213: 1031398947678846066
+    second: AnswerPhone_45
+  - first:
+      213: -2877527698818808818
+    second: AnswerPhone_46
+  - first:
+      213: -3808962512847087351
+    second: AnswerPhone_47
+  - first:
+      213: -4099881003619946353
+    second: AnswerPhone_48
+  - first:
+      213: -6102159044896675352
+    second: AnswerPhone_49
+  - first:
+      213: 4473695069426821267
+    second: AnswerPhone_50
+  - first:
+      213: 2206295993681076738
+    second: AnswerPhone_51
+  - first:
+      213: -2877653627280846795
+    second: AnswerPhone_52
+  - first:
+      213: -7493765254167585128
+    second: AnswerPhone_53
+  - first:
+      213: 3851509930610354471
+    second: AnswerPhone_54
+  - first:
+      213: 6102189212833969872
+    second: AnswerPhone_55
+  - first:
+      213: -2713616742982542668
+    second: AnswerPhone_56
+  - first:
+      213: -8472986991382609042
+    second: AnswerPhone_57
+  - first:
+      213: 3270639159921134486
+    second: AnswerPhone_58
+  - first:
+      213: 1786635430064439526
+    second: AnswerPhone_59
+  - first:
+      213: 6595174277900740620
+    second: AnswerPhone_60
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AnswerPhone_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 25
+        width: 1905
+        height: 782
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59620b07db1e95600800000000000000
+      internalID: 457645040910476949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_1
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 773
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54f26546cf047d010800000000000000
+      internalID: 1213510077358944069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_2
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 749
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b59e656757393c50800000000000000
+      internalID: 6645403573665306039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_3
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 708
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b27f743e074dd3b80800000000000000
+      internalID: -8413334947543648469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_4
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 576
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a862eac73ff9a1b0800000000000000
+      internalID: -5644700042840086360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 525
+        width: 5
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e86a599a18e5d740800000000000000
+      internalID: 5176298547671886054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 486
+        width: 5
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 654e8dac5a462eb90800000000000000
+      internalID: -7214092989858519978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 339
+        width: 28
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ecf18f250ff3c30800000000000000
+      internalID: 4341452804949266038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_8
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 99
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de81c8ab940f4f1e0800000000000000
+      internalID: -2164841321405343507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_9
+      rect:
+        serializedVersion: 2
+        x: 1148
+        y: 105
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 340790dcc411091f0800000000000000
+      internalID: -1040312492367450045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_10
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 95
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73324f1f806be3920800000000000000
+      internalID: 2972012953646408503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_11
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 91
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a348ad2ee11412fb0800000000000000
+      internalID: -4674383337323068358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_12
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 89
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07f79090a842280e0800000000000000
+      internalID: -2269211086965604496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_13
+      rect:
+        serializedVersion: 2
+        x: 486
+        y: 74
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 528e70b87e42a68f0800000000000000
+      internalID: -546583827883497435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_14
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 78
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d21f2c1572e2f8a60800000000000000
+      internalID: 7678406636100317485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_15
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 67
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c92c74fdefc05300800000000000000
+      internalID: 238919401166612934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_16
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 61
+        width: 44
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3b024f3971b9eab0800000000000000
+      internalID: -4978252778770920644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_17
+      rect:
+        serializedVersion: 2
+        x: 1156
+        y: 78
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21bbcc9f35591ac50800000000000000
+      internalID: 6674780310645553938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_18
+      rect:
+        serializedVersion: 2
+        x: 1174
+        y: 72
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05897a3ce1f54be70800000000000000
+      internalID: 9130026930323036240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_19
+      rect:
+        serializedVersion: 2
+        x: 1180
+        y: 72
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cbc357194e5e0920800000000000000
+      internalID: 2958405673245985736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_20
+      rect:
+        serializedVersion: 2
+        x: 1681
+        y: 79
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 382d43a125cab6a70800000000000000
+      internalID: 8821333763762213507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_21
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 64
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a682725c7c1204d0800000000000000
+      internalID: -3169939867430648158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_22
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 66
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 445ac8d3ac71b0040800000000000000
+      internalID: 4614808400554665284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_23
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 63
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eecf2764dc7c6d90800000000000000
+      internalID: -7103165260564017433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_24
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 34
+        width: 37
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f35891da07591b470800000000000000
+      internalID: 8408666290450433343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_25
+      rect:
+        serializedVersion: 2
+        x: 1069
+        y: 66
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a2cb366d368da1f0800000000000000
+      internalID: -1032021141331656028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_26
+      rect:
+        serializedVersion: 2
+        x: 1228
+        y: 50
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0c677b183aaeb050800000000000000
+      internalID: 5818274926564961294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_27
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 72
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de19182deecdef3d0800000000000000
+      internalID: -3170854169330216467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_28
+      rect:
+        serializedVersion: 2
+        x: 1357
+        y: 44
+        width: 37
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5813a44250e2c64e0800000000000000
+      internalID: -1987162735958675067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_29
+      rect:
+        serializedVersion: 2
+        x: 1431
+        y: 40
+        width: 36
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8dc98c6422819640800000000000000
+      internalID: 5084988547229404558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_30
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 48
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7223549b9d2297360800000000000000
+      internalID: 7167798600448422439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_31
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 54
+        width: 22
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 362a0cfd3c6363240800000000000000
+      internalID: 4771061070146085475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_32
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 45
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7db682a9f7686e0a0800000000000000
+      internalID: -6852641900392322089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_33
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 48
+        width: 13
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ffb47fdfafc9e90800000000000000
+      internalID: -7017458150667452642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_34
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 54
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e5c1cf0759096700800000000000000
+      internalID: 533968300351276520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_35
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 56
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a026f071d00cf6f00800000000000000
+      internalID: 1112318795437793802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_36
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 46
+        width: 10
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daa90d7f7ea0264d0800000000000000
+      internalID: -3142937598539818323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_37
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 52
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfc5ee7aaf92fc150800000000000000
+      internalID: 5894976593787247868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_38
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 50
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0606699d6cdecc9c0800000000000000
+      internalID: -3905485338527244192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_39
+      rect:
+        serializedVersion: 2
+        x: 1084
+        y: 48
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c268ee9dddd7b320800000000000000
+      internalID: 2573769655989068485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_40
+      rect:
+        serializedVersion: 2
+        x: 1102
+        y: 50
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f516e8350629b800800000000000000
+      internalID: 628575426866189815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_41
+      rect:
+        serializedVersion: 2
+        x: 1116
+        y: 38
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c67ee751c0b7d030800000000000000
+      internalID: 3519475978263754437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_42
+      rect:
+        serializedVersion: 2
+        x: 1268
+        y: 48
+        width: 25
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 110b5d5c11ae8b730800000000000000
+      internalID: 4015216429855256593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_43
+      rect:
+        serializedVersion: 2
+        x: 1606
+        y: 46
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 590760e809259c190800000000000000
+      internalID: -7941725687079604075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_44
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 36
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 778d02710c9672a50800000000000000
+      internalID: 6496277261247895671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_45
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 34
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27cfb1ad0e3405e00800000000000000
+      internalID: 1031398947678846066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_46
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 27
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e04ce80cdc7f018d0800000000000000
+      internalID: -2877527698818808818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_47
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 34
+        width: 24
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90958fa76c8d32bc0800000000000000
+      internalID: -3808962512847087351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_48
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 34
+        width: 17
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f807cd503fb4a17c0800000000000000
+      internalID: -4099881003619946353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_49
+      rect:
+        serializedVersion: 2
+        x: 609
+        y: 40
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e92ff5eda6c05ba0800000000000000
+      internalID: -6102159044896675352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_50
+      rect:
+        serializedVersion: 2
+        x: 872
+        y: 34
+        width: 14
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3982a9686f1c51e30800000000000000
+      internalID: 4473695069426821267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_51
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 42
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2026abc44865e9e10800000000000000
+      internalID: 2206295993681076738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_52
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 34
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5309f4fb5458018d0800000000000000
+      internalID: -2877653627280846795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_53
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 32
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89e1d2b743cc00890800000000000000
+      internalID: -7493765254167585128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_54
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 35
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7296bee20ef437530800000000000000
+      internalID: 3851509930610354471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_55
+      rect:
+        serializedVersion: 2
+        x: 1142
+        y: 40
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d6703f12c45fa450800000000000000
+      internalID: 6102189212833969872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_56
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 34
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ba19f913fb475ad0800000000000000
+      internalID: -2713616742982542668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_57
+      rect:
+        serializedVersion: 2
+        x: 1395
+        y: 34
+        width: 21
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6342202937e96a80800000000000000
+      internalID: -8472986991382609042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_58
+      rect:
+        serializedVersion: 2
+        x: 1342
+        y: 34
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69bc493ccf4a36d20800000000000000
+      internalID: 3270639159921134486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_59
+      rect:
+        serializedVersion: 2
+        x: 1622
+        y: 17
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e04e1825776bc810800000000000000
+      internalID: 1786635430064439526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AnswerPhone_60
+      rect:
+        serializedVersion: 2
+        x: 1630
+        y: 19
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0821122014c68b50800000000000000
+      internalID: 6595174277900740620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AnswerPhone_0: 457645040910476949
+      AnswerPhone_1: 1213510077358944069
+      AnswerPhone_10: 2972012953646408503
+      AnswerPhone_11: -4674383337323068358
+      AnswerPhone_12: -2269211086965604496
+      AnswerPhone_13: -546583827883497435
+      AnswerPhone_14: 7678406636100317485
+      AnswerPhone_15: 238919401166612934
+      AnswerPhone_16: -4978252778770920644
+      AnswerPhone_17: 6674780310645553938
+      AnswerPhone_18: 9130026930323036240
+      AnswerPhone_19: 2958405673245985736
+      AnswerPhone_2: 6645403573665306039
+      AnswerPhone_20: 8821333763762213507
+      AnswerPhone_21: -3169939867430648158
+      AnswerPhone_22: 4614808400554665284
+      AnswerPhone_23: -7103165260564017433
+      AnswerPhone_24: 8408666290450433343
+      AnswerPhone_25: -1032021141331656028
+      AnswerPhone_26: 5818274926564961294
+      AnswerPhone_27: -3170854169330216467
+      AnswerPhone_28: -1987162735958675067
+      AnswerPhone_29: 5084988547229404558
+      AnswerPhone_3: -8413334947543648469
+      AnswerPhone_30: 7167798600448422439
+      AnswerPhone_31: 4771061070146085475
+      AnswerPhone_32: -6852641900392322089
+      AnswerPhone_33: -7017458150667452642
+      AnswerPhone_34: 533968300351276520
+      AnswerPhone_35: 1112318795437793802
+      AnswerPhone_36: -3142937598539818323
+      AnswerPhone_37: 5894976593787247868
+      AnswerPhone_38: -3905485338527244192
+      AnswerPhone_39: 2573769655989068485
+      AnswerPhone_4: -5644700042840086360
+      AnswerPhone_40: 628575426866189815
+      AnswerPhone_41: 3519475978263754437
+      AnswerPhone_42: 4015216429855256593
+      AnswerPhone_43: -7941725687079604075
+      AnswerPhone_44: 6496277261247895671
+      AnswerPhone_45: 1031398947678846066
+      AnswerPhone_46: -2877527698818808818
+      AnswerPhone_47: -3808962512847087351
+      AnswerPhone_48: -4099881003619946353
+      AnswerPhone_49: -6102159044896675352
+      AnswerPhone_5: 5176298547671886054
+      AnswerPhone_50: 4473695069426821267
+      AnswerPhone_51: 2206295993681076738
+      AnswerPhone_52: -2877653627280846795
+      AnswerPhone_53: -7493765254167585128
+      AnswerPhone_54: 3851509930610354471
+      AnswerPhone_55: 6102189212833969872
+      AnswerPhone_56: -2713616742982542668
+      AnswerPhone_57: -8472986991382609042
+      AnswerPhone_58: 3270639159921134486
+      AnswerPhone_59: 1786635430064439526
+      AnswerPhone_6: -7214092989858519978
+      AnswerPhone_60: 6595174277900740620
+      AnswerPhone_7: 4341452804949266038
+      AnswerPhone_8: -2164841321405343507
+      AnswerPhone_9: -1040312492367450045
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

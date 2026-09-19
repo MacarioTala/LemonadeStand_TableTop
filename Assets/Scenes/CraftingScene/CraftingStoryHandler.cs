@@ -22,7 +22,9 @@ public class CraftingStoryHandler : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _forSaleText;
     [SerializeField] private Transmogrifier _transmogrifier;
     [SerializeField] private Fridge _fridge;
+    [SerializeField] private ErrorPanel errorPanel;
     private const string InitialMarketName = "Episode 1 Market";
+    private const int peteNDmitriFrequency=3;
     public static CraftingStoryHandler Instance { get; private set; }
     public TheEconomy TheEconomyInstance;
     private Image hudTextScroll;
@@ -68,8 +70,20 @@ private void StartTurn()
         foreach(var neighbourhood in country.GetNeighbourhoods())
             neighbourhood.Act();
 
+        ArePeteAndDmitriVisiting();
         ResolveResidentEncounters();
     }
+
+    private void ArePeteAndDmitriVisiting()
+    {
+        if(TheEconomy.Instance.TradingPeriod%peteNDmitriFrequency==0)
+        {
+            StartCoroutine(errorPanel.IncomingCall("Pete and Dmitri at door",
+            ()=> BuyGoods(TheEconomy.Instance.TradingPeriod)
+            ));
+        }
+    }
+
     private IEnumerator EndTurnFlow()
     {
         CurrentUIState = UIStateEnum.Reading;
@@ -370,10 +384,8 @@ private void StartTurn()
        ElementDelivery.Display(availableGoods);
     }
 
-    public void SetThingToSell(InventoryEntry entry)
-    {
-        _forSaleText.text = entry.good.GoodName;
-    }
+    public void SetThingToSell(InventoryEntry entry) => _forSaleText.text = entry.good.GoodName;
+    
     #endregion
    
 
